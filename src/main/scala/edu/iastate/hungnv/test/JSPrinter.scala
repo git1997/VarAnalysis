@@ -267,6 +267,7 @@ object JSPrinter {
           case j@JSThis() => Text("this", j.getPositionFrom)
           case JSReturnStatement(e) => "return " ~ opt(e) ~ ";"
           case JSConstructorCall(target, arguments) => "new " ~ target ~ "(" ~ listSep(arguments, _ ~ ", " ~ _) ~ ")"
+          case JSFunctionExpression(name, params, funBody) => "function " ~ opt(name) ~ "(params)" ~ "{" ~> funBody * "}"
           case _ => "AST:" ~ ast.getClass().toString()
           
             /*

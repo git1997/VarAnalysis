@@ -21,7 +21,7 @@ abstract class JSStatement extends JSSourceElement
 
 case class JSFunctionDeclaration(name: JSIdentifier, param: Any, funBody: JSProgram) extends JSSourceElement
 
-case class JSFunctionExpression(name: Option[JSIdentifier], param: Any, funBody: Any) extends JSExpression
+case class JSFunctionExpression(name: Option[JSIdentifier], param: Any, funBody: JSProgram) extends JSExpression
 
 case class JSBlock(sourceElements: List[Opt[JSStatement]]) extends JSStatement
 

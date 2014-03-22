@@ -21,9 +21,9 @@ object JumpOpeningClosingTags {
 	def run(element: DElement, list_feature_expr: List[FeatureExpr]): Unit = {
 		element match {
 		  	case DNode(name, attributes, children, openTag, closingTag) => {
-		  		log(list_feature_expr + "Name: " + name.name + " | Open: " + openTag.getPositionFrom + " | Close: " + closingTag.getPositionFrom)
+		  		log("Name: " + name.name + " | Open: " + openTag.getPositionFrom + " | Close: " + closingTag.getPositionFrom)
 		  		
-		  		Main.tagsFile.write("Name: " + name.name + " | Open: " + openTag.getPositionFrom + " | Close: " + closingTag.getPositionFrom + "\n")
+//		  		Main.tagsFile.write("Name: " + name.name + " | Open: " + openTag.getPositionFrom + " | Close: " + closingTag.getPositionFrom + "\n")
 		  		
 		  		run(children, list_feature_expr)
 		  	}

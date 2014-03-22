@@ -1,0 +1,97 @@
+
+	 (Location: index.php @ Line 1) <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<link rel="stylesheet" href="userlogin.css" type="text/css" />
+ (Location: index.php @ Line 29) <s (Location: index.php @ Line 35) cript type="text/javascript" src="javascript/cookies.js"></script>
+<title>WebChess ::  (Location: index.php @ Line 35) Login (Location: index.php @ Line 36) </title>
+ (Location: index.php @ Line 36) <s (Location: index.php @ Line 37) cript language="javascript" type="text/javascript">
+var visitordata = null;
+var cookieDomain = null;
+function storeLogin()
+{
+	if(document.loginForm.remember.checked)
+	{
+		visitordata.nick = document.loginForm.txtNick.value;
+		visitordata.pwd = document.loginForm.pwdPassword.value;
+		visitordata.store();
+	}
+}
+window.onload = function()
+{
+	document.loginForm.onclick = function(){storeLogin();};
+
+	cookieDomain = document.domain;
+	var idx = cookieDomain.lastIndexOf('.');
+	idx = cookieDomain.lastIndexOf('.', idx-1);
+	if(idx == -1)
+		cookieDomain = '.' + cookieDomain;
+	else
+		cookieDomain = cookieDomain.substr(idx);
+	visitordata = new Cookie(document, "WebChess", 2400, '/', cookieDomain);
+	if(visitordata.load())
+	{
+		if(visitordata.nick)
+			document.loginForm.txtNick.value = visitordata.nick;
+		if(visitordata.pwd)
+			document.loginForm.pwdPassword.value = visitordata.pwd;
+		document.loginForm.remember.checked = true;
+	}
+	document.loginForm.txtNick.focus();
+	document.loginForm.txtNick.select();
+}
+</script>
+</head>
+<body>
+<div id="header">
+  <div id="heading">WebChess ::  (Location: index.php @ Line 37) Login (Location: index.php @ Line 76) </div>
+</div>
+
+<div id="ctr" align="center">
+	<div class="login">
+		<div class="login-form">
+			<form name="loginForm" id="loginForm" method="post" action="mainmenu.php">
+				<div class="form-block">
+                                        <div class="inputlabel"> (Location: index.php @ Line 76) Username (Location: index.php @ Line 84) </div>
+					<div><input id="txtNick" name="txtNick" type="text" class="inputbox" size="15" /></div>
+                                        <div class="inputlabel"> (Location: index.php @ Line 84) Password (Location: index.php @ Line 86) </div>
+					<div><input id="pwdPassword" name="pwdPassword" type="password" class="inputbox" size="15" /></div>
+					<div class="remember">
+                                        <label for="remember" title=" (Location: index.php @ Line 86) Remember me (Location: index.php @ Line 89) " class="inputlabel">
+                                        <input id="remember" name="remember" type="checkbox" /> (Location: index.php @ Line 89) Remember me (Location: index.php @ Line 90) 					</label>
+					</div>
+					<input name="ToDo" value="Login" type="hidden" />
+					<div align="left">
+						<input type="submit" name="login" class="button" value=" (Location: index.php @ Line 91) Login (Location: index.php @ Line 95) " />
+				 (Location: index.php @ Line 95) 
+#if ($CFG_NEW_USERS_ALLOWED==true)
+                                <input name="newAccount" class="button" value=" (Location: index.php @ Line 100) New Account (Location: index.php @ Line 100) " type="button" onClick="window.open('newuser.php', '_self')" />
+				 (Location: index.php @ Line 100) 
+#else
+
+#endif
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="login-text">
+			<div class="ctr"><img src="images/webchess.jpg" width="65" height="92" alt="security" /></div>
+                        <p> (Location: index.php @ Line 104) Welcome to (Location: index.php @ Line 110)   (Location: index.php @ Line 110) WebChess (Location: index.php @ Line 110) !</p>
+                        <p> (Location: index.php @ Line 110) Use a valid username and password to gain access to WebChess. (Location: index.php @ Line 111) </p>
+    	</div>
+		<div class="clr"></div>
+	</div>
+</div>
+<div id="break"></div>
+<noscript>
+!Warning! Javascript must be enabled for proper operation of WebChess
+</noscript>
+<div class="footer" align="center">
+<div align="center"> (Location: index.php @ Line 111) WebChess  (Location: index.php @ Line 121) Version (Location: index.php @ Line 121)  1.0.0,  (Location: index.php @ Line 121) last updated (Location: index.php @ Line 121)   (Location: index.php @ Line 121) August (Location: index.php @ Line 121)  15, 2010 (Location: index.php @ Line 121) </div>
+<div align="center"><a href="http://webchess.sourceforge.net/"> (Location: index.php @ Line 121) WebChess (Location: index.php @ Line 122) </a>  (Location: index.php @ Line 122) is Free Software released under the GNU General Public License (GPL). (Location: index.php @ Line 122) </div>
+</div>
+</body>
+</html>
+ (Location: index.php @ Line 122) 

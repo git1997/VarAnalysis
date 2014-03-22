@@ -30,7 +30,8 @@ object Main extends App {
 //    "/Work/To-do/Data/Web Projects/Server Code/addressbookv6.2.12/"
 //    "/Work/To-do/Data/Web Projects/Server Code/SchoolMate-1.5.4/"
 //    "/Work/To-do/Data/Web Projects/Server Code/TimeClock-1.04/"
-    "/Work/To-do/Data/Web Projects/Server Code/UPB-2.2.7/"
+//    "/Work/To-do/Data/Web Projects/Server Code/UPB-2.2.7/"
+    "/Work/To-do/Data/Web Projects/Server Code/webchess-1.0.0/"
 
   /*
    * Sets the SAT solver library
@@ -84,15 +85,15 @@ object Main extends App {
 //  val testFile = "src/main/resources/timeclock/data_model.xml"
 //  val testFile = "src/main/resources/timeclock/data_model.txt"
     
-//  val testFile = "src/main/resources/upb/index_php_data_model.xml"
-//  val testFile = "src/main/resources/upb/index_php_data_model.txt"
-  val testFile = "src/main/resources/upb/admin_forums_php_data_model.xml"
+//  val testFile = "src/main/resources/upb/admin_forums_php_data_model.xml"
 //  val testFile = "src/main/resources/upb/admin_forums_php_data_model.txt"
+    
+    val testFile = "src/main/resources/webchess/data_model.xml"
 
   val reader = new FileReader(testFile)
   val writer = new FileWriter(testFile.replace("/resources/", "/resources/output/").replace("data_model.xml", "transformed_html.html"))
 
-  val tagsFile = new FileWriter("/Users/HUNG/Desktop/tags.txt")
+//  val tagsFile = new FileWriter("/Users/HUNG/Desktop/tags.txt")
   
   val domResult = HtmlParser.parse(reader)
   
@@ -118,9 +119,9 @@ object Main extends App {
 
   JumpOpeningClosingTags.run(domResult)
   
-  tagsFile.close()
+//  tagsFile.close()
   
-//  JumpCSSClasses.run(domResult)
+  JumpCSSClasses.run(domResult)
 
 }
 

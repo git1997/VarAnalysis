@@ -121,7 +121,7 @@ object HtmlParser {
         if (domResult == null)
         	System.exit(0)
 
-        log(domResult.toString)
+//        log(domResult.toString)
 
 //        var s = dom.asInstanceOf[p.Success[DNode]]
 //        var rootNode = s.result
@@ -143,7 +143,7 @@ object HtmlParser {
         var ele = null
         for (ele <- domResult) {
           ele match {
-            case Opt(f, x) => {printDomResult(f, x)}
+            case Opt(f, x) => {/*printDomResult(f, x)*/}
           }
         }
         
