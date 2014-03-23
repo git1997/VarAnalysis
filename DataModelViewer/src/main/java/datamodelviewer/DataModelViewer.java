@@ -240,7 +240,7 @@ public class DataModelViewer extends ViewPart implements
 			}
 		}
 		if (file != null)
-			refreshTree(SymExModel.getInstance().getModel(file));
+			refreshTree(SymExModel.getInstance().getDModel(file));
 		else
 			refreshTree(null);
 	}
@@ -280,7 +280,8 @@ public class DataModelViewer extends ViewPart implements
 		if (lastModel == model)
 			return;
 		lastModel = model;
-		if (model == null) {
+		
+		if (model == null && !treeViewer.getControl().isDisposed()) {
 			treeViewer.setInput(null);
 			text.setText("");
 		} else {
@@ -377,7 +378,7 @@ public class DataModelViewer extends ViewPart implements
 	@Override
 	public void modelUpdated(IFile file) {
 		if (currentFile == file)
-			refreshTree(SymExModel.getInstance().getModel(file));
+			refreshTree(SymExModel.getInstance().getDModel(file));
 	}
 
 }

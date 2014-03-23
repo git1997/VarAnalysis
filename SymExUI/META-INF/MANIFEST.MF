@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: SymExUI
-Bundle-SymbolicName: edu.cmu.va.SymExUI;singleton:=true
+Bundle-Name: VarAnalysisUI
+Bundle-SymbolicName: edu.cmu.va.varanalysis.core.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: symexui.Activator
 Require-Bundle: PHPSync;bundle-version="1.0.0",

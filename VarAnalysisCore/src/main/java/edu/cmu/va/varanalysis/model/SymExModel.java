@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IFile;
 import datamodel.nodes.DataModelVisitor;
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import de.fosd.typechef.parser.html.VarDom;
 
 public class SymExModel {
 
@@ -24,14 +25,26 @@ public class SymExModel {
 	}
 
 	private final HashMap<IFile, DataNode> models = new HashMap<>();
+	private final HashMap<IFile, VarDom> vardoms = new HashMap<>();
 	private final List<SymExModelChangeListener> listeners = new ArrayList<>();
 
-	public void updateModel(IFile file, DataNode model) {
+	public void updateDModel(IFile file, DataNode model) {
 		if (model == null)
 			models.remove(file);
 		else
 			models.put(file, model);
-		fireModelChanged(file);
+		fireDModelChanged(file);
+	}
+
+	public void updateVarDom(IFile file, VarDom model) {
+		if (model == null)
+			vardoms.remove(file);
+		else
+			vardoms.put(file, model);
+		fireVarDomChanged(file);
+	}
+
+	private void fireVarDomChanged(IFile file) {
 	}
 
 	public boolean isStringLit(IFile file, final int offset, final int length) {
@@ -68,7 +81,7 @@ public class SymExModel {
 		listeners.add(listener);
 	}
 
-	protected void fireModelChanged(IFile file) {
+	protected void fireDModelChanged(IFile file) {
 		for (SymExModelChangeListener l : listeners)
 			l.modelUpdated(file);
 	}
@@ -102,7 +115,7 @@ public class SymExModel {
 		return result;
 	}
 
-	public DataNode getModel(IFile file) {
+	public DataNode getDModel(IFile file) {
 		return models.get(file);
 	}
 }

@@ -39,8 +39,8 @@ public class SymExBuilder extends IncrementalProjectBuilder {
 				// handle removed resource
 				if (resource instanceof IFile) {
 					deleteMarkers((IFile) resource);
-					SymExModel.getInstance()
-							.updateModel((IFile) resource, null);
+					SymExModel.getInstance().updateDModel((IFile) resource,
+							null);
 				}
 				break;
 			case IResourceDelta.CHANGED:
@@ -70,8 +70,8 @@ public class SymExBuilder extends IncrementalProjectBuilder {
 		}
 
 		private void addMarker(SymExException e, int severity) {
-			SymExBuilder.this.addMarker(file, e.getMessage(),
-					e.getLineNumber(), severity);
+			SymExBuilder.this.addMarker(file, e.getMessage(), e.getOffset(),
+					severity);
 		}
 
 		@Override
@@ -90,9 +90,9 @@ public class SymExBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	public static final String BUILDER_ID = "edu.cmu.va.SymExUI.symexbuilder";
+	public static final String BUILDER_ID = "edu.cmu.va.varanalysis.core.symexbuilder";
 
-	private static final String MARKER_TYPE = "edu.cmu.va.SymExUI.symexProblem";
+	private static final String MARKER_TYPE = "edu.cmu.va.varanalysis.core.symexproblem";
 
 	private void addMarker(IFile file, String message, int lineNumber,
 			int severity) {

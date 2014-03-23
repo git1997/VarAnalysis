@@ -11,7 +11,7 @@ public class SymExNature implements IProjectNature {
 	/**
 	 * ID of this project nature
 	 */
-	public static final String NATURE_ID = "edu.cmu.va.SymExUI.symexnature";
+	public static final String NATURE_ID = "edu.cmu.va.varanalysis.core.symexnature";
 
 	private IProject project;
 

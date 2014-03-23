@@ -6,13 +6,13 @@
          point="org.eclipse.ui.commands">
       <category
             name="SymEx Nature commands"
-            id="edu.cmu.va.SymExUI.symexnature.category">
+            id="edu.cmu.va.varanalysis.core.ui.category">
       </category>
       <command
             name="Add/Remove SymEx Nature"
             defaultHandler="edu.cmu.va.varanalysis.ui.builder.AddRemoveSymExNatureHandler"
-            categoryId="edu.cmu.va.SymExUI.symexnature.category"
-            id="edu.cmu.va.SymExUI.addRemoveSymExNature">
+            categoryId="edu.cmu.va.varanalysis.core.ui.category"
+            id="edu.cmu.va.varanalysis.core.ui.addRemoveSymExNature">
       </command>
    </extension>
    <extension
@@ -20,7 +20,7 @@
       <menuContribution
             locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
          <command
-               commandId="edu.cmu.va.SymExUI.addRemoveSymExNature"
+               commandId="edu.cmu.va.varanalysis.core.ui.addRemoveSymExNature"
                label="Disable VarAnalysis builder"
                style="push">
             <visibleWhen
@@ -36,7 +36,7 @@
                               value="org.eclipse.core.resources.IProject">
                         </instanceof>
                         <test
-                              value="edu.cmu.va.SymExUI.symexnature"
+                              value="edu.cmu.va.varanalysis.core.symexnature"
                               property="org.eclipse.core.resources.projectNature">
                         </test>
                      </and>
@@ -45,7 +45,7 @@
             </visibleWhen>
          </command>
          <command
-               commandId="edu.cmu.va.SymExUI.addRemoveSymExNature"
+               commandId="edu.cmu.va.varanalysis.core.ui.addRemoveSymExNature"
                label="Enable VarAnalysis builder"
                style="push">
             <visibleWhen
@@ -62,7 +62,7 @@
                         </instanceof>
                         <not>
                            <test
-                                 value="edu.cmu.va.SymExUI.symexnature"
+                                 value="edu.cmu.va.varanalysis.core.symexnature"
                                  property="org.eclipse.core.resources.projectNature">
                            </test>
                         </not>
@@ -75,7 +75,7 @@
    </extension>
     <extension point="org.eclipse.wst.sse.ui.semanticHighlighting">
         <highlighting
-        class="edu.cmu.va.varanalysis.highlighting.StringLitHighlighting"
+        class="edu.cmu.va.varanalysis.ui.highlighting.StringLitHighlighting"
         target="org.eclipse.php.core.phpsource">
         </highlighting>
     </extension>

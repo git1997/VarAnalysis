@@ -21,7 +21,7 @@ class FileProcessor {
         val file = ifile.getRawLocation().makeAbsolute().toFile();
 
         val model = executeSymbolically(reporter, file);
-        SymExModel.getInstance().updateModel(ifile, model);
+        SymExModel.getInstance().updateDModel(ifile, model);
 
         if (model == null) {
             reporter.fatalError(new SymExException("could not create D-Model",
@@ -29,14 +29,22 @@ class FileProcessor {
             return ;
         }
 
-        parseVarDom(model, reporter);
+        val vardom = parseVarDom(model, reporter);
 
+        if (model == null) {
+            reporter.fatalError(new SymExException("could not create VarDOM",
+                file, 0));
+            return ;
+        }
+
+        SymExModel.getInstance().updateVarDom(ifile, vardom);
     }
 
     def parseVarDom(model: DataNode, reporter: SymExErrorHandler): VarDom = {
-        val tokens = lexDModel(model);
+        val tokens = lexDModel(model)
         val tagSequence = parseSAX(tokens, reporter)
-        parseDOM(tagSequence, reporter);
+        parseDOM(tagSequence, reporter)
+
     }
 
     def lexDModel(model: DataNode): TokenReader[CharacterToken, Object] = new DModelLexer().lex(model);
