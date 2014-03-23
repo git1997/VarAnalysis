@@ -66,15 +66,15 @@ public class DataModel {
 		XmlDocument.writeXmlDocumentToFile(document, xmlFile);
 	}
 	
-	/**
-	 * Reads the Output from XML format.
-	 */
-	public static datamodel.nodes.ext.DataNode readOutputFromXmlFile(File xmlFile) {
-		Document document = XmlDocument.readXmlDocumentFromFile(xmlFile);
-		Element outputElement = (Element) document.getElementsByTagName(DataModelConfig.XML_OUTPUT).item(0);
-		Element outputDataNodeElement = (Element) outputElement.getFirstChild();
-		return datamodel.nodes.ext.DataNode.createInstance(outputDataNodeElement);
-	}
+//	/**
+//	 * Reads the Output from XML format.
+//	 */
+//	public static datamodel.nodes.ext.DataNode readOutputFromXmlFile(File xmlFile) {
+//		Document document = XmlDocument.readXmlDocumentFromFile(xmlFile);
+//		Element outputElement = (Element) document.getElementsByTagName(DataModelConfig.XML_OUTPUT).item(0);
+//		Element outputDataNodeElement = (Element) outputElement.getFirstChild();
+//		return datamodel.nodes.ext.DataNode.createInstance(outputDataNodeElement);
+//	}
 	
 	/**
 	 * Prints the Output and variable values to Graphviz format.

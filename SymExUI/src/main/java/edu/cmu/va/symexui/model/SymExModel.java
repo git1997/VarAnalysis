@@ -102,4 +102,8 @@ public class SymExModel {
 		});
 		return result;
 	}
+
+	public DataNode getModel(IFile file) {
+		return models.get(file);
+	}
 }

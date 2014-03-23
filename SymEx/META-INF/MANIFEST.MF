@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Export-Package: config,
  datamodel,
  datamodel.nodes,
- datamodel.nodes.ext,
  errormodel,
  main,
  php,

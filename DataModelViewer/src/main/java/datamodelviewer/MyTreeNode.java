@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import util.StringUtils;
 import util.sourcetracing.SourceCodeLocation;
 import varanalysis.RunFile;
-import datamodel.nodes.ext.SymbolicNode;
-import datamodel.nodes.ext.ConcatNode;
-import datamodel.nodes.ext.DataNode;
-import datamodel.nodes.ext.LiteralNode;
-import datamodel.nodes.ext.RepeatNode;
-import datamodel.nodes.ext.SelectNode;
+import datamodel.nodes.ConcatNode;
+import datamodel.nodes.DataNode;
+import datamodel.nodes.LiteralNode;
+import datamodel.nodes.RepeatNode;
+import datamodel.nodes.SelectNode;
+import datamodel.nodes.SymbolicNode;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class MyTreeNode {
 		}
 		else if (dataNode instanceof RepeatNode) {
 			RepeatNode repeatNode = (RepeatNode) dataNode;
-			childNodes.add(repeatNode.getDataNode());
+			childNodes.add(repeatNode.getChildNode());
 		}
 		// else do nothing
 		
@@ -70,7 +70,7 @@ public class MyTreeNode {
 		else if (dataNode instanceof LiteralNode) {
 			LiteralNode literalNode = (LiteralNode) dataNode;
 			SourceCodeLocation location = literalNode.getLocation().getLocationAtOffset(0);
-			SourceCodeLocation absoluteLocation = new SourceCodeLocation(RunFile.PROJECT_FOLDER + StringUtils.getFileSystemSlash() + location.getFilePath(), location.getPosition());
+			SourceCodeLocation absoluteLocation = new SourceCodeLocation(location.getFilePath(), location.getPosition());
 			return location.getFilePath() + " @ Line " + absoluteLocation.getLine(); 
 		}
 		else { // if (dataNode instanceof SymbolicNode) {

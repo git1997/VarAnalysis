@@ -1,6 +1,6 @@
 package datamodelviewer;
 
-import datamodel.nodes.ext.DataNode;
+import datamodel.nodes.DataNode;
 
 /**
  * 
