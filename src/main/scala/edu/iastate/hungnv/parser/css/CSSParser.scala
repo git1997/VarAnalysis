@@ -11,7 +11,7 @@ import de.fosd.typechef.parser.common.MultiFeatureParserExt
  */
 class CSSParser extends MultiFeatureParserExt {
   type Elem = CharacterToken
-  type TypeContext = Null
+  type TypeContext = Object
 
   /*
    * Utility methods

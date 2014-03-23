@@ -9,7 +9,7 @@ import de.fosd.typechef.parser.common.MultiFeatureParserExt
 
 class JSParser extends MultiFeatureParserExt {
     type Elem = CharacterToken
-    type TypeContext = Null
+    type TypeContext = Object
 
     private implicit def char(s: Char): MultiParserExt[Elem] = token(s.toString, _.getKindChar() == s)
     private implicit def keyword(s: String): MultiParserExt[String] = {

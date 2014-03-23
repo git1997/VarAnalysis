@@ -14,8 +14,8 @@ class JSParserTest {
 
     val p = new JSParser()
 
-    def assertNotParseable(code: String, mainProduction: (TokenReader[CharacterToken, Null], FeatureExpr) => p.MultiParseResult[Any]) = assertParseable(code, mainProduction, false)
-    def assertParseable(code: String, mainProduction: (TokenReader[CharacterToken, Null], FeatureExpr) => p.MultiParseResult[Any], expectSuccess: Boolean = true) {
+    def assertNotParseable(code: String, mainProduction: (TokenReader[CharacterToken, Object], FeatureExpr) => p.MultiParseResult[Any]) = assertParseable(code, mainProduction, false)
+    def assertParseable(code: String, mainProduction: (TokenReader[CharacterToken, Object], FeatureExpr) => p.MultiParseResult[Any], expectSuccess: Boolean = true) {
         var tokens = CharacterLexer.lex(new StringReader(code))
 
         val actual = mainProduction(tokens, FeatureExprFactory.True)

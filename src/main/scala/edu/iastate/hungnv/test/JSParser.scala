@@ -24,11 +24,11 @@ object JSParser {
 	}
 	
 	def parse(tokens: List[CharacterToken]): JSProgram = {
-		val tokenReader = new TokenReader[CharacterToken, Null](tokens, 0, null, new CharacterToken(-1, FeatureExprFactory.True, new JPosition("", -1, -1)))
+		val tokenReader = new TokenReader[CharacterToken, Object](tokens, 0, null, new CharacterToken(-1, FeatureExprFactory.True, new JPosition("", -1, -1)))
 		parse(tokenReader)
 	}
 	
-	def parse(tokenReader: TokenReader[CharacterToken, Null]): JSProgram = {
+	def parse(tokenReader: TokenReader[CharacterToken, Object]): JSProgram = {
 		/*
 		 * Step 1: Get tokens
 		 */

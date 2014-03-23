@@ -16,7 +16,7 @@ import scala.xml.Text
  */
 object CharacterLexer {
 
-  def lex(r: Reader): TokenReader[CharacterToken, Null] = {
+  def lex(r: Reader): TokenReader[CharacterToken, Object] = {
 
     var _tokens = List[CharacterToken]()
     var result = List[CharacterToken]()
@@ -73,7 +73,7 @@ object CharacterLexer {
       }
     }
 
-    new TokenReader[CharacterToken, Null](result.reverse, 0, null, new CharacterToken(-1, FeatureExprFactory.True, new JPosition("", -1, -1)))
+    new TokenReader[CharacterToken, Object](result.reverse, 0, null, new CharacterToken(-1, FeatureExprFactory.True, new JPosition("", -1, -1)))
 
   }
 
@@ -210,7 +210,7 @@ object CharacterLexer {
     }
   }
   
-  def lexForXml(r: Reader): TokenReader[CharacterToken, Null] = {
+  def lexForXml(r: Reader): TokenReader[CharacterToken, Object] = {
 	val dmodel = scala.xml.XML.load(r);
 	
     var fexprCombinedStack = new util.Stack[FeatureExpr]()
@@ -222,7 +222,7 @@ object CharacterLexer {
     
     visitNode(dmodel.child, fexprCombinedStack, fexprStack, tokens)
     
-    new TokenReader[CharacterToken, Null](tokens.reverse.toList, 0, null, new CharacterToken(-1, FeatureExprFactory.True, new JPosition("", -1, -1)))
+    new TokenReader[CharacterToken, Object](tokens.reverse.toList, 0, null, new CharacterToken(-1, FeatureExprFactory.True, new JPosition("", -1, -1)))
   }
 
 }

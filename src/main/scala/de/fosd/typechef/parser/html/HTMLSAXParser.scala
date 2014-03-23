@@ -12,7 +12,7 @@ import de.fosd.typechef.parser.common.CharacterToken
 //
 class HTMLSAXParser extends MultiFeatureParser {
   type Elem = CharacterToken
-  type TypeContext = Null
+  type TypeContext = Object
 
   ////grammar
   ///*****************************************

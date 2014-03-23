@@ -14,7 +14,7 @@ class CSSParserTest {
 
     val p = new CSSParser()
 
-    def assertParseable(code: String, mainProduction: (TokenReader[CharacterToken, Null], FeatureExpr) => p.MultiParseResult[Any]) {
+    def assertParseable(code: String, mainProduction: (TokenReader[CharacterToken, Object], FeatureExpr) => p.MultiParseResult[Any]) {
         var tokens=CharacterLexer.lex(new StringReader(code))
 
         println(tokens)
