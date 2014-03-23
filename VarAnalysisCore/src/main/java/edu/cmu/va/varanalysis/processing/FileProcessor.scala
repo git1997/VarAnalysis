@@ -15,6 +15,9 @@ import de.fosd.typechef.conditional.Opt
 import de.fosd.typechef.featureexpr.FeatureExpr
 import de.fosd.typechef.featureexpr.FeatureExpr
 import de.fosd.typechef.parser.TokenReader
+import datamodel.nodes.DataNode
+import varanalysis.RunFile
+import errormodel.SymExErrorHandler
 
 class FileProcessor {
     def process(ifile: IFile, reporter: SymExErrorHandler) {
@@ -25,7 +28,7 @@ class FileProcessor {
 
         if (model == null) {
             reporter.fatalError(new SymExException("could not create D-Model",
-                file, 0));
+                file, 0,0));
             return ;
         }
 
@@ -33,7 +36,7 @@ class FileProcessor {
 
         if (model == null) {
             reporter.fatalError(new SymExException("could not create VarDOM",
-                file, 0));
+                file, 0,0));
             return ;
         }
 
@@ -59,12 +62,14 @@ class FileProcessor {
                     reporter.error(
                         new SymExException("error: SAXParser not at end: " + rest,
                             new File(rest.first.getPosition.getFile),
+                            rest.first.getPosition.getLine,
                             rest.first.getPosition.getColumn))
                 r.map(_.and(ctx))
             case p.NoSuccess(msg, rest, _) =>
                 reporter.error(
                     new SymExException(msg,
                         new File(rest.first.getPosition.getFile),
+                        rest.first.getPosition.getLine,
                         rest.first.getPosition.getColumn))
                 Nil
             case p.SplittedParseResult(f, a, b) => getParseResult(a, ctx and f) ++ getParseResult(b, ctx andNot f)
@@ -88,12 +93,14 @@ class FileProcessor {
                     reporter.error(
                         new SymExException("error: SAXParser not at end: " + rest,
                             new File(rest.first.getPosition.getFile),
+                            rest.first.getPosition.getLine,
                             rest.first.getPosition.getColumn))
                 r.map(_.and(ctx))
             case p2.NoSuccess(msg, rest, _) =>
                 reporter.error(
                     new SymExException(msg,
                         new File(rest.first.getPosition.getFile),
+                        rest.first.getPosition.getLine,
                         rest.first.getPosition.getColumn))
                 Nil
             case p2.SplittedParseResult(f, a, b) => getParseResult(a, ctx and f) ++ getParseResult(b, ctx andNot f)

@@ -43,8 +43,9 @@ public class StringLitHighlighting implements ISemanticHighlighting,
 		Position[] result = new Position[positions.size()];
 		for (int i = 0; i < positions.size(); i++)
 			result[i] = new Position(positions.get(i).getFrom(), positions.get(
-					i).getTo());
-		
+					i).getTo()
+					- positions.get(i).getFrom());
+
 		return result;
 	}
 

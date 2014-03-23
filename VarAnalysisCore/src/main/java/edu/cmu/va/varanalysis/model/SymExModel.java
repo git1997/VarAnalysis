@@ -108,7 +108,7 @@ public class SymExModel {
 				if ((litpos >= from && litpos < to)
 						|| (end > from && end <= to))
 					result.add(new Position(Math.max(from, litpos), Math.min(
-							to, length)));
+							to, end)));
 				super.visitLiteralNode(literalNode);
 			}
 		});

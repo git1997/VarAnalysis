@@ -70,7 +70,7 @@ public class SymExBuilder extends IncrementalProjectBuilder {
 		}
 
 		private void addMarker(SymExException e, int severity) {
-			SymExBuilder.this.addMarker(file, e.getMessage(), e.getOffset(),
+			SymExBuilder.this.addMarker(file, e.getMessage(), e.getLine(),
 					severity);
 		}
 

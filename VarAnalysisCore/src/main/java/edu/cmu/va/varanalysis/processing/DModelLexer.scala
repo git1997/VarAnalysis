@@ -48,7 +48,7 @@ class DModelLexer {
     var p=loc.getPosition()
     var result:List[CharacterToken]=Nil
     for (c<-str) {
-      result = new CharacterToken(c, ctx, new JPosition(file, -1, p)) :: result
+      result = new CharacterToken(c, ctx, new JPosition(file, loc.getLine(), p)) :: result
       p += 1
     }
     
