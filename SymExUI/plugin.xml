@@ -3,30 +3,6 @@
 <plugin>
 
    <extension
-         id="symexbuilder"
-         name="SymEx Builder"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true">
-         <run
-               class="edu.cmu.va.varanalysis.ui.builder.SymExBuilder">
-         </run>
-      </builder>
-   </extension>
-   <extension
-         id="symexnature"
-         name="SymEx Nature"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="edu.cmu.va.varanalysis.ui.builder.SymExNature">
-         </run>
-      </runtime>
-      <builder
-            id="edu.cmu.va.SymExUI.symexbuilder">
-      </builder>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <category
             name="SymEx Nature commands"
@@ -96,17 +72,6 @@
             </visibleWhen>
          </command>
       </menuContribution>
-   </extension>
-   <extension
-         id="xmlProblem"
-         name="XML Problem"
-         point="org.eclipse.core.resources.markers">
-      <super
-            type="org.eclipse.core.resources.problemmarker">
-      </super>
-      <persistent
-            value="false">
-      </persistent>
    </extension>
     <extension point="org.eclipse.wst.sse.ui.semanticHighlighting">
         <highlighting

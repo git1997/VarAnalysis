@@ -17,6 +17,7 @@ public class ParseHelloWorld {
 	public void test() {
 		DataNode model = new RunFile(new File("helloworld.php"), new File("."))
 				.run(null);
+		assertNotNull(model);
 		System.out.println(RunFile.valueToIfdefString(model, false));
 
 		model.visit(new DataModelVisitor() {
@@ -29,4 +30,5 @@ public class ParseHelloWorld {
 		});
 	}
 
+	
 }

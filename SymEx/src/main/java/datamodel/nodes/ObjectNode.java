@@ -57,7 +57,7 @@ public class ObjectNode extends DataNode {
 	
 	@Override
 	public Element printGraphToXmlFormat(Document document,	HashSet<DataNode> parentNodes) {
-		LiteralNode literalNode = new LiteralNode(this.getApproximateStringValue());
+		LiteralNode literalNode = LiteralNodeFactory.createLiteralNode(this.getApproximateStringValue());
 		return literalNode.printGraphToXmlFormat(document, parentNodes);
 	}
 	
@@ -67,7 +67,7 @@ public class ObjectNode extends DataNode {
 	
 	@Override
 	public String printGraphToGraphvizFormat(HashSet<DataNode> setOfPrintedNodes) {
-		LiteralNode literalNode = new LiteralNode(this.getApproximateStringValue());
+		LiteralNode literalNode = LiteralNodeFactory.createLiteralNode(this.getApproximateStringValue());
 		return literalNode.printGraphToGraphvizFormat(setOfPrintedNodes);
 	}
 

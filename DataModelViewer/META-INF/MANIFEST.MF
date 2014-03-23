@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  PHPSync;bundle-version="1.0.0",
- edu.cmu.va.SymExUI;bundle-version="1.0.0",
  edu.cmu.va.varanalysis.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy

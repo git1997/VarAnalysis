@@ -1,18 +1,10 @@
 package edu.cmu.va.varanalysis.ui.highlighting;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.dltk.core.ISourceModule;
-import org.eclipse.dltk.core.ModelException;
-import org.eclipse.jdt.internal.ui.preferences.MockupPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Position;
-import org.eclipse.php.internal.core.ast.nodes.Program;
-import org.eclipse.php.internal.ui.PHPUiPlugin;
-import org.eclipse.php.internal.ui.editor.PHPStructuredEditor;
-import org.eclipse.php.ui.editor.SharedASTProvider;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -21,8 +13,8 @@ import org.eclipse.wst.sse.core.internal.provisional.text.IStructuredDocumentReg
 import org.eclipse.wst.sse.ui.ISemanticHighlighting;
 import org.eclipse.wst.sse.ui.ISemanticHighlightingExtension2;
 
-import edu.cmu.va.varanalysis.model.SymExModel;
 import symexui.Activator;
+import edu.cmu.va.varanalysis.model.SymExModel;
 
 public class StringLitHighlighting implements ISemanticHighlighting,
 		ISemanticHighlightingExtension2 {

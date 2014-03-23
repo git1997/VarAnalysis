@@ -5,10 +5,10 @@ import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import php.ElementManager;
 import php.elements.PhpArrayElement;
 import php.elements.PhpVariable;
-
 import datamodel.nodes.ArrayNode;
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 import datamodel.nodes.SymbolicNode;
 
 /**
@@ -120,7 +120,7 @@ public class ArrayAccessNode extends VariableBaseNode {
 			&& indexExpressionNode != null) {
 				DataNode dataNode;
 				if (indexExpressionNode instanceof IdentifierNode)
-					dataNode = new LiteralNode((IdentifierNode) indexExpressionNode);
+					dataNode = LiteralNodeFactory.createLiteralNode((IdentifierNode) indexExpressionNode);
 				else 
 					dataNode = indexExpressionNode.execute(elementManager);
 				requestVariableListener.requestVariableFound(dataNode);
@@ -135,7 +135,7 @@ public class ArrayAccessNode extends VariableBaseNode {
 					&& indexExpressionNode != null) {
 					DataNode dataNode;
 					if (indexExpressionNode instanceof IdentifierNode)
-						dataNode = new LiteralNode((IdentifierNode) indexExpressionNode);
+						dataNode = LiteralNodeFactory.createLiteralNode((IdentifierNode) indexExpressionNode);
 					else 
 						dataNode = indexExpressionNode.execute(elementManager);
 					sqlTableColumnListener.sqlTableColumnFound(dataNode, variableValue);

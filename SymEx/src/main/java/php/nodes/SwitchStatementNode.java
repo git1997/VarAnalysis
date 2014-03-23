@@ -6,9 +6,9 @@ import org.eclipse.php.internal.core.ast.nodes.Statement;
 import org.eclipse.php.internal.core.ast.nodes.SwitchStatement;
 
 import php.ElementManager;
-
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 
 
 /**
@@ -77,7 +77,7 @@ public class SwitchStatementNode extends StatementNode {
 		}
 		
 		this.switchExpressionNode = ExpressionNode.createInstance(switchStatement.getExpression());
-		this.switchExpressionString = new LiteralNode(switchStatement.getExpression());		
+		this.switchExpressionString = LiteralNodeFactory.createLiteralNode(switchStatement.getExpression());		
 		this.switchCaseNodes = switchCaseNodes;
 	}
 

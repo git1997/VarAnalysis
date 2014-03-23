@@ -3,9 +3,9 @@ package php.nodes;
 import org.eclipse.php.internal.core.ast.nodes.WhileStatement;
 
 import php.ElementManager;
-
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 
 /**
  * 
@@ -30,7 +30,7 @@ public class WhileStatementNode extends StatementNode {
 	 endwhile; 
 	*/
 	public WhileStatementNode(WhileStatement whileStatement) {
-		conditionString = new LiteralNode(whileStatement.getCondition());
+		conditionString = LiteralNodeFactory.createLiteralNode(whileStatement.getCondition());
 		conditionNode = ExpressionNode.createInstance(whileStatement.getCondition());
 		statementNode = StatementNode.createInstance(whileStatement.getBody());
 	}

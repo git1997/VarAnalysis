@@ -3,10 +3,10 @@ package php.nodes;
 import org.eclipse.php.internal.core.ast.nodes.InfixExpression;
 
 import php.ElementManager;
-
 import datamodel.nodes.DataNode;
 import datamodel.nodes.ConcatNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 import datamodel.nodes.SymbolicNode;
 
 /**
@@ -51,14 +51,14 @@ public class InfixExpressionNode extends ExpressionNode {
 			// '!='
 			case InfixExpression.OP_IS_NOT_EQUAL:
 				if ((leftNode instanceof LiteralNode || leftNode instanceof ConcatNode) && (rightNode instanceof LiteralNode || rightNode instanceof ConcatNode))
-					return leftNode.getApproximateStringValue().equals(rightNode.getApproximateStringValue()) ? new LiteralNode("FALSE") : new LiteralNode("TRUE");
+					return leftNode.getApproximateStringValue().equals(rightNode.getApproximateStringValue()) ? LiteralNodeFactory.createLiteralNode("FALSE") : LiteralNodeFactory.createLiteralNode("TRUE");
 				else
 					return new SymbolicNode(this);
 			
 			// '!=='
 			case InfixExpression.OP_IS_NOT_IDENTICAL:
 				if ((leftNode instanceof LiteralNode || leftNode instanceof ConcatNode) && (rightNode instanceof LiteralNode || rightNode instanceof ConcatNode))
-					return leftNode.getApproximateStringValue().equals(rightNode.getApproximateStringValue()) ? new LiteralNode("FALSE") : new LiteralNode("TRUE");
+					return leftNode.getApproximateStringValue().equals(rightNode.getApproximateStringValue()) ? LiteralNodeFactory.createLiteralNode("FALSE") : LiteralNodeFactory.createLiteralNode("TRUE");
 				else
 					return new SymbolicNode(this);
 				

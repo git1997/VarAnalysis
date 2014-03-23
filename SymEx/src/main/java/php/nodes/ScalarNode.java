@@ -6,6 +6,7 @@ import org.eclipse.php.internal.core.ast.nodes.Scalar;
 import php.ElementManager;
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 
 public class ScalarNode extends ExpressionNode {
 
@@ -122,7 +123,7 @@ public class ScalarNode extends ExpressionNode {
 		if (this.isPredefinedConstant())
 			return elementManager.getPredefinedConstantValue(this);
 		else
-			return new LiteralNode(this);		
+			return LiteralNodeFactory.createLiteralNode(this);		
 	}
 	
 }

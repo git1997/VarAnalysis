@@ -3,9 +3,9 @@ package php.nodes;
 import org.eclipse.php.internal.core.ast.nodes.InLineHtml;
 
 import php.ElementManager;
-
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 
 /**
  * 
@@ -27,7 +27,7 @@ public class InLineHtmlNode extends StatementNode {
 	 */
 	@Override
 	public DataNode execute(ElementManager elementManager) {
-		elementManager.appendOutput(new LiteralNode(this));
+		elementManager.appendOutput(LiteralNodeFactory.createLiteralNode(this));
 		return null;
 	}
 

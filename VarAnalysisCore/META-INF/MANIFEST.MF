@@ -6,8 +6,18 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: edu.cmu.va.varanalysis.Activator
 Require-Bundle: org.eclipse.core.runtime,
  PHPSync,
- org.eclipse.core.resources
+ org.eclipse.core.resources,
+ org.scala-ide.scala.library,
+ edu.cmu.va.javascriptparser;bundle-version="1.0.0",
+ org.junit
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
-Export-Package: edu.cmu.va.varanalysis.builder,
- edu.cmu.va.varanalysis.model
+Export-Package: edu.cmu.va.varanalysis.builder;
+  uses:="scala.collection.immutable,
+   org.eclipse.core.runtime,
+   de.fosd.typechef.featureexpr,
+   errormodel,
+   org.eclipse.core.resources,
+   de.fosd.typechef.parser,
+   de.fosd.typechef.parser.common",
+ edu.cmu.va.varanalysis.model;uses:="datamodel.nodes,org.eclipse.core.resources"

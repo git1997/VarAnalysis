@@ -6,9 +6,9 @@ import org.eclipse.php.internal.core.ast.nodes.Expression;
 import org.eclipse.php.internal.core.ast.nodes.ForStatement;
 
 import php.ElementManager;
-
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 
 /**
  * 
@@ -34,7 +34,7 @@ public class ForStatementNode extends StatementNode {
 	 endfor;
 	*/
 	public ForStatementNode(ForStatement forStatement) {		
-		conditionString = (forStatement.conditions().isEmpty() ? new LiteralNode(forStatement) : new LiteralNode(forStatement.conditions().get(0)));
+		conditionString = (forStatement.conditions().isEmpty() ? LiteralNodeFactory.createLiteralNode(forStatement) : LiteralNodeFactory.createLiteralNode(forStatement.conditions().get(0)));
 		for (Expression expression : forStatement.initializers()) {
 			initializerNodes.add(ExpressionNode.createInstance(expression));
 		}

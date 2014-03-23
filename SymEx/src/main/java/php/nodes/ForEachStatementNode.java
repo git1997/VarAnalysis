@@ -3,9 +3,9 @@ package php.nodes;
 import org.eclipse.php.internal.core.ast.nodes.ForEachStatement;
 
 import php.ElementManager;
-
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 
 /**
  * 
@@ -33,7 +33,7 @@ public class ForEachStatementNode extends StatementNode {
 	 endforeach;
 	*/
 	public ForEachStatementNode(ForEachStatement forEachStatement) {
-		conditionString = new LiteralNode(forEachStatement.getExpression());
+		conditionString =LiteralNodeFactory.createLiteralNode(forEachStatement.getExpression());
 		expressionNode = ExpressionNode.createInstance(forEachStatement.getExpression());
 		statementNode = StatementNode.createInstance(forEachStatement.getStatement());		
 	}

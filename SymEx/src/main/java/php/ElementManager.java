@@ -20,6 +20,7 @@ import util.logging.MyLogger;
 import datamodel.nodes.DataNode;
 import datamodel.nodes.ConcatNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 import datamodel.nodes.RepeatNode;
 import datamodel.nodes.SelectNode;
 import datamodel.nodes.SymbolicNode;
@@ -282,15 +283,15 @@ public class ElementManager {
 
 		/* Handle PHP keywords */
 		else if (constantName.toUpperCase().equals("TRUE"))
-			return new LiteralNode("TRUE");
+			return LiteralNodeFactory.createLiteralNode("TRUE");
 		else if (constantName.toUpperCase().equals("FALSE"))
-			return new LiteralNode("FALSE");
+			return LiteralNodeFactory.createLiteralNode("FALSE");
 		else if (constantName.toUpperCase().equals("NULL"))
-			return new LiteralNode("");
+			return LiteralNodeFactory.createLiteralNode("");
 
 		/* Handle PHP system constants */
 		else if (constantName.toUpperCase().equals("__FILE__"))
-			return new LiteralNode(getWorkingDirectory()
+			return LiteralNodeFactory.createLiteralNode(getWorkingDirectory()
 					+ StringUtils.getFileSystemSlash() + peekFileFromStack());
 
 		/* Else, return a symbolic value */

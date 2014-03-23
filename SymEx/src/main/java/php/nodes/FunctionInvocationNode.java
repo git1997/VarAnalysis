@@ -13,6 +13,7 @@ import util.logging.MyLevel;
 import util.logging.MyLogger;
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 import datamodel.nodes.ObjectNode;
 import datamodel.nodes.SymbolicNode;
 
@@ -260,7 +261,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		if (parameterValues.size() == 1) {
 			String fileName = parameterValues.get(0).getApproximateStringValue();
 			String dirName = new File(fileName).getParent();
- 			return (dirName != null ? new LiteralNode(dirName) : new SymbolicNode(this));
+ 			return (dirName != null ? LiteralNodeFactory.createLiteralNode(dirName) : new SymbolicNode(this));
 		}
 		else
 			return new SymbolicNode(this);
@@ -272,7 +273,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	private DataNode php_strtolower(ArrayList<DataNode> parameterValues, ElementManager elementManager) {	
 		if (parameterValues.size() == 1 && parameterValues.get(0) instanceof LiteralNode) {
 			String str = parameterValues.get(0).getApproximateStringValue();
-			return new LiteralNode(str.toLowerCase(), this.getLocation());
+			return LiteralNodeFactory.createLiteralNode(str.toLowerCase(), this.getLocation());
 		}
 		else
 			return new SymbolicNode(this);
@@ -302,7 +303,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		}
 		
 		if (mysqlQueryStatementListener != null)
-			return new LiteralNode("mysql_query_" + scope.hashCode()); // @see php.nodes.ArrayAccessNode.execute(ElementManager)
+			return LiteralNodeFactory.createLiteralNode("mysql_query_" + scope.hashCode()); // @see php.nodes.ArrayAccessNode.execute(ElementManager)
 		// END OF BABELREF CODE
 		
 		return new SymbolicNode(this);

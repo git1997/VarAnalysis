@@ -3,9 +3,9 @@ package php.nodes;
 import org.eclipse.php.internal.core.ast.nodes.ConditionalExpression;
 
 import php.ElementManager;
-
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 
 /**
  * 
@@ -27,7 +27,7 @@ public class ConditionalExpressionNode extends ExpressionNode {
 	*/
 	public ConditionalExpressionNode(ConditionalExpression conditionalExpression) {
 		super(conditionalExpression);
-		this.conditionString = new LiteralNode(conditionalExpression.getCondition());
+		this.conditionString = LiteralNodeFactory.createLiteralNode(conditionalExpression.getCondition());
 		this.conditionExpressionNode = ExpressionNode.createInstance(conditionalExpression.getCondition());
 		this.ifTrueExpressionNode = ExpressionNode.createInstance(conditionalExpression.getIfTrue());
 		this.ifFalseExpressionNode = ExpressionNode.createInstance(conditionalExpression.getIfFalse());

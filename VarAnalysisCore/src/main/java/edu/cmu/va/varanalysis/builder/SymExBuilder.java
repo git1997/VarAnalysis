@@ -1,6 +1,5 @@
 package edu.cmu.va.varanalysis.builder;
 
-import java.io.File;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -14,9 +13,8 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import varanalysis.RunFile;
-import datamodel.nodes.DataNode;
 import edu.cmu.va.varanalysis.model.SymExModel;
+import edu.cmu.va.varanalysis.processing.FileProcessor;
 import errormodel.SymExErrorHandler;
 import errormodel.SymExException;
 
@@ -143,10 +141,7 @@ public class SymExBuilder extends IncrementalProjectBuilder {
 
 			SymExErrorHandler reporter = new ErrorHandler(ifile);
 			try {
-				File file = ifile.getRawLocation().makeAbsolute().toFile();
-
-				DataNode model = new RunFile(file, new File(".")).run(reporter);
-				SymExModel.getInstance().updateModel(ifile, model);
+				new FileProcessor().process(ifile, reporter);
 			} catch (Exception e1) {
 			}
 		}

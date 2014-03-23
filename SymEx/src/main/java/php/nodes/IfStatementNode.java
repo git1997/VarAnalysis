@@ -3,10 +3,10 @@ package php.nodes;
 import org.eclipse.php.internal.core.ast.nodes.IfStatement;
 
 import php.ElementManager;
-
 import datamodel.nodes.ConcatNode;
 import datamodel.nodes.DataNode;
 import datamodel.nodes.LiteralNode;
+import datamodel.nodes.LiteralNodeFactory;
 import datamodel.nodes.SelectNode;
 
 /**
@@ -39,7 +39,7 @@ public class IfStatementNode extends StatementNode {
 	 endif;
 	 */
 	public IfStatementNode(IfStatement ifStatement) {
-		this.conditionString = new LiteralNode(ifStatement.getCondition());
+		this.conditionString = LiteralNodeFactory.createLiteralNode(ifStatement.getCondition());
 		this.expressionNode = ExpressionNode.createInstance(ifStatement.getCondition());
 		this.trueStatementNode = StatementNode.createInstance(ifStatement.getTrueStatement());
 		this.falseStatementNode = (ifStatement.getFalseStatement() != null ? StatementNode.createInstance(ifStatement.getFalseStatement()) : null);
@@ -69,14 +69,14 @@ public class IfStatementNode extends StatementNode {
 				if (trueBranchNode != null)
 					return trueBranchNode.execute(elementManager);
 				else 
-					return new LiteralNode("");
+					return LiteralNodeFactory.createLiteralNode("");
 			}
 			else if (dataNode instanceof LiteralNode &&
 					(dataNode.getApproximateStringValue().equals("FALSE") || dataNode.getApproximateStringValue().isEmpty())) {
 				if (falseBranchNode != null)
 					return falseBranchNode.execute(elementManager);
 				else
-					return new LiteralNode("");
+					return LiteralNodeFactory.createLiteralNode("");
 			}
 		}
 			
