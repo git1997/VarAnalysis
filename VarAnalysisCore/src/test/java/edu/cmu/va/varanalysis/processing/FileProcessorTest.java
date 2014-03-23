@@ -18,6 +18,7 @@ import datamodel.nodes.LiteralNode;
 import de.fosd.typechef.parser.TokenReader;
 import de.fosd.typechef.parser.common.CharacterToken;
 import de.fosd.typechef.parser.html.HElementToken;
+import de.fosd.typechef.parser.html.VarDom;
 import errormodel.SymExErrorHandler;
 import errormodel.SymExException;
 
@@ -62,46 +63,55 @@ public class FileProcessorTest {
 				.lexDModel(model);
 
 		System.out.println(tokenStream);
-		
+
 		char[] sourceFile = readFile();
 		while (!tokenStream.atEnd()) {
 			CharacterToken t = tokenStream.first();
-			tokenStream=tokenStream.rest();
-			
+			tokenStream = tokenStream.rest();
+
 			int pos = t.getPosition().getColumn();
 			assertTrue(t.getPosition().getFile().contains(FILENAME));
-			assertTrue(pos<sourceFile.length);
+			assertTrue(pos < sourceFile.length);
 			assertEquals(sourceFile[pos], t.getKind());
 		}
 
 	}
 
-	private final FileProcessor p=new FileProcessor();
-	private SymExErrorHandler failOnErrorReporter=new SymExErrorHandler() {
+	private final FileProcessor p = new FileProcessor();
+	private SymExErrorHandler failOnErrorReporter = new SymExErrorHandler() {
 
 		@Override
 		public void warning(SymExException exception) {
-			fail("warning occurred" + exception);
+			fail("warning occurred: " + exception);
 			exception.printStackTrace();
 		}
 
 		@Override
 		public void fatalError(SymExException exception) {
-			fail("fatal error occurred" + exception);
+			fail("fatal error occurred: " + exception);
 			exception.printStackTrace();
 		}
 
 		@Override
 		public void error(SymExException exception) {
-			fail("error occurred" + exception);
+			fail("error occurred: " + exception);
 			exception.printStackTrace();
 
 		}
 	};
-	
+
 	@Test
 	public void testSAX() {
-		List<HElementToken> result = p.parseSAX(p.lexDModel(symExFile()), failOnErrorReporter);
+		List<HElementToken> result = p.parseSAX(p.lexDModel(symExFile()),
+				failOnErrorReporter);
+		System.out.println(result);
+	}
+
+	@Test
+	public void testDOM() {
+		VarDom result = p.parseDOM(
+				p.parseSAX(p.lexDModel(symExFile()), failOnErrorReporter),
+				failOnErrorReporter);
 		System.out.println(result);
 	}
 
