@@ -4,9 +4,10 @@ import de.fosd.typechef.parser._
 import de.fosd.typechef.parser.common.CharacterToken
 import de.fosd.typechef.featureexpr.{FeatureExprFactory, FeatureExpr}
 import de.fosd.typechef.conditional.Conditional
+import de.fosd.typechef.parser.common.MultiFeatureParserExt
 
 
-class JSParser extends MultiFeatureParser {
+class JSParser extends MultiFeatureParserExt {
     type Elem = CharacterToken
     type TypeContext = Null
 

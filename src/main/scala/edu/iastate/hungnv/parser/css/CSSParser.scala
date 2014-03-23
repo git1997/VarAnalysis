@@ -3,12 +3,13 @@ package edu.iastate.hungnv.parser.css
 import de.fosd.typechef.parser._
 import de.fosd.typechef.conditional.{ ConditionalLib, Opt }
 import de.fosd.typechef.parser.common.CharacterToken
+import de.fosd.typechef.parser.common.MultiFeatureParserExt
 
 /**
  * @author HUNG
  * Modified from TypeChef
  */
-class CSSParser extends MultiFeatureParser {
+class CSSParser extends MultiFeatureParserExt {
   type Elem = CharacterToken
   type TypeContext = Null
 
