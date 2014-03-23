@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: VarAnalysisCore
+Bundle-SymbolicName: edu.cmu.va.varanalysis.core;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.cmu.va.varanalysis.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ PHPSync,
+ org.eclipse.core.resources
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Export-Package: edu.cmu.va.varanalysis.builder,
+ edu.cmu.va.varanalysis.model

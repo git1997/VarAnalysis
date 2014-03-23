@@ -1,4 +1,4 @@
-package edu.cmu.va.symexui.builder;
+package edu.cmu.va.varanalysis.builder;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;

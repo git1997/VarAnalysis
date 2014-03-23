@@ -1,4 +1,4 @@
-package edu.cmu.va.symexui.model;
+package edu.cmu.va.varanalysis.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.text.Position;
 
 import datamodel.nodes.DataModelVisitor;
 import datamodel.nodes.DataNode;

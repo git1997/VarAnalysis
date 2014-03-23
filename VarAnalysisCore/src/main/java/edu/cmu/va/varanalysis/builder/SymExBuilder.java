@@ -1,4 +1,4 @@
-package edu.cmu.va.symexui.builder;
+package edu.cmu.va.varanalysis.builder;
 
 import java.io.File;
 import java.util.Map;
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import varanalysis.RunFile;
 import datamodel.nodes.DataNode;
-import edu.cmu.va.symexui.model.SymExModel;
+import edu.cmu.va.varanalysis.model.SymExModel;
 import errormodel.SymExErrorHandler;
 import errormodel.SymExException;
 

@@ -13,7 +13,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
@@ -29,8 +28,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import varanalysis.RunFile;
 import datamodel.nodes.DataNode;
-import edu.cmu.va.symexui.model.SymExModel;
-import edu.cmu.va.symexui.model.SymExModelChangeListener;
+import edu.cmu.va.varanalysis.model.SymExModel;
+import edu.cmu.va.varanalysis.model.SymExModelChangeListener;
 
 /**
  * 

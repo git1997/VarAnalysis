@@ -1,6 +1,7 @@
-package edu.cmu.va.symexui.builder;
+package edu.cmu.va.varanalysis.ui.builder;
 
 import java.util.Iterator;
+
 import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -9,6 +10,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
+
+import edu.cmu.va.varanalysis.builder.SymExNature;
 
 public class AddRemoveSymExNatureHandler extends AbstractHandler {
 

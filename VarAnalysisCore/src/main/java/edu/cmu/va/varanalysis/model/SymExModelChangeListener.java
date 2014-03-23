@@ -1,4 +1,4 @@
-package edu.cmu.va.symexui.model;
+package edu.cmu.va.varanalysis.model;
 
 import org.eclipse.core.resources.IFile;
 

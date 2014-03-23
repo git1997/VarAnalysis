@@ -11,8 +11,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
-import edu.cmu.va.symexui.highlighting.IColorConstants;
-import edu.cmu.va.symexui.highlighting.StringLitHighlighting;
+import edu.cmu.va.varanalysis.ui.highlighting.IColorConstants;
+import edu.cmu.va.varanalysis.ui.highlighting.StringLitHighlighting;
 
 /**
  * The activator class controls the plug-in life cycle

@@ -1,4 +1,4 @@
-package edu.cmu.va.symexui.highlighting;
+package edu.cmu.va.varanalysis.ui.highlighting;
 
 import org.eclipse.swt.graphics.RGB;
 

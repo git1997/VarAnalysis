@@ -1,4 +1,4 @@
-package edu.cmu.va.symexui.highlighting;
+package edu.cmu.va.varanalysis.ui.highlighting;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,7 +21,7 @@ import org.eclipse.wst.sse.core.internal.provisional.text.IStructuredDocumentReg
 import org.eclipse.wst.sse.ui.ISemanticHighlighting;
 import org.eclipse.wst.sse.ui.ISemanticHighlightingExtension2;
 
-import edu.cmu.va.symexui.model.SymExModel;
+import edu.cmu.va.varanalysis.model.SymExModel;
 import symexui.Activator;
 
 public class StringLitHighlighting implements ISemanticHighlighting,
@@ -44,12 +44,16 @@ public class StringLitHighlighting implements ISemanticHighlighting,
 		if (file == null)
 			return new Position[0];
 
-		List<Position> positions = SymExModel.getInstance().getStringLits(file,
-				region.getStartOffset(), region.getEndOffset());
-		
-		System.out.println(positions);
+		List<edu.cmu.va.varanalysis.model.Position> positions = SymExModel
+				.getInstance().getStringLits(file, region.getStartOffset(),
+						region.getEndOffset());
 
-		return positions.toArray(new Position[positions.size()]);
+		Position[] result = new Position[positions.size()];
+		for (int i = 0; i < positions.size(); i++)
+			result[i] = new Position(positions.get(i).getFrom(), positions.get(
+					i).getTo());
+		
+		return result;
 	}
 
 	@Override

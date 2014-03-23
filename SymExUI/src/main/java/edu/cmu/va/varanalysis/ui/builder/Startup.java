@@ -1,4 +1,4 @@
-package symexui;
+package edu.cmu.va.varanalysis.ui.builder;
 
 import org.eclipse.core.internal.events.BuildManager;
 import org.eclipse.core.resources.IProject;
