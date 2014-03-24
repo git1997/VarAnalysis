@@ -1,0 +1,175 @@
+Text<html xmlns="http://www.w3.org/1999/xhtml">
+ Text
+ <head>
+  Text
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  </meta>
+  Text
+  <link rel="stylesheet" href="userlogin.css" type="text/css">
+  </link>
+  Text
+  <style>
+   Text
+  </style>
+  <script type="text/javascript" src="javascript/cookies.js">
+  </script>
+  Text
+  <title>
+   Text
+  </title>
+  Text
+  <script language="javascript" type="text/javascript">var visitordata @index.php:-340530525:1439:38  = null @index.php:-340530525:1450:38 ;
+var cookieDomain @index.php:-340530525:1463:39  = null @index.php:-340530525:1475:39 ;
+storeLogin @index.php:-340530525:1493:40  = function (params) {
+   if (document @index.php:-340530525:1512:42 .loginForm @index.php:-340530525:1520:42 .remember @index.php:-340530525:1530:42 .checked @index.php:-340530525:1539:42 )
+      {
+         visitordata @index.php:-340530525:1554:44 .nick @index.php:-340530525:1565:44  = document @index.php:-340530525:1573:44 .loginForm @index.php:-340530525:1581:44 .txtNick @index.php:-340530525:1591:44 .value @index.php:-340530525:1599:44 ;
+         visitordata @index.php:-340530525:1609:45 .pwd @index.php:-340530525:1620:45  = document @index.php:-340530525:1627:45 .loginForm @index.php:-340530525:1635:45 .pwdPassword @index.php:-340530525:1645:45 .value @index.php:-340530525:1657:45 ;
+         visitordata @index.php:-340530525:1667:46 .store @index.php:-340530525:1678:46 ();
+      }
+}
+window @index.php:-340530525:1693:49 .onload @index.php:-340530525:1699:49  = function (params){
+   document @index.php:-340530525:1723:51 .loginForm @index.php:-340530525:1731:51 .onclick @index.php:-340530525:1741:51  = function (params){
+      storeLogin @index.php:-340530525:1763:51 ();
+   };
+   cookieDomain @index.php:-340530525:1781:53  = document @index.php:-340530525:1796:53 .domain @index.php:-340530525:1804:53 ;
+   var idx @index.php:-340530525:1818:54  = cookieDomain @index.php:-340530525:1824:54 .lastIndexOf @index.php:-340530525:1836:54 ('.' @index.php:-340530525:1849:54 );
+   idx @index.php:-340530525:1856:55  = cookieDomain @index.php:-340530525:1862:55 .lastIndexOf @index.php:-340530525:1874:55 ('.' @index.php:-340530525:1887:55 , idx @index.php:-340530525:1892:55  - 1 @index.php:-340530525:1896:55 );
+   if (idx @index.php:-340530525:1904:56  == -1 @index.php:-340530525:1911:56 )
+      cookieDomain @index.php:-340530525:1917:57  = '.' @index.php:-340530525:1932:57  + cookieDomain @index.php:-340530525:1938:57 ;
+   else
+      cookieDomain @index.php:-340530525:1960:59  = cookieDomain @index.php:-340530525:1975:59 .substr @index.php:-340530525:1987:59 (idx @index.php:-340530525:1995:59 );
+   visitordata @index.php:-340530525:2002:60  = new Cookie @index.php:-340530525:2016:60 (document @index.php:-340530525:2027:60 , "WebChess" @index.php:-340530525:2035:60 , 2400 @index.php:-340530525:2047:60 , '/' @index.php:-340530525:2053:60 , cookieDomain @index.php:-340530525:2058:60 );
+   if (visitordata @index.php:-340530525:2079:61 .load @index.php:-340530525:2090:61 ())
+      {
+         if (visitordata @index.php:-340530525:2107:63 .nick @index.php:-340530525:2118:63 )
+            document @index.php:-340530525:2128:64 .loginForm @index.php:-340530525:2136:64 .txtNick @index.php:-340530525:2146:64 .value @index.php:-340530525:2154:64  = visitordata @index.php:-340530525:2163:64 .nick @index.php:-340530525:2174:64 ;
+         if (visitordata @index.php:-340530525:2186:65 .pwd @index.php:-340530525:2197:65 )
+            document @index.php:-340530525:2206:66 .loginForm @index.php:-340530525:2214:66 .pwdPassword @index.php:-340530525:2224:66 .value @index.php:-340530525:2236:66  = visitordata @index.php:-340530525:2245:66 .pwd @index.php:-340530525:2256:66 ;
+         document @index.php:-340530525:2264:67 .loginForm @index.php:-340530525:2272:67 .remember @index.php:-340530525:2282:67 .checked @index.php:-340530525:2291:67  = true @index.php:-340530525:2302:67 ;
+      }
+   document @index.php:-340530525:2312:69 .loginForm @index.php:-340530525:2320:69 .txtNick @index.php:-340530525:2330:69 .focus @index.php:-340530525:2338:69 ();
+   document @index.php:-340530525:2349:70 .loginForm @index.php:-340530525:2357:70 .txtNick @index.php:-340530525:2367:70 .select @index.php:-340530525:2375:70 ();
+};
+  </script>
+  Text
+ </head>
+ Text
+ <body>
+  Text
+  <div id="header">
+   Text
+   <div id="heading">
+    Text
+   </div>
+   Text
+  </div>
+  Text
+  <div id="ctr" align="center">
+   Text
+   <div class="login">
+    Text
+    <div class="login-form">
+     Text
+     <form name="loginForm" id="loginForm" method="post" action="mainmenu.php">
+      Text
+      <div class="form-block">
+       Text
+       <div class="inputlabel">
+        Text
+       </div>
+       Text
+       <div>
+        <input id="txtNick" name="txtNick" type="text" class="inputbox" size="15">
+        </input>
+       </div>
+       Text
+       <div class="inputlabel">
+        Text
+       </div>
+       Text
+       <div>
+        <input id="pwdPassword" name="pwdPassword" type="password" class="inputbox" size="15">
+        </input>
+       </div>
+       Text
+       <div class="remember">
+        Text
+        <label for="remember" title="Remember me" class="inputlabel">
+         Text
+         <input id="remember" name="remember" type="checkbox">
+         </input>
+         Text
+        </label>
+        Text
+       </div>
+       Text
+       <input name="ToDo" value="Login" type="hidden">
+       </input>
+       Text
+       <div align="left">
+        Text
+        <input type="submit" name="login" class="button" value="Login">
+        </input>
+        Text
+        Text
+        <input name="newAccount" class="button" value="New Account" type="button" onClick="window @index.php:2002977963:3786:100 .open @index.php:2002977963:3786:100 ('newuser.php' @index.php:2002977963:3786:100 , '_self' @index.php:2002977963:3786:100 );" cond="List(def($CFG_NEW_USERS_ALLOWED==true), True)">
+        </input>
+        Text
+       </div>
+       Text
+      </div>
+      Text
+     </form>
+     Text
+    </div>
+    Text
+    <div class="login-text">
+     Text
+     <div class="ctr">
+      <img src="images/webchess.jpg" width="65" height="92" alt="security">
+      </img>
+     </div>
+     Text
+     <p>
+      Text
+     </p>
+     Text
+     <p>
+      Text
+     </p>
+     Text
+    </div>
+    Text
+    <div class="clr">
+    </div>
+    Text
+   </div>
+   Text
+  </div>
+  Text
+  <div id="break">
+  </div>
+  Text
+  <noscript>
+   Text
+  </noscript>
+  Text
+  <div class="footer" align="center">
+   Text
+   <div align="center">
+    Text
+   </div>
+   Text
+   <div align="center">
+    <a href="http://webchess.sourceforge.net/">
+     Text
+    </a>
+    Text
+   </div>
+   Text
+  </div>
+  Text
+ </body>
+ Text
+</html>Text

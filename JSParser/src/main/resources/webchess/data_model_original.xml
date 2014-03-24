@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Output>
+<Concat>
+<Literal File="index.php" Position="0" StringValue="&#10;&#9;"/>
+<Literal File="index.php" Position="940" StringValue="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot;&#10;   &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;&#10;&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;&#10;&lt;head&gt;&#10;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=ISO-8859-1&quot; /&gt;&#10;&lt;link rel=&quot;stylesheet&quot; href=&quot;userlogin.css&quot; type=&quot;text/css&quot; /&gt;&#10;"/>
+<Literal File="index.php" Position="1254" StringValue="&lt;s"/>
+<Literal File="index.php" Position="1256" StringValue="cript type=&quot;text/javascript&quot; src=&quot;javascript/cookies.js&quot;&gt;&lt;/script&gt;&#10;&lt;title&gt;WebChess :: "/>
+<Literal File="index.php" Position="1362" StringValue="Login"/>
+<Literal File="index.php" Position="1372" StringValue="&lt;/title&gt;&#10;"/>
+<Literal File="index.php" Position="1381" StringValue="&lt;s"/>
+<Literal File="index.php" Position="1383" StringValue="cript language=&quot;javascript&quot; type=&quot;text/javascript&quot;&gt;&#10;var visitordata = null;&#10;var cookieDomain = null;&#10;function storeLogin()&#10;{&#10;&#9;if(document.loginForm.remember.checked)&#10;&#9;{&#10;&#9;&#9;visitordata.nick = document.loginForm.txtNick.value;&#10;&#9;&#9;visitordata.pwd = document.loginForm.pwdPassword.value;&#10;&#9;&#9;visitordata.store();&#10;&#9;}&#10;}&#10;window.onload = function()&#10;{&#10;&#9;document.loginForm.onclick = function(){storeLogin();};&#10;&#10;&#9;cookieDomain = document.domain;&#10;&#9;var idx = cookieDomain.lastIndexOf('.');&#10;&#9;idx = cookieDomain.lastIndexOf('.', idx-1);&#10;&#9;if(idx == -1)&#10;&#9;&#9;cookieDomain = '.' + cookieDomain;&#10;&#9;else&#10;&#9;&#9;cookieDomain = cookieDomain.substr(idx);&#10;&#9;visitordata = new Cookie(document, &quot;WebChess&quot;, 2400, '/', cookieDomain);&#10;&#9;if(visitordata.load())&#10;&#9;{&#10;&#9;&#9;if(visitordata.nick)&#10;&#9;&#9;&#9;document.loginForm.txtNick.value = visitordata.nick;&#10;&#9;&#9;if(visitordata.pwd)&#10;&#9;&#9;&#9;document.loginForm.pwdPassword.value = visitordata.pwd;&#10;&#9;&#9;document.loginForm.remember.checked = true;&#10;&#9;}&#10;&#9;document.loginForm.txtNick.focus();&#10;&#9;document.loginForm.txtNick.select();&#10;}&#10;&lt;/script&gt;&#10;&lt;/head&gt;&#10;&lt;body&gt;&#10;&lt;div id=&quot;header&quot;&gt;&#10;  &lt;div id=&quot;heading&quot;&gt;WebChess :: "/>
+<Literal File="index.php" Position="2483" StringValue="Login"/>
+<Literal File="index.php" Position="2493" StringValue="&lt;/div&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;div id=&quot;ctr&quot; align=&quot;center&quot;&gt;&#10;&#9;&lt;div class=&quot;login&quot;&gt;&#10;&#9;&#9;&lt;div class=&quot;login-form&quot;&gt;&#10;&#9;&#9;&#9;&lt;form name=&quot;loginForm&quot; id=&quot;loginForm&quot; method=&quot;post&quot; action=&quot;mainmenu.php&quot;&gt;&#10;&#9;&#9;&#9;&#9;&lt;div class=&quot;form-block&quot;&gt;&#10;                                        &lt;div class=&quot;inputlabel&quot;&gt;"/>
+<Literal File="index.php" Position="2777" StringValue="Username"/>
+<Literal File="index.php" Position="2790" StringValue="&lt;/div&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;div&gt;&lt;input id=&quot;txtNick&quot; name=&quot;txtNick&quot; type=&quot;text&quot; class=&quot;inputbox&quot; size=&quot;15&quot; /&gt;&lt;/div&gt;&#10;                                        &lt;div class=&quot;inputlabel&quot;&gt;"/>
+<Literal File="index.php" Position="2974" StringValue="Password"/>
+<Literal File="index.php" Position="2987" StringValue="&lt;/div&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;div&gt;&lt;input id=&quot;pwdPassword&quot; name=&quot;pwdPassword&quot; type=&quot;password&quot; class=&quot;inputbox&quot; size=&quot;15&quot; /&gt;&lt;/div&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;div class=&quot;remember&quot;&gt;&#10;                                        &lt;label for=&quot;remember&quot; title=&quot;"/>
+<Literal File="index.php" Position="3216" StringValue="Remember me"/>
+<Literal File="index.php" Position="3232" StringValue="&quot; class=&quot;inputlabel&quot;&gt;&#10;                                        &lt;input id=&quot;remember&quot; name=&quot;remember&quot; type=&quot;checkbox&quot; /&gt;"/>
+<Literal File="index.php" Position="3369" StringValue="Remember me"/>
+<Literal File="index.php" Position="3386" StringValue="&#9;&#9;&#9;&#9;&#9;&lt;/label&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;/div&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;input name=&quot;ToDo&quot; value=&quot;Login&quot; type=&quot;hidden&quot; /&gt;&#10;&#9;&#9;&#9;&#9;&#9;&lt;div align=&quot;left&quot;&gt;&#10;&#9;&#9;&#9;&#9;&#9;&#9;&lt;input type=&quot;submit&quot; name=&quot;login&quot; class=&quot;button&quot; value=&quot;"/>
+<Literal File="index.php" Position="3573" StringValue="Login"/>
+<Literal File="index.php" Position="3583" StringValue="&quot; /&gt;&#10;&#9;&#9;&#9;&#9;"/>
+<Select File="index.php" Position="3605" StringValue="$CFG_NEW_USERS_ALLOWED==true">
+<True>
+<Concat>
+<Literal File="index.php" Position="3648" StringValue="                                &lt;input name=&quot;newAccount&quot; class=&quot;button&quot; value=&quot;"/>
+<Literal File="index.php" Position="3747" StringValue="New Account"/>
+<Literal File="index.php" Position="3763" StringValue="&quot; type=&quot;button&quot; onClick=&quot;window.open('newuser.php', '_self')&quot; /&gt;&#10;&#9;&#9;&#9;&#9;"/>
+</Concat>
+</True>
+</Select>
+<Literal File="index.php" Position="3851" StringValue="&#9;&#9;&#9;&#9;&#9;&lt;/div&gt;&#10;&#9;&#9;&#9;&#9;&lt;/div&gt;&#10;&#9;&#9;&#9;&lt;/form&gt;&#10;&#9;&#9;&lt;/div&gt;&#10;&#9;&#9;&lt;div class=&quot;login-text&quot;&gt;&#10;&#9;&#9;&#9;&lt;div class=&quot;ctr&quot;&gt;&lt;img src=&quot;images/webchess.jpg&quot; width=&quot;65&quot; height=&quot;92&quot; alt=&quot;security&quot; /&gt;&lt;/div&gt;&#10;                        &lt;p&gt;"/>
+<Literal File="index.php" Position="4066" StringValue="Welcome to"/>
+<Literal File="index.php" Position="4082" StringValue=" "/>
+<Literal File="index.php" Position="4096" StringValue="WebChess"/>
+<Literal File="index.php" Position="4109" StringValue="!&lt;/p&gt;&#10;                        &lt;p&gt;"/>
+<Literal File="index.php" Position="4162" StringValue="Use a valid username and password to gain access to WebChess."/>
+<Literal File="index.php" Position="4228" StringValue="&lt;/p&gt;&#10;    &#9;&lt;/div&gt;&#10;&#9;&#9;&lt;div class=&quot;clr&quot;&gt;&lt;/div&gt;&#10;&#9;&lt;/div&gt;&#10;&lt;/div&gt;&#10;&lt;div id=&quot;break&quot;&gt;&lt;/div&gt;&#10;&lt;noscript&gt;&#10;!Warning! Javascript must be enabled for proper operation of WebChess&#10;&lt;/noscript&gt;&#10;&lt;div class=&quot;footer&quot; align=&quot;center&quot;&gt;&#10;&lt;div align=&quot;center&quot;&gt;"/>
+<Literal File="index.php" Position="4470" StringValue="WebChess "/>
+<Literal File="index.php" Position="4492" StringValue="Version"/>
+<Literal File="index.php" Position="4505" StringValue=" 1.0.0, "/>
+<Literal File="index.php" Position="4526" StringValue="last updated"/>
+<Literal File="index.php" Position="4543" StringValue=" "/>
+<Literal File="index.php" Position="4556" StringValue="August"/>
+<Literal File="index.php" Position="4567" StringValue=" 15, 2010"/>
+<Literal File="index.php" Position="4579" StringValue="&lt;/div&gt;&#10;&lt;div align=&quot;center&quot;&gt;&lt;a href=&quot;http://webchess.sourceforge.net/&quot;&gt;"/>
+<Literal File="index.php" Position="4669" StringValue="WebChess"/>
+<Literal File="index.php" Position="4682" StringValue="&lt;/a&gt; "/>
+<Literal File="index.php" Position="4707" StringValue="is Free Software released under the GNU General Public License (GPL)."/>
+<Literal File="index.php" Position="4781" StringValue="&lt;/div&gt;&#10;&lt;/div&gt;&#10;&lt;/body&gt;&#10;&lt;/html&gt;&#10;"/>
+</Concat>
+</Output>
