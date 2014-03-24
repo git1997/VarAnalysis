@@ -35,3 +35,5 @@ case class DText(value: List[Opt[CharacterToken]]) extends DElement
 
 case class DString(name: String) extends AST
 
+case class VarDom(children: List[Opt[DElement]])
+
