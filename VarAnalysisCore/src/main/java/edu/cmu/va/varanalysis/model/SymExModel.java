@@ -26,6 +26,7 @@ public class SymExModel {
 
 	private final HashMap<IFile, DataNode> models = new HashMap<>();
 	private final HashMap<IFile, VarDom> vardoms = new HashMap<>();
+	private final HashMap<IFile, CallGraph> callgraphs = new HashMap<>();
 	private final List<SymExModelChangeListener> listeners = new ArrayList<>();
 
 	public void updateDModel(IFile file, DataNode model) {
@@ -42,6 +43,14 @@ public class SymExModel {
 		else
 			vardoms.put(file, model);
 		fireVarDomChanged(file);
+	}
+	
+	public void updateCallGraph(IFile file, CallGraph model) {
+		if (model == null)
+			callgraphs.remove(file);
+		else
+			callgraphs.put(file, model);
+//		fireVarDomChanged(file);
 	}
 
 	private void fireVarDomChanged(IFile file) {
@@ -117,5 +126,9 @@ public class SymExModel {
 
 	public DataNode getDModel(IFile file) {
 		return models.get(file);
+	}
+
+	public CallGraph getCallGraph(IFile file) {
+		return callgraphs.get(file);
 	}
 }

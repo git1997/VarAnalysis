@@ -18,6 +18,8 @@ import de.fosd.typechef.parser.TokenReader
 import datamodel.nodes.DataNode
 import varanalysis.RunFile
 import errormodel.SymExErrorHandler
+import edu.cmu.va.varanalysis.model.CallGraph
+import edu.cmu.va.varanalysis.model.PositionRange
 
 class FileProcessor {
     def process(ifile: IFile, reporter: SymExErrorHandler) {
@@ -41,6 +43,13 @@ class FileProcessor {
         }
 
         SymExModel.getInstance().updateVarDom(ifile, vardom);
+        
+        
+        val htmlCallGraph=getHTMLCallGraph(vardom)
+
+        println(htmlCallGraph)
+        
+        SymExModel.getInstance().updateCallGraph(ifile, htmlCallGraph) 
     }
 
     def parseVarDom(model: DataNode, reporter: SymExErrorHandler): VarDom = {
@@ -112,4 +121,26 @@ class FileProcessor {
     def executeSymbolically(reporter: SymExErrorHandler, file: File): DataNode =
         new RunFile(file, new File(".")).run(reporter);
 
+    
+    def getHTMLCallGraph(vardom:VarDom): CallGraph = {
+        var callgraph= new CallGraph()
+        
+        def dstringToRange(v:DString): PositionRange = 
+            new PositionRange(v.getFile.getOrElse("<unknown>"), v.getPositionFrom.getColumn, v.getPositionTo.getColumn)
+        
+        def getHTMLEdge(element: DElement, ctx: FeatureExpr):Unit = element match {
+            case DNode(name, _, children, openTag, closingTag) =>
+                callgraph.addEdge(dstringToRange(openTag.name), dstringToRange(closingTag.name), ctx)
+                for (Opt(f,c)<-children)
+                    getHTMLEdge(c, ctx and f)
+            case DText(_) =>
+                
+        }
+        
+        for (Opt(f,c)<-vardom.children)
+        	getHTMLEdge(c, f)
+        
+        callgraph
+    }
+    
 }

@@ -73,16 +73,39 @@
          </command>
       </menuContribution>
    </extension>
+   
+       
     <extension point="org.eclipse.wst.sse.ui.semanticHighlighting">
         <highlighting
-        class="edu.cmu.va.varanalysis.ui.highlighting.StringLitHighlighting"
-        target="org.eclipse.php.core.phpsource">
-        </highlighting>
+	        class="edu.cmu.va.varanalysis.ui.highlighting.StringLitHighlighting"
+	        target="org.eclipse.php.core.phpsource">
+	    </highlighting>
     </extension>
+    
+    <extension point="org.eclipse.wst.sse.ui.semanticHighlighting">
+        <highlighting
+	        class="edu.cmu.va.varanalysis.ui.highlighting.CallGraphNodeHighlighting"
+	        target="org.eclipse.php.core.phpsource">
+	    </highlighting>
+    </extension>
+
+
+    
+    
     <extension
           point="org.eclipse.ui.startup">
        <startup
              class="edu.cmu.va.varanalysis.ui.builder.Startup">
        </startup>
-    </extension> 
+    </extension>
+    <extension
+          point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+       <hyperlinkDetector
+             activate="true"
+             class="edu.cmu.va.varanalysis.core.ui.jump.HyperLinkDetector"
+             id="edu.cmu.va.varanalysis.core.ui.hyperlink"
+             name="HyperLinkDetector"
+             targetId="org.eclipse.php.core.phpsource">
+       </hyperlinkDetector>
+    </extension>
 </plugin>

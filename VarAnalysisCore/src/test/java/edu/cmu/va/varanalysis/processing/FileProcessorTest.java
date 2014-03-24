@@ -21,6 +21,7 @@ import de.fosd.typechef.parser.html.HElementToken;
 import de.fosd.typechef.parser.html.VarDom;
 import errormodel.SymExErrorHandler;
 import errormodel.SymExException;
+import edu.cmu.va.varanalysis.model.*;
 
 public class FileProcessorTest {
 
@@ -109,11 +110,24 @@ public class FileProcessorTest {
 
 	@Test
 	public void testDOM() {
-		VarDom result = p.parseDOM(
-				p.parseSAX(p.lexDModel(symExFile()), failOnErrorReporter),
-				failOnErrorReporter);
+		VarDom result =getVarDom();
 		System.out.println(result);
 	}
+
+	private VarDom getVarDom() {
+		 return p.parseDOM(
+				p.parseSAX(p.lexDModel(symExFile()), failOnErrorReporter),
+				failOnErrorReporter);
+	}
+	
+	@Test
+	public void testHTMLCallGraph() {
+		VarDom vardom = getVarDom();
+		CallGraph cg=p.getHTMLCallGraph(vardom);
+		System.out.println(cg);
+	}
+
+	
 
 	// TODO write test for includes
 }

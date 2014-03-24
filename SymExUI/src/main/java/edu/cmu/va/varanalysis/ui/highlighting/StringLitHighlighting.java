@@ -15,6 +15,7 @@ import org.eclipse.wst.sse.ui.ISemanticHighlightingExtension2;
 
 import symexui.Activator;
 import edu.cmu.va.varanalysis.model.SymExModel;
+import edu.cmu.va.varanalysis.ui.Util;
 
 public class StringLitHighlighting implements ISemanticHighlighting,
 		ISemanticHighlightingExtension2 {
@@ -32,7 +33,7 @@ public class StringLitHighlighting implements ISemanticHighlighting,
 	@Override
 	public Position[] consumes(IStructuredDocumentRegion region) {
 
-		IFile file = getFile(region);
+		IFile file =new Util().  getFile();
 		if (file == null)
 			return new Position[0];
 
@@ -91,23 +92,6 @@ public class StringLitHighlighting implements ISemanticHighlighting,
 		return "semantichighlighting.symex.underline";
 	}
 
-	private IFile file;
-
-	protected IFile getFile(final IStructuredDocumentRegion region) {// region.getParentDocument().get()
-		file = null;
-		// resolve current sourceModule
-		PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IWorkbenchPage page = Activator.getActivePage();
-				if (page != null) {
-					IEditorPart editor = page.getActiveEditor();
-					IEditorInput input = editor.getEditorInput();
-					file = (IFile) input.getAdapter(IFile.class);
-				}
-			}
-		});
-
-		return file;
-	}
+	
 
 }

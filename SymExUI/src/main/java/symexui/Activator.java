@@ -11,6 +11,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
+import edu.cmu.va.varanalysis.ui.highlighting.CallGraphNodeHighlighting;
 import edu.cmu.va.varanalysis.ui.highlighting.IColorConstants;
 import edu.cmu.va.varanalysis.ui.highlighting.StringLitHighlighting;
 
@@ -29,13 +30,28 @@ public class Activator extends AbstractUIPlugin {
 			new InstanceScope(), getBundle().getSymbolicName());
 	{
 		store.setDefault(
-				StringLitHighlighting.SEMANTICHIGHLIGHTING_SYMEX_ENDABLED, true);
+				StringLitHighlighting.SEMANTICHIGHLIGHTING_SYMEX_ENDABLED, false);
 		store.setDefault(
-				StringLitHighlighting.SEMANTICHIGHLIGHTING_SYMEX_BOLD, true);
+				CallGraphNodeHighlighting.SEMANTICHIGHLIGHTING_CGNODE_ENDABLED, true);
 		
-//		PreferenceConverter.setDefault(store, StringLitHighlighting.SEMANTICHIGHLIGHTING_SYMEX_BACKGROUND, IColorConstants.MATCHEDLIT);
-		store.setDefault(StringLitHighlighting.SEMANTICHIGHLIGHTING_SYMEX_BACKGROUND, "#ff3311");
-		PreferenceConverter.setDefault(store, StringLitHighlighting.SEMANTICHIGHLIGHTING_SYMEX_COLOR, IColorConstants.STRINGLIT);
+		store.setDefault(StringLitHighlighting.SEMANTICHIGHLIGHTING_SYMEX_BOLD,
+				true);
+		store.setDefault(
+				CallGraphNodeHighlighting.SEMANTICHIGHLIGHTING_CGNODE_UNDERLINE,
+				true);
+
+		// PreferenceConverter.setDefault(store,
+		// StringLitHighlighting.SEMANTICHIGHLIGHTING_SYMEX_BACKGROUND,
+		// IColorConstants.MATCHEDLIT);
+		store.setDefault(
+				StringLitHighlighting.SEMANTICHIGHLIGHTING_SYMEX_BACKGROUND,
+				"#ff3311");
+		store.setDefault(
+				CallGraphNodeHighlighting.SEMANTICHIGHLIGHTING_CGNODE_BACKGROUND,
+				"#ff3311");
+		PreferenceConverter.setDefault(store,
+				StringLitHighlighting.SEMANTICHIGHLIGHTING_SYMEX_COLOR,
+				IColorConstants.STRINGLIT);
 
 	}
 
