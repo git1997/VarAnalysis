@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="edu.iastate.symex.category.symex"
+            name="Symex">
+      </category>
+      <view
+            category="edu.iastate.symex.category.symex"
+            class="edu.iastate.symex.ui.notused.DataModelView"
+            icon="icons/sample.gif"
+            id="edu.iastate.symex.ui.notused.DataModelView"
+            name="Symbolic Output (not used)">
+      </view>
+      <view
+            category="edu.iastate.symex.category.symex"
+            class="edu.iastate.symex.ui.views.DataModelView"
+            icon="icons/sample.gif"
+            id="edu.iastate.symex.ui.views.DataModelView"
+            name="Symbolic Output">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="edu.iastate.symex.ui.notused.DataModelView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.ProblemView">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>

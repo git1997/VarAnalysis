@@ -11,13 +11,13 @@ public class Startup implements IStartup {
 
 	@Override
 	public void earlyStartup() {
-		for (IProject p:ResourcesPlugin.getWorkspace().getRoot().getProjects())
+		/*for (IProject p:ResourcesPlugin.getWorkspace().getRoot().getProjects())
 			try {
 				p.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 		
 //		IProject#build(int,String,Map,IProgressMonitor)
 	}

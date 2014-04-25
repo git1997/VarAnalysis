@@ -8,7 +8,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.wst.sse.core.internal.provisional.text.IStructuredDocumentRegion;
 
-import symexui.Activator;
+import edu.cmu.va.varanalysis.symexui.Activator;
+
 
 public class Util {
 	private IFile file;

@@ -1,0 +1,6 @@
+PENDING		actions
+PENDING		contentassist
+OK			core
+PENDING		highlighters
+PENDING		hyperlinks
+OK			views

@@ -1,0 +1,50 @@
+FileNode									x
+PhpNode
+	ClassNameNode
+	ExpressionNode	
+		ArrayCreationNode
+		AssignmentNode						x
+		CastExpressionNode
+		ClassInstanceCreationNode			x
+		ConditionalExpressionNode
+		IdentifierNode						x
+		IgnoreErrorNode
+		IncludeNode							x
+		InfixExpressionNode					x
+		ParenthesisExpressionNode
+		PostfixExpressionNode
+		PrefixExpressionNode
+		QuoteNode
+		ScalarNode							x
+		UnaryOperationNode
+		UnresolvedExpressionNode
+		VariableBaseNode
+			ArrayAccessNode					x
+			DispatchNode
+				FieldAccessNode				x
+				MethodInvocationNode		x
+				UnresolvedDispatchNode
+			FunctionInvocationNode			x
+			UnresolvedVariableBaseNode
+			VariableNode					x
+	FormalParameterNode
+	ProgramNode
+	StatementNode	
+		BlockNode
+		BreakStatementNode
+		ClassDeclarationNode
+		EchoStatementNode
+		EmptyStatementNode
+		ExpressionStatementNode
+		ForEachStatementNode
+		ForStatementNode
+		FunctionDeclarationNode
+		GlobalStatementNode
+		IfStatementNode						x
+		InLineHtmlNode					
+		ReturnStatementNode				
+		SwitchCaseNode
+		SwitchStatementNode					x
+		TryStatementNode	
+		UnresolvedStatementNode
+		WhileStatementNode

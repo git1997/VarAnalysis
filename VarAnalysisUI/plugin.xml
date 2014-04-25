@@ -88,6 +88,28 @@
 	        target="org.eclipse.php.core.phpsource">
 	    </highlighting>
     </extension>
+    
+    <extension point="org.eclipse.wst.sse.ui.semanticHighlighting">
+        <highlighting
+	        class="edu.iastate.varis.ui.highlighters.HtmlTagHighlighting"
+	        target="org.eclipse.php.core.phpsource">
+	    </highlighting>
+    </extension>
+    
+    <extension point="org.eclipse.wst.sse.ui.semanticHighlighting">
+        <highlighting
+	        class="edu.iastate.varis.ui.highlighters.HtmlAttrNameHighlighting"
+	        target="org.eclipse.php.core.phpsource">
+	    </highlighting>
+    </extension>
+    
+    <extension point="org.eclipse.wst.sse.ui.semanticHighlighting">
+        <highlighting
+	        class="edu.iastate.varis.ui.highlighters.HtmlAttrValueHighlighting"
+	        target="org.eclipse.php.core.phpsource">
+	    </highlighting>
+    </extension>
+    
 
 
     
@@ -107,5 +129,57 @@
              name="HyperLinkDetector"
              targetId="org.eclipse.php.core.phpsource">
        </hyperlinkDetector>
+       <hyperlinkDetector
+             activate="true"
+             class="edu.iastate.varis.ui.hyperlinks.HyperLinkDetector"
+             id="edu.iastate.varis.ui.hyperlinks.HyperLinkDetector"
+             name="HyperLinkDetector"
+             targetId="org.eclipse.php.core.phpsource">
+       </hyperlinkDetector>       
     </extension>
+    
+	
+	 <extension
+        id="VarisCompletionProposalComputer"
+        point="org.eclipse.dltk.ui.scriptCompletionProposalComputer">
+                <scriptCompletionProposalComputer
+                        categoryId="edu.iastate.varis.ui.proposalCategory.varisTemplates"
+                        class="edu.iastate.varis.ui.contentassist.VarisCompletionComputer"
+                        toolkitId="org.eclipse.php.core.PHPNature">
+                        <partition type="org.eclipse.php.PHP_DEFAULT">
+                        </partition>
+                </scriptCompletionProposalComputer>
+     </extension>
+        
+        
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="edu.iastate.varis.category.varis"
+            name="Varis">
+      </category>
+      <view
+            category="edu.iastate.varis.category.varis"
+            class="edu.iastate.varis.ui.views.VarDomView"
+            icon="icons/sample.gif"
+            id="edu.iastate.varis.ui.views.VarDomView"
+            name="VarDOM">
+      </view>
+   </extension>
+    
+    <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="edu.iastate.varis.ui.viewerContribution.JumpToDeclaration"
+            targetID="org.eclipse.php.core.phpsource.source.EditorContext">
+         <action
+               class="edu.iastate.varis.ui.actions.JumpToDeclaration"
+               id="edu.iastate.varis.ui.actions.JumpToDeclaration"
+               label="Jump to Declaration (Varis)"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+   </extension>
+       
+        
 </plugin>

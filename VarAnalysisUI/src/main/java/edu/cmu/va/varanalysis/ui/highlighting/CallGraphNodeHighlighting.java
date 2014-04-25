@@ -14,11 +14,11 @@ import org.eclipse.wst.sse.core.internal.provisional.text.IStructuredDocumentReg
 import org.eclipse.wst.sse.ui.ISemanticHighlighting;
 import org.eclipse.wst.sse.ui.ISemanticHighlightingExtension2;
 
-import symexui.Activator;
 import edu.cmu.va.varanalysis.model.CallGraph;
 import edu.cmu.va.varanalysis.model.PositionRange;
 import edu.cmu.va.varanalysis.model.Range;
 import edu.cmu.va.varanalysis.model.SymExModel;
+import edu.cmu.va.varanalysis.symexui.Activator;
 import edu.cmu.va.varanalysis.ui.Util;
 
 public class CallGraphNodeHighlighting implements ISemanticHighlighting,
