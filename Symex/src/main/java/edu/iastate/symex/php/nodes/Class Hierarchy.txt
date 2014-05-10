@@ -40,7 +40,7 @@ PhpNode
 		ForStatementNode
 		FunctionDeclarationNode
 		GlobalStatementNode
-		IfStatementNode						x
+		IfStatementNode
 		InLineHtmlNode					
 		ReturnStatementNode				
 		SwitchCaseNode

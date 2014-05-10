@@ -17,7 +17,7 @@ import de.fosd.typechef.parser.TokenReader
 import edu.iastate.symex.datamodel.nodes.DataNode
 import edu.cmu.va.varanalysis.model.CallGraph
 import edu.cmu.va.varanalysis.model.PositionRange
-import edu.iastate.symex.run.RunFile
+import edu.iastate.symex.run.RunSymexForFile
 
 class FileProcessor {
     def process(ifile: IFile, reporter: SymexErrorHandler) {
@@ -115,7 +115,7 @@ class FileProcessor {
     }
 
     def executeSymbolically(reporter: SymexErrorHandler, file: File): DataNode =
-        new RunFile(file, new File(".")).run(reporter);
+        new RunSymexForFile(file).execute().getRoot();
 
     
     def getHTMLCallGraph(vardom:VarDom): CallGraph = {

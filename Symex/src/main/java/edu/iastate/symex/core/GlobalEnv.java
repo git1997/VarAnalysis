@@ -20,7 +20,7 @@ public class GlobalEnv extends Env {
 	/*
 	 * Working directory
 	 */
-	private File workingDirectory = null; // Optional
+	private File workingDirectory = null; // [Optional] The project folder containing the PHP file to be executed
 	
 	/*
 	 * Manage the declarations of functions, classes, and files,

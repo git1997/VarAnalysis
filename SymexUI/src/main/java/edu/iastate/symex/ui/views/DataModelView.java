@@ -220,7 +220,7 @@ public class DataModelView extends ViewPart {
 	 * Run Symex and show results 
 	 */
 	private void runSymexAndShowResults(File file, File project) {
-		DataModel dataModel = new RunSymexForFile(file, project).execute();
+		DataModel dataModel = new RunSymexForFile(file).execute();
 		
 		filePathLabel.setText(file.getAbsolutePath());
 		dataModelTreeViewer.setInput(dataModel);

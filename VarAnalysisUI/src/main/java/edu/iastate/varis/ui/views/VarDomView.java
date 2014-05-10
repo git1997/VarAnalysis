@@ -205,7 +205,7 @@ public class VarDomView extends ViewPart {
 	 * Run Varis and show results 
 	 */
 	private void runVarisAndShowResults(File file, File project) {
-		DataModel dataModel = new RunSymexForFile(file, project).execute();
+		DataModel dataModel = new RunSymexForFile(file).execute();
 		VarDom varDom = new FileProcessor().parseVarDom(dataModel.getRoot(), null);
 		
 		filePathLabel.setText(file.getAbsolutePath());

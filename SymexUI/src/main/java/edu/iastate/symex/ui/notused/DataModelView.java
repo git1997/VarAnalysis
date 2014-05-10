@@ -32,7 +32,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import edu.cmu.va.varanalysis.model.SymExModel;
 import edu.cmu.va.varanalysis.model.SymExModelChangeListener;
-import edu.iastate.symex.run.RunFile;
 import edu.iastate.symex.ui.Activator;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 
@@ -258,7 +257,7 @@ public class DataModelView extends ViewPart implements
 			text.setText("");
 		} else {
 			treeViewer.setInput(new MyTree(model));
-			text.setText(RunFile.valueToIfdefString(model, false));
+			//text.setText(RunFile.valueToIfdefString(model, false));
 		}
 	}
 

@@ -16,13 +16,11 @@ public class PhpExecuter {
 	/**
 	 * Executes PHP code and returns a data model describing its output.
 	 * @param file The file to be executed
-	 * @param workingDirectory Optional
 	 */
-	public DataModel execute(File file, File workingDirectory) {
+	public DataModel execute(File file) {
 		GlobalEnv env = new GlobalEnv();
-		env.setWorkingDirectory(workingDirectory);
-		
 		FileNode fileNode = new FileNode(file);
+
 		fileNode.execute(env);
 		env.addCurrentOutputToFinalOutput(); // The final output is a selection of outputs from the normal flows and exit flows
 		

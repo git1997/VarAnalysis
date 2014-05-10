@@ -56,7 +56,7 @@ class DModelLexer {
   }
 
   def lexSelectNode(node: SelectNode, ctx: FeatureExpr): List[CharacterToken] = {
-    val fexpr = FeatureExprFactory.createDefinedExternal(node.getConditionString().getStringValue())
+    val fexpr = FeatureExprFactory.createDefinedExternal(node.getConstraint().toString())
     var result: List[CharacterToken] = Nil
     if ((ctx and fexpr).isSatisfiable && node.getNodeInTrueBranch() != null)
       result = lexNode(node.getNodeInTrueBranch(), ctx and fexpr) ++ result

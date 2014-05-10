@@ -26,4 +26,11 @@ public class DataModel {
 		return root;
 	}
 	
+	/**
+	 * Writes the DataModel to #ifdef format
+	 */
+	public String toIfdefString() {
+		return WriteDataModelToIfDefs.convert(this);
+	}
+	
 }

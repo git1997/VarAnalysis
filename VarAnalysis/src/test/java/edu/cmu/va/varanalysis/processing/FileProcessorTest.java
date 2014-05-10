@@ -20,7 +20,8 @@ import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.cmu.va.varanalysis.model.*;
 import edu.iastate.symex.errormodel.SymexErrorHandler;
 import edu.iastate.symex.errormodel.SymexException;
-import edu.iastate.symex.run.RunFile;
+import edu.iastate.symex.run.RunSymexForFile;
+import edu.iastate.symex.datamodel.DataModel;
 import edu.iastate.symex.util.FileIO;
 
 public class FileProcessorTest {
@@ -44,7 +45,7 @@ public class FileProcessorTest {
 		DataNode model = symExFile();
 
 		assertNotNull(model);
-		System.out.println(RunFile.valueToIfdefString(model, false));
+		System.out.println(new DataModel(model).toIfdefString());
 
 		model.accept(new DataModelVisitor() {
 			@Override

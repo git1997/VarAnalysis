@@ -83,25 +83,25 @@ public class IfStatementNode extends StatementNode {
 			
 		BranchEnv trueBranchEnv = null;
 		BranchEnv falseBranchEnv = null;
-		DataNode trueBranchValue = null;
-		DataNode falseBranchValue = null;		
+		DataNode trueBranchRetValue = null;
+		DataNode falseBranchRetValue = null;		
 		
 		// Execute the branches
 		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString);
 		if (trueStatement != null) {
 			trueBranchEnv = new BranchEnv(env, constraint);
-			trueBranchValue = trueStatement.execute(trueBranchEnv);
+			trueBranchRetValue = trueStatement.execute(trueBranchEnv);
 		}
 		if (falseStatement != null) {
 			falseBranchEnv = new BranchEnv(env, ConstraintFactory.createNotConstraint(constraint));
-			falseBranchValue = falseStatement.execute(falseBranchEnv);
+			falseBranchRetValue = falseStatement.execute(falseBranchEnv);
 		}
 		
 		// Update the env
 		env.updateWithBranches(constraint, trueBranchEnv, falseBranchEnv);
 		
-		// Return a value (in case it is a ConditionalExpression)
-		return DataNodeFactory.createCompactSelectNode(constraint, trueBranchValue, falseBranchValue);		
+		// Return value
+		return DataNodeFactory.createCompactSelectNode(constraint, trueBranchRetValue, falseBranchRetValue);		
 	}
 
 }

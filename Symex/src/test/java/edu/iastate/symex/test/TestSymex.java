@@ -23,7 +23,7 @@ public class TestSymex {
 	public static void main(String[] args) {
 		File inputFile = new File("src/test/resources/testScalar.php");
 		//File inputFile = new File("/Work/To-do/Data/Web Projects/Server Code/addressbookv6.2.12/map.php");
-		DataModel dataModel = new RunSymexForFile(inputFile, null).execute();
+		DataModel dataModel = new RunSymexForFile(inputFile).execute();
 		System.out.println(WriteDataModelToIfDefs.convert(dataModel));
 	}
 
@@ -31,7 +31,7 @@ public class TestSymex {
 		File inputFile = new File("src/test/resources/" + inputFilePath);
 		File outputFile = new File("src/test/resources/" + outputFilePath);
 		
-		DataModel dataModel = new RunSymexForFile(inputFile, null).execute();
+		DataModel dataModel = new RunSymexForFile(inputFile).execute();
 		if (testMode) {
 			String actual = WriteDataModelToIfDefs.convert(dataModel);
 			String expected = FileIO.readStringFromFile(outputFile);

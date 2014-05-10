@@ -6,7 +6,7 @@ OK			datamodel.nodes
 OK			errormodel
 PENDING		php.nodes
 OK			position
-PENDING		run
+OK			run
 OK			util
 OK			logging
 OK 			sourcetracing
