@@ -15,7 +15,6 @@ import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.ObjectNode;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.php.elements.PhpVariable;
 
 /**
@@ -74,7 +73,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		 */
 		String functionName = getResolvedFunctionNameOrNull(env);
 		if (functionName == null)
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 		
 		// TODO: [AdhocCode] In squirrelmail, some function calls are misspelled.
 		// The following code is temporarily used to fixed that bug. Should be removed later.
@@ -85,7 +84,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		
 		// Avoid recursive function calling
 		if (env.containsFunctionInStack(functionName))
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 		
 		/*
 		 * For some standard PHP functions, process them separately.
@@ -140,7 +139,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			functionNode = objectNode.getClassDeclarationNode().getFunction(functionName);
 		}
 		if (functionNode == null)
-			return new SymbolicNode(this);		
+			return DataNodeFactory.createSymbolicNode(this);		
 		
 		/*
 		 * Prepare to execute the function
@@ -161,7 +160,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 				if (formalParameterNode.getDefaultValue() != null)
 					parameterValue = formalParameterNode.getDefaultValue().execute(functionEnv);
 				else
-					parameterValue = new SymbolicNode(formalParameterNode);
+					parameterValue = DataNodeFactory.createSymbolicNode(formalParameterNode);
 			}			
 			PhpVariable phpVariable = new PhpVariable(parameterName);
 			phpVariable.setDataNode(parameterValue);
@@ -191,7 +190,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		if (returnValue != null)
 			return returnValue.getDataNode();
 		else
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 	}
 	
 	/**
@@ -201,7 +200,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		env.setHasExitStatement(true);
 		if (SymexConfig.COLLECT_OUTPUTS_FROM_EXIT_STATEMENTS)
 			env.addCurrentOutputToFinalOutput();
-		return new SymbolicNode(this);
+		return DataNodeFactory.createSymbolicNode(this);
 	}
 	
 	/**
@@ -209,7 +208,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 */
 	private DataNode php_print(ArrayList<DataNode> parameterValues, Env env) {	
 		env.appendOutput(parameterValues);
-		return new SymbolicNode(this);
+		return DataNodeFactory.createSymbolicNode(this);
 	}
 	
 	/**
@@ -222,7 +221,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			if (constantName != null)
 				env.setPredefinedConstantValue(constantName, constantValue);
 		}
-		return new SymbolicNode(this);
+		return DataNodeFactory.createSymbolicNode(this);
 	}
 	
 	/**
@@ -232,7 +231,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		if (parameterValues.size() == 1)
 			return parameterValues.get(0);
 		else
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 		
 	}
 
@@ -243,7 +242,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		if (parameterValues.size() == 1)
 			return parameterValues.get(0);
 		else
-			return new SymbolicNode(this);		
+			return DataNodeFactory.createSymbolicNode(this);		
 	}
 	
 	/**
@@ -258,7 +257,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 					return DataNodeFactory.createLiteralNode(dirName);
 			}
 		}
-		return new SymbolicNode(this);
+		return DataNodeFactory.createSymbolicNode(this);
 	}
 	
 	/**
@@ -270,7 +269,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			if (str != null)
 				return DataNodeFactory.createLiteralNode(str.toLowerCase()); // TODO Add positionRange
 		}
-		return new SymbolicNode(this);
+		return DataNodeFactory.createSymbolicNode(this);
 	}
 	
 	/*
@@ -300,7 +299,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			return DataNodeFactory.createLiteralNode("mysql_query_" + scope.hashCode()); // @see edu.iastate.symex.php.nodes.ArrayAccessNode.execute(env)
 		// END OF BABELREF CODE
 		
-		return new SymbolicNode(this);
+		return DataNodeFactory.createSymbolicNode(this);
 	}
 	
 	/**
@@ -315,7 +314,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			return parameterValues.get(0);	// @see edu.iastate.symex.php.nodes.ArrayAccessNode.execute(env)
 		// END OF BABELREF CODE
 		
-		return new SymbolicNode(this);
+		return DataNodeFactory.createSymbolicNode(this);
 	}
 	
 	/**
@@ -333,7 +332,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 //		}
 		// END OF BABELREF CODE
 		
-		return new SymbolicNode(this);
+		return DataNodeFactory.createSymbolicNode(this);
 	}
 	
 }

@@ -5,7 +5,7 @@ import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
+import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.php.elements.PhpArrayElement;
 import edu.iastate.symex.php.elements.PhpVariable;
 
@@ -57,7 +57,7 @@ public class ArrayAccessNode extends VariableBaseNode {
 					return value;
 			}
 		}
-		return new SymbolicNode(this);
+		return DataNodeFactory.createSymbolicNode(this);
 	}
 
 	/*

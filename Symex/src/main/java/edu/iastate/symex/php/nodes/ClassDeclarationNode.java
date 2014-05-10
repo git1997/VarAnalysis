@@ -9,7 +9,6 @@ import org.eclipse.php.internal.core.ast.nodes.Statement;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.php.elements.PhpClass;
 
 /**
  * 

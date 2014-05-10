@@ -15,9 +15,9 @@ public class RepeatNode extends DataNode {
 	private DataNode childNode;				// The dataNode which is wrapped around by the repeatNode.
 
 	/**
-	 * Constructor
+	 * Protected constructor, called from DataNodeFactory only.
 	 */
-	public RepeatNode(Constraint constraint, DataNode dataNode) {
+	protected RepeatNode(Constraint constraint, DataNode dataNode) {
 		this.constraint = constraint;
 		if (checkAndUpdateDepth(dataNode))
 			this.childNode = dataNode;

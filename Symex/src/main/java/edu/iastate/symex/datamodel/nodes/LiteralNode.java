@@ -14,11 +14,10 @@ public class LiteralNode extends DataNode {
 
 	private String stringValue;				// The string value of this literal node
 	
-	/*
-	 * Constructors
-	 */
-	
-	public LiteralNode(PositionRange positionRange, String stringValue) { 
+	/**
+	 * Protected constructor, called from DataNodeFactory only.
+	 */ 
+	protected LiteralNode(PositionRange positionRange, String stringValue) { 
 		this.positionRange = positionRange; 
 		this.stringValue = stringValue;
 	}

@@ -2,6 +2,8 @@ package edu.iastate.symex.datamodel.nodes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.PhpNode;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.ScatteredPositionRange;
@@ -15,6 +17,13 @@ import edu.iastate.symex.constraints.Constraint;
  *
  */
 public class DataNodeFactory {
+	
+	/**
+	 * Creates an ArrayNode.
+	 */
+	public static ArrayNode createArrayNode() {
+		return new ArrayNode();
+	}
 	
 	/**
 	 * Creates a (compact) ConcatNode from childNodes
@@ -42,7 +51,6 @@ public class DataNodeFactory {
 	
 	/**
 	 * Appends childNodes such that the ConcatNode is compact
-	 * @param childNode
 	 */
 	private static void appendChildNodes(ArrayList<DataNode> compactChildNodes, ArrayList<DataNode> childNodes) {
 		for (DataNode childNode : childNodes)
@@ -75,11 +83,48 @@ public class DataNodeFactory {
 		}
 	}	
 	
+	/*
+	 * Create Literal Nodes
+	 */
+	
+	public static LiteralNode createLiteralNode(PositionRange positionRange, String stringValue) {
+		return new LiteralNode(positionRange, stringValue);
+	}
+	
+	public static LiteralNode createLiteralNode(LiteralNode node1, LiteralNode node2) {
+		PositionRange positionRange = new ScatteredPositionRange(node1.getPositionRange(), node2.getPositionRange());
+		String stringValue = node1.getStringValue() + node2.getStringValue();
+		return createLiteralNode(positionRange, stringValue);
+	}
+
+	public static LiteralNode createLiteralNode(PhpNode phpNode) {
+		return createLiteralNode(phpNode.getPositionRange(), phpNode.getSourceCode());
+	}
+
+	public static LiteralNode createLiteralNode(String stringValue) {
+		// The value is dynamically generated and cannot be traced back to the source code.
+		return createLiteralNode(UndefinedPositionRange.inst, stringValue); 
+	}
+	
+	/**
+	 * Creates an ObjectNode.
+	 */
+	public static ObjectNode createObjectNode(ClassDeclarationNode classDeclarationNode) {
+		return new ObjectNode(classDeclarationNode);
+	}
+	
+	/**
+	 * Creates a RepeatNode.
+	 */
+	public static RepeatNode createRepeatNode(Constraint constraint, DataNode dataNode) {
+		return new RepeatNode(constraint, dataNode);
+	}
+	
 	/**
 	 * Creates a (compact) SelectNode
 	 */
 	public static DataNode createCompactSelectNode(Constraint constraint, DataNode nodeInTrueBranch, DataNode nodeInFalseBranch) {
-		// Attempt to compact the SelectNode if the branches are Concat/LiteralNodes
+		// Attempt to compact the SelectNode only if the branches are Concat/LiteralNodes
 		if (!((nodeInTrueBranch instanceof ConcatNode || nodeInTrueBranch instanceof LiteralNode) && (nodeInFalseBranch instanceof ConcatNode || nodeInFalseBranch instanceof LiteralNode)))
 			return new SelectNode(constraint, nodeInTrueBranch, nodeInFalseBranch);
 
@@ -111,7 +156,7 @@ public class DataNodeFactory {
 				break;
 		}
 
-		// Only attempt compacting if the branches share some common nodes
+		// Attempt to compact only if the branches share some common nodes
 		if (commonNodesBefore == 0 && commonNodesAfter == 0)
 			return new SelectNode(constraint, nodeInTrueBranch, nodeInFalseBranch);
 
@@ -159,211 +204,26 @@ public class DataNodeFactory {
 	}
 	
 	/*
-	 * Create Literal Nodes
+	 * Create SymbolicNodes
 	 */
-	
-	public static LiteralNode createLiteralNode(LiteralNode node1, LiteralNode node2) {
-		PositionRange positionRange = new ScatteredPositionRange(node1.getPositionRange(), node2.getPositionRange());
-		String stringValue = node1.getStringValue() + node2.getStringValue();
-		return new LiteralNode(positionRange, stringValue);
-	}
 
-	public static LiteralNode createLiteralNode(PhpNode phpNode) {
-		return new LiteralNode(phpNode.getPositionRange(), phpNode.getSourceCode());
+	/**
+	 * @param phpNode The PhpNode which has unresolved value, can be null.
+	 * @param parentNode To support the tracing of unresolved values, can be null.
+	 */
+	public static SymbolicNode createSymbolicNode(PhpNode phpNode, SymbolicNode parentNode) {
+		return new SymbolicNode(phpNode, parentNode);
 	}
-
-	public static LiteralNode createLiteralNode(String stringValue) {
-		// The value is dynamically generated and cannot be traced back to the source code.
-		return new LiteralNode(UndefinedPositionRange.inst, stringValue); 
+	
+	/**
+	 * @param phpNode The PhpNode which has unresolved value, can be null.
+	 */
+	public static SymbolicNode createSymbolicNode(PhpNode phpNode) {
+		return createSymbolicNode(phpNode, null);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	
-//	public static LiteralNode createLiteralNode(SymbolicNode symbolicNode) {
-//		SinglePositionRange positionRange;
-//		String type;
-//		String stringValue;
-//		String unescapedStringValue;
-//
-//		positionRange = null; // FIXME UndefinedPositionRange.inst;
-//		type = LiteralNode.LITERAL_UNDEFINED;
-//		stringValue = symbolicNode.getSymbolicValue();
-//		unescapedStringValue = stringValue;
-//
-//		return new LiteralNode(positionRange, type, stringValue, unescapedStringValue);
-//	}
-//
-//	public static LiteralNode createLiteralNode(SelectNode selectionNode) {
-//		SinglePositionRange positionRange;
-//		String type;
-//		String stringValue;
-//		String unescapedStringValue;
-//
-//		positionRange = null; // FIXME = UndefinedLocation.inst;
-//		type = LiteralNode.LITERAL_UNDEFINED;
-//		stringValue = selectionNode.getSymbolicValue();
-//		unescapedStringValue = stringValue;
-//
-//		return new LiteralNode(positionRange, type, stringValue, unescapedStringValue);
-//	}
-//
-//	public static LiteralNode createLiteralNode(SwitchCase switchCase) {
-//		LiteralNode lit = createLiteralNode((ASTNode) switchCase);
-//		lit.stringValue = "case "
-//				+ (switchCase.getParent().getParent() instanceof SwitchStatement ? TraceTable
-//						.getSourceCodeOfPhpASTNode(((SwitchStatement) switchCase
-//								.getParent().getParent()).getExpression())
-//						: "?")
-//				+ " == "
-//				+ (switchCase.getValue() != null ? TraceTable
-//						.getSourceCodeOfPhpASTNode(switchCase.getValue())
-//						: TraceTable.getSourceCodeOfPhpASTNode(switchCase));
-//		lit.unescapedStringValue = lit.stringValue;
-//		return lit;
-//	}
-//
-//	public static LiteralNode createLiteralNode(String stringValue, SinglePositionRange positionRange) {
-//		String type;
-//		String unescapedStringValue;
-//
-//		// The value is dynamically generated from an AST
-//		// node (e.g. function invocation)
-//		type = LiteralNode.LITERAL_UNDEFINED;
-//		unescapedStringValue = stringValue;
-//
-//		return new LiteralNode(positionRange, type, stringValue, unescapedStringValue);
-//	}
-//
-//	/*
-//	 * Escape/unescape string values
-//	 */
-//
-//	public static String getUnescapedStringValue(String stringValue,
-//			String stringType) {
-//		//stringValue = stringValue.replace(" ", "c"); // Fix the copyright
-//														// character (can't be
-//														// printed in XML
-//														// format)
-//		if (stringType.equals(LiteralNode.LITERAL_QUOTES)) {
-//			HashMap<Character, String> mapTable = new HashMap<Character, String>();
-//			mapTable.put('t', "\t");
-//			mapTable.put('r', "\r");
-//			mapTable.put('n', "\n");
-//			mapTable.put('\\', "\\");
-//			mapTable.put('"', "\"");
-//			mapTable.put('\'', "\\\'"); // Keep \' as \' in quotes
-//			// mapTable.put('u', "\\u"); // Fix a bug with the escape character
-//			// \\u
-//			return StringUtils.unescape(stringValue, mapTable);
-//		} else if (stringType.equals(LiteralNode.LITERAL_APOSTROPHES)) {
-//			HashMap<Character, String> mapTable = new HashMap<Character, String>();
-//			mapTable.put('t', "\t");
-//			mapTable.put('r', "\r");
-//			mapTable.put('n', "\n");
-//			mapTable.put('\\', "\\");
-//			mapTable.put('\'', "\'");
-//			mapTable.put('\"', "\\\""); // Keep \" as \" in apostrophes
-//			return StringUtils.unescape(stringValue, mapTable);
-//		} else if (stringType.equals(LiteralNode.LITERAL_CONSTANT)) {
-//			// Do nothing for CONSTANT
-//			return stringValue;
-//		} else if (stringType.equals(LiteralNode.LITERAL_INLINE)) {
-//			// Do nothing for INLINE
-//			return stringValue;
-//		} else {
-//			// Don't know how to handle UNDEFINED
-//			MyLogger.log(
-//					MyLevel.TODO,
-//					"In LiteralNode.getUnescapedStringValue: Don't know how to handle UNDEFINED string type of LiteralNode: "
-//							+ stringValue);
-//			return stringValue;
-//		}
-//	}
-//
-//	public static String getUnescapedStringValuePreservingLength(
-//			String stringValue, String stringType) {
-//		//stringValue = stringValue.replace(" ", "c"); // Fix the copyright
-//														// character (can't be
-//														// printed in XML
-//														// format)
-//		if (stringType.equals(LiteralNode.LITERAL_QUOTES)) {
-//			HashMap<Character, String> mapTable = new HashMap<Character, String>();
-//			mapTable.put('t', " \t");
-//			mapTable.put('r', " \r");
-//			mapTable.put('n', "\n "); // Put the space after so that \r\n ->
-//										// _[\r][\n]_
-//			mapTable.put('\\', " \\");
-//			mapTable.put('"', "\" "); // Put the space after so that \\\" ->
-//										// _\"_
-//			mapTable.put('\'', "\\\'"); // Keep \' as \' in quotes
-//			// mapTable.put('u', "\\u"); // Fix a bug with the escape character
-//			// \\u
-//			return StringUtils.unescape(stringValue, mapTable);
-//		} else if (stringType.equals(LiteralNode.LITERAL_APOSTROPHES)) {
-//			HashMap<Character, String> mapTable = new HashMap<Character, String>();
-//			mapTable.put('t', " \t");
-//			mapTable.put('r', " \r");
-//			mapTable.put('n', "\n "); // Put the space after so that \r\n ->
-//										// _[\r][\n]_
-//			mapTable.put('\\', " \\");
-//			mapTable.put('\'', "\' "); // Put the space after so that \\\' ->
-//										// _\'_
-//			mapTable.put('\"', "\\\""); // Keep \" as \" in apostrophes
-//			return StringUtils.unescape(stringValue, mapTable);
-//		} else if (stringType.equals(LiteralNode.LITERAL_CONSTANT)) {
-//			// Do nothing for CONSTANT
-//			return stringValue;
-//		} else if (stringType.equals(LiteralNode.LITERAL_INLINE)) {
-//			// Do nothing for INLINE
-//			return stringValue;
-//		} else {
-//			// Don't know how to handle UNDEFINED
-//			MyLogger.log(
-//					MyLevel.TODO,
-//					"In LiteralNode.getUnescapedStringValuePreservingLength: Don't know how to handle UNDEFINED string type of LiteralNode: "
-//							+ stringValue);
-//			return stringValue;
-//		}
-//	}
-//
-//	public static String getEscapedStringValue(String stringValue,
-//			String stringType) {
-//		if (stringType.equals(LiteralNode.LITERAL_QUOTES)) {
-//			HashMap<Character, String> mapTable = new HashMap<Character, String>();
-//			mapTable.put('\\', "\\\\");
-//			mapTable.put('"', "\\\"");
-//			return StringUtils.escape(stringValue, mapTable);
-//		} else if (stringType.equals(LiteralNode.LITERAL_APOSTROPHES)) {
-//			HashMap<Character, String> mapTable = new HashMap<Character, String>();
-//			mapTable.put('\\', "\\\\");
-//			mapTable.put('\'', "\\\'");
-//			return StringUtils.escape(stringValue, mapTable);
-//		} else if (stringType.equals(LiteralNode.LITERAL_CONSTANT)) {
-//			// CONSTANT needs a special treatment. For example, if we are to
-//			// replace a numeric value 10 with string a"bc, then 10 => "a\"bc"
-//			if (StringUtils.isNumeric(stringValue))
-//				return stringValue;
-//			else
-//				return "\""
-//						+ getEscapedStringValue(stringValue,
-//								LiteralNode.LITERAL_QUOTES) + "\"";
-//		} else if (stringType.equals(LiteralNode.LITERAL_INLINE)) {
-//			// Do nothing for INLINE
-//			return stringValue;
-//		} else {
-//			// Don't know how to handle UNDEFINED
-//			return stringValue;
-//		}
-//	}
+	public static SymbolicNode createSymbolicNode() {
+		return createSymbolicNode(null, null);
+	}
 
 }

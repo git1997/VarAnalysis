@@ -7,7 +7,6 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.position.Position;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.AtomicPositionRange;
@@ -75,7 +74,7 @@ public class ScalarNode extends ExpressionNode {
 			case 7:
 			case 8:
 				DataNode constantValue = env.getPredefinedConstantValue(getSourceCode());
-				return constantValue != null ? constantValue : new SymbolicNode(this);
+				return constantValue != null ? constantValue : DataNodeFactory.createSymbolicNode(this);
 			
 			// If it is surrounded by quotes/apostrophes
 			case 4:
@@ -116,7 +115,7 @@ public class ScalarNode extends ExpressionNode {
 		
 		PositionRange positionRange = new AtomicPositionRange(position.getFile(), position.getOffset(), stringValue.length());
 		String stringValue = StringUtils.getUnescapedStringValuePreservingLength(string, stringType);
-		return new LiteralNode(positionRange, stringValue);
+		return DataNodeFactory.createLiteralNode(positionRange, stringValue);
 	}
 	
 }

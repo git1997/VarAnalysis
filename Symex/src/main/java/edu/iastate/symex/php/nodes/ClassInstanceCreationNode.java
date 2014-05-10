@@ -4,8 +4,7 @@ import org.eclipse.php.internal.core.ast.nodes.ClassInstanceCreation;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.ObjectNode;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
+import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 
 /**
  * 
@@ -39,9 +38,9 @@ public class ClassInstanceCreationNode extends ExpressionNode {
 		
 		// Return an object, or a SymbolicNode if the class name is not found
 		if (phpClass != null)
-			return new ObjectNode(phpClass);
+			return DataNodeFactory.createObjectNode(phpClass);
 		else
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 	}
 
 }

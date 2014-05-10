@@ -66,9 +66,6 @@ public abstract class DataNode {
 	 * Converts to Boolean value
 	 */
 	public BooleanNode convertToBooleanValue() {
-		if (this instanceof BooleanNode)
-			return (BooleanNode) this;
-		
 		String stringValue = this.getExactStringValueOrNull();
 		if (stringValue == null)
 			return BooleanNode.UNKNOWN;

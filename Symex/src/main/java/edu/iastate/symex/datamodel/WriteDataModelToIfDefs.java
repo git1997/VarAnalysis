@@ -1,6 +1,5 @@
 package edu.iastate.symex.datamodel;
 
-import edu.iastate.symex.constraints.AtomicConstraint;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
 import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;

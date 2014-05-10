@@ -31,7 +31,7 @@ public abstract class PhpNode {
 		
 		this.astNode = astNode;
 		this.positionRange = new AtomicPositionRange(file, astNode.getStart(), astNode.getEnd() - astNode.getStart());
-		this.sourceCode = ASTHelper.inst.getSourceCodeOfPhpASTNode(astNode);
+		this.sourceCode = ASTHelper.inst.getSourceCodeOfPhpASTNode(astNode); // TODO sourceCode.length should equal positionRange.length
 	}
 	
 	/**

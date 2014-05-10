@@ -10,21 +10,19 @@ import edu.iastate.symex.datamodel.DataModelVisitor;
  */
 public class SymbolicNode extends DataNode {
 
-	private PhpNode phpNode = null;			// The PhpNode which has unresolved value.
+	private PhpNode phpNode = null;			// The PhpNode which has unresolved value, can be null.
 	
-	private SymbolicNode parentNode = null;	// To support the tracing of unresolved values.
+	private SymbolicNode parentNode = null;	// To support the tracing of unresolved values, can be null.
 	
 	/*
 	 * Constructors
 	 */
 	
-	public SymbolicNode() {		
-	}
-	
-	public SymbolicNode(PhpNode phpNode) {
-		this.phpNode = phpNode;
-	}
-
+	/**
+	 * Protected constructor, called from DataNodeFactory only.
+	 * @param phpNode The PhpNode which has unresolved value, can be null.
+	 * @param parentNode To support the tracing of unresolved values, can be null.
+	 */
 	public SymbolicNode(PhpNode phpNode, SymbolicNode parentNode) {
 		this.phpNode = phpNode;
 		this.parentNode = parentNode;

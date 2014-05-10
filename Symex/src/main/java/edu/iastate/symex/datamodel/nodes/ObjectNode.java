@@ -13,10 +13,10 @@ public class ObjectNode extends DataNode {
 	private ClassDeclarationNode classDeclarationNode;
 	
 	/**
-	 * Constructor
+	 * Protected constructor, called from DataNodeFactory only.
 	 * @param classDeclarationNode
 	 */
-	public ObjectNode(ClassDeclarationNode classDeclarationNode) {
+	protected ObjectNode(ClassDeclarationNode classDeclarationNode) {
 		this.classDeclarationNode = classDeclarationNode;
 	}
 

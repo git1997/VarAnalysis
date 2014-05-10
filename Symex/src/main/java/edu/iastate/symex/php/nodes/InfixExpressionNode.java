@@ -5,7 +5,6 @@ import org.eclipse.php.internal.core.ast.nodes.InfixExpression;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 
 /**
  *
@@ -60,7 +59,7 @@ public class InfixExpressionNode extends ExpressionNode {
 				
 			// TODO Implement more cases
 			default:
-				return new SymbolicNode(this);
+				return DataNodeFactory.createSymbolicNode(this);
 		}
 	}
 	

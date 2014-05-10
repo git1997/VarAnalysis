@@ -4,6 +4,7 @@ import org.eclipse.php.internal.core.ast.nodes.Variable;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.php.elements.PhpVariable;
 
@@ -66,7 +67,7 @@ public class VariableNode extends VariableBaseNode {
 		String variableName = getResolvedVariableNameOrNull(env);
 		PhpVariable phpVariable = env.readVariable(variableName);
 		if (phpVariable == null)
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 		else if (phpVariable.getDataNode() instanceof SymbolicNode) {
 			SymbolicNode symbolicNode = new SymbolicNode(this, (SymbolicNode) phpVariable.getDataNode());
 			return symbolicNode;

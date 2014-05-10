@@ -4,7 +4,7 @@ import org.eclipse.php.internal.core.ast.nodes.PostfixExpression;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
+import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 
 /**
  * 
@@ -30,7 +30,7 @@ public class PostfixExpressionNode extends ExpressionNode {
 
 	@Override
 	public DataNode execute(Env env) {
-		return new SymbolicNode(this);
+		return DataNodeFactory.createSymbolicNode(this);
 	}
 
 }

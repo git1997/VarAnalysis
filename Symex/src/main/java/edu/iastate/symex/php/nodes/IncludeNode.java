@@ -9,9 +9,8 @@ import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
+import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.php.elements.PhpVariable;
-import edu.iastate.symex.util.StringUtils;
 
 /**
  * 
@@ -49,7 +48,7 @@ public class IncludeNode extends ExpressionNode {
 			MyLogger.log(MyLevel.USER_EXCEPTION, "In IncludeNode.java: Unable to resolve the included file " + expression.getSourceCode() + ". "
 						+ "Current file: " + currentFile + ". "
 						+ "Original file: " + originalFile + ".");
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 		}
 
 		/*
@@ -57,11 +56,11 @@ public class IncludeNode extends ExpressionNode {
 		 */
 		if ((includeType == Include.IT_INCLUDE_ONCE || includeType == Include.IT_REQUIRE_ONCE)
 				&& env.getInvokedFiles().contains(includedFile)) {
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 		}
 		// Avoid recursive file calling
 		if (env.containsFileInStack(includedFile))
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 
 		/*
 		 * Prepare to execute the file
@@ -102,7 +101,7 @@ public class IncludeNode extends ExpressionNode {
 		if (newPhpReturn != null)
 			return newPhpReturn.getDataNode();
 		else
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 	}
 
 	/**

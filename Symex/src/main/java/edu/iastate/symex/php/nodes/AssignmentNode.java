@@ -8,7 +8,6 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.php.elements.PhpArrayElement;
 import edu.iastate.symex.php.elements.PhpVariable;
 
@@ -62,7 +61,7 @@ public class AssignmentNode extends ExpressionNode {
 			if (oldPhpArray != null && oldPhpArray.getDataNode() instanceof ArrayNode)
 				newPhpArray.setDataNode(oldPhpArray.getDataNode());	// TODO: Get a clone because we don't want to modify the ArrayNode of the oldPhpArray
 			else
-				newPhpArray.setDataNode(new ArrayNode());
+				newPhpArray.setDataNode(DataNodeFactory.createArrayNode());
 			ArrayNode arrayNode = (ArrayNode) newPhpArray.getDataNode();
 			
 			switch (operator) {
@@ -81,7 +80,7 @@ public class AssignmentNode extends ExpressionNode {
 					
 				default:				
 					MyLogger.log(MyLevel.TODO, "In AssignmentNode.java: Assignment Operator " + Assignment.getOperator(operator) + " not yet implemented.");
-					arrayNode.setElement(key, new SymbolicNode(this));
+					arrayNode.setElement(key, DataNodeFactory.createSymbolicNode(this));
 					break;
 			}
 			env.writeVariable(newPhpArray);
@@ -108,17 +107,17 @@ public class AssignmentNode extends ExpressionNode {
 					
 				// '+='
 				case Assignment.OP_PLUS_EQUAL:
-					phpVariable.setDataNode(new SymbolicNode(this));
+					phpVariable.setDataNode(DataNodeFactory.createSymbolicNode(this));
 					break;
 					
 				// '*='		
 				case Assignment.OP_MUL_EQUAL:
-					phpVariable.setDataNode(new SymbolicNode(this));
+					phpVariable.setDataNode(DataNodeFactory.createSymbolicNode(this));
 					break;
 					
 				default:	
 					MyLogger.log(MyLevel.TODO, "In AssignmentNode.java: Assignment Operator " + Assignment.getOperator(operator) + " not yet implemented.");
-					phpVariable.setDataNode(new SymbolicNode(this));
+					phpVariable.setDataNode(DataNodeFactory.createSymbolicNode(this));
 					break;
 			}
 			env.writeVariable(phpVariable);

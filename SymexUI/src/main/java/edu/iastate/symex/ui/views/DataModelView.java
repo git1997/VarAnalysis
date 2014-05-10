@@ -35,6 +35,7 @@ import edu.iastate.symex.ui.UIHelper;
 import edu.iastate.symex.constraints.AtomicConstraint;
 import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.RepeatNode;
 import edu.iastate.symex.datamodel.nodes.SelectNode;
@@ -307,7 +308,7 @@ public class DataModelView extends ViewPart {
 			DataModel dataModel = (DataModel) inputElement;
 			DataNode outputDataNode = dataModel.getRoot();
 			if (outputDataNode == null)
-				outputDataNode = new SymbolicNode();
+				outputDataNode = DataNodeFactory.createSymbolicNode();
 			return new Object[]{outputDataNode};
 		}
 

@@ -6,8 +6,8 @@ import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.ObjectNode;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.php.elements.PhpVariable;
 
 /**
@@ -38,12 +38,12 @@ public class MethodInvocationNode extends DispatchNode {
 		// Get the object
 		if (!(dispatcher instanceof VariableNode)) {
 			MyLogger.log(MyLevel.TODO, "In MethodInvocationNode.java: VariableBase Expression unimplemented for the MethodInvocation.");
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 		}		
 		String variableName = ((VariableNode) dispatcher).getResolvedVariableNameOrNull(env);
 		PhpVariable phpVariable = env.readVariable(variableName);
 		if (phpVariable == null || !(phpVariable.getDataNode() instanceof ObjectNode)) {
-			return new SymbolicNode(this);
+			return DataNodeFactory.createSymbolicNode(this);
 		}		
 		ObjectNode objectNode = (ObjectNode) phpVariable.getDataNode();
 		

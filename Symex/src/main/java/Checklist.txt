@@ -2,7 +2,7 @@ OK			config
 OK			constraints
 OK			core
 OK			datamodel 
-PENDING		datamodel.nodes
+OK			datamodel.nodes
 OK			errormodel
 PENDING		php.elements
 PENDING		php.nodes

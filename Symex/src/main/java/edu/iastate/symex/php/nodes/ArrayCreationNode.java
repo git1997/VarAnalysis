@@ -8,6 +8,7 @@ import org.eclipse.php.internal.core.ast.nodes.ArrayElement;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 
 /**
  * 
@@ -39,7 +40,7 @@ public class ArrayCreationNode extends ExpressionNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		ArrayNode arrayNode = new ArrayNode();
+		ArrayNode arrayNode = DataNodeFactory.createArrayNode();
 		for (int i = 0; i < keys.size(); i++) {
 			ExpressionNode key = keys.get(i);
 			ExpressionNode value = values.get(i);

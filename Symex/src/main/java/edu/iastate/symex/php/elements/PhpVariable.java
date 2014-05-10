@@ -4,7 +4,6 @@ import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 
 /**
  * 
@@ -39,7 +38,7 @@ public class PhpVariable extends PhpElement {
 			return dataNode;
 		else {
 			MyLogger.log(MyLevel.USER_EXCEPTION, "In PhpVariable.java: Variable " + name + " has no associated data node.");
-			return new SymbolicNode();
+			return DataNodeFactory.createSymbolicNode();
 		}
 	}
 	

@@ -7,19 +7,25 @@ import edu.iastate.symex.datamodel.DataModelVisitor;
  * @author HUNG
  * 
  */
-public class SpecialNode extends DataNode {
+public abstract class SpecialNode extends DataNode {
 	
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
 		dataModelVisitor.visitSpecialNode(this);
-		
 	}
 	
+	/**
+	 * Represents Boolean values.
+	 */
 	public static class BooleanNode extends SpecialNode {
+		
 		public static BooleanNode TRUE		= new BooleanNode();
 		public static BooleanNode FALSE		= new BooleanNode();
 		public static BooleanNode UNKNOWN	= new BooleanNode();
 		
+		/**
+		 * Private constructor.
+		 */
 		private BooleanNode() {
 		}
 		
@@ -48,6 +54,11 @@ public class SpecialNode extends DataNode {
 		}
 		
 		@Override
+		public BooleanNode convertToBooleanValue() {
+			return this;
+		}
+		
+		@Override
 		public BooleanNode isEqualTo(DataNode dataNode) {
 			if (isUnknownValue())
 				return UNKNOWN;
@@ -60,13 +71,24 @@ public class SpecialNode extends DataNode {
 			if (isUnknownValue())
 				return UNKNOWN;
 			
-			return super.isEqualTo(dataNode);
+			return super.isIdenticalTo(dataNode);
 		}
 	}
 	
+	/**
+	 * Represents returned codes of statements
+	 */
 	public static class ControlNode extends SpecialNode {
+		
 		public static ControlNode RETURN 	= new ControlNode();
 		public static ControlNode BREAK 	= new ControlNode();
+		
+		/**
+		 * Private constructor.
+		 */
+		private ControlNode() {
+		}
+		
 	}
 
 }

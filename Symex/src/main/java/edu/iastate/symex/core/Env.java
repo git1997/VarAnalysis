@@ -13,7 +13,6 @@ import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.RepeatNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
-import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.php.elements.PhpVariable;
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.ExpressionNode;
@@ -160,7 +159,7 @@ public abstract class Env {
 		if (referredGlobalVariable != null)
 			globalVariable.setDataNode(referredGlobalVariable.getDataNode());
 		else
-			globalVariable.setDataNode(new SymbolicNode());
+			globalVariable.setDataNode(DataNodeFactory.createSymbolicNode());
 		writeVariable(globalVariable);
 	}
 	
@@ -415,7 +414,7 @@ public abstract class Env {
 				if (dataNodeBeforeLoop != null)
 					phpVariable.appendStringValue(dataNodeBeforeLoop);
 
-				RepeatNode repeatNode = new RepeatNode(constraint, appendedStringValue);
+				RepeatNode repeatNode = DataNodeFactory.createRepeatNode(constraint, appendedStringValue);
 				phpVariable.appendStringValue(repeatNode);
 				this.putVariableInCurrentScope(phpVariable);
 			}
@@ -434,7 +433,7 @@ public abstract class Env {
 				if (dataNodeBeforeLoop != null)
 					phpVariable.appendStringValue(dataNodeBeforeLoop);
 
-				RepeatNode repeatNode = new RepeatNode(constraint, appendedStringValue);
+				RepeatNode repeatNode = DataNodeFactory.createRepeatNode(constraint, appendedStringValue);
 				phpVariable.appendStringValue(repeatNode);
 				this.putVariableInCurrentScope(phpVariable);
 			}
