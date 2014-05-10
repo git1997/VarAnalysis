@@ -1,4 +1,4 @@
-package edu.iastate.symex.php.elements;
+package edu.iastate.symex.core;
 
 /**
  * 
@@ -11,7 +11,8 @@ public class PhpArrayElement extends PhpVariable {
 	
 	/**
 	 * Constructor
-	 * @param name
+	 * @param name The name of the array
+	 * @param key The key of the array element, e.g. $x[1] has name = x, key = 1.
 	 */
 	public PhpArrayElement(String name, String key) {
 		super(name);

@@ -13,7 +13,6 @@ import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.RepeatNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
-import edu.iastate.symex.php.elements.PhpVariable;
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.ExpressionNode;
 import edu.iastate.symex.php.nodes.FileNode;

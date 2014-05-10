@@ -1,4 +1,4 @@
-package edu.iastate.symex.php.elements;
+package edu.iastate.symex.core;
 
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
@@ -10,11 +10,11 @@ import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
  * @author HUNG
  *
  */
-public class PhpVariable extends PhpElement {
+public class PhpVariable {
 	
 	private String name;		// The name of the phpVariable
 	
-	private DataNode dataNode;	// The string value of the phpVariable, represented by a dataNode.
+	private DataNode dataNode;	// The value of the phpVariable, represented by a dataNode.
 	
 	/**
 	 * Constructor

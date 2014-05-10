@@ -7,7 +7,7 @@ import org.eclipse.php.internal.core.ast.nodes.Variable;
 import org.eclipse.php.internal.core.ast.nodes.VariableBase;
 
 import edu.iastate.symex.core.Env;
-import edu.iastate.symex.php.elements.PhpVariable;
+import edu.iastate.symex.core.PhpVariable;
 
 import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;

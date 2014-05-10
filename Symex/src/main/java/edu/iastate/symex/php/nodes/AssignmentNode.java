@@ -5,11 +5,11 @@ import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
+import edu.iastate.symex.core.PhpArrayElement;
+import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.php.elements.PhpArrayElement;
-import edu.iastate.symex.php.elements.PhpVariable;
 
 /**
  * 
@@ -59,7 +59,7 @@ public class AssignmentNode extends ExpressionNode {
 			PhpVariable newPhpArray = new PhpVariable(arrayName);
 			PhpVariable oldPhpArray = env.readVariable(arrayName);
 			if (oldPhpArray != null && oldPhpArray.getDataNode() instanceof ArrayNode)
-				newPhpArray.setDataNode(oldPhpArray.getDataNode());	// TODO: Get a clone because we don't want to modify the ArrayNode of the oldPhpArray
+				newPhpArray.setDataNode(oldPhpArray.getDataNode());	// TODO: Should we get a clone? (because we don't want to modify the ArrayNode of the oldPhpArray)
 			else
 				newPhpArray.setDataNode(DataNodeFactory.createArrayNode());
 			ArrayNode arrayNode = (ArrayNode) newPhpArray.getDataNode();
