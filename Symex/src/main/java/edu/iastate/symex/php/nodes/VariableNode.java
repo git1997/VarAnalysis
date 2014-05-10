@@ -64,7 +64,7 @@ public class VariableNode extends VariableBaseNode {
 		// END OF BABELREF CODE
 		
 		String variableName = getResolvedVariableNameOrNull(env);
-		PhpVariable phpVariable = env.getVariableFromFunctionScope(variableName);
+		PhpVariable phpVariable = env.readVariable(variableName);
 		if (phpVariable == null)
 			return new SymbolicNode(this);
 		else if (phpVariable.getDataNode() instanceof SymbolicNode) {

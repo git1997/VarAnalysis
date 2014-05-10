@@ -1,4 +1,4 @@
-FileNode									x
+FileNode									
 PhpNode
 	ClassNameNode
 	ExpressionNode	
@@ -7,10 +7,10 @@ PhpNode
 		CastExpressionNode
 		ClassInstanceCreationNode			x
 		ConditionalExpressionNode
-		IdentifierNode						x
+		IdentifierNode						
 		IgnoreErrorNode
 		IncludeNode							x
-		InfixExpressionNode					x
+		InfixExpressionNode					
 		ParenthesisExpressionNode
 		PostfixExpressionNode
 		PrefixExpressionNode

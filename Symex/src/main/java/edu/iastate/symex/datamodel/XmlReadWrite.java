@@ -11,6 +11,7 @@ import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.ObjectNode;
 import edu.iastate.symex.datamodel.nodes.RepeatNode;
 import edu.iastate.symex.datamodel.nodes.SelectNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.util.XmlDocument;
 import edu.iastate.symex.util.logging.MyLevel;
@@ -63,6 +64,8 @@ public class XmlReadWrite {
 			return printRepeatNodeToXml((RepeatNode) dataNode, document);
 		else if (dataNode instanceof SelectNode)
 			return printSelectNodeToXml((SelectNode) dataNode, document);
+		else if (dataNode instanceof SpecialNode)
+			return printSpecialNodeToXml((SpecialNode) dataNode, document);
 		else if (dataNode instanceof SymbolicNode)
 			return printSymbolicNodeToXml((SymbolicNode) dataNode, document);
 		else {
@@ -273,6 +276,20 @@ public class XmlReadWrite {
 //			else
 //				nodeInFalseBranch = DataNode.createInstance(childNode);
 //		}
+		return null;
+	}
+	
+	/**
+	 * Prints the SpecialNode to XML.
+	 */
+	public Element printSpecialNodeToXml(SpecialNode specialNode, Document document) {
+		return null;
+	}
+	
+	/**
+	 * Reads the SpecialNode from XML.
+	 */
+	public SpecialNode readSpecialNodeFromXml(Element xmlElement) {
 		return null;
 	}
 	

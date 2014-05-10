@@ -7,7 +7,7 @@ import org.eclipse.php.internal.core.ast.nodes.Statement;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -56,7 +56,7 @@ public class BlockNode extends StatementNode {
 			if ( !(statementNode instanceof FunctionDeclarationNode) && !(statementNode instanceof ClassDeclarationNode) )
 				retValue = statementNode.execute(env);
 			
-			if (retValue == DataNodeFactory.RETURN || retValue == DataNodeFactory.BREAK)
+			if (retValue == SpecialNode.ControlNode.RETURN || retValue == SpecialNode.ControlNode.BREAK)
 				break;
 		}
 		

@@ -6,6 +6,7 @@ import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.ObjectNode;
 import edu.iastate.symex.datamodel.nodes.RepeatNode;
 import edu.iastate.symex.datamodel.nodes.SelectNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 
 /**
@@ -32,6 +33,9 @@ public class DataModelVisitor {
 	}
 
 	public void visitSelectNode(SelectNode selectNode) {
+	}
+	
+	public void visitSpecialNode(SpecialNode specialNode) {
 	}
 
 	public void visitSymbolicNode(SymbolicNode symbolicNode) {

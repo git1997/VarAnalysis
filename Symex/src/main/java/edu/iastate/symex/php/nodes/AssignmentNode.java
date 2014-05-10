@@ -58,7 +58,7 @@ public class AssignmentNode extends ExpressionNode {
 			String key = ((PhpArrayElement) phpVariable).getKey();
 			
 			PhpVariable newPhpArray = new PhpVariable(arrayName);
-			PhpVariable oldPhpArray = env.getVariableFromFunctionScope(arrayName);
+			PhpVariable oldPhpArray = env.readVariable(arrayName);
 			if (oldPhpArray != null && oldPhpArray.getDataNode() instanceof ArrayNode)
 				newPhpArray.setDataNode(oldPhpArray.getDataNode());	// TODO: Get a clone because we don't want to modify the ArrayNode of the oldPhpArray
 			else
@@ -84,7 +84,7 @@ public class AssignmentNode extends ExpressionNode {
 					arrayNode.setElement(key, new SymbolicNode(this));
 					break;
 			}
-			env.putVariableInCurrentScope(newPhpArray);
+			env.writeVariable(newPhpArray);
 		}
 		
 		/*
@@ -99,7 +99,7 @@ public class AssignmentNode extends ExpressionNode {
 					
 				// '.='	
 				case Assignment.OP_CONCAT_EQUAL:
-					PhpVariable oldVariable = env.getVariableFromFunctionScope(phpVariable.getName());
+					PhpVariable oldVariable = env.readVariable(phpVariable.getName());
 					if (oldVariable != null)
 						phpVariable.setDataNode(DataNodeFactory.createCompactConcatNode(oldVariable.getDataNode(), rightHandSideValue));
 					else
@@ -121,7 +121,7 @@ public class AssignmentNode extends ExpressionNode {
 					phpVariable.setDataNode(new SymbolicNode(this));
 					break;
 			}
-			env.putVariableInCurrentScope(phpVariable);
+			env.writeVariable(phpVariable);
 		}
 		
 		return rightHandSideValue;

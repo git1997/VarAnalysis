@@ -2,11 +2,14 @@ package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.IfStatement;
 
+import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.constraints.ConstraintFactory;
+import edu.iastate.symex.core.BranchEnv;
 import edu.iastate.symex.core.Env;
-import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
 
 /**
  * 
@@ -56,46 +59,49 @@ public class IfStatementNode extends StatementNode {
 	 * @see {@link edu.iastate.symex.php.nodes.ConditionalExpressionNode#execute(Env)}
 	 */
 	public static DataNode execute(Env env, ExpressionNode condition, LiteralNode conditionString, PhpNode trueStatement, PhpNode falseStatement) {
-		if (condition != null) {
-			DataNode dataNode = condition.execute(env);
-			if ( // @see edu.iastate.symex.php.nodes.InfixExpressionNode.execute(env)
-				dataNode instanceof ConcatNode && !dataNode.getApproximateStringValue().isEmpty()
-				|| dataNode instanceof LiteralNode && 
-					!((LiteralNode) dataNode).getStringValue().equals("FALSE") && !((LiteralNode) dataNode).getStringValue().isEmpty()) {
-				if (trueStatement != null)
-					return trueStatement.execute(env);
-				else 
-					return DataNodeFactory.createLiteralNode("");
-			}
-			else if (dataNode instanceof LiteralNode &&
-					(dataNode.getApproximateStringValue().equals("FALSE") || dataNode.getApproximateStringValue().isEmpty())) {
-				if (falseStatement != null)
-					return falseStatement.execute(env);
-				else
-					return DataNodeFactory.createLiteralNode("");
-			}
+		DataNode conditionValue = condition.execute(env);
+		return execute(env, conditionValue.convertToBooleanValue(), conditionString, trueStatement, falseStatement);
+	}
+	
+	/**
+	 * Executes different branches and updates the env accordingly.
+	 * @see {@link edu.iastate.symex.php.nodes.ConditionalExpressionNode#execute(Env)}
+	 */
+	public static DataNode execute(Env env, BooleanNode conditionValue, LiteralNode conditionString, PhpNode trueStatement, PhpNode falseStatement) {
+		if (conditionValue.isTrueValue()) {
+			if (trueStatement != null)
+				return trueStatement.execute(env);
+			else 
+				return null;
+		}
+		else if (conditionValue.isFalseValue()) {
+			if (falseStatement != null)
+				return falseStatement.execute(env);
+			else
+				return null;
 		}
 			
-		Env trueBranchEnv = null;
-		Env falseBranchEnv = null;
+		BranchEnv trueBranchEnv = null;
+		BranchEnv falseBranchEnv = null;
 		DataNode trueBranchValue = null;
 		DataNode falseBranchValue = null;		
 		
 		// Execute the branches
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString);
 		if (trueStatement != null) {
-			trueBranchEnv = new Env(env, conditionString, true);
+			trueBranchEnv = new BranchEnv(env, constraint);
 			trueBranchValue = trueStatement.execute(trueBranchEnv);
 		}
 		if (falseStatement != null) {
-			falseBranchEnv = new Env(env, conditionString, false);
+			falseBranchEnv = new BranchEnv(env, ConstraintFactory.createNotConstraint(constraint));
 			falseBranchValue = falseStatement.execute(falseBranchEnv);
 		}
 		
 		// Update the env
-		env.updateWithBranches(conditionString, trueBranchEnv, falseBranchEnv);
+		env.updateWithBranches(constraint, trueBranchEnv, falseBranchEnv);
 		
 		// Return a value (in case it is a ConditionalExpression)
-		return DataNodeFactory.createCompactSelectNode(conditionString, trueBranchValue, falseBranchValue);		
+		return DataNodeFactory.createCompactSelectNode(constraint, trueBranchValue, falseBranchValue);		
 	}
 
 }

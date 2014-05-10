@@ -7,9 +7,9 @@ import org.eclipse.php.internal.core.ast.nodes.Variable;
 import org.eclipse.php.internal.core.ast.nodes.VariableBase;
 
 import edu.iastate.symex.core.Env;
-import edu.iastate.symex.core.TraceTable;
 import edu.iastate.symex.php.elements.PhpVariable;
 
+import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 
@@ -39,7 +39,7 @@ public abstract class VariableBaseNode extends ExpressionNode {
 			case VariableBase.ARRAY_ACCESS:			return new ArrayAccessNode((ArrayAccess) variableBase);
 			case VariableBase.FUNCTION_INVOCATION:	return new FunctionInvocationNode((FunctionInvocation) variableBase);
 			case VariableBase.VARIABLE:				return new VariableNode((Variable) variableBase);
-			default:								MyLogger.log(MyLevel.TODO, "VariableBase unimplemented: " + TraceTable.getSourceCodeOfPhpASTNode(variableBase)); return new UnresolvedVariableBaseNode(variableBase);
+			default:								MyLogger.log(MyLevel.TODO, "VariableBase unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(variableBase)); return new UnresolvedVariableBaseNode(variableBase);
 		}
 	}
 	

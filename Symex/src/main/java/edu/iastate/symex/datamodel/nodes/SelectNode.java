@@ -1,5 +1,6 @@
 package edu.iastate.symex.datamodel.nodes;
 
+import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.datamodel.DataModelVisitor;
 
 /**
@@ -9,7 +10,7 @@ import edu.iastate.symex.datamodel.DataModelVisitor;
  */
 public class SelectNode extends DataNode {
 
-	private LiteralNode conditionString; 	// Use a literal node to describe and locate the condition string (can be null)
+	private Constraint constraint;
 
 	private DataNode nodeInTrueBranch; 		// Can be null
 
@@ -20,10 +21,10 @@ public class SelectNode extends DataNode {
 	 */
 
 	/**
-	 * Package-level constructor, called from DataNodeFactory only.
+	 * Protected constructor, called from DataNodeFactory only.
 	 */
-	SelectNode(LiteralNode conditionString, DataNode nodeInTrueBranch,DataNode nodeInFalseBranch) {
-		this.conditionString = conditionString;
+	protected SelectNode(Constraint constraint, DataNode nodeInTrueBranch,DataNode nodeInFalseBranch) {
+		this.constraint = constraint;
 
 		if (nodeInTrueBranch != null && checkAndUpdateDepth(nodeInTrueBranch))
 			this.nodeInTrueBranch = nodeInTrueBranch;
@@ -32,8 +33,8 @@ public class SelectNode extends DataNode {
 			this.nodeInFalseBranch = nodeInFalseBranch;
 	}
 
-	public LiteralNode getConditionString() {
-		return conditionString;
+	public Constraint getConstraint() {
+		return constraint;
 	}
 
 	public DataNode getNodeInTrueBranch() {
@@ -44,43 +45,9 @@ public class SelectNode extends DataNode {
 		return nodeInFalseBranch;
 	}
 
-	public String getSymbolicValue() {
-		return "__SELECTION_" + this.hashCode() + "__";
-	}
-
-	public static String getSymbolicValueRegularExpression() {
-		return "__SELECTION_\\d+__";
-	}
-
-	@Override
-	final public String getApproximateStringValue() {
-		if (getDepth() > 5)
-			return this.getSymbolicValue();
-
-		String trueBranchValue = (nodeInTrueBranch != null ? nodeInTrueBranch.getApproximateStringValue() : "");
-		String falseBranchValue = (nodeInFalseBranch != null ? nodeInFalseBranch.getApproximateStringValue() : "");
-		if (nodeInTrueBranch != null && !containsSymbolicValues(trueBranchValue))
-			return trueBranchValue;
-		else if (nodeInFalseBranch != null && !containsSymbolicValues(falseBranchValue))
-			return falseBranchValue;
-		else
-			return this.getSymbolicValue();
-	}
-
-	/**
-	 * Returns true if the string contains symbolic values
-	 */
-	private boolean containsSymbolicValues(String string) {
-		return string.matches("(?s).*" + SymbolicNode.getSymbolicValueRegularExpression() + ".*") // (?s) to consider line terminators
-				|| string.matches("(?s).*" + SelectNode.getSymbolicValueRegularExpression()	+ ".*")
-				|| string.matches("(?s).*" + ObjectNode.getSymbolicValueRegularExpression() + ".*");
-	}
-
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
 		dataModelVisitor.visitSelectNode(this);
-		if (conditionString != null)
-			conditionString.accept(dataModelVisitor);
 		if (nodeInTrueBranch != null)
 			nodeInTrueBranch.accept(dataModelVisitor);
 		if (nodeInFalseBranch != null)

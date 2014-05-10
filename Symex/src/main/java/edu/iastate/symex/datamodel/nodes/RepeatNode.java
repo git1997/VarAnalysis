@@ -1,5 +1,6 @@
 package edu.iastate.symex.datamodel.nodes;
 
+import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.datamodel.DataModelVisitor;
 
 /**
@@ -9,21 +10,21 @@ import edu.iastate.symex.datamodel.DataModelVisitor;
  */
 public class RepeatNode extends DataNode {
 	
-	private LiteralNode conditionString;	// Use a literal node to describe and locate the condition string
+	private Constraint constraint;
 	
 	private DataNode childNode;				// The dataNode which is wrapped around by the repeatNode.
 
 	/**
 	 * Constructor
 	 */
-	public RepeatNode(LiteralNode conditionString, DataNode dataNode) {
-		this.conditionString = conditionString;
+	public RepeatNode(Constraint constraint, DataNode dataNode) {
+		this.constraint = constraint;
 		if (checkAndUpdateDepth(dataNode))
 			this.childNode = dataNode;
 	}
 	
-	public LiteralNode getConditionString() {
-		return conditionString;
+	public Constraint getConstraint() {
+		return constraint;
 	}
 	
 	public DataNode getChildNode() {
@@ -31,14 +32,8 @@ public class RepeatNode extends DataNode {
 	}
 	
 	@Override
-	public String getApproximateStringValue() {
-		return childNode.getApproximateStringValue();
-	}
-	
-	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
 		dataModelVisitor.visitRepeatNode(this);
-		conditionString.accept(dataModelVisitor);
 		childNode.accept(dataModelVisitor);
 	}
 

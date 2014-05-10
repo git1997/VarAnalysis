@@ -38,19 +38,6 @@ public class SymbolicNode extends DataNode {
 		return parentNode;
 	}
 	
-	public String getSymbolicValue() {
-		return "__SYMBOLIC_" + this.hashCode() + "__";
-	}
-	
-	public static String getSymbolicValueRegularExpression() {
-		return "__SYMBOLIC_\\d+__";
-	}
-	
-	@Override
-	public String getApproximateStringValue() {
-		return this.getSymbolicValue();
-	}
-	
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
 		dataModelVisitor.visitSymbolicNode(this);

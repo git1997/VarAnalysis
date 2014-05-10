@@ -82,7 +82,7 @@ public class MyTreeNode {
 		}
 		else if (dataNode instanceof SelectNode) {
 			SelectNode selectNode = (SelectNode) dataNode;
-			return "Select(" + (selectNode.getConditionString() != null ? selectNode.getConditionString().getStringValue() : "") + ")";
+			return "Select(" + (selectNode.getConstraint() != null ? selectNode.getConstraint().toString() : "") + ")";
 		}
 		else if (dataNode instanceof RepeatNode) {
 			RepeatNode repeatNode = (RepeatNode) dataNode;

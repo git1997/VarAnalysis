@@ -59,7 +59,7 @@ public class ClassDeclarationNode extends StatementNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		env.putClass(this.getName(), new PhpClass(this));
+		env.putClass(this.getName(), this);
 		return null;
 	}
 

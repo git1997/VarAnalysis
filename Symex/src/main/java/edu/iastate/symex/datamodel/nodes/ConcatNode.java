@@ -13,10 +13,10 @@ public class ConcatNode extends DataNode {
 	private ArrayList<DataNode> childNodes = new ArrayList<DataNode>(); // childNodes must be compact (no child nodes of type ConcatNode)
 
 	/**
-	 * Package-level constructor, called from DataNodeFactory only.
+	 * Protected constructor, called from DataNodeFactory only.
 	 * @param childNodes childNodes must be compact (no child nodes of type ConcatNode)
 	 */
-	ConcatNode(ArrayList<DataNode> childNodes) {
+	protected ConcatNode(ArrayList<DataNode> childNodes) {
 		for (DataNode childNode : childNodes) {
 			if (checkAndUpdateDepth(childNode))
 				this.childNodes.add(childNode);
@@ -28,10 +28,13 @@ public class ConcatNode extends DataNode {
 	}
 	
 	@Override
-	public String getApproximateStringValue() {
+	public String getExactStringValueOrNull() {
 		StringBuilder string = new StringBuilder();
 		for (DataNode childNode : childNodes) {
-			string.append(childNode.getApproximateStringValue());
+			String childValue = childNode.getExactStringValueOrNull();
+			if (childValue == null)
+				return null;
+			string.append(childValue);
 		}
 		return string.toString();
 	}

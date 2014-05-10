@@ -19,8 +19,8 @@ import org.eclipse.php.internal.core.ast.nodes.UnaryOperation;
 import org.eclipse.php.internal.core.ast.nodes.VariableBase;
 
 import edu.iastate.symex.core.Env;
-import edu.iastate.symex.core.TraceTable;
 
+import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 
@@ -63,7 +63,7 @@ public abstract class ExpressionNode extends PhpNode {
 			case Expression.QUOTE:						return new QuoteNode((Quote) expression);
 			case Expression.SCALAR:						return new ScalarNode((Scalar) expression);
 			case Expression.UNARY_OPERATION:			return new UnaryOperationNode((UnaryOperation) expression);
-			default:									MyLogger.log(MyLevel.TODO, "Expression unimplemented: " + TraceTable.getSourceCodeOfPhpASTNode(expression)); return new UnresolvedExpressionNode(expression);
+			default:									MyLogger.log(MyLevel.TODO, "Expression unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(expression)); return new UnresolvedExpressionNode(expression);
 		}
 	}
 	

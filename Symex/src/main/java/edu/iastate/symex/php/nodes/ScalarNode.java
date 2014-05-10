@@ -7,6 +7,7 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.position.Position;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.AtomicPositionRange;
@@ -52,11 +53,11 @@ public class ScalarNode extends ExpressionNode {
 				scalarKind = 3;
 				break;
 			case Scalar.TYPE_STRING:
-				if (stringValue.startsWith("\""))								// [4] e.g. "abc"
+				if (getAstNode().getParent().getType() == ASTNode.QUOTE)		// [4] e.g. abc in "abc$x"
 					scalarKind = 4;
-				else if (stringValue.startsWith("'"))							// [5] e.g. 'abc'
+				else if (stringValue.startsWith("\""))							// [5] e.g. "abc"
 					scalarKind = 5;
-				else if (getAstNode().getParent().getType() == ASTNode.QUOTE)	// [6] e.g. abc in "abc$x"
+				else if (stringValue.startsWith("'"))							// [6] e.g. 'abc'
 					scalarKind = 6;
 				else															// [7] e.g. ABC
 					scalarKind = 7;			
@@ -73,21 +74,22 @@ public class ScalarNode extends ExpressionNode {
 			// If it is a predefined constants (e.g. WEBSITE_PATH, __FILE__)
 			case 7:
 			case 8:
-				return env.getPredefinedConstantValue(this);
+				DataNode constantValue = env.getPredefinedConstantValue(getSourceCode());
+				return constantValue != null ? constantValue : new SymbolicNode(this);
 			
 			// If it is surrounded by quotes/apostrophes
 			case 4:
-				String string1 = stringValue.substring(1, stringValue.length() - 1);
-				Position position1 = this.getPositionRange().getPositionAtRelativeOffset(1);
-				return generateLiteralNode(string1, position1, '\"');
-			case 5:
-				String string2 = stringValue.substring(1, stringValue.length() - 1);
-				Position position2 = this.getPositionRange().getPositionAtRelativeOffset(1);
-				return generateLiteralNode(string2, position2, '\'');
-			case 6:
 				String string3 = stringValue;
 				Position position3 = this.getPositionRange().getPositionAtRelativeOffset(0);
 				return generateLiteralNode(string3, position3, '\"');
+			case 5:
+				String string1 = stringValue.substring(1, stringValue.length() - 1);
+				Position position1 = this.getPositionRange().getPositionAtRelativeOffset(1);
+				return generateLiteralNode(string1, position1, '\"');
+			case 6:
+				String string2 = stringValue.substring(1, stringValue.length() - 1);
+				Position position2 = this.getPositionRange().getPositionAtRelativeOffset(1);
+				return generateLiteralNode(string2, position2, '\'');
 			
 			// Other cases
 			default:

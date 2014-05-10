@@ -48,7 +48,7 @@ public class ArrayAccessNode extends VariableBaseNode {
 		if (name instanceof VariableNode && index != null) {
 			String arrayName = ((VariableNode) name).getResolvedVariableNameOrNull(env);
 			String key = index.getResolvedNameOrNull(env);
-			PhpVariable phpVariable = env.getVariableFromFunctionScope(arrayName);
+			PhpVariable phpVariable = env.readVariable(arrayName);
 			
 			if (phpVariable != null && phpVariable.getDataNode() instanceof ArrayNode) {
 				ArrayNode arrayNode = (ArrayNode) phpVariable.getDataNode();
@@ -77,8 +77,11 @@ public class ArrayAccessNode extends VariableBaseNode {
 		
 		if (name instanceof VariableNode && index != null) {
 			String arrayName = ((VariableNode) name).getResolvedVariableNameOrNull(env);
-			String key = index.execute(env).getApproximateStringValue();			
-			return new PhpArrayElement(arrayName, key);			
+			String key = index.execute(env).getExactStringValueOrNull();
+			if (arrayName != null && key != null)
+				return new PhpArrayElement(arrayName, key);
+			else
+				return null;
 		}
 		else
 			return null;

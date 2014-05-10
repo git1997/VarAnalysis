@@ -58,60 +58,7 @@ public class RunFile {
 	}
 	
 	public static String valueToIfdefString(DataNode dataNode, boolean withLocationInfo) {
-		if (dataNode instanceof ArrayNode) {
-			return "[Array]";
-		}
-		
-		else if (dataNode instanceof ObjectNode) {
-			return "[Object]";
-		}
-		
-		else if (dataNode instanceof ConcatNode) {
-	    	StringBuilder str = new StringBuilder();
-	    	for (DataNode child : ((ConcatNode) dataNode).getChildNodes()) {
-	    		String childValue = valueToIfdefString(child, withLocationInfo);
-    			str.append(childValue);
-    		}
-    		return str.toString();
-		}
-		
-		else if (dataNode instanceof LiteralNode) {
-			String stringValue = ((LiteralNode) dataNode).getStringValue();
-			PositionRange positionRange = ((LiteralNode) dataNode).getPositionRange();
-			String locationInfo = "[Unresolved Location]";
-			if (positionRange instanceof AtomicPositionRange) {
-				AtomicPositionRange p = (AtomicPositionRange) positionRange;
-				locationInfo = " (Location: " + p.getFile().getPath() + " @ Line " + FileIO.getLineFromOffsetInFile(p.getFile(), p.getOffset()) + ") ";
-			}
-
-			return stringValue + (withLocationInfo ? locationInfo : "");
-		}
-		
-		else if (dataNode instanceof RepeatNode) {
-			return "[RepeatBegin]\n" + valueToIfdefString(((RepeatNode) dataNode).getChildNode(), withLocationInfo) + "\n[RepeatEnd]"; 
-		}
-		
-		else if (dataNode instanceof SelectNode) {
-			String constraint = ((SelectNode) dataNode).getConditionString() != null ? ((SelectNode) dataNode).getConditionString().getStringValue() : "[Unresolved Constraint]";
-			
-			String trueBranch = valueToIfdefString(((SelectNode) dataNode).getNodeInTrueBranch(), withLocationInfo);
-			String falseBranch = valueToIfdefString(((SelectNode) dataNode).getNodeInFalseBranch(), withLocationInfo);
-		
-			String retString = "\n#if (" + constraint + ")\n"
-					+ trueBranch + "\n"
-					+ "#else" + "\n"
-					+ falseBranch + "\n"
-					+ "#endif" + "\n";
-			
-			return retString;
-		}
-		
-		else if (dataNode instanceof SymbolicNode) {
-			//return "[Symbolic:" + ((SymbolicNode) dataNode).getPhpNode().getStringValue() + "]";
-			return "[SYM]";
-		}
-		
-	    return ""; // Should not reach here
+			return "";
     }
 
 }

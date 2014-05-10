@@ -5,8 +5,8 @@ import java.io.File;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 
 import edu.iastate.symex.position.AtomicPositionRange;
+import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.core.Env;
-import edu.iastate.symex.core.TraceTable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 
 /**
@@ -27,11 +27,11 @@ public abstract class PhpNode {
 	 * @param astNode
 	 */
 	public PhpNode(ASTNode astNode) {
-		File file = TraceTable.getCurrentSourceFileRelativePathOfPhpASTNode(astNode);	
+		File file = ASTHelper.inst.getSourceFileOfPhpASTNode(astNode);	
 		
 		this.astNode = astNode;
 		this.positionRange = new AtomicPositionRange(file, astNode.getStart(), astNode.getEnd() - astNode.getStart());
-		this.sourceCode = TraceTable.getSourceCodeOfPhpASTNode(astNode);
+		this.sourceCode = ASTHelper.inst.getSourceCodeOfPhpASTNode(astNode);
 	}
 	
 	/**

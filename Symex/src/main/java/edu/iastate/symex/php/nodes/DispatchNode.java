@@ -4,8 +4,8 @@ import org.eclipse.php.internal.core.ast.nodes.Dispatch;
 import org.eclipse.php.internal.core.ast.nodes.FieldAccess;
 import org.eclipse.php.internal.core.ast.nodes.MethodInvocation;
 
-import edu.iastate.symex.core.TraceTable;
 
+import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 
@@ -31,7 +31,7 @@ public abstract class DispatchNode extends VariableBaseNode {
 		switch (dispatch.getType()) {
 			case Dispatch.FIELD_ACCESS: 		return new FieldAccessNode((FieldAccess) dispatch);
 			case Dispatch.METHOD_INVOCATION:	return new MethodInvocationNode((MethodInvocation) dispatch);
-			default:							MyLogger.log(MyLevel.TODO, "Dispatch AST node type unimplemented: " + TraceTable.getSourceCodeOfPhpASTNode(dispatch)); return new UnresolvedDispatchNode(dispatch);
+			default:							MyLogger.log(MyLevel.TODO, "Dispatch AST node type unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(dispatch)); return new UnresolvedDispatchNode(dispatch);
 		}
 	}
 

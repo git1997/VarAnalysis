@@ -15,14 +15,11 @@ public class PhpExecuter {
 	
 	/**
 	 * Executes PHP code and returns a data model describing its output.
-	 * @param file The file to be execute
+	 * @param file The file to be executed
 	 * @param workingDirectory Optional
 	 */
 	public DataModel execute(File file, File workingDirectory) {
-		Env.resetStaticFields(); // TODO: [Optional] Reset the static fields of env to prevent caching (e.g. some server code content has changed)
-		TraceTable.resetStaticFields(); // Reset the static fields of TraceTable
-		
-		Env env = new Env();
+		GlobalEnv env = new GlobalEnv();
 		env.setWorkingDirectory(workingDirectory);
 		
 		FileNode fileNode = new FileNode(file);

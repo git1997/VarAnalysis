@@ -4,6 +4,7 @@ DataNode
 	LiteralNode
 	ObjectNode		
 	RepeatNode		
-	SelectNode		
+	SelectNode	
+	SpecialNode		x	
 	SymbolicNode
 DataNodeFactory		x

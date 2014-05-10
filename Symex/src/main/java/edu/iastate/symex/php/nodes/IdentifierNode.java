@@ -14,7 +14,7 @@ import edu.iastate.symex.datamodel.nodes.DataNode;
  */
 public class IdentifierNode extends ExpressionNode {
 	
-	private String name;		// The name of the identifier.
+	private String name;	// The name of the identifier
 	
 	/*
 	Holds an identifier.
@@ -35,7 +35,7 @@ public class IdentifierNode extends ExpressionNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		MyLogger.log(MyLevel.USER_EXCEPTION, "In IdentifierNode.java: IdentiferNode + " + this.name + " should not get executed.");
+		MyLogger.log(MyLevel.USER_EXCEPTION, "In IdentifierNode.java: IdentiferNode + " + this.getSourceCode() + " should not get executed.");
 		return null;
 	}
 	

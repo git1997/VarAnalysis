@@ -1,31 +1,13 @@
 package edu.iastate.symex.datamodel.nodes;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-
-import org.eclipse.php.internal.core.ast.nodes.ASTNode;
-import org.eclipse.php.internal.core.ast.nodes.SwitchCase;
-import org.eclipse.php.internal.core.ast.nodes.SwitchStatement;
-
-import edu.iastate.symex.php.nodes.IdentifierNode;
-import edu.iastate.symex.php.nodes.InLineHtmlNode;
 import edu.iastate.symex.php.nodes.PhpNode;
-import edu.iastate.symex.php.nodes.ScalarNode;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.ScatteredPositionRange;
-import edu.iastate.symex.position.AtomicPositionRange;
 import edu.iastate.symex.position.UndefinedPositionRange;
-import edu.iastate.symex.util.StringUtils;
-import edu.iastate.symex.util.logging.MyLevel;
-import edu.iastate.symex.util.logging.MyLogger;
-import edu.iastate.symex.util.sourcetracing.Location;
-import edu.iastate.symex.util.sourcetracing.ScatteredLocation;
-import edu.iastate.symex.util.sourcetracing.SourceCodeLocation;
-import edu.iastate.symex.util.sourcetracing.UndefinedLocation;
 import edu.iastate.symex.config.SymexConfig;
-import edu.iastate.symex.core.TraceTable;
+import edu.iastate.symex.constraints.Constraint;
 
 /**
  * 
@@ -33,12 +15,6 @@ import edu.iastate.symex.core.TraceTable;
  *
  */
 public class DataNodeFactory {
-	
-	/*
-	 * Special objects to indicate the returned values of statements.
-	 */
-	public static SymbolicNode RETURN = new SymbolicNode();
-	public static SymbolicNode BREAK = new SymbolicNode();
 	
 	/**
 	 * Creates a (compact) ConcatNode from childNodes
@@ -102,10 +78,10 @@ public class DataNodeFactory {
 	/**
 	 * Creates a (compact) SelectNode
 	 */
-	public static DataNode createCompactSelectNode(LiteralNode conditionString, DataNode nodeInTrueBranch, DataNode nodeInFalseBranch) {
+	public static DataNode createCompactSelectNode(Constraint constraint, DataNode nodeInTrueBranch, DataNode nodeInFalseBranch) {
 		// Attempt to compact the SelectNode if the branches are Concat/LiteralNodes
 		if (!((nodeInTrueBranch instanceof ConcatNode || nodeInTrueBranch instanceof LiteralNode) && (nodeInFalseBranch instanceof ConcatNode || nodeInFalseBranch instanceof LiteralNode)))
-			return new SelectNode(conditionString, nodeInTrueBranch, nodeInFalseBranch);
+			return new SelectNode(constraint, nodeInTrueBranch, nodeInFalseBranch);
 
 		// Get the nodes in the two branches (turn ConcatNode into a list of DataNodes)
 		ArrayList<DataNode> nodesInTrueBranch = new ArrayList<DataNode>();
@@ -137,7 +113,7 @@ public class DataNodeFactory {
 
 		// Only attempt compacting if the branches share some common nodes
 		if (commonNodesBefore == 0 && commonNodesAfter == 0)
-			return new SelectNode(conditionString, nodeInTrueBranch, nodeInFalseBranch);
+			return new SelectNode(constraint, nodeInTrueBranch, nodeInFalseBranch);
 
 		// Extract the common nodes on the left hand side
 		ArrayList<DataNode> childNodesOfConcat = new ArrayList<DataNode>();
@@ -170,7 +146,7 @@ public class DataNodeFactory {
 		}
 
 		if (diffNodesInTrueBranch != null || diffNodesInFalseBranch != null) {
-			DataNode middleNode = createCompactSelectNode(conditionString, diffNodesInTrueBranch, diffNodesInFalseBranch);
+			DataNode middleNode = createCompactSelectNode(constraint, diffNodesInTrueBranch, diffNodesInFalseBranch);
 			childNodesOfConcat.add(middleNode);
 		}
 

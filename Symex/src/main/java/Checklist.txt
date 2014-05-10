@@ -1,5 +1,6 @@
 OK			config
-PENDING		core
+OK			constraints
+OK			core
 OK			datamodel 
 PENDING		datamodel.nodes
 OK			errormodel

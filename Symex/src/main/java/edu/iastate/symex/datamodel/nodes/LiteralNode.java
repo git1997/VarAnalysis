@@ -37,11 +37,6 @@ public class LiteralNode extends DataNode {
 	}
 	
 	@Override
-	public String getApproximateStringValue() {
-		return stringValue;
-	}
-	
-	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
 		dataModelVisitor.visitLiteralNode(this);
 	}

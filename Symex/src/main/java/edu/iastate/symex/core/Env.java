@@ -4,253 +4,171 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Stack;
-
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
+import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.RepeatNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.datamodel.nodes.SymbolicNode;
-import edu.iastate.symex.php.elements.PhpClass;
-import edu.iastate.symex.php.elements.PhpFile;
-import edu.iastate.symex.php.elements.PhpFunction;
 import edu.iastate.symex.php.elements.PhpVariable;
+import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.ExpressionNode;
+import edu.iastate.symex.php.nodes.FileNode;
 import edu.iastate.symex.php.nodes.FormalParameterNode;
-import edu.iastate.symex.php.nodes.ScalarNode;
+import edu.iastate.symex.php.nodes.FunctionDeclarationNode;
 import edu.iastate.symex.php.nodes.VariableNode;
-import edu.iastate.symex.util.StringUtils;
 
 /**
- * 
+ * Env contains information during run time about variables, classes, methods, etc.
  * @author HUNG
  * 
  */
-public class Env {
+public abstract class Env {
 
-	/*
-	 * Manage the scopes of elements
-	 */
-	public enum ScopeType {
-		PROGRAM, FUNCTION, BRANCH
-	}
-
-	private ScopeType scopeType; // The scope type of the current env
-	private Env outerScopeenv; // Manages the elements in
-														// the outer scope
+	protected Env outerScopeEnv; 	// The Env in the outer scope, can be null if it is already the outermost Env (GlobalEnv)
 
 	/*
 	 * Manage the variables in the current scope
 	 */
 	private HashMap<String, PhpVariable> variableTable = new HashMap<String, PhpVariable>();
-	private static String SPECIAL_VARIABLE_OUTPUT = "[OUTPUT]"; // Used
-																// throughout
-																// the execution
-	private static String SPECIAL_VARIABLE_FINAL_OUTPUT = "[FINAL_OUTPUT]"; // Used
-																			// in
-																			// PROGRAM
-																			// scope
-																			// only
-	private static String SPECIAL_VARIABLE_RETURN = "[RETURN]"; // Used in
-																// PROGRAM/FUNCTION
-																// scope only
+	private static String SPECIAL_VARIABLE_OUTPUT = "[OUTPUT]"; // Used throughout the execution (GLOBAL/FUNCTION/BRANCH scopes)
+	private static String SPECIAL_VARIABLE_FINAL_OUTPUT = "[FINAL_OUTPUT]"; // Used in GLOBAL scope only
+	private static String SPECIAL_VARIABLE_RETURN = "[RETURN]"; // Used in GLOBAL/FUNCTION scopes only
 
 	/*
-	 * Manage global variables
+	 * Manage global variables in the current scope
+	 * (Variables that are declared with the global keyword)
 	 */
-	private HashSet<String> globalVariableNames = new HashSet<String>(); // Used
-																			// in
-																			// PROGRAM/FUNCTION
-																			// scope
-																			// only
-
-	/*
-	 * Manage the declarations of functions, classes, and files, so that they
-	 * only need to be parsed once.
-	 */
-	private static File workingDirectory = new File(".");
-	private static HashMap<String, PhpFunction> functionTable = new HashMap<String, PhpFunction>();
-	private static HashMap<String, PhpClass> classTable = new HashMap<String, PhpClass>();
-	private static HashMap<File, PhpFile> fileTable = new HashMap<File, PhpFile>();
-
-	/*
-	 * These fields are used to prevent recursive function/program invocation
-	 */
-	private Stack<String> functionStack = new Stack<String>(); // Used in
-																// PROGRAM scope
-																// only
-	private Stack<File> fileStack = new Stack<File>(); // Used in PROGRAM scope
-														// only
-	private HashSet<File> invokedFiles = new HashSet<File>(); // Used in PROGRAM
-																// scope only
+	private HashSet<String> globalVariables = new HashSet<String>(); 
 
 	/*
 	 * These fields are used to handle return/exit statements.
 	 */
-	private LiteralNode conditionString = null;
-	private boolean isTrueBranch = true;
 	private boolean hasReturnStatement = false;
 	private boolean hasExitStatement = false;
 
 	/**
-	 * Resets the static fields every time the main program is executed to save
-	 * memory space and prevent caching.
+	 * Constuctor
+	 * @param outerScopeEnv
 	 */
-	public static void resetStaticFields() {
-		functionTable = new HashMap<String, PhpFunction>();
-		classTable = new HashMap<String, PhpClass>();
-		fileTable = new HashMap<File, PhpFile>();
+	public Env(Env outerScopeEnv) {
+		this.outerScopeEnv = outerScopeEnv;
 	}
-
-	/**
-	 * Constructor PROGRAM scope.
-	 */
-	public Env() {
-		this.scopeType = ScopeType.PROGRAM;
-		this.outerScopeenv = null;
-	}
-
-	/**
-	 * Constructor FUNCTION scope
-	 */
-	public Env(Env outerScopeenv,
-			String functionName) {
-		this.scopeType = ScopeType.FUNCTION;
-		this.outerScopeenv = outerScopeenv;
-	}
-
-	/**
-	 * Constructor BRANCH scope
-	 */
-	public Env(Env outerScopeenv,
-			LiteralNode conditionString, boolean isTrueBranch) {
-		this.scopeType = ScopeType.BRANCH;
-		this.outerScopeenv = outerScopeenv;
-
-		this.conditionString = conditionString;
-		this.isTrueBranch = isTrueBranch;
-	}
-
+	
 	/*
 	 * Get the env from different scopes
 	 */
 
 	/**
-	 * Returns the env that contains this env and has a
-	 * PROGRAM/FUNCTION scope, or returns itself if it already has a
-	 * PROGRAM/FUNCTION scope.
+	 * Returns the global Env.
 	 */
-	public Env getFunctionScopeenv() {
-		if (scopeType == ScopeType.PROGRAM || scopeType == ScopeType.FUNCTION)
-			return this;
+	public GlobalEnv getGlobalEnv() {
+		if (this instanceof GlobalEnv)
+			return (GlobalEnv) this;
 		else
-			return outerScopeenv.getFunctionScopeenv();
+			return outerScopeEnv.getGlobalEnv();
 	}
-
+	
 	/**
-	 * Returns the outermost env (the env of the program).
+	 * Returns the global or function env that contains this env.
 	 */
-	public Env getProgramScopeenv() {
-		if (scopeType == ScopeType.PROGRAM)
+	public Env getGlobalOrFunctionEnv() {
+		if (this instanceof GlobalEnv || this instanceof FunctionEnv)
 			return this;
 		else
-			return outerScopeenv.getProgramScopeenv();
+			return outerScopeEnv.getGlobalOrFunctionEnv();
 	}
 
 	/*
-	 * Manage VARIABLES. Typically, a write access will be done on the current
-	 * scope's element manager, whereas a read access will be done on a function
-	 * scope element manager.
+	 * Manage VARIABLES.
+	 * Typically, a write access will be done on the current scope's env,
+	 * whereas a read access will be done on a global/function scope's env.
 	 */
+	
+	/**
+	 * Writes a variable
+	 * @param phpVariable
+	 */
+	public void writeVariable(PhpVariable phpVariable) {
+		putVariableInCurrentScope(phpVariable);
+	}
+	
+	/**
+	 * Reads a variable from its name
+	 * @param name
+	 */
+	public PhpVariable readVariable(String name) {
+		return getVariableFromGlobalOrFunctionScope(name); 
+	}
 
 	/**
 	 * Puts a variable in the CURRENT scope
-	 * 
-	 * @param variableName
-	 * @param phpElement
+	 * @param phpVariable
 	 */
-	public void putVariableInCurrentScope(PhpVariable phpVariable) {
+	protected void putVariableInCurrentScope(PhpVariable phpVariable) {
 		variableTable.put(phpVariable.getName(), phpVariable);
 	}
 
 	/**
 	 * Gets a variable from the CURRENT scope
-	 * 
 	 * @param variableName
-	 * @return
 	 */
-	private PhpVariable getVariableFromCurrentScope(String variableName) {
+	protected PhpVariable getVariableFromCurrentScope(String variableName) {
 		return variableTable.get(variableName);
 	}
 
 	/**
-	 * Gets a variable from a FUNCTION scope (used for non-global variables)
-	 * 
+	 * Gets a variable from the first enclosing Env that has GLOBAL/FUNCTION scope
 	 * @param variableName
-	 * @return
 	 */
-	public PhpVariable getVariableFromFunctionScope(String variableName) {
-		PhpVariable phpVariable = this
-				.getVariableFromCurrentScope(variableName);
+	protected PhpVariable getVariableFromGlobalOrFunctionScope(String variableName) {
+		PhpVariable phpVariable = getVariableFromCurrentScope(variableName);
 		if (phpVariable != null)
 			return phpVariable;
-		else if (scopeType == ScopeType.PROGRAM
-				|| scopeType == ScopeType.FUNCTION)
+		else if (this instanceof GlobalEnv || this instanceof FunctionEnv)
 			return null;
 		else
-			return outerScopeenv
-					.getVariableFromFunctionScope(variableName);
+			return outerScopeEnv.getVariableFromGlobalOrFunctionScope(variableName);
 	}
 
 	/**
-	 * Gets a variable from the PROGRAM scope (used for global variables)
-	 * 
+	 * Gets a variable from the first enclosing Env that has GLOBAL scope
 	 * @param variableName
-	 * @return
 	 */
-	private PhpVariable getVariableFromProgramScope(String variableName) {
-		PhpVariable phpVariable = this
-				.getVariableFromCurrentScope(variableName);
+	protected PhpVariable getVariableFromGlobalScope(String variableName) {
+		PhpVariable phpVariable = getVariableFromCurrentScope(variableName);
 		if (phpVariable != null)
 			return phpVariable;
-		else if (scopeType == ScopeType.PROGRAM)
+		else if (this instanceof GlobalEnv)
 			return null;
 		else
-			return outerScopeenv
-					.getVariableFromProgramScope(variableName);
+			return outerScopeEnv.getVariableFromGlobalScope(variableName);
 	}
 
-	/*
-	 * Manage GLOBAL VARIABLES
-	 */
-
 	/**
-	 * Adds a global variable.
+	 * Adds a global variable in the current Env
 	 */
-	public void addGlobalVariable(VariableNode globalVariableNode) {
-		String globalVariableName = globalVariableNode
-				.getResolvedVariableNameOrNull(this);
-		PhpVariable globalVariable = new PhpVariable(globalVariableName);
-		PhpVariable referredGlobalVariable = this
-				.getVariableFromProgramScope(globalVariableName);
+	public void addGlobalVariable(String variableName) {
+		globalVariables.add(variableName);
+		
+		PhpVariable globalVariable = new PhpVariable(variableName);
+		PhpVariable referredGlobalVariable = readVariable(variableName);
 		if (referredGlobalVariable != null)
 			globalVariable.setDataNode(referredGlobalVariable.getDataNode());
 		else
-			globalVariable.setDataNode(new SymbolicNode(globalVariableNode));
-		this.putVariableInCurrentScope(globalVariable);
-		this.getFunctionScopeenv().globalVariableNames
-				.add(globalVariableName);
+			globalVariable.setDataNode(new SymbolicNode());
+		writeVariable(globalVariable);
 	}
-
+	
 	/**
-	 * Returns all global variables in the function
+	 * Gets the set of global variables in the current Env
 	 */
-	public HashSet<String> getGlobalVariableNames() {
-		return new HashSet<String>(
-				this.getFunctionScopeenv().globalVariableNames);
+	public HashSet<String> getGlobalVariables() {
+		return new HashSet<String>(globalVariables);
 	}
 
 	/*
@@ -258,208 +176,185 @@ public class Env {
 	 */
 
 	/**
-	 * Sets the value of a predefined constant.
+	 * Sets the value of a predefined constant in the Global Env.
 	 */
-	public void setPredefinedConstantValue(String constantName,
-			DataNode constantValue) {
+	public void setPredefinedConstantValue(String constantName,	DataNode constantValue) {
 		PhpVariable phpConstant = new PhpVariable(constantName);
 		phpConstant.setDataNode(constantValue);
-		this.getProgramScopeenv().putVariableInCurrentScope(
-				phpConstant);
+		getGlobalEnv().putVariableInCurrentScope(phpConstant);
 	}
 
 	/**
-	 * Returns the value of a predefined constant.
+	 * Returns the value of a predefined constant from the Global Env, or null if not found.
 	 */
-	public DataNode getPredefinedConstantValue(ScalarNode scalarNode) {
-		String constantName = scalarNode.getSourceCode();
-		PhpVariable phpConstant = this.getProgramScopeenv()
-				.getVariableFromCurrentScope(constantName);
+	public DataNode getPredefinedConstantValue(String constantName) {
+		PhpVariable phpConstant = getGlobalEnv().getVariableFromCurrentScope(constantName);
 
 		/* Get the value if it has been defined */
 		if (phpConstant != null)
 			return phpConstant.getDataNode();
 
-		/* Handle PHP keywords */
+		/* Handle PHP keywords */ 
 		else if (constantName.toUpperCase().equals("TRUE"))
-			return DataNodeFactory.createLiteralNode("TRUE");
+			return SpecialNode.BooleanNode.TRUE;
 		else if (constantName.toUpperCase().equals("FALSE"))
-			return DataNodeFactory.createLiteralNode("FALSE");
+			return SpecialNode.BooleanNode.FALSE;
 		else if (constantName.toUpperCase().equals("NULL"))
 			return DataNodeFactory.createLiteralNode("");
 
 		/* Handle PHP system constants */
 		else if (constantName.toUpperCase().equals("__FILE__"))
-			return DataNodeFactory.createLiteralNode(getWorkingDirectory()
-					+ StringUtils.getFileSystemSlash() + peekFileFromStack());
+			return DataNodeFactory.createLiteralNode(peekFileFromStack().getAbsolutePath());
 
-		/* Else, return a symbolic value */
+		/* Else, return null */
 		else
-			return new SymbolicNode(scalarNode);
-	}
-
+			return null;
+	}	
+	
 	/*
 	 * Manage FUNCTIONS, CLASSES, and FILES.
 	 */
 
-	public void setWorkingDirectory(File projectFolder_) {
-		workingDirectory = projectFolder_;
+	public void putFunction(String functionName, FunctionDeclarationNode phpFunction) {
+		getGlobalEnv().putFunction_(functionName, phpFunction);
 	}
 
-	public File getWorkingDirectory() {
-		return workingDirectory;
+	public FunctionDeclarationNode getFunction(String functionName) {
+		return getGlobalEnv().getFunction_(functionName);
 	}
 
-	public void putFunction(String functionName, PhpFunction phpFunction) {
-		Env.functionTable.put(functionName, phpFunction);
+	public void putClass(String className, ClassDeclarationNode phpClass) {
+		getGlobalEnv().putClass_(className, phpClass);
 	}
 
-	public PhpFunction getFunction(String functionName) {
-		return Env.functionTable.get(functionName);
+	public ClassDeclarationNode getClass(String className) {
+		return getGlobalEnv().getClass_(className);
 	}
 
-	public void putClass(String className, PhpClass phpClass) {
-		Env.classTable.put(className, phpClass);
+	public void putFile(File file, FileNode phpFile) {
+		getGlobalEnv().putFile_(file, phpFile);
 	}
 
-	public PhpClass getClass(String className) {
-		return Env.classTable.get(className);
+	public FileNode getFile(File file) {
+		return getGlobalEnv().getFile_(file);
 	}
-
-	public void putFile(File fileName, PhpFile phpFile) {
-		Env.fileTable.put(fileName, phpFile);
-	}
-
-	public PhpFile getFile(File fileName) {
-		return Env.fileTable.get(fileName);
-	}
-
+	
 	/*
 	 * Manage invoked functions and included files
 	 */
 
 	public void pushFunctionToStack(String functionName) {
-		this.getProgramScopeenv().functionStack.push(functionName);
+		getGlobalEnv().pushFunctionToStack_(functionName);
 	}
 
 	public String peekFunctionFromStack() {
-		return this.getProgramScopeenv().functionStack.peek();
+		return getGlobalEnv().peekFunctionFromStack_();
 	}
 
-	public void popFunctionFromStack() {
-		this.getProgramScopeenv().functionStack.pop();
+	public String popFunctionFromStack() {
+		return getGlobalEnv().popFunctionFromStack_();
 	}
 
 	public boolean containsFunctionInStack(String functionName) {
-		return this.getProgramScopeenv().functionStack
-				.contains(functionName);
+		return getGlobalEnv().containsFunctionInStack_(functionName);
 	}
 
 	public ArrayList<String> getFunctionStack() {
-		return new ArrayList<String>(
-				this.getProgramScopeenv().functionStack);
+		return new ArrayList<String>(getGlobalEnv().getFunctionStack_());
 	}
-
-	public void pushFileToStack(File fileName) {
-		this.getProgramScopeenv().fileStack.push(fileName);
-		addInvokedFiles(fileName);
+	
+	public void pushFileToStack(File file) {
+		getGlobalEnv().pushFileToStack_(file);
 	}
 
 	public File peekFileFromStack() {
-		return this.getProgramScopeenv().fileStack.peek();
+		return getGlobalEnv().peekFileFromStack_();
 	}
 
-	public void popFileFromStack() {
-		this.getProgramScopeenv().fileStack.pop();
+	public File popFileFromStack() {
+		return getGlobalEnv().popFileFromStack_();
 	}
 
-	public boolean containsFileInStack(File fileName) {
-		return this.getProgramScopeenv().fileStack
-				.contains(fileName);
+	public boolean containsFileInStack(File file) {
+		return getGlobalEnv().containsFileInStack_(file);
 	}
 
 	public ArrayList<File> getFileStack() {
-		return new ArrayList<File>(
-				this.getProgramScopeenv().fileStack);
+		return getGlobalEnv().getFileStack_();
 	}
-
-	public void addInvokedFiles(File fileName) {
-		this.getProgramScopeenv().invokedFiles.add(fileName);
-	}
-
+	
 	public HashSet<File> getInvokedFiles() {
-		return new HashSet<File>(
-				this.getProgramScopeenv().invokedFiles);
+		return new HashSet<File>(getGlobalEnv().getInvokedFiles_());
 	}
 
 	/*
 	 * Manage constraints
 	 */
-
+	
 	/**
-	 * Returns the set of constraints for the current scope.
+	 * Returns the conjuncted constraints of the current scope and its enclosing scopes.
 	 */
-	public ArrayList<Constraint> getConstraints() {
-		ArrayList<Constraint> constraints = new ArrayList<Constraint>();
-
-		if (scopeType == ScopeType.BRANCH) {
-			constraints.add(new Constraint(conditionString, isTrueBranch));
-			constraints.addAll(outerScopeenv.getConstraints());
+	public Constraint getConjunctedConstraint() {
+		if (this instanceof BranchEnv) {
+			Constraint outerConstraint = outerScopeEnv.getConjunctedConstraint();
+			Constraint thisConstraint = ((BranchEnv) this).getConstraint();
+			return ConstraintFactory.createAndConstraint(outerConstraint, thisConstraint);
 		}
-
-		return constraints;
+		else if (outerScopeEnv != null)
+			return outerScopeEnv.getConjunctedConstraint();
+		else
+			return Constraint.TRUE;
+	}
+	
+	/**
+	 * Returns the conjuncted constraints of the current scope and its enclosing scopes
+	 * up to its first enclosing Function/Global scope.
+	 */
+	public Constraint getConjunctedConstraintUpToGlobalOrFunctionScope() {
+		if (this instanceof BranchEnv) {
+			Constraint outerConstraint = outerScopeEnv.getConjunctedConstraintUpToGlobalOrFunctionScope();
+			Constraint thisConstraint = ((BranchEnv) this).getConstraint();
+			return ConstraintFactory.createAndConstraint(outerConstraint, thisConstraint);
+		}
+		else
+			return Constraint.TRUE;
 	}
 
 	/*
-	 * Update env when executing the program.
+	 * Update Env when executing the program.
 	 */
 
 	/**
 	 * Updates the env after executing some branches.
 	 */
-	public void updateWithBranches(LiteralNode conditionString,
-			Env trueBranchenv,
-			Env falseBranchenv) {
+	public void updateWithBranches(Constraint constraint, Env trueBranchEnv, Env falseBranchEnv) {
 		// If a branch has a return/exit statement, update the variables in the
 		// current scope with the other branch
-		boolean trueBranchTerminated = (trueBranchenv != null && (trueBranchenv
-				.hasReturnStatement() || trueBranchenv
-				.hasExitStatement()));
-		boolean falseBranchTerminated = (falseBranchenv != null && (falseBranchenv
-				.hasReturnStatement() || falseBranchenv
-				.hasExitStatement()));
+		boolean trueBranchTerminated = (trueBranchEnv != null && (trueBranchEnv.hasReturnStatement() || trueBranchEnv.hasExitStatement()));
+		boolean falseBranchTerminated = (falseBranchEnv != null && (falseBranchEnv.hasReturnStatement() || falseBranchEnv.hasExitStatement()));
 
 		if (trueBranchTerminated || falseBranchTerminated) {
-			if (trueBranchTerminated && !falseBranchTerminated
-					&& falseBranchenv != null)
-				this.updateVariableTable(falseBranchenv);
-			else if (!trueBranchTerminated && falseBranchTerminated
-					&& trueBranchenv != null)
-				this.updateVariableTable(trueBranchenv);
+			if (trueBranchTerminated && !falseBranchTerminated && falseBranchEnv != null)
+				this.updateVariableTableWithOneBranch(falseBranchEnv);
+			else if (!trueBranchTerminated && falseBranchTerminated && trueBranchEnv != null)
+				this.updateVariableTableWithOneBranch(trueBranchEnv);
 			return;
 		}
 
 		// Else, update the variables in the current scope considering their
 		// values in both branches.
-		HashSet<String> variableNamesInTrueBranch = (trueBranchenv != null ? trueBranchenv
-				.getRegularVariableNames() : new HashSet<String>());
-		HashSet<String> variableNamesInFalseBranch = (falseBranchenv != null ? falseBranchenv
-				.getRegularVariableNames() : new HashSet<String>());
-		HashSet<String> variableNamesInEitherBranch = new HashSet<String>(
-				variableNamesInTrueBranch);
+		HashSet<String> variableNamesInTrueBranch = (trueBranchEnv != null ? trueBranchEnv.getRegularVariableNames() : new HashSet<String>());
+		HashSet<String> variableNamesInFalseBranch = (falseBranchEnv != null ? falseBranchEnv.getRegularVariableNames() : new HashSet<String>());
+		HashSet<String> variableNamesInEitherBranch = new HashSet<String>(variableNamesInTrueBranch);
 		variableNamesInEitherBranch.addAll(variableNamesInFalseBranch);
 
 		for (String variableName : variableNamesInEitherBranch) {
-			PhpVariable variableInTrueBranch = (trueBranchenv != null ? trueBranchenv
-					.getVariableFromFunctionScope(variableName) : this
-					.getVariableFromFunctionScope(variableName));
-			PhpVariable variableInFalseBranch = (falseBranchenv != null ? falseBranchenv
-					.getVariableFromFunctionScope(variableName) : this
-					.getVariableFromFunctionScope(variableName));
+			PhpVariable variableInTrueBranch = (trueBranchEnv != null ? trueBranchEnv.getVariableFromGlobalOrFunctionScope(variableName) : this.getVariableFromGlobalOrFunctionScope(variableName));
+			PhpVariable variableInFalseBranch = (falseBranchEnv != null ? falseBranchEnv.getVariableFromGlobalOrFunctionScope(variableName) : this.getVariableFromGlobalOrFunctionScope(variableName));
 
 			DataNode dataNodeInTrueBranch = (variableInTrueBranch != null ? variableInTrueBranch.getDataNode() : null);
 			DataNode dataNodeInFalseBranch = (variableInFalseBranch != null ? variableInFalseBranch.getDataNode() : null);
-			DataNode compactSelectNode = DataNodeFactory.createCompactSelectNode(conditionString, dataNodeInTrueBranch, dataNodeInFalseBranch);
+			DataNode compactSelectNode = DataNodeFactory.createCompactSelectNode(constraint, dataNodeInTrueBranch, dataNodeInFalseBranch);
 
 			PhpVariable phpVariable = new PhpVariable(variableName);
 			phpVariable.setDataNode(compactSelectNode);
@@ -468,20 +363,16 @@ public class Env {
 
 		// Also, update the output in the current scope considering its values
 		// in both branches.
-		if (trueBranchenv != null
-				&& trueBranchenv.containsSpecialVariableOutput()
-				|| falseBranchenv != null
-				&& falseBranchenv.containsSpecialVariableOutput()) {
-			PhpVariable variableInTrueBranch = (trueBranchenv != null ? trueBranchenv
-					.getVariableFromProgramScope(SPECIAL_VARIABLE_OUTPUT)
-					: this.getVariableFromProgramScope(SPECIAL_VARIABLE_OUTPUT));
-			PhpVariable variableInFalseBranch = (falseBranchenv != null ? falseBranchenv
-					.getVariableFromProgramScope(SPECIAL_VARIABLE_OUTPUT)
-					: this.getVariableFromProgramScope(SPECIAL_VARIABLE_OUTPUT));
+		if (trueBranchEnv != null && trueBranchEnv.containsSpecialVariableOutput()
+				|| falseBranchEnv != null && falseBranchEnv.containsSpecialVariableOutput()) {
+			PhpVariable variableInTrueBranch = (trueBranchEnv != null ? trueBranchEnv.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT)
+					: this.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT));
+			PhpVariable variableInFalseBranch = (falseBranchEnv != null ? falseBranchEnv.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT)
+					: this.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT));
 
 			DataNode dataNodeInTrueBranch = (variableInTrueBranch != null ? variableInTrueBranch.getDataNode() : null);
 			DataNode dataNodeInFalseBranch = (variableInFalseBranch != null ? variableInFalseBranch.getDataNode() : null);
-			DataNode compactSelectNode = DataNodeFactory.createCompactSelectNode(conditionString, dataNodeInTrueBranch, dataNodeInFalseBranch);
+			DataNode compactSelectNode = DataNodeFactory.createCompactSelectNode(constraint, dataNodeInTrueBranch, dataNodeInFalseBranch);
 
 			PhpVariable phpVariable = new PhpVariable(SPECIAL_VARIABLE_OUTPUT);
 			phpVariable.setDataNode(compactSelectNode);
@@ -492,74 +383,58 @@ public class Env {
 	/**
 	 * Updates the variableTable with the one in one of the branches.
 	 */
-	private void updateVariableTable(Env branchenv) {
+	private void updateVariableTableWithOneBranch(Env branchEnv) {
 		// Update regular variables
-		for (String variableName : branchenv
-				.getRegularVariableNames()) {
-			PhpVariable phpVariable = branchenv
-					.getVariableFromCurrentScope(variableName);
+		for (String variableName : branchEnv.getRegularVariableNames()) {
+			PhpVariable phpVariable = branchEnv.getVariableFromCurrentScope(variableName);
 			this.putVariableInCurrentScope(phpVariable);
 		}
 		// Update output
-		if (branchenv.containsSpecialVariableOutput()) {
-			PhpVariable phpVariable = branchenv
-					.getVariableFromCurrentScope(SPECIAL_VARIABLE_OUTPUT);
+		if (branchEnv.containsSpecialVariableOutput()) {
+			PhpVariable phpVariable = branchEnv.getVariableFromCurrentScope(SPECIAL_VARIABLE_OUTPUT);
 			this.putVariableInCurrentScope(phpVariable);
 		}
 	}
 
 	/**
-	 * Updates the env after executing a loop.
+	 * Updates the Env after executing a loop.
 	 */
-	public void updateWithLoop(LiteralNode conditionString,
-			Env loopenv) {
+	public void updateWithLoop(Constraint constraint, Env loopEnv) {
 		// Update regular variables
-		HashSet<String> variableNamesInsideLoop = loopenv
-				.getRegularVariableNames();
+		HashSet<String> variableNamesInsideLoop = loopEnv.getRegularVariableNames();
 		for (String variableName : variableNamesInsideLoop) {
-			PhpVariable variableBeforeLoop = this
-					.getVariableFromFunctionScope(variableName);
-			PhpVariable variableInsideLoop = loopenv
-					.getVariableFromCurrentScope(variableName);
+			PhpVariable variableBeforeLoop = this.getVariableFromGlobalOrFunctionScope(variableName);
+			PhpVariable variableInsideLoop = loopEnv.getVariableFromCurrentScope(variableName);
 
-			DataNode dataNodeBeforeLoop = (variableBeforeLoop != null ? variableBeforeLoop
-					.getDataNode() : null);
+			DataNode dataNodeBeforeLoop = (variableBeforeLoop != null ? variableBeforeLoop.getDataNode() : null);
 			DataNode dataNodeAfterLoop = variableInsideLoop.getDataNode();
 
-			DataNode appendedStringValue = getAppendedStringValue(
-					dataNodeBeforeLoop, dataNodeAfterLoop);
+			DataNode appendedStringValue = getAppendedStringValue(dataNodeBeforeLoop, dataNodeAfterLoop);
 			if (appendedStringValue != null) {
 				PhpVariable phpVariable = new PhpVariable(variableName);
 				if (dataNodeBeforeLoop != null)
 					phpVariable.appendStringValue(dataNodeBeforeLoop);
 
-				RepeatNode repeatNode = new RepeatNode(conditionString,
-						appendedStringValue);
+				RepeatNode repeatNode = new RepeatNode(constraint, appendedStringValue);
 				phpVariable.appendStringValue(repeatNode);
 				this.putVariableInCurrentScope(phpVariable);
 			}
 		}
 		// Update output
-		if (loopenv.containsSpecialVariableOutput()) {
-			PhpVariable variableBeforeLoop = this
-					.getVariableFromProgramScope(SPECIAL_VARIABLE_OUTPUT);
-			PhpVariable variableInsideLoop = loopenv
-					.getVariableFromCurrentScope(SPECIAL_VARIABLE_OUTPUT);
+		if (loopEnv.containsSpecialVariableOutput()) {
+			PhpVariable variableBeforeLoop = this.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT);
+			PhpVariable variableInsideLoop = loopEnv.getVariableFromCurrentScope(SPECIAL_VARIABLE_OUTPUT);
 
-			DataNode dataNodeBeforeLoop = (variableBeforeLoop != null ? variableBeforeLoop
-					.getDataNode() : null);
+			DataNode dataNodeBeforeLoop = (variableBeforeLoop != null ? variableBeforeLoop.getDataNode() : null);
 			DataNode dataNodeAfterLoop = variableInsideLoop.getDataNode();
-			DataNode appendedStringValue = getAppendedStringValue(
-					dataNodeBeforeLoop, dataNodeAfterLoop);
+			DataNode appendedStringValue = getAppendedStringValue(dataNodeBeforeLoop, dataNodeAfterLoop);
 
 			if (appendedStringValue != null) {
-				PhpVariable phpVariable = new PhpVariable(
-						SPECIAL_VARIABLE_OUTPUT);
+				PhpVariable phpVariable = new PhpVariable(SPECIAL_VARIABLE_OUTPUT);
 				if (dataNodeBeforeLoop != null)
 					phpVariable.appendStringValue(dataNodeBeforeLoop);
 
-				RepeatNode repeatNode = new RepeatNode(conditionString,
-						appendedStringValue);
+				RepeatNode repeatNode = new RepeatNode(constraint, appendedStringValue);
 				phpVariable.appendStringValue(repeatNode);
 				this.putVariableInCurrentScope(phpVariable);
 			}
@@ -573,8 +448,7 @@ public class Env {
 	 * stringValueBeforeLoop. If it is not so, then we don't know how to handle
 	 * it nicely yet, let's return null.
 	 */
-	private DataNode getAppendedStringValue(DataNode stringValueBeforeLoop,
-			DataNode stringValueAfterLoop) {
+	private DataNode getAppendedStringValue(DataNode stringValueBeforeLoop, DataNode stringValueAfterLoop) {
 		if (stringValueBeforeLoop == null)
 			return stringValueAfterLoop;
 
@@ -585,32 +459,26 @@ public class Env {
 		ArrayList<DataNode> stringValuesAfterLoop = new ArrayList<DataNode>();
 
 		if (stringValueBeforeLoop instanceof ConcatNode)
-			stringValuesBeforeLoop.addAll(((ConcatNode) stringValueBeforeLoop)
-					.getChildNodes());
+			stringValuesBeforeLoop.addAll(((ConcatNode) stringValueBeforeLoop).getChildNodes());
 		else
 			stringValuesBeforeLoop.add(stringValueBeforeLoop);
-		stringValuesAfterLoop = ((ConcatNode) stringValueAfterLoop)
-				.getChildNodes();
+		stringValuesAfterLoop = ((ConcatNode) stringValueAfterLoop).getChildNodes();
 
 		boolean checkPrefix = true; // True if stringValuesBeforeLoop form the
 									// prefix of stringValuesAfterLoop
 		for (int i = 0; i < stringValuesBeforeLoop.size(); i++) {
 			if (i == stringValuesAfterLoop.size()
-					|| stringValuesBeforeLoop.get(i) != stringValuesAfterLoop
-							.get(i)) {
+					|| stringValuesBeforeLoop.get(i) != stringValuesAfterLoop.get(i)) {
 				checkPrefix = false;
 				break;
 			}
 		}
-		if (!checkPrefix
-				|| stringValuesBeforeLoop.size() == stringValuesAfterLoop
-						.size())
+		if (!checkPrefix || stringValuesBeforeLoop.size() == stringValuesAfterLoop.size())
 			return null;
 
 		DataNode appendedStringValue;
 		if (stringValuesBeforeLoop.size() + 1 == stringValuesAfterLoop.size())
-			appendedStringValue = stringValuesAfterLoop
-					.get(stringValuesAfterLoop.size() - 1);
+			appendedStringValue = stringValuesAfterLoop.get(stringValuesAfterLoop.size() - 1);
 		else {
 			ArrayList<DataNode> childNodes = new ArrayList<DataNode>();
 			for (int i = stringValuesBeforeLoop.size(); i < stringValuesAfterLoop.size(); i++)
@@ -621,46 +489,33 @@ public class Env {
 	}
 
 	/**
-	 * Updates the env after executing a function.
+	 * Updates the Env after executing a function.
 	 */
-	public void updateAfterFunctionExecution(
-			Env functionenv,
-			ArrayList<FormalParameterNode> formalParameterNodes,
-			ArrayList<ExpressionNode> argumentExpressionNodes) {
+	public void updateAfterFunctionExecution(Env functionEnv, ArrayList<FormalParameterNode> formalParameterNodes, ArrayList<ExpressionNode> argumentExpressionNodes) {
 		// Update reference parameters
 		for (FormalParameterNode formalParameterNode : formalParameterNodes) {
 			if (formalParameterNode.isReference()) {
-				int parameterIndex = formalParameterNodes
-						.indexOf(formalParameterNode);
-				String parameterName = formalParameterNode
-						.getResolvedParameterNameOrNull(null);
+				int parameterIndex = formalParameterNodes.indexOf(formalParameterNode);
+				String parameterName = formalParameterNode.getResolvedParameterNameOrNull(null);
 
 				if (parameterIndex >= argumentExpressionNodes.size()) {
 					break;
 				}
 				if (!(argumentExpressionNodes.get(parameterIndex) instanceof VariableNode)) {
-					MyLogger.log(
-							MyLevel.TODO,
-							"In env.updateAfterFunctionExecution: Reference parameter is not of type VariableNode.");
+					MyLogger.log(MyLevel.TODO, "In Env.updateAfterFunctionExecution: Reference parameter is not of type VariableNode.");
 					continue;
 				}
 
-				String referencedVariableName = ((VariableNode) argumentExpressionNodes
-						.get(parameterIndex)).getResolvedVariableNameOrNull(null);
-				PhpVariable phpVariable = new PhpVariable(
-						referencedVariableName);
-				phpVariable.setDataNode(functionenv
-						.getVariableFromCurrentScope(parameterName)
-						.getDataNode());
+				String referencedVariableName = ((VariableNode) argumentExpressionNodes.get(parameterIndex)).getResolvedVariableNameOrNull(null);
+				PhpVariable phpVariable = new PhpVariable(referencedVariableName);
+				phpVariable.setDataNode(functionEnv.getVariableFromCurrentScope(parameterName).getDataNode());
 				this.putVariableInCurrentScope(phpVariable);
 			}
 		}
 
 		// Update global variables
-		for (String globalVariableName : functionenv
-				.getGlobalVariableNames()) {
-			PhpVariable variableInsideFunction = functionenv
-					.getVariableFromCurrentScope(globalVariableName);
+		for (String globalVariableName : functionEnv.getGlobalVariables()) {
+			PhpVariable variableInsideFunction = functionEnv.getVariableFromCurrentScope(globalVariableName);
 			if (variableInsideFunction != null) {
 				PhpVariable phpVariable = new PhpVariable(globalVariableName);
 				phpVariable.setDataNode(variableInsideFunction.getDataNode());
@@ -669,11 +524,9 @@ public class Env {
 		}
 
 		// Update output
-		if (functionenv.containsSpecialVariableOutput()) {
+		if (functionEnv.containsSpecialVariableOutput()) {
 			PhpVariable phpVariable = new PhpVariable(SPECIAL_VARIABLE_OUTPUT);
-			phpVariable.setDataNode(functionenv
-					.getVariableFromCurrentScope(SPECIAL_VARIABLE_OUTPUT)
-					.getDataNode());
+			phpVariable.setDataNode(functionEnv.getVariableFromCurrentScope(SPECIAL_VARIABLE_OUTPUT).getDataNode());
 			this.putVariableInCurrentScope(phpVariable);
 		}
 	}
@@ -688,12 +541,10 @@ public class Env {
 	 */
 	public void appendOutput(ArrayList<DataNode> resolvedExpressionNodes) {
 		PhpVariable newOutputVariable = new PhpVariable(SPECIAL_VARIABLE_OUTPUT);
-		PhpVariable oldOutputVariable = this
-				.getVariableFromProgramScope(SPECIAL_VARIABLE_OUTPUT);
+		PhpVariable oldOutputVariable = readVariable(SPECIAL_VARIABLE_OUTPUT);
 
 		if (oldOutputVariable != null)
-			newOutputVariable
-					.appendStringValue(oldOutputVariable.getDataNode());
+			newOutputVariable.appendStringValue(oldOutputVariable.getDataNode());
 		for (DataNode stringValue : resolvedExpressionNodes)
 			newOutputVariable.appendStringValue(stringValue);
 
@@ -739,20 +590,15 @@ public class Env {
 		if (currentOutput == null)
 			return;
 
-		PhpVariable finalOutput = this.getProgramScopeenv()
-				.getVariableFromCurrentScope(SPECIAL_VARIABLE_FINAL_OUTPUT);
+		PhpVariable finalOutput = this.getGlobalEnv().getVariableFromCurrentScope(SPECIAL_VARIABLE_FINAL_OUTPUT);
 		if (finalOutput == null) {
-			PhpVariable finalOutputVariable = new PhpVariable(
-					SPECIAL_VARIABLE_FINAL_OUTPUT);
+			PhpVariable finalOutputVariable = new PhpVariable(SPECIAL_VARIABLE_FINAL_OUTPUT);
 			finalOutputVariable.setDataNode(currentOutput.getDataNode());
-			this.getProgramScopeenv().putVariableInCurrentScope(
-					finalOutputVariable);
+			this.getGlobalEnv().putVariableInCurrentScope(finalOutputVariable);
 		} else {
 			DataNode selectNode;
-			if (isTrueBranch)
-				selectNode = DataNodeFactory.createCompactSelectNode(conditionString, currentOutput.getDataNode(), finalOutput.getDataNode());
-			else
-				selectNode = DataNodeFactory.createCompactSelectNode(conditionString, finalOutput.getDataNode(), currentOutput.getDataNode());
+			Constraint constraint = getConjunctedConstraint();
+			selectNode = DataNodeFactory.createCompactSelectNode(constraint, currentOutput.getDataNode(), finalOutput.getDataNode());
 			finalOutput.setDataNode(selectNode);
 		}
 	}
@@ -762,20 +608,15 @@ public class Env {
 	 * composed of all the return values at return statements.
 	 */
 	public void addReturnValue(DataNode currentReturnValue) {
-		PhpVariable finalReturn = this.getFunctionScopeenv()
-				.getVariableFromCurrentScope(SPECIAL_VARIABLE_RETURN);
+		PhpVariable finalReturn = this.getGlobalOrFunctionEnv().getVariableFromCurrentScope(SPECIAL_VARIABLE_RETURN);
 		if (finalReturn == null) {
-			PhpVariable finalReturnVariable = new PhpVariable(
-					SPECIAL_VARIABLE_RETURN);
+			PhpVariable finalReturnVariable = new PhpVariable(SPECIAL_VARIABLE_RETURN);
 			finalReturnVariable.setDataNode(currentReturnValue);
-			this.getFunctionScopeenv().putVariableInCurrentScope(
-					finalReturnVariable);
+			this.getGlobalOrFunctionEnv().putVariableInCurrentScope(finalReturnVariable);
 		} else {
 			DataNode selectNode;
-			if (isTrueBranch)
-				selectNode = DataNodeFactory.createCompactSelectNode(conditionString, currentReturnValue, finalReturn.getDataNode());
-			else
-				selectNode = DataNodeFactory.createCompactSelectNode(conditionString, finalReturn.getDataNode(), currentReturnValue);
+			Constraint constraint = getConjunctedConstraintUpToGlobalOrFunctionScope();
+			selectNode = DataNodeFactory.createCompactSelectNode(constraint, currentReturnValue, finalReturn.getDataNode());
 			finalReturn.setDataNode(selectNode);
 		}
 	}
@@ -783,11 +624,10 @@ public class Env {
 	/**
 	 * Temporarily removes the RETURN variable.
 	 * 
-	 * @see servergraph.nodes.IncludeNode.execute(env)
+	 * @see IncludeNode.execute(env)
 	 */
 	public void removeReturnValue() {
-		this.getFunctionScopeenv().variableTable
-				.remove(SPECIAL_VARIABLE_RETURN);
+		this.getGlobalOrFunctionEnv().variableTable.remove(SPECIAL_VARIABLE_RETURN);
 	}
 
 	/*
@@ -798,9 +638,9 @@ public class Env {
 		return new HashSet<String>(variableTable.keySet());
 	}
 
-	public HashSet<PhpVariable> getAllVariables() {
-		return new HashSet<PhpVariable>(variableTable.values());
-	}
+//	public HashSet<PhpVariable> getAllVariables() {
+//		return new HashSet<PhpVariable>(variableTable.values());
+//	}
 
 	public HashSet<String> getRegularVariableNames() {
 		HashSet<String> variableNames = getAllVariableNames();
@@ -815,21 +655,15 @@ public class Env {
 	}
 
 	public PhpVariable getCurrentOutput() {
-		return this.getVariableFromProgramScope(SPECIAL_VARIABLE_OUTPUT);
+		return this.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT);
 	}
 
 	public PhpVariable getFinalOutput() {
-		return this.getProgramScopeenv()
-				.getVariableFromCurrentScope(SPECIAL_VARIABLE_FINAL_OUTPUT);
+		return this.getGlobalEnv().getVariableFromCurrentScope(SPECIAL_VARIABLE_FINAL_OUTPUT);
 	}
 
 	public PhpVariable getReturnValue() {
-		return this.getFunctionScopeenv()
-				.getVariableFromCurrentScope(SPECIAL_VARIABLE_RETURN);
-	}
-
-	public HashSet<PhpFunction> getAllFunctions() {
-		return new HashSet<PhpFunction>(functionTable.values());
+		return this.getGlobalOrFunctionEnv().getVariableFromCurrentScope(SPECIAL_VARIABLE_RETURN);
 	}
 
 }

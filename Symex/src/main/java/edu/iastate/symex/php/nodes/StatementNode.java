@@ -19,7 +19,7 @@ import org.eclipse.php.internal.core.ast.nodes.SwitchStatement;
 import org.eclipse.php.internal.core.ast.nodes.TryStatement;
 import org.eclipse.php.internal.core.ast.nodes.WhileStatement;
 
-import edu.iastate.symex.core.TraceTable;
+import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 
@@ -60,7 +60,7 @@ public abstract class StatementNode extends PhpNode {
 			case Statement.SWITCH_STATEMENT:		return new SwitchStatementNode((SwitchStatement) statement);
 			case Statement.TRY_STATEMENT:			return new TryStatementNode((TryStatement) statement);
 			case Statement.WHILE_STATEMENT:			return new WhileStatementNode((WhileStatement) statement);			
-			default: 								MyLogger.log(MyLevel.TODO, "Statement unimplemented: " + TraceTable.getSourceCodeOfPhpASTNode(statement)); return new UnresolvedStatementNode(statement);
+			default: 								MyLogger.log(MyLevel.TODO, "Statement unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(statement)); return new UnresolvedStatementNode(statement);
 		}
 	}
 	

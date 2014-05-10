@@ -4,6 +4,7 @@ import java.io.File;
 
 import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
+import edu.iastate.symex.datamodel.WriteDataModelToIfDefs;
 import edu.iastate.symex.util.Timer;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
@@ -25,6 +26,7 @@ public class RunSymexForFile {
 	public static String PROJECT_FOLDER 	= WORKSPACE + "/" + SERVER_CODE + "/{PROJECT_NAME}"; // @see config.DataModelConfig.getProjectFolderForProjectName(String)
 	public static String OUTPUT_FOLDER 		= WORKSPACE + "/" + DATA_MODEL + "/{PROJECT_NAME}/{RELATIVE_FILE_PATH}";	// @see config.DataModelConfig.getOutputFolderForFile(String, String)
 
+	public static String PHP_FILE			= "/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/test.php";
 
 	public static String dataModelXmlFile	= "data_model.xml";
 	public static String dataModelDotFile	= "data_model.dot";
@@ -49,9 +51,9 @@ public class RunSymexForFile {
 //	/**
 //	 * The entry point of the program.
 //	 */
-//	public static void main(String[] args) {
-//		new CreateDataModelForFile(PROJECT_NAME, RELATIVE_FILE_PATH).execute();
-//	}
+	public static void main(String[] args) {
+		new RunSymexForFile(new File(PHP_FILE), null).execute();
+	}
 	
 	/**
 	 * Constructor.
@@ -82,13 +84,14 @@ public class RunSymexForFile {
 	 */
 	public DataModel execute() {
 		Timer timer = new Timer();
-		MyLogger.log(MyLevel.PROGRESS, "[CreateDataModelForFile:" + file + "] Started.");
+		MyLogger.log(MyLevel.PROGRESS, "[RunSymexForFile:" + file + "] Started.");
 		
 		// Step 1: Create the data model
 		DataModel dataModel = new PhpExecuter().execute(file, workingDirectory);
 		
 		// Step 2: Print results
-//		printResults(dataModel);
+		MyLogger.log(MyLevel.INFO, WriteDataModelToIfDefs.convert(dataModel));
+		//printResults(dataModel);
 		
 		MyLogger.log(MyLevel.PROGRESS, "[CreateDataModelForFile:" + file + "] Done in " + timer.getElapsedSecondsInText() + ".");
 		

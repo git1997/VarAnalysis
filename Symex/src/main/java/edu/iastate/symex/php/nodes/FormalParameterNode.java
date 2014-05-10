@@ -6,10 +6,10 @@ import org.eclipse.php.internal.core.ast.nodes.Reference;
 import org.eclipse.php.internal.core.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 
+import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
-import edu.iastate.symex.core.TraceTable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 
 /**
@@ -46,7 +46,7 @@ public class FormalParameterNode extends PhpNode {
 				this.isReference = true;
 				break;
 			default:
-				MyLogger.log(MyLevel.TODO, "FormalParameterNode.java: Parameter type " + TraceTable.getSourceCodeOfPhpASTNode(formalParameter) + " not yet implemented.");
+				MyLogger.log(MyLevel.TODO, "FormalParameterNode.java: Parameter type " + ASTHelper.inst.getSourceCodeOfPhpASTNode(formalParameter) + " not yet implemented.");
 				this.parameterName = ExpressionNode.createInstance(parameterNameExpression);
 				this.isReference = false;
 		}

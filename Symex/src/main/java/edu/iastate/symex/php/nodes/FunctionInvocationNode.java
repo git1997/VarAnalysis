@@ -8,6 +8,7 @@ import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 
 import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.core.Env;
+import edu.iastate.symex.core.FunctionEnv;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.datamodel.nodes.DataNode;
@@ -71,7 +72,9 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		/*
 		 * Get the function name
 		 */
-		String functionName = getResolvedFunctionNameOrNull(env);		
+		String functionName = getResolvedFunctionNameOrNull(env);
+		if (functionName == null)
+			return new SymbolicNode(this);
 		
 		// TODO: [AdhocCode] In squirrelmail, some function calls are misspelled.
 		// The following code is temporarily used to fixed that bug. Should be removed later.
@@ -131,7 +134,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		FunctionDeclarationNode functionNode = null;
 		if (objectNode == null) {
 			if (env.getFunction(functionName) != null)
-				functionNode = env.getFunction(functionName).getFunctionDeclarationNode();
+				functionNode = env.getFunction(functionName);
 		}
 		else {
 			functionNode = objectNode.getClassDeclarationNode().getFunction(functionName);
@@ -144,47 +147,47 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		 */
 					
 		// Set up a new scope for the execution of the function
-		Env functionenv = new Env(env, functionName);
+		FunctionEnv functionEnv = new FunctionEnv(env, functionName);
 		
 		// Set up parameters
 		ArrayList<FormalParameterNode> formalParameterNodes = functionNode.getFormalParameters();
 		for (FormalParameterNode formalParameterNode : formalParameterNodes) {
 			int parameterIndex = formalParameterNodes.indexOf(formalParameterNode);
-			String parameterName = formalParameterNode.getResolvedParameterNameOrNull(functionenv);
+			String parameterName = formalParameterNode.getResolvedParameterNameOrNull(functionEnv);
 			DataNode parameterValue;
 			if (parameterIndex < argumentValues.size())
 				parameterValue = argumentValues.get(parameterIndex);
 			else {
 				if (formalParameterNode.getDefaultValue() != null)
-					parameterValue = formalParameterNode.getDefaultValue().execute(functionenv);
+					parameterValue = formalParameterNode.getDefaultValue().execute(functionEnv);
 				else
 					parameterValue = new SymbolicNode(formalParameterNode);
 			}			
 			PhpVariable phpVariable = new PhpVariable(parameterName);
 			phpVariable.setDataNode(parameterValue);
-			functionenv.putVariableInCurrentScope(phpVariable);
+			functionEnv.writeVariable(phpVariable);
 		}
 		
 		/*
 		 * Execute the function
 		 */
-		functionenv.pushFunctionToStack(functionName);
+		functionEnv.pushFunctionToStack(functionName);
 		//MyLogger.log(MyLevel.PROGRESS, "Executing files " + env.getFileStack() + " functions " + env.getFunctionStack() + " ...");
 		
-		functionNode.getBody().execute(functionenv);
+		functionNode.getBody().execute(functionEnv);
 		
 		//MyLogger.log(MyLevel.PROGRESS, "Done with files " + env.getFileStack() + " functions " + env.getFunctionStack() + ".");
-		functionenv.popFunctionFromStack();
+		functionEnv.popFunctionFromStack();
 		
 		/*
 		 * Finish up
 		 */
 		
 		// Update the env
-		env.updateAfterFunctionExecution(functionenv, formalParameterNodes, parameters);
+		env.updateAfterFunctionExecution(functionEnv, formalParameterNodes, parameters);
 		
 		// Get the return value of the function.
-		PhpVariable returnValue = functionenv.getReturnValue();
+		PhpVariable returnValue = functionEnv.getReturnValue();
 		if (returnValue != null)
 			return returnValue.getDataNode();
 		else
@@ -214,9 +217,10 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 */
 	private DataNode php_define(ArrayList<DataNode> parameterValues, Env env) {	
 		if (parameterValues.size() == 2) {
-			String constantName = parameterValues.get(0).getApproximateStringValue();
+			String constantName = parameterValues.get(0).getExactStringValueOrNull();
 			DataNode constantValue = parameterValues.get(1);
-			env.setPredefinedConstantValue(constantName, constantValue);
+			if (constantName != null)
+				env.setPredefinedConstantValue(constantName, constantValue);
 		}
 		return new SymbolicNode(this);
 	}
@@ -247,12 +251,14 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 */
 	private DataNode php_dirname(ArrayList<DataNode> parameterValues, Env env) {	
 		if (parameterValues.size() == 1) {
-			String fileName = parameterValues.get(0).getApproximateStringValue();
-			String dirName = new File(fileName).getParent();
- 			return (dirName != null ? DataNodeFactory.createLiteralNode(dirName) : new SymbolicNode(this));
+			String fileName = parameterValues.get(0).getExactStringValueOrNull();
+			if (fileName != null) {
+				String dirName = new File(fileName).getParent();
+				if (dirName != null)
+					return DataNodeFactory.createLiteralNode(dirName);
+			}
 		}
-		else
-			return new SymbolicNode(this);
+		return new SymbolicNode(this);
 	}
 	
 	/**
@@ -260,11 +266,11 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 */
 	private DataNode php_strtolower(ArrayList<DataNode> parameterValues, Env env) {	
 		if (parameterValues.size() == 1 && parameterValues.get(0) instanceof LiteralNode) {
-			String str = parameterValues.get(0).getApproximateStringValue();
-			return DataNodeFactory.createLiteralNode(str.toLowerCase()); // TODO Add positionRange
+			String str = parameterValues.get(0).getExactStringValueOrNull();
+			if (str != null)
+				return DataNodeFactory.createLiteralNode(str.toLowerCase()); // TODO Add positionRange
 		}
-		else
-			return new SymbolicNode(this);
+		return new SymbolicNode(this);
 	}
 	
 	/*

@@ -6,7 +6,6 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.ObjectNode;
 import edu.iastate.symex.datamodel.nodes.SymbolicNode;
-import edu.iastate.symex.php.elements.PhpClass;
 
 /**
  * 
@@ -36,11 +35,11 @@ public class ClassInstanceCreationNode extends ExpressionNode {
 		String resolvedClassName = className.getResolvedNameOrNull(env);	
 		
 		// Get the PHP class
-		PhpClass phpClass = env.getClass(resolvedClassName);
+		ClassDeclarationNode phpClass = env.getClass(resolvedClassName);
 		
 		// Return an object, or a SymbolicNode if the class name is not found
 		if (phpClass != null)
-			return new ObjectNode(phpClass.getClassDeclarationNode());
+			return new ObjectNode(phpClass);
 		else
 			return new SymbolicNode(this);
 	}

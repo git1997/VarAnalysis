@@ -41,7 +41,7 @@ public class MethodInvocationNode extends DispatchNode {
 			return new SymbolicNode(this);
 		}		
 		String variableName = ((VariableNode) dispatcher).getResolvedVariableNameOrNull(env);
-		PhpVariable phpVariable = env.getVariableFromFunctionScope(variableName);
+		PhpVariable phpVariable = env.readVariable(variableName);
 		if (phpVariable == null || !(phpVariable.getDataNode() instanceof ObjectNode)) {
 			return new SymbolicNode(this);
 		}		

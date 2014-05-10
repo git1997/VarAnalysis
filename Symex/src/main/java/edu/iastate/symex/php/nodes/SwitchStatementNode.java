@@ -9,6 +9,7 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
 
 /**
  * 
@@ -92,7 +93,7 @@ public class SwitchStatementNode extends StatementNode {
 		
 		// Remove the first switchCaseNode from the current SwitchStatementNode to create a fake SwitchStatementNode
 		SwitchCaseNode firstSwitchCaseNode = switchCases.get(0);
-		FakeSwitchStatementNode fakeSwitchStatementNode = new FakeSwitchStatementNode();
+		FakeSwitchStatementNode fakeSwitchStatementNode = new FakeSwitchStatementNode((SwitchStatement) this.getAstNode());
 		fakeSwitchStatementNode.expression = expression;
 		fakeSwitchStatementNode.switchExpressionNodeResult = switchExpressionNodeResult;
 		fakeSwitchStatementNode.conditionString = conditionString;			
@@ -106,7 +107,7 @@ public class SwitchStatementNode extends StatementNode {
 		else {
 			DataNode firstSwitchCaseNodeResult = firstSwitchCaseNode.getValue().execute(env);
 			if (switchExpressionNodeResult instanceof LiteralNode && firstSwitchCaseNodeResult instanceof LiteralNode) {
-				if (switchExpressionNodeResult.getApproximateStringValue().equals(firstSwitchCaseNodeResult.getApproximateStringValue()))
+				if (switchExpressionNodeResult.isEqualTo(firstSwitchCaseNodeResult).isTrueValue())
 					firstSwitchCaseNode.execute(env);
 				else
 					fakeSwitchStatementNode.execute(env);
@@ -114,18 +115,17 @@ public class SwitchStatementNode extends StatementNode {
 			else {
 				LiteralNode switchCaseExpressionString = firstSwitchCaseNode.getConditionString();
 				LiteralNode conditionString = switchCaseExpressionString; // Or it could be: conditionString = new LiteralNode(switchExpressionString.getStringValue() + " == " + switchCaseExpressionString.getStringValue());
-				IfStatementNode.execute(env, null, conditionString, firstSwitchCaseNode, fakeSwitchStatementNode);
+				IfStatementNode.execute(env, BooleanNode.UNKNOWN, conditionString, firstSwitchCaseNode, fakeSwitchStatementNode);
 			}
 		}
 		
 		return null;
 	}
 	
-	private SwitchStatementNode() { // To allow empty constructor of the FakeSwitchStatementNode class
-		super(null);
-	}
-	
 	private class FakeSwitchStatementNode extends SwitchStatementNode {
+		private FakeSwitchStatementNode(SwitchStatement switchStatement) {
+			super(switchStatement);
+		}
 	}
 	
 }

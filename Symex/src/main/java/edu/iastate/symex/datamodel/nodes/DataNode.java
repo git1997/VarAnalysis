@@ -4,6 +4,7 @@ import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.datamodel.DataModelVisitor;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
 
 /**
  * 
@@ -50,16 +51,61 @@ public abstract class DataNode {
 	public String getExactStringValueOrNull() {
 		return null;
 	}
-	
-	/**
-	 * Returns the approximate string value of this node
-	 */
-	public abstract String getApproximateStringValue();
 
 	/**
 	 * Visitor pattern
 	 * @param dataModelVisitor
 	 */
 	public abstract void accept(DataModelVisitor dataModelVisitor);
+	
+	/*
+	 * Handling Boolean operations.
+	 */
+	
+	/**
+	 * Converts to Boolean value
+	 */
+	public BooleanNode convertToBooleanValue() {
+		if (this instanceof BooleanNode)
+			return (BooleanNode) this;
+		
+		String stringValue = this.getExactStringValueOrNull();
+		if (stringValue == null)
+			return BooleanNode.UNKNOWN;
+		
+		// TODO Handle strings "1", "0", "TRUE", "FALSE", etc.
+		if (!stringValue.isEmpty())
+			return BooleanNode.TRUE;
+		else
+			return BooleanNode.FALSE;
+	}
+	
+	/**
+	 * Implements operator '=='
+	 */
+	public BooleanNode isEqualTo(DataNode dataNode) {
+		if (this == dataNode)
+			return BooleanNode.TRUE;
+		
+		String leftValue = this.getExactStringValueOrNull();
+		String rightValue = dataNode.getExactStringValueOrNull();
+		if (leftValue == null || rightValue == null)
+			return BooleanNode.UNKNOWN;
+		
+		if (leftValue.equals(rightValue))
+			return BooleanNode.TRUE;
+		else
+			return BooleanNode.FALSE;
+	}
+	
+	/**
+	 * Implements operator '==='
+	 */
+	public BooleanNode isIdenticalTo(DataNode dataNode) {
+		if (this == dataNode)
+			return BooleanNode.TRUE;
+		else
+			return BooleanNode.FALSE;
+	}
 	
 }

@@ -9,9 +9,8 @@ import org.eclipse.php.internal.core.ast.nodes.Program;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
-import edu.iastate.symex.core.TraceTable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.php.elements.PhpFile;
+import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.FileIO;
 
 /**
@@ -21,12 +20,12 @@ import edu.iastate.symex.util.FileIO;
  */
 public class FileNode {
 
-	private ProgramNode programNode = null;	// The AST node representing a PHP program
 	private final File file;
+	private ProgramNode programNode = null;	// The AST node representing a PHP program
 		
 	/**
 	 * Constructor: Creates a FileNode representing a PHP source file.
-	 * @param phpFileRelativePath	The PHP file to be parsed
+	 * @param file	The PHP file to be parsed
 	 * @see {@link edu.iastate.symex.php.nodes.IncludeNode#execute(Env)}
 	 */
 	public FileNode(File file) {
@@ -38,23 +37,29 @@ public class FileNode {
 			char[] source = FileIO.readStringFromFile(file).toCharArray();
 			parser.setSource(source);
 			Program program = parser.createAST(null);
-			TraceTable.setSourceCodeForPhpProgram(program, source);
-			TraceTable.setSourceFileForPhpProgram(program, file);			
+			
+			ASTHelper.inst.setSourceFileForPhpProgram(program, file);
+			ASTHelper.inst.setSourceCodeForPhpProgram(program, source);
+			
 			this.programNode = new ProgramNode(program);
 		} catch (Exception e) {
 			MyLogger.log(MyLevel.JAVA_EXCEPTION, "In FileNode.java: Error parsing " + file + " (" + e.getMessage() + ")");
 		}
 	}
 	
+	/**
+	 * @see {@link edu.iastate.symex.php.nodes.PhpNode#execute(Env)}
+	 */
 	public DataNode execute(Env env) {
-		env.putFile(file, new PhpFile(this));
+		env.putFile(file, this);
 		
 		env.pushFileToStack(file);
+		DataNode retValue = null;
 		if (programNode != null)
-			programNode.execute(env);
+			retValue = programNode.execute(env);
 		env.popFileFromStack();
 		
-		return null;
+		return retValue;
 	}
 
 }

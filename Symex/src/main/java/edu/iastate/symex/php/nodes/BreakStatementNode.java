@@ -2,12 +2,12 @@ package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.BreakStatement;
 
+import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
-import edu.iastate.symex.core.TraceTable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -25,13 +25,13 @@ public class BreakStatementNode extends StatementNode {
 	public BreakStatementNode(BreakStatement breakStatement) {
 		super(breakStatement);
 		if (breakStatement.getExpression() != null) {
-			MyLogger.log(MyLevel.TODO, "In BreakStatementNode.java: BreakStatement not fully implemented (" + TraceTable.getSourceCodeOfPhpASTNode(breakStatement) + ")");
+			MyLogger.log(MyLevel.TODO, "In BreakStatementNode.java: BreakStatement not fully implemented (" + ASTHelper.inst.getSourceCodeOfPhpASTNode(breakStatement) + ")");
 		}
 	}
 	
 	@Override
 	public DataNode execute(Env env) {
-		return DataNodeFactory.BREAK;
+		return SpecialNode.ControlNode.BREAK;
 	}
 
 }

@@ -10,7 +10,6 @@ import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.SymbolicNode;
-import edu.iastate.symex.php.elements.PhpFile;
 import edu.iastate.symex.php.elements.PhpVariable;
 import edu.iastate.symex.util.StringUtils;
 
@@ -41,9 +40,17 @@ public class IncludeNode extends ExpressionNode {
 		/*
 		 * Resolve the included file
 		 */
-		File includedFile = resolveIncludedFileAbsolutePath(env);
-		if (includedFile == null || !includedFile.isFile())
+		File includedFile = resolveIncludedFile(env);
+		
+		if (includedFile == null) {
+			ArrayList<File> fileStack = env.getFileStack();
+			File currentFile = fileStack.get(fileStack.size() - 1);
+			File originalFile = fileStack.get(0);
+			MyLogger.log(MyLevel.USER_EXCEPTION, "In IncludeNode.java: Unable to resolve the included file " + expression.getSourceCode() + ". "
+						+ "Current file: " + currentFile + ". "
+						+ "Original file: " + originalFile + ".");
 			return new SymbolicNode(this);
+		}
 
 		/*
 		 * Check for include_once and require_once.
@@ -60,8 +67,7 @@ public class IncludeNode extends ExpressionNode {
 		 * Prepare to execute the file
 		 */
 
-		// Before executing the file, do some backup with the current return
-		// value
+		// Before executing the file, do some backup with the current return value
 		PhpVariable backupPhpReturn = env.getReturnValue();
 		env.removeReturnValue();
 
@@ -75,11 +81,8 @@ public class IncludeNode extends ExpressionNode {
 		/*
 		 * Execute the file
 		 */
-		PhpFile phpFile = env.getFile(includedFile);
-		FileNode fileNode;
-		if (phpFile != null)
-			fileNode = phpFile.getFileNode();
-		else
+		FileNode fileNode = env.getFile(includedFile);
+		if (fileNode == null)
 			fileNode = new FileNode(includedFile);
 		fileNode.execute(env);
 
@@ -103,37 +106,28 @@ public class IncludeNode extends ExpressionNode {
 	}
 
 	/**
-	 * Resolves the absolute path of the included file.
+	 * Resolves the included file.
+	 * Returns null if the file cannot be resolved.
 	 */
-	private File resolveIncludedFileAbsolutePath(Env env) {
-		String includedFileRelativePath = expression
-				.execute(env).getApproximateStringValue()
-				.replace("\\", StringUtils.getFileSystemSlash())
-				.replace("/", StringUtils.getFileSystemSlash());
-		File includedFile = new File(includedFileRelativePath);
-
-		// Some systems specify absolute paths in include statements. In such
-		// cases, return its path right away.
+	private File resolveIncludedFile(Env env) {
+		String includedFilePath = expression.execute(env).getExactStringValueOrNull();
+		if (includedFilePath == null)
+			return null;
+		
+		includedFilePath = includedFilePath.replace('\\', File.separatorChar).replace('/', File.separatorChar);
+		File includedFile = new File(includedFilePath);
+		
+		// Some systems specify absolute paths in include statements.
+		// In such cases, the file is found right away.
 		if (includedFile.isFile())
 			return includedFile;
 
-		ArrayList<File> fileStack = env.getFileStack();
-
-		for (File invokedFile : fileStack) {
-			includedFile = new File(invokedFile.getParent(),
-					includedFileRelativePath);
+		// Others use relative paths, therefore do a search.
+		for (File invokedFile : env.getFileStack()) {
+			includedFile = new File(invokedFile.getParent() + File.separatorChar + includedFilePath);
 			if (includedFile.isFile())
 				return includedFile;
 		}
-
-		// error
-		File currentFilePath = fileStack.get(fileStack.size() - 1);
-		File originalFilePath = fileStack.get(0);
-		MyLogger.log(MyLevel.USER_EXCEPTION,
-				"In IncludeNode.java: Unable to resolve the included file "
-						+ includedFileRelativePath + ". Current file: "
-						+ currentFilePath + ". Original file: "
-						+ originalFilePath + ".");
 		return null;
 	}
 

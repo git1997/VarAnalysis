@@ -55,7 +55,10 @@ public class Position {
 	 * Returns true if the two positions are identical
 	 */
 	public boolean sameAs(Position position) {
-		return this.getFile().equals(position.getFile()) && this.getOffset() == position.getOffset();
+		if (this.isUndefined() || position.isUndefined())
+			return false;
+		else
+			return this.getFile().equals(position.getFile()) && this.getOffset() == position.getOffset();
 	}
 	
 }

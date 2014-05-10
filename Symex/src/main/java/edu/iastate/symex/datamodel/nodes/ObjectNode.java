@@ -24,19 +24,6 @@ public class ObjectNode extends DataNode {
 		return classDeclarationNode;
 	}
 	
-	public String getSymbolicValue() {
-		return "__OBJECT_" + this.hashCode() + "__";
-	}
-	
-	public static String getSymbolicValueRegularExpression() {
-		return "__OBJECT_\\d+__";
-	}
-	
-	@Override
-	public String getApproximateStringValue() {
-		return getSymbolicValue();
-	}
-
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
 		dataModelVisitor.visitObjectNode(this);

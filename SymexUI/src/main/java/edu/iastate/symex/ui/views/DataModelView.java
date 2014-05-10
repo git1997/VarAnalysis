@@ -32,6 +32,7 @@ import org.eclipse.ui.part.ViewPart;
 import edu.iastate.symex.position.Position;
 import edu.iastate.symex.run.RunSymexForFile;
 import edu.iastate.symex.ui.UIHelper;
+import edu.iastate.symex.constraints.AtomicConstraint;
 import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
@@ -277,12 +278,6 @@ public class DataModelView extends ViewPart {
 		}
 
 		@Override
-		public String getApproximateStringValue() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
 		public void accept(DataModelVisitor dataModelVisitor) {
 			// TODO Auto-generated method stub
 		}
@@ -397,7 +392,7 @@ public class DataModelView extends ViewPart {
 	
 	private String getTextOfDataNode(DataNode dataNode) {
 		if (dataNode instanceof SelectNode)
-			return (((SelectNode) dataNode).getConditionString() != null ? ((SelectNode) dataNode).getConditionString().getStringValue() : "");
+			return (((SelectNode) dataNode).getConstraint() != null ? ((AtomicConstraint) ((SelectNode) dataNode).getConstraint()).getConditionString().getStringValue() : "");
 		
 		else if (dataNode instanceof SymbolicNode)
 			return (((SymbolicNode) dataNode).getPhpNode() != null ? ((SymbolicNode) dataNode).getPhpNode().getSourceCode() : "");
@@ -411,7 +406,7 @@ public class DataModelView extends ViewPart {
 	
 	private String getStandardizedTextOfDataNode(DataNode dataNode) {
 		if (dataNode instanceof SelectNode)
-			return (((SelectNode) dataNode).getConditionString() != null ? ((SelectNode) dataNode).getConditionString().getStringValue() : "");
+			return (((SelectNode) dataNode).getConstraint() != null ? ((AtomicConstraint) ((SelectNode) dataNode).getConstraint()).getConditionString().getStringValue() : "");
 		
 		else if (dataNode instanceof SymbolicNode)
 			return (((SymbolicNode) dataNode).getPhpNode() != null ? ((SymbolicNode) dataNode).getPhpNode().getSourceCode() : "");
@@ -425,7 +420,7 @@ public class DataModelView extends ViewPart {
 	
 	private Position getPositionOfDataNode(DataNode dataNode) {
 		if (dataNode instanceof SelectNode)
-			return (((SelectNode) dataNode).getConditionString() != null ? ((SelectNode) dataNode).getConditionString().getPositionRange().getStartPosition() : Position.UNDEFINED);
+			return (((SelectNode) dataNode).getConstraint() != null ? ((AtomicConstraint)((SelectNode) dataNode).getConstraint()).getConditionString().getPositionRange().getStartPosition() : Position.UNDEFINED);
 		
 		else if (dataNode instanceof SymbolicNode)
 			return (((SymbolicNode) dataNode).getPhpNode() != null ? ((SymbolicNode) dataNode).getPhpNode().getPositionRange().getStartPosition() : Position.UNDEFINED);

@@ -4,9 +4,7 @@ import org.eclipse.php.internal.core.ast.nodes.InfixExpression;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 
 /**
@@ -44,20 +42,23 @@ public class InfixExpressionNode extends ExpressionNode {
 			case InfixExpression.OP_CONCAT: 
 				return DataNodeFactory.createCompactConcatNode(leftValue, rightValue);
 				
+			// '=='
+			case InfixExpression.OP_IS_EQUAL:
+				return leftValue.isEqualTo(rightValue);
+			
+			// '==='
+			case InfixExpression.OP_IS_IDENTICAL:
+				return leftValue.isIdenticalTo(rightValue);
+								
 			// '!='
 			case InfixExpression.OP_IS_NOT_EQUAL:
-				if ((leftValue instanceof LiteralNode || leftValue instanceof ConcatNode) && (rightValue instanceof LiteralNode || rightValue instanceof ConcatNode))
-					return leftValue.getApproximateStringValue().equals(rightValue.getApproximateStringValue()) ? DataNodeFactory.createLiteralNode("FALSE") : DataNodeFactory.createLiteralNode("TRUE");
-				else
-					return new SymbolicNode(this);
+				return leftValue.isEqualTo(rightValue).negate();
 			
 			// '!=='
 			case InfixExpression.OP_IS_NOT_IDENTICAL:
-				if ((leftValue instanceof LiteralNode || leftValue instanceof ConcatNode) && (rightValue instanceof LiteralNode || rightValue instanceof ConcatNode))
-					return leftValue.getApproximateStringValue().equals(rightValue.getApproximateStringValue()) ? DataNodeFactory.createLiteralNode("FALSE") : DataNodeFactory.createLiteralNode("TRUE");
-				else
-					return new SymbolicNode(this);
+				return leftValue.isIdenticalTo(rightValue).negate();
 				
+			// TODO Implement more cases
 			default:
 				return new SymbolicNode(this);
 		}

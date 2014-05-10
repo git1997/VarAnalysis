@@ -2,6 +2,8 @@ package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.WhileStatement;
 
+import edu.iastate.symex.constraints.ConstraintFactory;
+import edu.iastate.symex.core.BranchEnv;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
@@ -47,9 +49,9 @@ public class WhileStatementNode extends StatementNode {
 	 * Executes the loop and updates the env accordingly.
 	 */
 	public static void execute(Env env, LiteralNode conditionString, StatementNode statement) {
-		Env loopEnv = new Env(env, conditionString, true);
+		BranchEnv loopEnv = new BranchEnv(env, ConstraintFactory.createAtomicConstraint(conditionString));
 		statement.execute(loopEnv);
-		env.updateWithLoop(conditionString, loopEnv);
+		env.updateWithLoop(ConstraintFactory.createAtomicConstraint(conditionString), loopEnv);
 	}
 
 }
