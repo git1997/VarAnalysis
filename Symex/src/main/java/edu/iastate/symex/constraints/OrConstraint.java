@@ -14,7 +14,7 @@ public class OrConstraint extends Constraint {
 	 * Protected constructor, called from ConstraintFactory only.
 	 */
 	protected OrConstraint(Constraint constraint1, Constraint constraint2) {
-		super(constraint1.featureExpr.or(constraint2.featureExpr));
+		super("OR(" + constraint1.featureExpr + ", " + constraint2.featureExpr + ")");
 		this.constraint1 = constraint1;
 		this.constraint2 = constraint2;
 	}

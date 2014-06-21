@@ -29,7 +29,10 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+
+import edu.iastate.symex.position.ContinuousRegion;
 import edu.iastate.symex.position.Position;
+import edu.iastate.symex.position.Region;
 import edu.iastate.symex.run.RunSymexForFile;
 import edu.iastate.symex.ui.UIHelper;
 import edu.iastate.symex.constraints.AtomicConstraint;
@@ -135,7 +138,7 @@ public class DataModelView extends ViewPart {
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
-				return getStandardizedTextOfDataNode((DataNode) element);
+				return getTextOfDataNode((DataNode) element);
 			}
 		});
 		
@@ -253,7 +256,8 @@ public class DataModelView extends ViewPart {
 	 * Invoked when a DataNode is selected
 	 */
 	private void dataNodeSelected(DataNode dataNode) {
-		UIHelper.selectAndReveal(getFileOfDataNode(dataNode), getOffsetInFileOfDataNode(dataNode), getTextOfDataNode(dataNode).length());
+		ContinuousRegion region = getRegionOfDataNode(dataNode).getContinuousRegions().get(0);
+		UIHelper.selectAndReveal(region.getFile(), region.getOffset(), region.getLength());
 		dataModelTreeViewer.getControl().setFocus();
 	}
 	
@@ -399,42 +403,10 @@ public class DataModelView extends ViewPart {
 			return (((SymbolicNode) dataNode).getPhpNode() != null ? ((SymbolicNode) dataNode).getPhpNode().getSourceCode() : "");
 		
 		else if (dataNode instanceof LiteralNode)
-			return ((LiteralNode) dataNode).getStringValue();
-		
-		else
-			return "";
-	}
-	
-	private String getStandardizedTextOfDataNode(DataNode dataNode) {
-		if (dataNode instanceof SelectNode)
-			return (((SelectNode) dataNode).getConstraint() != null ? ((AtomicConstraint) ((SelectNode) dataNode).getConstraint()).getConditionString().getStringValue() : "");
-		
-		else if (dataNode instanceof SymbolicNode)
-			return (((SymbolicNode) dataNode).getPhpNode() != null ? ((SymbolicNode) dataNode).getPhpNode().getSourceCode() : "");
-		
-		else if (dataNode instanceof LiteralNode)
 			return UIHelper.standardizeText(((LiteralNode) dataNode).getStringValue());
 		
 		else
 			return "";
-	}
-	
-	private Position getPositionOfDataNode(DataNode dataNode) {
-		if (dataNode instanceof SelectNode)
-			return (((SelectNode) dataNode).getConstraint() != null ? ((AtomicConstraint)((SelectNode) dataNode).getConstraint()).getConditionString().getPositionRange().getStartPosition() : Position.UNDEFINED);
-		
-		else if (dataNode instanceof SymbolicNode)
-			return (((SymbolicNode) dataNode).getPhpNode() != null ? ((SymbolicNode) dataNode).getPhpNode().getPositionRange().getStartPosition() : Position.UNDEFINED);
-		
-		else if (dataNode instanceof LiteralNode)
-			return ((LiteralNode) dataNode).getPositionRange().getStartPosition();
-		
-		else
-			return Position.UNDEFINED;
-	}
-	
-	private File getFileOfDataNode(DataNode dataNode) {
-		return getPositionOfDataNode(dataNode).getFile();
 	}
 	
 	private String getFilePathOfDataNode(DataNode dataNode) {
@@ -442,12 +414,30 @@ public class DataModelView extends ViewPart {
 		return (file != null ? file.getPath() : "");
 	}
 	
+	private int getLineInFileOfDataNode(DataNode dataNode) {
+		return getPositionOfDataNode(dataNode).getLine();
+	}
+	
 	private int getOffsetInFileOfDataNode(DataNode dataNode) {
 		return getPositionOfDataNode(dataNode).getOffset();
 	}
 	
-	private int getLineInFileOfDataNode(DataNode dataNode) {
-		return getPositionOfDataNode(dataNode).getLine();
+	private Region getRegionOfDataNode(DataNode dataNode) {
+		if (dataNode instanceof SelectNode)
+			return (((SelectNode) dataNode).getConstraint() != null ? ((AtomicConstraint)((SelectNode) dataNode).getConstraint()).getConditionString().getRegion() : Region.UNDEFINED);
+		
+		else if (dataNode instanceof SymbolicNode)
+			return (((SymbolicNode) dataNode).getPhpNode() != null ? ((SymbolicNode) dataNode).getPhpNode().getRegion() : Region.UNDEFINED);
+		
+		else if (dataNode instanceof LiteralNode)
+			return ((LiteralNode) dataNode).getRegion();
+		
+		else
+			return Region.UNDEFINED;
+	}
+	
+	private Position getPositionOfDataNode(DataNode dataNode) {
+		return getRegionOfDataNode(dataNode).getStartPosition();
 	}
 	
 }

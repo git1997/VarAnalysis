@@ -1,11 +1,11 @@
-package edu.iastate.symex.constraints;
+package edu.iastate.symex.constraints.bdd;
 
 /**
  * 
  * @author HUNG
  *
  */
-public class AndConstraint extends Constraint {
+public class OrConstraint extends Constraint {
 	
 	public Constraint constraint1;
 	public Constraint constraint2;
@@ -13,8 +13,8 @@ public class AndConstraint extends Constraint {
 	/**
 	 * Protected constructor, called from ConstraintFactory only.
 	 */
-	protected AndConstraint(Constraint constraint1, Constraint constraint2) {
-		super("AND(" + constraint1.featureExpr + ", " + constraint2.featureExpr + ")");
+	protected OrConstraint(Constraint constraint1, Constraint constraint2) {
+		super(constraint1.featureExpr.or(constraint2.featureExpr));
 		this.constraint1 = constraint1;
 		this.constraint2 = constraint2;
 	}

@@ -1,4 +1,4 @@
-package edu.iastate.symex.constraints;
+package edu.iastate.symex.constraints.bdd;
 
 /**
  * 
@@ -13,7 +13,7 @@ public class NotConstraint extends Constraint {
 	 * Protected constructor, called from ConstraintFactory only.
 	 */
 	protected NotConstraint(Constraint oppositeConstraint) {
-		super("NOT(" + oppositeConstraint.featureExpr + ")");
+		super(oppositeConstraint.featureExpr.not());
 		this.oppositeConstraint = oppositeConstraint;
 	}
 	

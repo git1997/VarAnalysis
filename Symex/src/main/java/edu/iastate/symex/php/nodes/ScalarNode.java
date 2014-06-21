@@ -1,5 +1,6 @@
 package edu.iastate.symex.php.nodes;
 
+import java.util.ArrayList;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.nodes.Scalar;
 
@@ -7,10 +8,8 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.position.ContinuousRegion;
 import edu.iastate.symex.position.Position;
-import edu.iastate.symex.position.PositionRange;
-import edu.iastate.symex.position.AtomicPositionRange;
-import edu.iastate.symex.util.StringUtils;
 
 /**
  * 
@@ -64,31 +63,31 @@ public class ScalarNode extends ExpressionNode {
 			case Scalar.TYPE_SYSTEM:											// [8] e.g. __ABC__
 				scalarKind = 8;
 				break;
-			default: // Scalar.TYPE_UNKNOWN										// [9] e.g. ...
+			default: // Scalar.TYPE_UNKNOWN										// [9] e.g. ... // TODO Handle this case
 				scalarKind = 9;
 				break;
 		}
 		
 		switch (scalarKind) {
+			// If it is surrounded by quotes/apostrophes
+			case 4:
+				String string1 = stringValue;
+				Position position1 = this.getRegion().getPositionAtRelativeOffset(0);
+				return generateDataNode(string1, position1, '\"');
+			case 5:
+				String string2 = stringValue.substring(1, stringValue.length() - 1);
+				Position position2 = this.getRegion().getPositionAtRelativeOffset(1);
+				return generateDataNode(string2, position2, '\"');
+			case 6:
+				String string3 = stringValue.substring(1, stringValue.length() - 1);
+				Position position3 = this.getRegion().getPositionAtRelativeOffset(1);
+				return generateDataNode(string3, position3, '\'');
+			
 			// If it is a predefined constants (e.g. WEBSITE_PATH, __FILE__)
 			case 7:
 			case 8:
-				DataNode constantValue = env.getPredefinedConstantValue(getSourceCode());
+				DataNode constantValue = env.getPredefinedConstantValue(stringValue);
 				return constantValue != null ? constantValue : DataNodeFactory.createSymbolicNode(this);
-			
-			// If it is surrounded by quotes/apostrophes
-			case 4:
-				String string3 = stringValue;
-				Position position3 = this.getPositionRange().getPositionAtRelativeOffset(0);
-				return generateLiteralNode(string3, position3, '\"');
-			case 5:
-				String string1 = stringValue.substring(1, stringValue.length() - 1);
-				Position position1 = this.getPositionRange().getPositionAtRelativeOffset(1);
-				return generateLiteralNode(string1, position1, '\"');
-			case 6:
-				String string2 = stringValue.substring(1, stringValue.length() - 1);
-				Position position2 = this.getPositionRange().getPositionAtRelativeOffset(1);
-				return generateLiteralNode(string2, position2, '\'');
 			
 			// Other cases
 			default:
@@ -97,25 +96,96 @@ public class ScalarNode extends ExpressionNode {
 	}
 	
 	/**
-	 * Generates a LiteralNode from the string of a PHP scalar.
+	 * Generates a DataNode from the string of a PHP scalar.
 	 * For example, given the PHP scalar "print(\"Hello\")", the inputs are
 	 * 		+ string: 		print(\"Hello\")
 	 * 		+ position:		1
 	 * 		+ stringType: 	" // quotes
-	 * The returned value should be a LiteralNode with the following properties:
-	 * 		+ stringValue:	print("Hello")
-	 * 		+ position:		print( [1-6], " [7-8], Hello [9-13], ") [15-16]
+	 * The returned value should be a ConcatNode with the following properties:
+	 * 		+ fragments:	print(		  "        Hello         "          )
+	 * 		+ positions:	print( [1-6], " [7-8], Hello [9-13], " [14-15], ) [16]
 	 * @param string		The string of a PHP scalar
 	 * @param position		The position of the string
-	 * @param stringType	The type of the string ("" or '')
+	 * @param stringType	The type of the string (originally enclosed by single quotes ' or double quotes ")
 	 * @return
 	 */
-	private LiteralNode generateLiteralNode(String string, Position position, char stringType) {
-		// TODO Fix this
+	private DataNode generateDataNode(String string, Position position, char stringType) {
+		// Chop the string into fragments separated by slash \ characters.
+		ArrayList<DataNode> fragments = new ArrayList<DataNode>();
+		int beginIndex = 0; // beginIndex of a fragment, inclusive
+		int endIndex = 0; // endIndex of a fragment, exclusive
 		
-		PositionRange positionRange = new AtomicPositionRange(position.getFile(), position.getOffset(), stringValue.length());
-		String stringValue = StringUtils.getUnescapedStringValuePreservingLength(string, stringType);
-		return DataNodeFactory.createLiteralNode(positionRange, stringValue);
+		while (true) {
+			int idx = string.indexOf('\\', beginIndex);
+			if (idx == -1) {
+				// Get the remaining fragment
+				endIndex = string.length();
+				String stringValue = string.substring(beginIndex, endIndex);
+				ContinuousRegion region = new ContinuousRegion(position.getFile(), position.getOffset() + beginIndex, endIndex - beginIndex);
+				LiteralNode literalNode = DataNodeFactory.createLiteralNode(region, stringValue);
+				fragments.add(literalNode);
+				break;
+			}
+			else {
+				// Get the fragment up to the slash character
+				endIndex = idx;
+				if (beginIndex < endIndex) {
+					String stringValue = string.substring(beginIndex, endIndex);
+					ContinuousRegion region = new ContinuousRegion(position.getFile(), position.getOffset() + beginIndex, endIndex - beginIndex);
+					LiteralNode literalNode = DataNodeFactory.createLiteralNode(region, stringValue);
+					fragments.add(literalNode);
+				}
+				
+				// Get the fragment at the slash character (e.g., \" => ")
+				/*
+				 * There are 2 strategies for position mapping:
+				 * 	1. A generated " character is mapped to \" in the source code: Correct but region.Length != stringValue.Length
+				 *  2. A generated " character is mapped to " in the source code: Acceptable, and more importantly, region.Length == stringValue.Length, which facilitates
+				 *				position tracking during parsing
+				 * Let's use strategy 2 for now.
+				 */
+				beginIndex = endIndex;
+				endIndex = endIndex + 2;
+				String stringValue = unescapeString(string.substring(beginIndex, endIndex), stringType);
+				ContinuousRegion region = new ContinuousRegion(position.getFile(), position.getOffset() + endIndex - stringValue.length(), stringValue.length());
+				LiteralNode literalNode = DataNodeFactory.createLiteralNode(region, stringValue);
+				fragments.add(literalNode);
+				
+				beginIndex = endIndex;
+				if (endIndex == string.length())
+					break;
+			}
+		}
+		
+		return DataNodeFactory.createCompactConcatNode(fragments);
+	}
+	
+	/**
+	 * Unescapes a character following a \.
+	 * Example 1: 
+	 * 		Original string: "abc\"def"
+	 * 		Input string: \"
+	 * 		String type: "
+	 * 		Unescaped string: "
+	 * Example 2:
+	 * 		Original string: 'abc\"def'
+	 * 		Input string: \"
+	 * 		String type: '
+	 * 		Unescaped string: \"
+	 * @param inputString		The input string consisting of a slash \ and a character.
+	 * @param stringType		The type of the string (originally enclosed by single quotes ' or double quotes ")
+	 * @return					The unescaped character (or the original input string if it fails)
+	 */
+	private String unescapeString(String inputString, char stringType) {
+		switch (inputString) {
+			case "\\t": 	return "\t";
+			case "\\r":		return "\r";
+			case "\\n": 	return "\n";
+			case "\\\\": 	return "\\";
+			case "\\'":		return (stringType == '\'' ? "'" : inputString);	
+			case "\\\"":	return (stringType == '"' ? "\"" : inputString);
+			default: 		return inputString;
+		}
 	}
 	
 }

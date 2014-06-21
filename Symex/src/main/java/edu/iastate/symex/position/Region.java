@@ -7,32 +7,34 @@ import java.util.ArrayList;
  * @author HUNG
  *
  */
-public abstract class PositionRange {
+public abstract class Region {
+	
+	public static final UndefinedRegion UNDEFINED = new UndefinedRegion();
 	
 	/**
-	 * Returns the position at a relative offset to the start position of the positionRange.
+	 * Returns the position at a relative offset to the start position of the region
 	 */
 	public abstract Position getPositionAtRelativeOffset(int relOffset);
 	
 	/**
-	 * Returns atomic position ranges
+	 * Returns continuous regions
 	 */
-	public abstract ArrayList<AtomicPositionRange> getAtomicPositionRanges();
+	public abstract ArrayList<ContinuousRegion> getContinuousRegions();
 	
 	/**
-	 * Returns the length of the positionRange.
+	 * Returns the length of the region
 	 */
 	public abstract int getLength();
 	
 	/**
-	 * Returns the start position of the positionRange.
+	 * Returns the start position of the region
 	 */
 	public Position getStartPosition() {
 		return getPositionAtRelativeOffset(0);
 	}
 	
 	/**
-	 * Returns the end position of the positionRange.
+	 * Returns the end position of the region
 	 */
 	public Position getEndPosition() {
 		return getPositionAtRelativeOffset(getLength());

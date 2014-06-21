@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * @author HUNG
  *
  */
-public class AtomicPositionRange extends PositionRange {
+public class ContinuousRegion extends Region {
 
 	private File file;
 	private int offset;
@@ -17,7 +17,7 @@ public class AtomicPositionRange extends PositionRange {
 	/**
 	 * Constructor
 	 */
-	public AtomicPositionRange(File file, int offset, int length) {
+	public ContinuousRegion(File file, int offset, int length) {
 		this.file = file;
 		this.offset = offset;
 		this.length = length;
@@ -42,10 +42,10 @@ public class AtomicPositionRange extends PositionRange {
 	}
 	
 	@Override
-	public ArrayList<AtomicPositionRange> getAtomicPositionRanges() {
-		ArrayList<AtomicPositionRange> ranges = new ArrayList<AtomicPositionRange>(1);
-		ranges.add(this);
-		return ranges;
+	public ArrayList<ContinuousRegion> getContinuousRegions() {
+		ArrayList<ContinuousRegion> regions = new ArrayList<ContinuousRegion>(1);
+		regions.add(this);
+		return regions;
 	}
 	
 }

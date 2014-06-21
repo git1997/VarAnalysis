@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 
-import edu.iastate.symex.position.AtomicPositionRange;
+import edu.iastate.symex.position.ContinuousRegion;
 import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
@@ -18,7 +18,7 @@ public abstract class PhpNode {
 	
 	private ASTNode astNode;					// The original AST node
 	
-	private AtomicPositionRange positionRange;	// Its position in the source code
+	private ContinuousRegion region;			// Its position in the source code
 	
 	private String sourceCode;					// The source code of the PhpNode
 	
@@ -30,7 +30,7 @@ public abstract class PhpNode {
 		File file = ASTHelper.inst.getSourceFileOfPhpASTNode(astNode);	
 		
 		this.astNode = astNode;
-		this.positionRange = new AtomicPositionRange(file, astNode.getStart(), astNode.getEnd() - astNode.getStart());
+		this.region = new ContinuousRegion(file, astNode.getStart(), astNode.getEnd() - astNode.getStart());
 		this.sourceCode = ASTHelper.inst.getSourceCodeOfPhpASTNode(astNode); // TODO sourceCode.length should equal positionRange.length
 	}
 	
@@ -45,8 +45,8 @@ public abstract class PhpNode {
 	 * Returns the position of the PhpNode in the source code.
 	 * Note that the location may not be available (can be undefined).
 	 */
-	public AtomicPositionRange getPositionRange() {
-		return positionRange;
+	public ContinuousRegion getRegion() {
+		return region;
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package edu.iastate.symex.constraints;
+package edu.iastate.symex.constraints.bdd;
 
 /**
  * 
@@ -14,7 +14,7 @@ public class AndConstraint extends Constraint {
 	 * Protected constructor, called from ConstraintFactory only.
 	 */
 	protected AndConstraint(Constraint constraint1, Constraint constraint2) {
-		super("AND(" + constraint1.featureExpr + ", " + constraint2.featureExpr + ")");
+		super(constraint1.featureExpr.and(constraint2.featureExpr));
 		this.constraint1 = constraint1;
 		this.constraint2 = constraint2;
 	}

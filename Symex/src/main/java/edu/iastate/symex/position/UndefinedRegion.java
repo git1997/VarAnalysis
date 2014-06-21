@@ -7,14 +7,12 @@ import java.util.ArrayList;
  * @author HUNG
  *
  */
-public class UndefinedPositionRange extends PositionRange {
+public class UndefinedRegion extends Region {
 
-	public static UndefinedPositionRange inst = new UndefinedPositionRange();
-	
 	/**
-	 * Private constructor.
+	 * Protected constructor.
 	 */
-	private UndefinedPositionRange() {
+	protected UndefinedRegion() {
 	}
 	
 	@Override
@@ -28,7 +26,7 @@ public class UndefinedPositionRange extends PositionRange {
 	}
 	
 	@Override
-	public ArrayList<AtomicPositionRange> getAtomicPositionRanges() {
+	public ArrayList<ContinuousRegion> getContinuousRegions() {
 		// TODO Fix this
 		return null;
 	}

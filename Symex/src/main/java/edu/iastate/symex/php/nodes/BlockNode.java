@@ -43,24 +43,25 @@ public class BlockNode extends StatementNode {
 	}
 	
 	public static DataNode executeStatements(ArrayList<StatementNode> statements, Env env) {
-		DataNode retValue = null;
-		
 		// Execute function/class declarations first
 		for (StatementNode statementNode : statements) {
 			if (statementNode instanceof FunctionDeclarationNode || statementNode instanceof ClassDeclarationNode)
-				retValue = statementNode.execute(env);
+				statementNode.execute(env);
 		}
 		
 		// Then, execute the regular statements
 		for (StatementNode statementNode : statements) {
-			if ( !(statementNode instanceof FunctionDeclarationNode) && !(statementNode instanceof ClassDeclarationNode) )
-				retValue = statementNode.execute(env);
-			
-			if (retValue == SpecialNode.ControlNode.RETURN || retValue == SpecialNode.ControlNode.BREAK)
-				break;
+			if ( !(statementNode instanceof FunctionDeclarationNode) && !(statementNode instanceof ClassDeclarationNode) ) {
+				DataNode retValue = statementNode.execute(env);
+
+				if (retValue == SpecialNode.ControlNode.RETURN)
+					return retValue;
+				else if (retValue == SpecialNode.ControlNode.BREAK)
+					break;
+			}
 		}
 		
-		return retValue;
+		return null;
 	}
 	
 }

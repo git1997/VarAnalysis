@@ -1,1 +1,2 @@
-01 123 123.4 abc abc abc[Symbolic:$x]' [Symbolic:$type7] [Symbolic:$type8]
+01 123 123.4 abc abc abc[Symbolic:$x]' [Symbolic:$type7] [Symbolic:$type8]abc"def
+ghi abc\"def	ghi"

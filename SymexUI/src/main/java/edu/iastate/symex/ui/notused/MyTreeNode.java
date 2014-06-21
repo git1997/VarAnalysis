@@ -67,7 +67,7 @@ public class MyTreeNode {
 		}
 		else if (dataNode instanceof LiteralNode) {
 			LiteralNode literalNode = (LiteralNode) dataNode;
-			Position position = literalNode.getPositionRange().getStartPosition();
+			Position position = literalNode.getRegion().getStartPosition();
 			return position.getFile().getPath() + " @ Line " + position.getLine(); 
 		}
 		else { // if (dataNode instanceof SymbolicNode) {

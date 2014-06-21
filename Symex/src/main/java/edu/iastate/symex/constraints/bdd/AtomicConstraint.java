@@ -1,5 +1,6 @@
-package edu.iastate.symex.constraints;
+package edu.iastate.symex.constraints.bdd;
 
+import de.fosd.typechef.featureexpr.FeatureExprFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
 
 /**
@@ -15,7 +16,7 @@ public class AtomicConstraint extends Constraint {
 	 * Protected constructor, called from ConstraintFactory only.
 	 */
 	protected AtomicConstraint(LiteralNode conditionString) {
-		super("ATOMIC(" + conditionString.getStringValue() + ")");
+		super(FeatureExprFactory.createDefinedExternal(conditionString.getStringValue()));
 		this.conditionString = conditionString;
 	}
 	

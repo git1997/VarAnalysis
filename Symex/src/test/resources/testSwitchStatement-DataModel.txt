@@ -1,0 +1,1 @@
+i equals 1i equals 0i equals 1i not equals 0 or 1

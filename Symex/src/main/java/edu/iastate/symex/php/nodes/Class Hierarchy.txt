@@ -15,7 +15,7 @@ PhpNode
 		PostfixExpressionNode
 		PrefixExpressionNode
 		QuoteNode
-		ScalarNode							x
+		ScalarNode
 		UnaryOperationNode
 		UnresolvedExpressionNode
 		VariableBaseNode
@@ -44,7 +44,7 @@ PhpNode
 		InLineHtmlNode					
 		ReturnStatementNode				
 		SwitchCaseNode
-		SwitchStatementNode					x
+		SwitchStatementNode
 		TryStatementNode	
 		UnresolvedStatementNode
 		WhileStatementNode

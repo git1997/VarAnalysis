@@ -11,7 +11,7 @@ import edu.iastate.symex.util.FileIO;
  */
 public class Position {
 	
-	public static Position UNDEFINED = new Position(null, -1);
+	public static final Position UNDEFINED = new Position(null, -1);
 	
 	private File file;
 	private int offset;

@@ -1,4 +1,8 @@
-package edu.iastate.symex.constraints;
+package edu.iastate.symex.constraints.bdd;
+
+import de.fosd.typechef.featureexpr.FeatureExpr;
+import de.fosd.typechef.featureexpr.FeatureExprFactory;
+import de.fosd.typechef.featureexpr.bdd.BDDFeatureExprFactory$;
 
 /**
  * 
@@ -7,18 +11,23 @@ package edu.iastate.symex.constraints;
  */
 public class Constraint {
 	
-	public static final Constraint TRUE	 = new Constraint("TRUE");
+	// Use the JavaBDD library instead of Sat4j 
+	static {
+		FeatureExprFactory.setDefault(BDDFeatureExprFactory$.MODULE$);
+	}
 	
-	public static final Constraint FALSE = new Constraint("FALSE");
+	public static final Constraint TRUE	 = new Constraint(FeatureExprFactory.True());
+	
+	public static final Constraint FALSE = new Constraint(FeatureExprFactory.False());
 	
 	// The FeatureExpr representing this constraint
-	protected String featureExpr;
+	protected FeatureExpr featureExpr;
 	
 	/**
 	 * Protected constructor
 	 * @param featureExpr
 	 */
-	protected Constraint(String featureExpr) {
+	protected Constraint(FeatureExpr featureExpr) {
 		this.featureExpr = featureExpr;
 	}
 	
@@ -30,21 +39,21 @@ public class Constraint {
 	 * @return True if the constraint is satisfiable
 	 */
 	public boolean isSatisfiable() {
-		return ! isContradiction();
+		return featureExpr.isSatisfiable();
 	}
 	
 	/**
 	 * @return True if the constraint is a tautology
 	 */
 	public boolean isTautology() {
-		return this == TRUE;
+		return featureExpr.isTautology();
 	}
 	
 	/**
 	 * @return True if the constraint is a contradiction
 	 */
 	public boolean isContradiction() {
-		return this == FALSE;
+		return featureExpr.isContradiction();
 	}
 	
 	/**
@@ -52,7 +61,7 @@ public class Constraint {
 	 * @return True if the two constraints are equivalent
 	 */
 	public boolean equivalentTo(Constraint constraint) {
-		return (this.featureExpr.equals(constraint.featureExpr));
+		return (this.featureExpr.equivalentTo(constraint.featureExpr));
 	}
 	
 	/**
@@ -60,13 +69,13 @@ public class Constraint {
 	 * @return True if the two constraints are opposite of each other
 	 */
 	public boolean oppositeOf(Constraint constraint) {
-		return equivalentTo(ConstraintFactory.createNotConstraint(constraint));
+		return (this.featureExpr.equivalentTo(constraint.featureExpr.not()));
 	}
 	
 	/**
 	 * Returns the FeatureExpr representing this constraint.
 	 */
-	public String getFeatureExpr() {
+	public FeatureExpr getFeatureExpr() {
 		return featureExpr;
 	}
 

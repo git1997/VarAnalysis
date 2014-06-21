@@ -5,9 +5,9 @@ import java.util.Arrays;
 
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.PhpNode;
-import edu.iastate.symex.position.PositionRange;
-import edu.iastate.symex.position.ScatteredPositionRange;
-import edu.iastate.symex.position.UndefinedPositionRange;
+import edu.iastate.symex.position.ContinuousRegion;
+import edu.iastate.symex.position.Region;
+import edu.iastate.symex.position.ScatteredRegion;
 import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.constraints.Constraint;
 
@@ -69,9 +69,26 @@ public class DataNodeFactory {
 				&& !compactChildNodes.isEmpty() && compactChildNodes.get(compactChildNodes.size() - 1) instanceof LiteralNode) {
 			LiteralNode node1 = (LiteralNode) compactChildNodes.get(compactChildNodes.size() - 1);
 			LiteralNode node2 = (LiteralNode) childNode;
-			if (SymexConfig.COMBINING_CONSECUTIVE_LITERAL_NODES
-				|| node1.getPositionRange().getEndPosition().sameAs(node2.getPositionRange().getStartPosition())) {
-				LiteralNode combinedLiteralNode = createLiteralNode(node1, node2);
+
+			if (node1.getRegion() instanceof ContinuousRegion && node2.getRegion() instanceof ContinuousRegion
+					&& node1.getRegion().getEndPosition().sameAs(node2.getRegion().getStartPosition())
+					&& node1.getRegion().getLength() == node1.getStringValue().length()
+					&& node2.getRegion().getLength() == node2.getStringValue().length()) {
+				// Combine consecutive literal nodes when the two nodes have adjacent positions.
+				Region region = new ContinuousRegion(node1.getRegion().getStartPosition().getFile(),
+						node1.getRegion().getStartPosition().getOffset(), 
+						node1.getRegion().getLength() + node2.getRegion().getLength());
+				String stringValue = node1.getStringValue() + node2.getStringValue();
+
+				LiteralNode combinedLiteralNode = createLiteralNode(region, stringValue);
+				compactChildNodes.set(compactChildNodes.size() - 1, combinedLiteralNode);
+			}
+			else if (SymexConfig.COMBINE_CONSECUTIVE_LITERAL_NODES) {
+				// Combine consecutive literal nodes even when the nodes node DO NOT have adjacent positions
+				Region region = new ScatteredRegion(node1.getRegion(), node2.getRegion());
+				String stringValue = node1.getStringValue() + node2.getStringValue();
+
+				LiteralNode combinedLiteralNode = createLiteralNode(region, stringValue);
 				compactChildNodes.set(compactChildNodes.size() - 1, combinedLiteralNode);
 			}
 			else {
@@ -87,23 +104,17 @@ public class DataNodeFactory {
 	 * Create Literal Nodes
 	 */
 	
-	public static LiteralNode createLiteralNode(PositionRange positionRange, String stringValue) {
-		return new LiteralNode(positionRange, stringValue);
-	}
-	
-	public static LiteralNode createLiteralNode(LiteralNode node1, LiteralNode node2) {
-		PositionRange positionRange = new ScatteredPositionRange(node1.getPositionRange(), node2.getPositionRange());
-		String stringValue = node1.getStringValue() + node2.getStringValue();
-		return createLiteralNode(positionRange, stringValue);
+	public static LiteralNode createLiteralNode(Region region, String stringValue) {
+		return new LiteralNode(region, stringValue);
 	}
 
 	public static LiteralNode createLiteralNode(PhpNode phpNode) {
-		return createLiteralNode(phpNode.getPositionRange(), phpNode.getSourceCode());
+		return createLiteralNode(phpNode.getRegion(), phpNode.getSourceCode());
 	}
 
 	public static LiteralNode createLiteralNode(String stringValue) {
 		// The value is dynamically generated and cannot be traced back to the source code.
-		return createLiteralNode(UndefinedPositionRange.inst, stringValue); 
+		return createLiteralNode(Region.UNDEFINED, stringValue); 
 	}
 	
 	/**

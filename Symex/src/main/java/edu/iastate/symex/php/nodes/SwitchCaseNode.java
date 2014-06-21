@@ -37,19 +37,20 @@ public class SwitchCaseNode extends StatementNode {
 	*/
 	public SwitchCaseNode(SwitchCase switchCase) {
 		super(switchCase);
+		
 		ArrayList<StatementNode> statementNodes = new ArrayList<StatementNode>();
 		boolean hasBreakStatement = false;
 		for (Statement statement : switchCase.actions()) {
 			StatementNode statementNode = StatementNode.createInstance(statement);
 			statementNodes.add(statementNode);
-			// [Required]:
 			if (statement.getType() == Statement.RETURN_STATEMENT || statement.getType() == Statement.BREAK_STATEMENT) {
 				hasBreakStatement = true;
 				break;
 			}
 		}
-		this.value = (switchCase.getValue() != null ? ExpressionNode.createInstance(switchCase.getValue()) : null);
-		this.condtionString = DataNodeFactory.createLiteralNode(this.value);
+		
+		this.value = (switchCase.isDefault() ? null : ExpressionNode.createInstance(switchCase.getValue()));
+		this.condtionString = (switchCase.isDefault() ? null : DataNodeFactory.createLiteralNode(this.value));
 		this.statements = statementNodes;
 		this.isDefault = switchCase.isDefault();
 		this.hasBreakStatement = hasBreakStatement;
@@ -67,14 +68,30 @@ public class SwitchCaseNode extends StatementNode {
 		return isDefault;
 	}
 	
+	public boolean hasBreakStatement() {
+		return hasBreakStatement;
+	}
+	
 	/**
-	 * Adds statement nodes of the switchCaseNodes below until a break statement is encountered.
+	 * Adds statement nodes of a switchCaseNode.
+	 * Used by SwitchStatementNode only.
+	 * @see edu.iastate.symex.php.nodes.SwitchStatementNode.SwitchStatementNode(SwitchStatement)
 	 */
-	public void addStatementNodesUntilBreak(SwitchCaseNode switchCaseNode) {
-		if (!this.hasBreakStatement) {
-			statements.addAll(switchCaseNode.statements);
-			if (switchCaseNode.hasBreakStatement)
-				hasBreakStatement = true;
+	public void addStatementNodes(SwitchCaseNode switchCaseNode) {
+		statements.addAll(switchCaseNode.statements);
+	}
+	
+	/**
+	 * Removes BreakStatementNode from a SwitchCaseNode.
+	 * Used by SwitchStatementNode only.
+	 * @see edu.iastate.symex.php.nodes.SwitchStatementNode.SwitchStatementNode(SwitchStatement)
+	 */
+	public void removeBreakStatementNode() {
+		for (int i = 0; i < statements.size(); i++) {
+			if (statements.get(i) instanceof BreakStatementNode) {
+				while (i < statements.size())
+					statements.remove(i);
+			}
 		}
 	}
 	

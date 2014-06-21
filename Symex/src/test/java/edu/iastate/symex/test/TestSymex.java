@@ -21,10 +21,8 @@ public class TestSymex {
 	public static boolean testMode = true; // true: to test; false: to generate Oracle
 	
 	public static void main(String[] args) {
-		File inputFile = new File("src/test/resources/testScalar.php");
-		//File inputFile = new File("/Work/To-do/Data/Web Projects/Server Code/addressbookv6.2.12/map.php");
-		DataModel dataModel = new RunSymexForFile(inputFile).execute();
-		System.out.println(WriteDataModelToIfDefs.convert(dataModel));
+		testMode = false;
+		new TestSymex().runFile("testScalar.php", "testScalar-DataModel.txt");
 	}
 
 	private void runFile(String inputFilePath, String outputFilePath) {
@@ -61,6 +59,11 @@ public class TestSymex {
 	@Test
 	public void testScalar() {
 		runFile("testScalar.php", "testScalar-DataModel.txt");
+	}
+	
+	@Test
+	public void testSwitchStatement() {
+		runFile("testSwitchStatement.php", "testSwitchStatement-DataModel.txt");
 	}
 
 }

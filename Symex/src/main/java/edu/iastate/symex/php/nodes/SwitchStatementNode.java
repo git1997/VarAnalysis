@@ -19,7 +19,6 @@ import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
 public class SwitchStatementNode extends StatementNode {
 
 	protected ExpressionNode expression;
-	protected DataNode switchExpressionNodeResult;
 	protected LiteralNode conditionString;
 	protected ArrayList<SwitchCaseNode> switchCases;
 	
@@ -61,21 +60,24 @@ public class SwitchStatementNode extends StatementNode {
 		 * Then, the statementNodes of case 0 include echo '0' only. 
 		 */
 		for (int i = 0; i < switchCaseNodes.size() - 1; i++) {
-			for (int j = i + 1; j < switchCaseNodes.size(); j++)
-				switchCaseNodes.get(i).addStatementNodesUntilBreak(switchCaseNodes.get(j));
+			if (!switchCaseNodes.get(i).hasBreakStatement()) {
+				for (int j = i + 1; j < switchCaseNodes.size(); j++) {
+					switchCaseNodes.get(i).addStatementNodes(switchCaseNodes.get(j));
+					if (switchCaseNodes.get(j).hasBreakStatement())
+						break;
+				}
+			}
+			switchCaseNodes.get(i).removeBreakStatementNode();
 		}
 		
 		// Reorder the switchCaseNodes so that the default switchCase is put at the end.
-		SwitchCaseNode defaultSwitchCaseNode = null;
-		for (int i = 0; i < switchCaseNodes.size(); i++) {
+		for (int i = 0; i < switchCaseNodes.size() - 1; i++) { // Use size() - 1, so that if it's already at the end, don't do anything
 			if (switchCaseNodes.get(i).isDefault()) {
-				defaultSwitchCaseNode = switchCaseNodes.get(i);
+				SwitchCaseNode defaultSwitchCaseNode = switchCaseNodes.get(i);
 				switchCaseNodes.remove(i);
+				switchCaseNodes.add(defaultSwitchCaseNode);
 				break;
 			}
-		}
-		if (defaultSwitchCaseNode != null) {
-			switchCaseNodes.add(defaultSwitchCaseNode);
 		}
 		
 		this.expression = ExpressionNode.createInstance(switchStatement.getExpression());
@@ -85,47 +87,54 @@ public class SwitchStatementNode extends StatementNode {
 
 	@Override
 	public DataNode execute(Env env) {
-		if (!(this instanceof FakeSwitchStatementNode))
-			switchExpressionNodeResult = expression.execute(env);
-		
-		if (switchCases.isEmpty())
-			return null;
-		
-		// Remove the first switchCaseNode from the current SwitchStatementNode to create a fake SwitchStatementNode
-		SwitchCaseNode firstSwitchCaseNode = switchCases.get(0);
-		FakeSwitchStatementNode fakeSwitchStatementNode = new FakeSwitchStatementNode((SwitchStatement) this.getAstNode());
-		fakeSwitchStatementNode.expression = expression;
-		fakeSwitchStatementNode.switchExpressionNodeResult = switchExpressionNodeResult;
-		fakeSwitchStatementNode.conditionString = conditionString;			
-		fakeSwitchStatementNode.switchCases = new ArrayList<SwitchCaseNode>(switchCases);
-		fakeSwitchStatementNode.switchCases.remove(0);
-		
-		// Execute the firstSwitchCaseNode and the fake SwitchStatementNode
-		if (firstSwitchCaseNode.isDefault()) {
-			firstSwitchCaseNode.execute(env);
-		}
-		else {
-			DataNode firstSwitchCaseNodeResult = firstSwitchCaseNode.getValue().execute(env);
-			if (switchExpressionNodeResult instanceof LiteralNode && firstSwitchCaseNodeResult instanceof LiteralNode) {
-				if (switchExpressionNodeResult.isEqualTo(firstSwitchCaseNodeResult).isTrueValue())
-					firstSwitchCaseNode.execute(env);
-				else
-					fakeSwitchStatementNode.execute(env);
-			}
-			else {
-				LiteralNode switchCaseExpressionString = firstSwitchCaseNode.getConditionString();
-				LiteralNode conditionString = switchCaseExpressionString; // Or it could be: conditionString = new LiteralNode(switchExpressionString.getStringValue() + " == " + switchCaseExpressionString.getStringValue());
-				IfStatementNode.execute(env, BooleanNode.UNKNOWN, conditionString, firstSwitchCaseNode, fakeSwitchStatementNode);
-			}
-		}
-		
-		return null;
+		DataNode expressionResult = expression.execute(env);
+		FakeSwitchStatementNode fakeSwitchExpressionNode = new FakeSwitchStatementNode((SwitchStatement) this.getAstNode(), expressionResult, conditionString, switchCases);
+		return fakeSwitchExpressionNode.execute(env);
 	}
 	
-	private class FakeSwitchStatementNode extends SwitchStatementNode {
-		private FakeSwitchStatementNode(SwitchStatement switchStatement) {
-			super(switchStatement);
+	/**
+	 * Use FakeSwitchStatementNode to model a SwitchStatement as a list of IfStatements
+	 */
+	private class FakeSwitchStatementNode extends StatementNode {
+		
+		private SwitchStatement originalSwitchStatement;
+		
+		private DataNode expressionResult;
+		private LiteralNode conditionString;
+		private ArrayList<SwitchCaseNode> switchCases;
+		
+		private FakeSwitchStatementNode(SwitchStatement originalSwitchStatement, DataNode expressionResult, LiteralNode conditionString, ArrayList<SwitchCaseNode> switchCases) {
+			super(originalSwitchStatement);
+			this.originalSwitchStatement = originalSwitchStatement;
+			
+			this.expressionResult = expressionResult;
+			this.conditionString = conditionString;
+			this.switchCases = switchCases;
 		}
+		
+		@Override
+		public DataNode execute(Env env) {
+			// Turn a SwitchStatement into an IfStatement such that:
+			//  + The then branch is the first SwitchCase
+			//  + The else branch is a FakeSwitchStatement, consisting of the remaining SwitchCases except the first SwitchCase
+			SwitchCaseNode thenBranch = switchCases.get(0);
+			ArrayList<SwitchCaseNode> remainingSwitchCases = new ArrayList<SwitchCaseNode>(switchCases);
+			remainingSwitchCases.remove(0);
+			FakeSwitchStatementNode elseBranch = remainingSwitchCases.isEmpty() ? null : new FakeSwitchStatementNode(originalSwitchStatement, expressionResult, conditionString, remainingSwitchCases);
+			
+			// Execute the branches
+			if (thenBranch.isDefault()) {
+				return thenBranch.execute(env);
+			}
+			else {
+				DataNode caseResult = thenBranch.getValue().execute(env);
+				BooleanNode conditionValue = expressionResult.isEqualTo(caseResult);
+				LiteralNode switchCaseConditionString = thenBranch.getConditionString();
+				LiteralNode conditionString = switchCaseConditionString; // TODO Or it could be: conditionString = new LiteralNode(this.conditionString.getStringValue() + " == " + switchCaseConditionString.getStringValue());
+				return IfStatementNode.execute(env, conditionValue, conditionString, thenBranch, elseBranch);
+			}
+		}
+		
 	}
 	
 }
