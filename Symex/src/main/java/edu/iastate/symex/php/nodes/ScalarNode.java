@@ -8,7 +8,7 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
-import edu.iastate.symex.position.ContinuousRegion;
+import edu.iastate.symex.position.Range;
 import edu.iastate.symex.position.Position;
 
 /**
@@ -72,15 +72,15 @@ public class ScalarNode extends ExpressionNode {
 			// If it is surrounded by quotes/apostrophes
 			case 4:
 				String string1 = stringValue;
-				Position position1 = this.getRegion().getPositionAtRelativeOffset(0);
+				Position position1 = this.getRange().getPositionAtRelativeOffset(0);
 				return generateDataNode(string1, position1, '\"');
 			case 5:
 				String string2 = stringValue.substring(1, stringValue.length() - 1);
-				Position position2 = this.getRegion().getPositionAtRelativeOffset(1);
+				Position position2 = this.getRange().getPositionAtRelativeOffset(1);
 				return generateDataNode(string2, position2, '\"');
 			case 6:
 				String string3 = stringValue.substring(1, stringValue.length() - 1);
-				Position position3 = this.getRegion().getPositionAtRelativeOffset(1);
+				Position position3 = this.getRange().getPositionAtRelativeOffset(1);
 				return generateDataNode(string3, position3, '\'');
 			
 			// If it is a predefined constants (e.g. WEBSITE_PATH, __FILE__)
@@ -121,8 +121,8 @@ public class ScalarNode extends ExpressionNode {
 				// Get the remaining fragment
 				endIndex = string.length();
 				String stringValue = string.substring(beginIndex, endIndex);
-				ContinuousRegion region = new ContinuousRegion(position.getFile(), position.getOffset() + beginIndex, endIndex - beginIndex);
-				LiteralNode literalNode = DataNodeFactory.createLiteralNode(region, stringValue);
+				Range range = new Range(position.getFile(), position.getOffset() + beginIndex, endIndex - beginIndex);
+				LiteralNode literalNode = DataNodeFactory.createLiteralNode(range, stringValue);
 				fragments.add(literalNode);
 				break;
 			}
@@ -131,24 +131,24 @@ public class ScalarNode extends ExpressionNode {
 				endIndex = idx;
 				if (beginIndex < endIndex) {
 					String stringValue = string.substring(beginIndex, endIndex);
-					ContinuousRegion region = new ContinuousRegion(position.getFile(), position.getOffset() + beginIndex, endIndex - beginIndex);
-					LiteralNode literalNode = DataNodeFactory.createLiteralNode(region, stringValue);
+					Range range = new Range(position.getFile(), position.getOffset() + beginIndex, endIndex - beginIndex);
+					LiteralNode literalNode = DataNodeFactory.createLiteralNode(range, stringValue);
 					fragments.add(literalNode);
 				}
 				
 				// Get the fragment at the slash character (e.g., \" => ")
 				/*
 				 * There are 2 strategies for position mapping:
-				 * 	1. A generated " character is mapped to \" in the source code: Correct but region.Length != stringValue.Length
-				 *  2. A generated " character is mapped to " in the source code: Acceptable, and more importantly, region.Length == stringValue.Length, which facilitates
+				 * 	1. A generated " character is mapped to \" in the source code: Correct but range.Length != stringValue.Length
+				 *  2. A generated " character is mapped to " in the source code: Acceptable, and more importantly, range.Length == stringValue.Length, which facilitates
 				 *				position tracking during parsing
 				 * Let's use strategy 2 for now.
 				 */
 				beginIndex = endIndex;
 				endIndex = endIndex + 2;
 				String stringValue = unescapeString(string.substring(beginIndex, endIndex), stringType);
-				ContinuousRegion region = new ContinuousRegion(position.getFile(), position.getOffset() + endIndex - stringValue.length(), stringValue.length());
-				LiteralNode literalNode = DataNodeFactory.createLiteralNode(region, stringValue);
+				Range range = new Range(position.getFile(), position.getOffset() + endIndex - stringValue.length(), stringValue.length());
+				LiteralNode literalNode = DataNodeFactory.createLiteralNode(range, stringValue);
 				fragments.add(literalNode);
 				
 				beginIndex = endIndex;

@@ -13,8 +13,8 @@ public class Position {
 	
 	public static final Position UNDEFINED = new Position(null, -1);
 	
-	private File file;
-	private int offset;
+	private File file;		// null means the position is not defined
+	private int offset;		// -1 means the position is not defined
 	
 	private int line = -2; 	// -2 means line has not been computed, 
 							// -1 means line has been computed and is unresolved,

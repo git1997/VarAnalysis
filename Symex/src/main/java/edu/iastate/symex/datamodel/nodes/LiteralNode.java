@@ -1,6 +1,6 @@
 package edu.iastate.symex.datamodel.nodes;
 
-import edu.iastate.symex.position.Region;
+import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.datamodel.DataModelVisitor;
 
 /**
@@ -10,20 +10,20 @@ import edu.iastate.symex.datamodel.DataModelVisitor;
  */
 public class LiteralNode extends DataNode {
 
-	private Region region;			// The position of this literal node in the source code (can be undefined if the value is dynamically generated)
+	private PositionRange positionRange;	// The position of this literal node in the source code (can be undefined if the value is dynamically generated)
 
-	private String stringValue;		// The string value of this literal node
+	private String stringValue;				// The string value of this literal node
 	
 	/**
 	 * Protected constructor, called from DataNodeFactory only.
 	 */ 
-	protected LiteralNode(Region region, String stringValue) { 
-		this.region = region; 
+	protected LiteralNode(PositionRange positionRange, String stringValue) { 
+		this.positionRange = positionRange; 
 		this.stringValue = stringValue;
 	}
 	
-	public Region getRegion() {
-		return region;
+	public PositionRange getPositionRange() {
+		return positionRange;
 	}
 	
 	public String getStringValue() {

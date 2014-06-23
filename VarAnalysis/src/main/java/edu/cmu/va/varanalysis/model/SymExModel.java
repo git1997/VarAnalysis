@@ -79,7 +79,7 @@ public class SymExModel {
 
 		@Override
 		public void visitLiteralNode(LiteralNode literalNode) {
-			int litpos = literalNode.getRegion().getStartPosition().getOffset();
+			int litpos = literalNode.getPositionRange().getStartPosition().getOffset();
 			foundIt = foundIt || (litpos >= offset && litpos < offset + length);
 			super.visitLiteralNode(literalNode);
 		}
@@ -107,7 +107,7 @@ public class SymExModel {
 		model.accept(new DataModelVisitor() {
 			@Override
 			public void visitLiteralNode(LiteralNode literalNode) {
-				int litpos = literalNode.getRegion().getStartPosition().getOffset();
+				int litpos = literalNode.getPositionRange().getStartPosition().getOffset();
 				int length = literalNode.getStringValue().length();
 
 				int end = litpos + length;

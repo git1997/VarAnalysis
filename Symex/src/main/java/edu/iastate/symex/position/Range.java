@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * @author HUNG
  *
  */
-public class ContinuousRegion extends Region {
+public class Range extends PositionRange {
 
 	private File file;
 	private int offset;
@@ -17,7 +17,7 @@ public class ContinuousRegion extends Region {
 	/**
 	 * Constructor
 	 */
-	public ContinuousRegion(File file, int offset, int length) {
+	public Range(File file, int offset, int length) {
 		this.file = file;
 		this.offset = offset;
 		this.length = length;
@@ -42,10 +42,10 @@ public class ContinuousRegion extends Region {
 	}
 	
 	@Override
-	public ArrayList<ContinuousRegion> getContinuousRegions() {
-		ArrayList<ContinuousRegion> regions = new ArrayList<ContinuousRegion>(1);
-		regions.add(this);
-		return regions;
+	public ArrayList<Range> getRanges() {
+		ArrayList<Range> ranges = new ArrayList<Range>(1);
+		ranges.add(this);
+		return ranges;
 	}
 	
 }

@@ -1,5 +1,5 @@
 Position
-Region
-	ContinuousRegion
-	ScatteredRegion
-	UndefinedRegion
+PositionRange
+	Range
+	RangeList
+	UndefinedRange

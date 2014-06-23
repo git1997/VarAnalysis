@@ -30,9 +30,9 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.iastate.symex.position.ContinuousRegion;
+import edu.iastate.symex.position.Range;
 import edu.iastate.symex.position.Position;
-import edu.iastate.symex.position.Region;
+import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.run.RunSymexForFile;
 import edu.iastate.symex.ui.UIHelper;
 import edu.iastate.symex.constraints.AtomicConstraint;
@@ -256,8 +256,8 @@ public class DataModelView extends ViewPart {
 	 * Invoked when a DataNode is selected
 	 */
 	private void dataNodeSelected(DataNode dataNode) {
-		ContinuousRegion region = getRegionOfDataNode(dataNode).getContinuousRegions().get(0);
-		UIHelper.selectAndReveal(region.getFile(), region.getOffset(), region.getLength());
+		Range range = getRangeOfDataNode(dataNode).getRanges().get(0);
+		UIHelper.selectAndReveal(range.getFile(), range.getOffset(), range.getLength());
 		dataModelTreeViewer.getControl().setFocus();
 	}
 	
@@ -422,22 +422,22 @@ public class DataModelView extends ViewPart {
 		return getPositionOfDataNode(dataNode).getOffset();
 	}
 	
-	private Region getRegionOfDataNode(DataNode dataNode) {
+	private PositionRange getRangeOfDataNode(DataNode dataNode) {
 		if (dataNode instanceof SelectNode)
-			return (((SelectNode) dataNode).getConstraint() != null ? ((AtomicConstraint)((SelectNode) dataNode).getConstraint()).getConditionString().getRegion() : Region.UNDEFINED);
+			return (((SelectNode) dataNode).getConstraint() != null ? ((AtomicConstraint)((SelectNode) dataNode).getConstraint()).getConditionString().getPositionRange() : PositionRange.UNDEFINED);
 		
 		else if (dataNode instanceof SymbolicNode)
-			return (((SymbolicNode) dataNode).getPhpNode() != null ? ((SymbolicNode) dataNode).getPhpNode().getRegion() : Region.UNDEFINED);
+			return (((SymbolicNode) dataNode).getPhpNode() != null ? ((SymbolicNode) dataNode).getPhpNode().getRange() : PositionRange.UNDEFINED);
 		
 		else if (dataNode instanceof LiteralNode)
-			return ((LiteralNode) dataNode).getRegion();
+			return ((LiteralNode) dataNode).getPositionRange();
 		
 		else
-			return Region.UNDEFINED;
+			return PositionRange.UNDEFINED;
 	}
 	
 	private Position getPositionOfDataNode(DataNode dataNode) {
-		return getRegionOfDataNode(dataNode).getStartPosition();
+		return getRangeOfDataNode(dataNode).getStartPosition();
 	}
 	
 }
