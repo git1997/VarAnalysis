@@ -5,9 +5,9 @@ import java.util.Arrays;
 
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.PhpNode;
+import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.Range;
 import edu.iastate.symex.position.PositionRange;
-import edu.iastate.symex.position.RangeList;
 import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.constraints.Constraint;
 
@@ -85,7 +85,7 @@ public class DataNodeFactory {
 			}
 			else if (SymexConfig.COMBINE_CONSECUTIVE_LITERAL_NODES) {
 				// Combine consecutive literal nodes even when the nodes node DO NOT have adjacent positions
-				PositionRange range = new RangeList(node1.getPositionRange(), node2.getPositionRange());
+				PositionRange range = new CompositeRange(node1.getPositionRange(), node2.getPositionRange());
 				String stringValue = node1.getStringValue() + node2.getStringValue();
 
 				LiteralNode combinedLiteralNode = createLiteralNode(range, stringValue);

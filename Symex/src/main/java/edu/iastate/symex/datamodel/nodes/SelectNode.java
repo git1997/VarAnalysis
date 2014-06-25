@@ -12,9 +12,9 @@ public class SelectNode extends DataNode {
 
 	private Constraint constraint;
 
-	private DataNode nodeInTrueBranch; 		// Can be null
+	private DataNode nodeInTrueBranch;
 
-	private DataNode nodeInFalseBranch; 	// Can be null
+	private DataNode nodeInFalseBranch;
 
 	/*
 	 * Constructors.
@@ -23,14 +23,18 @@ public class SelectNode extends DataNode {
 	/**
 	 * Protected constructor, called from DataNodeFactory only.
 	 */
-	protected SelectNode(Constraint constraint, DataNode nodeInTrueBranch,DataNode nodeInFalseBranch) {
+	protected SelectNode(Constraint constraint, DataNode nodeInTrueBranch, DataNode nodeInFalseBranch) {
 		this.constraint = constraint;
 
-		if (nodeInTrueBranch != null && checkAndUpdateDepth(nodeInTrueBranch))
+		if (checkAndUpdateDepth(nodeInTrueBranch))
 			this.nodeInTrueBranch = nodeInTrueBranch;
+		else
+			this.nodeInTrueBranch = DataNodeFactory.createSymbolicNode();
 
-		if (nodeInFalseBranch != null && checkAndUpdateDepth(nodeInFalseBranch))
+		if (checkAndUpdateDepth(nodeInFalseBranch))
 			this.nodeInFalseBranch = nodeInFalseBranch;
+		else
+			this.nodeInFalseBranch = DataNodeFactory.createSymbolicNode();
 	}
 
 	public Constraint getConstraint() {
@@ -48,10 +52,8 @@ public class SelectNode extends DataNode {
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
 		dataModelVisitor.visitSelectNode(this);
-		if (nodeInTrueBranch != null)
-			nodeInTrueBranch.accept(dataModelVisitor);
-		if (nodeInFalseBranch != null)
-			nodeInFalseBranch.accept(dataModelVisitor);
+		nodeInTrueBranch.accept(dataModelVisitor);
+		nodeInFalseBranch.accept(dataModelVisitor);
 	}
 	
 }

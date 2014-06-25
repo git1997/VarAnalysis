@@ -23,6 +23,13 @@ public class Range extends PositionRange {
 		this.length = length;
 	}
 	
+	/**
+	 * Constructor
+	 */
+	public Range(Position startPosition, int length) {
+		this(startPosition.getFile(), startPosition.getOffset(), length);
+	}
+	
 	public File getFile() {
 		return file;
 	}
@@ -39,6 +46,13 @@ public class Range extends PositionRange {
 	@Override
 	public Position getPositionAtRelativeOffset(int relOffset) {
 		return new Position(file, offset + relOffset);
+	}
+	
+	@Override
+	public ArrayList<Range> getRangesAtRelativeOffset(int relOffset, int length) {
+		ArrayList<Range> ranges = new ArrayList<Range>(1);
+		ranges.add(new Range(file, offset + relOffset, length));
+		return ranges;
 	}
 	
 	@Override

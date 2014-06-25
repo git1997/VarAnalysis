@@ -1,5 +1,6 @@
 Position
 PositionRange
+	CompositeRange
+	RelativeRange
 	Range
-	RangeList
 	UndefinedRange

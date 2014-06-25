@@ -12,17 +12,24 @@ public abstract class PositionRange {
 	public static final UndefinedRange UNDEFINED = new UndefinedRange();
 	
 	/**
-	 * Returns the position at a relative offset to the start position of the position range
-	 */
-	public abstract Position getPositionAtRelativeOffset(int relOffset);
-	
-	/**
 	 * Returns the length of the position range
 	 */
 	public abstract int getLength();
 	
 	/**
-	 * Returns ranges
+	 * Returns the position at a relative offset to the start position of the position range
+	 */
+	public abstract Position getPositionAtRelativeOffset(int relOffset);
+	
+	/**
+	 * Returns the (absolute) ranges at a relative offset to the start position of the position range
+	 */
+	public ArrayList<Range> getRangesAtRelativeOffset(int relOffset, int length) {
+		return new RelativeRange(this, relOffset, length).getRanges();
+	}
+	
+	/**
+	 * Returns the (absolute) ranges in this position range
 	 */
 	public abstract ArrayList<Range> getRanges();
 	
