@@ -1,6 +1,7 @@
 package edu.iastate.symex.datamodel.nodes;
 
 import edu.iastate.symex.php.nodes.PhpNode;
+import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.datamodel.DataModelVisitor;
 
 /**
@@ -34,6 +35,10 @@ public class SymbolicNode extends DataNode {
 	
 	public SymbolicNode getParentNode() {
 		return parentNode;
+	}
+	
+	public PositionRange getPositionRange() {
+		return phpNode != null ? phpNode.getRange() : PositionRange.UNDEFINED;
 	}
 	
 	@Override

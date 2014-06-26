@@ -76,6 +76,21 @@ public abstract class SpecialNode extends DataNode {
 	}
 	
 	/**
+	 * Represents UNSET values.
+	 */
+	public static class UnsetNode extends SpecialNode {
+		
+		public static UnsetNode UNSET	= new UnsetNode();
+		
+		/**
+		 * Private constructor.
+		 */
+		private UnsetNode() {
+		}
+		
+	}
+	
+	/**
 	 * Represents returned codes of statements
 	 */
 	public static class ControlNode extends SpecialNode {

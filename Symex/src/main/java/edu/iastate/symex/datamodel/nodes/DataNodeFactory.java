@@ -135,6 +135,12 @@ public class DataNodeFactory {
 	 * Creates a (compact) SelectNode
 	 */
 	public static DataNode createCompactSelectNode(Constraint constraint, DataNode nodeInTrueBranch, DataNode nodeInFalseBranch) {
+		// Use UNSET values instead of null
+		if (nodeInTrueBranch == null)
+			nodeInTrueBranch = SpecialNode.UnsetNode.UNSET;
+		if (nodeInFalseBranch == null)
+			nodeInFalseBranch = SpecialNode.UnsetNode.UNSET;
+		
 		// Attempt to compact the SelectNode only if the branches are Concat/LiteralNodes
 		if (!((nodeInTrueBranch instanceof ConcatNode || nodeInTrueBranch instanceof LiteralNode) && (nodeInFalseBranch instanceof ConcatNode || nodeInFalseBranch instanceof LiteralNode)))
 			return new SelectNode(constraint, nodeInTrueBranch, nodeInFalseBranch);
