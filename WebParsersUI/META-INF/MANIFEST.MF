@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: WebParsersUI
+Bundle-SymbolicName: WebParsersUI;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: edu.iastate.parsers.ui.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.ide;bundle-version="3.9.2",
+ WebParsers;bundle-version="1.0.0",
+ Symex;bundle-version="1.0.0",
+ SymexUI;bundle-version="1.0.0"
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Import-Package: org.eclipse.core.resources,
+ org.eclipse.ui.texteditor

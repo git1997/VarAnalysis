@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="edu.iastate.parsers.category.webparsers"
+            name="Web Parsers">
+      </category>
+      <view
+            category="edu.iastate.parsers.category.webparsers"
+            class="edu.iastate.parsers.ui.views.WebParsersView"
+            icon="icons/sample.gif"
+            id="edu.iastate.parsers.ui.views.WebParsersView"
+            name="Web Parsers">
+      </view>
+   </extension>
+
+</plugin>
