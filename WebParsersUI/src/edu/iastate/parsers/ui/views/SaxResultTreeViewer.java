@@ -7,11 +7,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
+import edu.iastate.parsers.html.dom.nodes.HtmlAttributeValue;
+import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.parsers.tree.TreeConcatNode;
 import edu.iastate.parsers.tree.TreeLeafNode;
 import edu.iastate.parsers.tree.TreeSelectNode;
 import edu.iastate.parsers.ui.UIHelper;
+import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
 
@@ -51,8 +55,17 @@ public class SaxResultTreeViewer extends GenericTreeViewer {
 			children.add(((SelectChildNode) element).getChildNode());
 		}
 		
-		else {
-			// Other nodes have no children.
+		else if (element instanceof TreeLeafNode<?>) {
+			TreeLeafNode<?> leafNode = (TreeLeafNode<?>) element;
+			HtmlSaxNode saxNode =  (HtmlSaxNode) leafNode.getNode();
+			if (saxNode instanceof HOpenTag) {
+				HOpenTag tag = (HOpenTag) saxNode;
+				children.addAll(tag.getAttributes());
+			}
+		}
+		
+		else if (element instanceof HtmlAttribute) {
+			children.add(((HtmlAttribute) element).getAttributeValue());
 		}
 		
 		Object[] objects = children.toArray(new Object[]{});
@@ -90,11 +103,25 @@ public class SaxResultTreeViewer extends GenericTreeViewer {
 	@Override
 	public String getTreeNodeDescription(Object element) {
 		if (element instanceof TreeSelectNode<?>)
-			return ((TreeSelectNode<?>) element).getConstraint().getFeatureExpr();
+			return ((TreeSelectNode<?>) element).getConstraint().toDebugString();
 		
 		else if (element instanceof TreeLeafNode<?>) {
 			HtmlSaxNode node = (HtmlSaxNode) ((TreeLeafNode<?>) element).getNode();
 			return UIHelper.standardizeText(node.toDebugString());
+		}
+		
+		else if (element instanceof HtmlAttribute) {
+			String name = ((HtmlAttribute) element).getName();
+			Constraint constraint = ((HtmlAttribute) element).getConstraint(); 
+			if (constraint.isTautology())
+				return name;
+			else
+				return name + " [" + constraint.toDebugString() + "]";
+		}
+		
+		else if (element instanceof HtmlAttributeValue) {
+			String value = ((HtmlAttributeValue) element).getStringValue();
+			return UIHelper.standardizeText(value);
 		}
 		
 		else
@@ -107,7 +134,16 @@ public class SaxResultTreeViewer extends GenericTreeViewer {
 			HtmlSaxNode node = (HtmlSaxNode) ((TreeLeafNode<?>) element).getNode();
 			return node.getLocation();
 		}
-		
+		else if (element instanceof TreeSelectNode<?>) {
+			Constraint constraint = ((TreeSelectNode<?>) element).getConstraint();
+			return constraint.getLocation();
+		}
+		else if (element instanceof HtmlAttribute) {
+			return ((HtmlAttribute) element).getLocation();
+		}
+		else if (element instanceof HtmlAttributeValue) {
+			return ((HtmlAttributeValue) element).getLocation();
+		}
 		else
 			return PositionRange.UNDEFINED;
 	}

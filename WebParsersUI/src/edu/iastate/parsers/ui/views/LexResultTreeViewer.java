@@ -12,6 +12,7 @@ import edu.iastate.parsers.tree.TreeConcatNode;
 import edu.iastate.parsers.tree.TreeLeafNode;
 import edu.iastate.parsers.tree.TreeSelectNode;
 import edu.iastate.parsers.ui.UIHelper;
+import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
 
@@ -113,7 +114,10 @@ public class LexResultTreeViewer extends GenericTreeViewer {
 			HtmlToken node = (HtmlToken) ((TreeLeafNode<?>) element).getNode();
 			return node.getLocation();
 		}
-		
+		else if (element instanceof TreeSelectNode<?>) {
+			Constraint constraint = ((TreeSelectNode<?>) element).getConstraint();
+			return constraint.getLocation();
+		}
 		else
 			return PositionRange.UNDEFINED;
 	}

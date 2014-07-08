@@ -1,6 +1,7 @@
 package edu.iastate.parsers.html.core;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import edu.iastate.parsers.html.dom.nodes.HtmlConcat;
@@ -9,11 +10,13 @@ import edu.iastate.parsers.html.dom.nodes.HtmlElement;
 import edu.iastate.parsers.html.dom.nodes.HtmlNode;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.htmlparser.HtmlDomParser;
+import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.parsers.tree.TreeConcatNode;
 import edu.iastate.parsers.tree.TreeLeafNode;
 import edu.iastate.parsers.tree.TreeNode;
 import edu.iastate.parsers.tree.TreeSelectNode;
+import edu.iastate.symex.position.PositionRange;
 
 /**
  * 
@@ -22,23 +25,21 @@ import edu.iastate.parsers.tree.TreeSelectNode;
  */
 public class HtmlSaxNodesToHtmlDocument {
 	
-	private ArrayList<HtmlNode> parseResult = new ArrayList<HtmlNode>();
-	
 	public HtmlDocument parse(TreeNode<HtmlSaxNode> saxNodes) {
-		// Parse the tokenTree and update the parseResult along the way
-		HtmlDomParser parser = new HtmlDomParser();
+		HtmlDomParser parser = new HtmlDomParser(); 
+		
+		// Create a pseudo root element
+		HOpenTag rootOpenTag = new HOpenTag("ROOT", PositionRange.UNDEFINED);
+		HtmlElement rootElement = new HtmlElement(rootOpenTag);
+		parser.pushHtmlStack(rootElement);
+
+		// Parse the saxNodes
 		parse(saxNodes, parser);
 		
-		// Get the remaining result
-		parseResult.addAll(parser.getParseResult());
-		Stack<HtmlElement> htmlStack = parser.saveHtmlStack();
-		if (!htmlStack.isEmpty())
-			parseResult.add(htmlStack.firstElement());
-		
+		// Create the HtmlDocument
 		HtmlDocument htmlDocument = new HtmlDocument();
-		for (HtmlNode element : parseResult)
+		for (HtmlNode element : rootElement.getChildNodes())
 			htmlDocument.addChildNode(element);
-
 		return htmlDocument;
 	}
 	
@@ -66,53 +67,48 @@ public class HtmlSaxNodesToHtmlDocument {
 	 */
 	private void parse(TreeSelectNode<HtmlSaxNode> selectNode, HtmlDomParser parser) {
 		// Get result before entering the branches
-		parseResult.addAll(parser.getParseResult());
-		Stack<HtmlElement> savedStack = parser.saveHtmlStack();
+		Stack<HtmlElement> htmlStack = parser.getHtmlStack();
+		HtmlElement lastElement = htmlStack.peek();
 		
 		/*
 		 *  Enter the true branch
 		 */
-		parser.clearParseResult();
 		parser.clearHtmlStack();
+		HtmlElement rootElementTrue = new HtmlElement(lastElement.getHtmlOpenTag());
+		parser.pushHtmlStack(rootElementTrue);
 				
 		if (selectNode.getTrueBranchNode() != null)
 			parse(selectNode.getTrueBranchNode(), parser);
-		
-		ArrayList<HtmlElement> nodesInTrueBranch = parser.getParseResult();
+		boolean emptyStackInTrueBranch = parser.getHtmlStack().isEmpty();
 		
 		/*
 		 * Enter the false branch
 		 */
-		parser.clearParseResult();
 		parser.clearHtmlStack();
+		HtmlElement rootElementFalse = new HtmlElement(lastElement.getHtmlOpenTag());
+		parser.pushHtmlStack(rootElementFalse);
 		
 		if (selectNode.getFalseBranchNode() != null)
 			parse(selectNode.getFalseBranchNode(), parser);
-		
-		ArrayList<HtmlElement> nodesInFalseBranch = parser.getParseResult();
+		boolean emptyStackInFalseBranch = parser.getHtmlStack().isEmpty();
 		
 		/*
 		 * Combine results and continue
 		 */
-		parser.restoreHtmlStack(savedStack);
-		HtmlNode nodeInTrueBranch = convert(nodesInTrueBranch);
-		HtmlNode nodeInFalseBranch = convert(nodesInFalseBranch);
-		HtmlSelect select = new HtmlSelect(selectNode.getConstraint(), nodeInTrueBranch, nodeInFalseBranch);
+		if (emptyStackInTrueBranch || emptyStackInFalseBranch) {
+			HtmlNode select = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), rootElementTrue, rootElementFalse);
+			htmlStack.pop();
+			lastElement = htmlStack.peek();
+			lastElement.replaceLastChildNode(select);
+		}
+		else {
+			HtmlNode nodeInTrueBranch = HtmlConcat.createCompactHtmlNode(new ArrayList<HtmlNode>(rootElementTrue.getChildNodes()));
+			HtmlNode nodeInFalseBranch = HtmlConcat.createCompactHtmlNode(new ArrayList<HtmlNode>(rootElementFalse.getChildNodes()));
+			HtmlNode select = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), nodeInTrueBranch, nodeInFalseBranch);
+			lastElement.addChildNode(select);
+		}
 		
-		if (!savedStack.isEmpty())
-			savedStack.peek().addChildNode(select);
-		else
-			parseResult.add(select);
-		parser.clearParseResult();
-	}
-	
-	private HtmlNode convert(ArrayList<HtmlElement> nodes) {
-		if (nodes.isEmpty())
-			return null;
-		else if (nodes.size() == 1)
-			return nodes.get(0);
-		else
-			return new HtmlConcat(new ArrayList<HtmlNode>(nodes)); 
+		parser.setHtmlStack(htmlStack);
 	}
 	
 	/**

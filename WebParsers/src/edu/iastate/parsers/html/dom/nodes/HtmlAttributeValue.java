@@ -43,6 +43,11 @@ public class HtmlAttributeValue extends HtmlNode {
 		return stringValue;
 	}
 	
+	public HtmlAttributeValue clone() {
+		HtmlAttributeValue clonedAttributeValue = new HtmlAttributeValue(stringValue, location);
+		return clonedAttributeValue;
+	}
+	
 	/**
 	 * Unescapes the string value of the attribute preserving length
 	 */

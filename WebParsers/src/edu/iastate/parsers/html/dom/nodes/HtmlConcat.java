@@ -2,6 +2,7 @@ package edu.iastate.parsers.html.dom.nodes;
 
 import java.util.ArrayList;
 
+import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
 
 /**
@@ -16,6 +17,15 @@ public class HtmlConcat extends HtmlNode {
 	public HtmlConcat(ArrayList<HtmlNode> childNodes) {
 		super(PositionRange.UNDEFINED);
 		this.childNodes = childNodes;
+	}
+	
+	public static HtmlNode createCompactHtmlNode(ArrayList<HtmlNode> childNodes) {
+		if (childNodes.isEmpty())
+			return null;
+		else if (childNodes.size() == 1)
+			return childNodes.get(childNodes.size() - 1);
+		else
+			return new HtmlConcat(childNodes);
 	}
 	
 	public ArrayList<HtmlNode> getChildNodes() {

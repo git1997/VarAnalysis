@@ -6,8 +6,8 @@ HtmlNode
 		HtmlForm
 		HtmlInput
 		HtmlScript
-	HtmlAttribute
 	HtmlText
+	HtmlAttribute
 	HtmlAttributeName
 	HtmlAttributeValue
 	//HtmlComment

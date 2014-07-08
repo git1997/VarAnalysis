@@ -2,9 +2,9 @@ package entities;
 
 import java.util.ArrayList;
 
-import constraints.Constraint;
-import constraints.OrConstraint;
-import references.DeclaringReference;
+import edu.iastate.analysis.references.DeclaringReference;
+import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.constraints.ConstraintFactory;
 
 /**
  * A MultiEntity is an Entity with multiple declarations (each with a different path constraint).
@@ -61,7 +61,7 @@ public class MultiEntity extends Entity {
 		else {
 			DeclaringReference lastReference = declaringReferences.get(declaringReferences.size() - 1);
 			declaringReferences.remove(declaringReferences.size() - 1);
-			return new OrConstraint(getConstraint(declaringReferences), lastReference.getConstraint());
+			return ConstraintFactory.createOrConstraint(getConstraint(declaringReferences), lastReference.getConstraint());
 		}
 	}
 

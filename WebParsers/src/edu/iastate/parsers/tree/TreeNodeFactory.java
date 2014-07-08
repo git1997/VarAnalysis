@@ -11,46 +11,88 @@ import edu.iastate.symex.constraints.Constraint;
  */
 public class TreeNodeFactory<T> {
 	
-	public TreeNode<T> createInstanceFromNewNodes(TreeNode<T> currentTree, ArrayList<T> list) {
-		ArrayList<TreeNode<T>> leafNodes = new ArrayList<TreeNode<T>>();
-		if (currentTree instanceof TreeConcatNode) {
-			for (TreeNode<T> item : ((TreeConcatNode<T>) currentTree).getChildNodes())
-				leafNodes.add(item);
-		}
-		
+	public TreeNode<T> createInstanceFromNodes(ArrayList<T> list) {
+		ArrayList<TreeNode<T>> nodes = new ArrayList<TreeNode<T>>();
 		for (T item : list)
-			leafNodes.add(new TreeLeafNode<T>(item));
+			nodes.add(new TreeLeafNode<T>(item));
 		
-		return createInstanceFromList(leafNodes);
+		return createCompactConcatNode(nodes);
 	}
 	
-	public TreeNode<T> createInstanceFromNewBranchingNodes(TreeNode<T> currentTree, Constraint constraint, ArrayList<T> listInTrueBranch, ArrayList<T> listInFalseBranch) {
-		TreeNode<T> treeInTrueBranch = createInstanceFromNewNodes(null, listInTrueBranch);
-		TreeNode<T> treeInFalseBranch = createInstanceFromNewNodes(null, listInFalseBranch);
-		TreeSelectNode<T> selectNode = new TreeSelectNode<T>(constraint, treeInTrueBranch, treeInFalseBranch);
-		
-		if (currentTree == null)
-			return selectNode;
-		else {
-			ArrayList<TreeNode<T>> childNodes = new ArrayList<TreeNode<T>>();
-			childNodes.add(currentTree);
-			childNodes.add(selectNode);
-			TreeConcatNode<T> concatNode = new TreeConcatNode<T>(childNodes);
-			
-			return concatNode;
-		}
+	public TreeNode<T> createInstanceFromBranchingNodes(Constraint constraint, ArrayList<T> listInTrueBranch, ArrayList<T> listInFalseBranch) {
+		TreeNode<T> treeInTrueBranch = createInstanceFromNodes(listInTrueBranch);
+		TreeNode<T> treeInFalseBranch = createInstanceFromNodes(listInFalseBranch);
+		TreeNode<T> selectNode = createCompactSelectNode(constraint, treeInTrueBranch, treeInFalseBranch);
+		return selectNode;
+	}
+	
+	public TreeNode<T> createCompactConcatNode(TreeNode<T> node1, TreeNode<T> node2) {
+		ArrayList<TreeNode<T>> nodes = new ArrayList<TreeNode<T>>();
+		nodes.add(node1);
+		nodes.add(node2);
+		return createCompactConcatNode(nodes);
 	}
 		
-	private TreeNode<T> createInstanceFromList(ArrayList<TreeNode<T>> list) {
-		if (list.size() == 0)
+	public TreeNode<T> createCompactConcatNode(ArrayList<TreeNode<T>> nodes) {
+		ArrayList<TreeNode<T>> compactNodes = new ArrayList<TreeNode<T>>();
+		appendNodes(compactNodes, nodes);
+		
+		if (compactNodes.size() == 0)
 			return null;
-		
-		else if (list.size() == 1)
-			return list.get(0);
-		
+		else if (compactNodes.size() == 1)
+			return compactNodes.get(0);
+		else
+			return new TreeConcatNode<T>(compactNodes);
+	}
+	
+	private void appendNodes(ArrayList<TreeNode<T>> compactNodes, ArrayList<TreeNode<T>> nodes) {
+		for (TreeNode<T> node : nodes)
+			appendNode(compactNodes, node);
+	}
+	
+	private void appendNode(ArrayList<TreeNode<T>> compactNodes, TreeNode<T> node) {
+		if (node instanceof TreeConcatNode<?>)
+			appendNodes(compactNodes, ((TreeConcatNode<T>) node).getChildNodes());
+		else if (node != null)
+			compactNodes.add(node);
+	}
+	
+	public TreeNode<T> createCompactSelectNode(Constraint constraint, TreeNode<T> trueBranchNode, TreeNode<T> falseBranchNode) {
+		if (trueBranchNode == null && falseBranchNode == null)
+			return null;
+		else
+			return new TreeSelectNode<T>(constraint, trueBranchNode, falseBranchNode);
+	}
+	
+	public T getRightMostNode(TreeNode<T> treeNode) {
+		if (treeNode instanceof TreeConcatNode<?>) {
+			ArrayList<TreeNode<T>> childNodes = ((TreeConcatNode<T>) treeNode).getChildNodes();
+			return getRightMostNode(childNodes.get(childNodes.size() - 1));
+		}
+		else if (treeNode instanceof TreeSelectNode<?>) {
+			return null;
+		}
 		else {
-			TreeConcatNode<T> concatNode = new TreeConcatNode<T>(list);
-			return concatNode;
+			return ((TreeLeafNode<T>) treeNode).getNode();
+		}
+	}
+	
+	public TreeNode<T> removeRightMostNode(TreeNode<T> treeNode) {
+		if (treeNode instanceof TreeConcatNode<?>) {
+			ArrayList<TreeNode<T>> childNodes = ((TreeConcatNode<T>) treeNode).getChildNodes();
+			TreeNode<T> lastNode = childNodes.get(childNodes.size() - 1);
+			childNodes.remove(childNodes.size() - 1);
+			
+			lastNode = removeRightMostNode(lastNode);
+			if (lastNode != null)
+				childNodes.add(lastNode);
+			return new TreeConcatNode<T>(childNodes);
+		}
+		else if (treeNode instanceof TreeSelectNode<?>) {
+			return null;
+		}
+		else {
+			return null;
 		}
 	}
 

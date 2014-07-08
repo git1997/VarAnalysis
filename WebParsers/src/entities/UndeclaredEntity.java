@@ -1,7 +1,8 @@
 package entities;
 
-import constraints.Constraint;
-import constraints.TrueConstraint;
+import java.io.File;
+
+import edu.iastate.symex.constraints.Constraint;
 
 /**
  * UndeclaredEntity is a collection of dangling references.
@@ -29,8 +30,8 @@ public class UndeclaredEntity extends Entity {
 	}
 	
 	@Override
-	public String getFilePath() {
-		return "";
+	public File getFile() {
+		return null;
 	}
 	
 	@Override
@@ -39,7 +40,7 @@ public class UndeclaredEntity extends Entity {
 	}
 	
 	public Constraint getConstraint() {
-		return TrueConstraint.inst;
+		return Constraint.TRUE;
 	}
 
 }

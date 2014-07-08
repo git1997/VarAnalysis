@@ -2,14 +2,21 @@ package edu.iastate.parsers.html.core;
 
 import java.util.ArrayList;
 
+import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
+import edu.iastate.parsers.html.dom.nodes.HtmlConcat;
+import edu.iastate.parsers.html.dom.nodes.HtmlNode;
+import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.htmlparser.HtmlSaxParser;
+import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.parsers.tree.TreeConcatNode;
 import edu.iastate.parsers.tree.TreeLeafNode;
 import edu.iastate.parsers.tree.TreeNode;
 import edu.iastate.parsers.tree.TreeNodeFactory;
 import edu.iastate.parsers.tree.TreeSelectNode;
+import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.constraints.ConstraintFactory;
 
 /**
  * 
@@ -22,7 +29,8 @@ public class HtmlTokensToSaxNodes {
 	
 	private void updateParseResult(HtmlSaxParser parser) {
 		ArrayList<HtmlSaxNode> currentResult = parser.getParseResult();
-		parseResult = new TreeNodeFactory<HtmlSaxNode>().createInstanceFromNewNodes(parseResult, currentResult);
+		TreeNode<HtmlSaxNode> curResult = new TreeNodeFactory<HtmlSaxNode>().createInstanceFromNodes(currentResult);
+		parseResult = new TreeNodeFactory<HtmlSaxNode>().createCompactConcatNode(parseResult, curResult);
 	}
 	
 	public TreeNode<HtmlSaxNode> parse(TreeNode<HtmlToken> tokenTree) {
@@ -68,23 +76,64 @@ public class HtmlTokensToSaxNodes {
 		/*
 		 *  Enter the true branch
 		 */
+		ArrayList<HtmlSaxNode> parseResultInFalseBranch = new ArrayList<HtmlSaxNode>();
+		
 		parser.clearParseResult();
-		parse(selectNode.getTrueBranchNode(), parser);
+		parser.setParseResultBeforeBranching(parseResult);
+		parser.setParseResultInOtherBranch(parseResultInFalseBranch);
+		
+		if (selectNode.getTrueBranchNode() != null)
+			parse(selectNode.getTrueBranchNode(), parser);
+		
 		ArrayList<HtmlSaxNode> nodesInTrueBranch = parser.getParseResult();
+		parseResult = parser.getParseResultBeforeBranching();
 		
 		/*
 		 * Enter the false branch
 		 */
-		parser.clearParseResult();
-		parse(selectNode.getFalseBranchNode(), parser);
+		parser.setParseResult(parseResultInFalseBranch);
+		parser.setParseResultBeforeBranching(null);
+		
+		if (selectNode.getFalseBranchNode() != null)
+			parse(selectNode.getFalseBranchNode(), parser);
+		
 		ArrayList<HtmlSaxNode> nodesInFalseBranch = parser.getParseResult();
 		
 		/*
 		 * Combine results and continue
 		 */
-		parseResult = new TreeNodeFactory<HtmlSaxNode>().createInstanceFromNewBranchingNodes(parseResult, selectNode.getConstraint(), nodesInTrueBranch, nodesInFalseBranch);
+		TreeNode<HtmlSaxNode> mergedResult = null;
+		
+		if (nodesInTrueBranch.size() == 1 && nodesInTrueBranch.get(nodesInTrueBranch.size() - 1) instanceof HOpenTag
+				&& nodesInFalseBranch.size() == 1 && nodesInFalseBranch.get(nodesInFalseBranch.size() - 1) instanceof HOpenTag) {
+			HOpenTag openTagInTrueBranch = (HOpenTag) nodesInTrueBranch.get(nodesInTrueBranch.size() - 1);
+			HOpenTag openTagInFalseBranch = (HOpenTag) nodesInFalseBranch.get(nodesInFalseBranch.size() - 1);
+			
+			if (openTagInTrueBranch.getType().equals(openTagInFalseBranch.getType()) && openTagInTrueBranch.getLocation() == openTagInFalseBranch.getLocation()) {
+				HOpenTag mergedTag = new HOpenTag(openTagInTrueBranch.getType(), openTagInTrueBranch.getLocation());
+				for (HtmlAttribute attr : openTagInTrueBranch.getAttributes()) {
+					attr.setConstraint(selectNode.getConstraint());
+					mergedTag.addAttribute(attr);
+				}
+				for (HtmlAttribute attr : openTagInFalseBranch.getAttributes()) {
+					attr.setConstraint(ConstraintFactory.createNotConstraint(selectNode.getConstraint()));
+					mergedTag.addAttribute(attr);
+				}
+				mergedResult = new TreeLeafNode<HtmlSaxNode>(mergedTag);
+			}
+		}
+		
+		if (mergedResult == null)
+			mergedResult =  new TreeNodeFactory<HtmlSaxNode>().createInstanceFromBranchingNodes(selectNode.getConstraint(), nodesInTrueBranch, nodesInFalseBranch);
+		
+		parseResult = new TreeNodeFactory<HtmlSaxNode>().createCompactConcatNode(parseResult, mergedResult);
+		
 		parser.clearParseResult();
+		parser.setParseResultBeforeBranching(null);
+		parser.setParseResultInOtherBranch(null);
 	}
+	
+
 	
 	/**
 	 * Parses a LeafNode

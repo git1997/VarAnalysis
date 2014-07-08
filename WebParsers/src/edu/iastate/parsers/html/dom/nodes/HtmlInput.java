@@ -13,5 +13,20 @@ public class HtmlInput extends HtmlElement {
 		super(htmlOpenTag);
 		// TODO Auto-generated constructor stub
 	}
+	
+	public String getInputName() {
+		HtmlAttributeValue inputName = getAttributeValue("name");
+		return (inputName != null ? inputName.getStringValue() : null);
+	}
+	
+	public HtmlForm getParentForm() {
+		HtmlElement parent = this.getParentElement();
+		while (parent != null) {
+			if (parent instanceof HtmlForm)
+			 	return (HtmlForm) parent;
+			parent = parent.getParentElement();
+		}
+		return null;
+	}
 
 }

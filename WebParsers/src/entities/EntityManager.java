@@ -1,23 +1,15 @@
 package entities;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import references.DeclaringReference;
-import references.PhpRefToHtmlEntity;
-import references.Reference;
-import references.ReferenceManager;
-import references.RegularReference;
-
-import util.XmlDocument;
-import constraints.OrConstraint;
-import deprecated.WebEntitiesConfig;
+import edu.iastate.analysis.references.DeclaringReference;
+import edu.iastate.analysis.references.PhpRefToHtmlEntity;
+import edu.iastate.analysis.references.Reference;
+import edu.iastate.analysis.references.RegularReference;
+import edu.iastate.symex.constraints.ConstraintFactory;
 
 /**
  * EntityManager manages entities and references as follows.
@@ -38,7 +30,7 @@ public class EntityManager {
 	/**
 	 * Maps a location (file and offset) to a reference
 	 */
-	private HashMap<String, HashMap<Integer, Reference>> mapLocationToReference = new HashMap<String, HashMap<Integer, Reference>>();
+	private HashMap<File, HashMap<Integer, Reference>> mapLocationToReference = new HashMap<File, HashMap<Integer, Reference>>();
 	
 	/**
 	 * List of entities
@@ -82,14 +74,14 @@ public class EntityManager {
 		/*
 		 * Update mapLocationToReference and mapPageToReferences
 		 */
-		if (!mapLocationToReference.containsKey(reference.getFilePath()))
-			mapLocationToReference.put(reference.getFilePath(), new HashMap<Integer, Reference>());
+		if (!mapLocationToReference.containsKey(reference.getFile()))
+			mapLocationToReference.put(reference.getFile(), new HashMap<Integer, Reference>());
 		
 		if (!mapPageToReferences.containsKey(phpPage))
 			mapPageToReferences.put(phpPage, new HashSet<Reference>());
 		
 		
-		HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(reference.getFilePath());
+		HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(reference.getFile());
 		HashSet<Reference> referencesInPage = mapPageToReferences.get(phpPage);
 		
 		Reference existingReference = mapPositionToReference.get(reference.getPosition());
@@ -100,7 +92,7 @@ public class EntityManager {
 			else {
 				// This is the case where a reference x is included in two different pages.
 				if (existingReference.getConstraint() != reference.getConstraint())
-					existingReference.setConstraint(new OrConstraint(existingReference.getConstraint(), reference.getConstraint()));
+					existingReference.setConstraint(ConstraintFactory.createOrConstraint(existingReference.getConstraint(), reference.getConstraint()));
 
 				referencesInPage.add(existingReference);
 				
@@ -240,14 +232,14 @@ public class EntityManager {
 	public void removeReferencesInPage(String phpPage) {
 		for (Entity entity : getEntitiesInPage(phpPage)) {
 			for (Reference reference : entity.getReferences()) {
-				HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(reference.getFilePath());
+				HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(reference.getFile());
 				mapPositionToReference.remove(reference.getPosition());
 			}
 			entityList.remove(entity);
 		}
 		
 		for (Reference danglingRef : getDanglingReferencesInPage(phpPage)) {
-			HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(danglingRef.getFilePath());
+			HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(danglingRef.getFile());
 			mapPositionToReference.remove(danglingRef.getPosition());
 			danglingReferenceList.remove(danglingRef);
 		}
@@ -405,8 +397,10 @@ public class EntityManager {
 	 * @return True if the reference refers to the entity
 	 */
 	public static boolean canLinkEntityReference(Entity entity, RegularReference reference) {
+		// TODO
 		return reference.refersTo(entity.getDeclaringReference())
-				&& (WebEntitiesConfig.DISCARD_CONSTRAINTS_WHEN_COMPARING_ENTITIES
+				//&& (WebEntitiesConfig.DISCARD_CONSTRAINTS_WHEN_COMPARING_ENTITIES
+				&& (false
 						|| reference instanceof PhpRefToHtmlEntity 	// Don't consider constraints for PhpRefToHtmlEntity
 						|| reference.getConstraint().satisfies(entity.getConstraint())); 
 	}
@@ -429,58 +423,6 @@ public class EntityManager {
 	public static void unlinkEntityReference(Entity entity, Reference reference) {
 		entity.removeReference(reference);
 		reference.setEntity(null);
-	}
-	
-	/*
-	 * Print/read entities to/from XML file
-	 */
-
-	/**
-	 * Prints entities to an XML file.
-	 */
-	public void printEntitiesToXmlFile(String xmlFile) {
-		printEntitiesToXmlFile(getEntityListIncludingDanglingRefs(), xmlFile);
-	}
-	
-	/**
-	 * Prints entities to an XML file.
-	 */
-	public static void printEntitiesToXmlFile(ArrayList<Entity> entityList, String xmlFile) {
-		Collections.sort(entityList, new Entity.EntityComparator()); // Sort the entities first
-		
-		Document document = XmlDocument.newDocument();
-		Element root = document.createElement(WebEntitiesConfig.XML_ROOT);
-		document.appendChild(root);
-		for (Entity entity : entityList) {
-			root.appendChild(entity.printToXmlElement(document));
-		}
-		XmlDocument.writeXmlDocumentToFile(document, xmlFile);
-	}
-	
-	/**
-	 * Reads the entities from an XML file.
-	 */
-	public static ArrayList<Entity> readEntitiesFromXmlFile(String xmlFile) {
-		Document document = XmlDocument.readXmlDocumentFromFile(xmlFile);
-		Element root = (Element) document.getDocumentElement();
-		NodeList entityElementList = root.getChildNodes();
-		
-		ArrayList<Entity> entityList = new ArrayList<Entity>();
-		for (int i = 0; i < entityElementList.getLength(); i++) {
-			Element entityElement = (Element) entityElementList.item(i);
-			entityList.add(Entity.readEntityFromXmlElement(entityElement));
-		}
-		return entityList;
-	}
-	
-	/**
-	 * Prints dangling references to an XML file.
-	 */
-	public void printDanglingReferencesToXmlFile(String xmlFile) {
-		ReferenceManager referenceManager = new ReferenceManager();
-		for (Reference reference : getDanglingReferenceList())
-			referenceManager.addReference(reference);
-		referenceManager.printReferencesToXmlFile(xmlFile);
 	}
 	
 }

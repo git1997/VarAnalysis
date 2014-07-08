@@ -1,10 +1,10 @@
 package edu.iastate.parsers.html.htmlparser;
 
-
 import java.util.ArrayList;
 import java.util.Stack;
 
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
+import edu.iastate.parsers.html.dom.nodes.HtmlText;
 import edu.iastate.parsers.html.sax.nodes.HCloseTag;
 import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
@@ -18,16 +18,14 @@ import edu.iastate.parsers.html.sax.nodes.HText;
 public class HtmlDomParser {
 	
 	private Stack<HtmlElement> htmlStack = new Stack<HtmlElement>();
-	
-	private ArrayList<HtmlElement> parseResult = new ArrayList<HtmlElement>();
-	
-	public Stack<HtmlElement> saveHtmlStack() {
+
+	public Stack<HtmlElement> getHtmlStack() {
 		Stack<HtmlElement> savedStack = new Stack<HtmlElement>();
 		savedStack.addAll(htmlStack);
 		return savedStack;
 	}
 	
-	public void restoreHtmlStack(Stack<HtmlElement> savedStack) {
+	public void setHtmlStack(Stack<HtmlElement> savedStack) {
 		this.htmlStack = savedStack;
 	}
 	
@@ -35,12 +33,8 @@ public class HtmlDomParser {
 		htmlStack = new Stack<HtmlElement>();
 	}
 	
-	public ArrayList<HtmlElement> getParseResult() {
-		return new ArrayList<HtmlElement>(parseResult);
-	}
-	
-	public void clearParseResult() {
-		parseResult = new ArrayList<HtmlElement>();
+	public void pushHtmlStack(HtmlElement element) {
+		htmlStack.push(element);
 	}
 	
 	public void parse(HtmlSaxNode saxNode) {
@@ -55,15 +49,16 @@ public class HtmlDomParser {
 				HtmlElement htmlElement = htmlStack.peek();
 				if (htmlElement.getType().equals(((HCloseTag) saxNode).getType())) {
 					htmlStack.pop();
-					if (htmlStack.isEmpty())
-						parseResult.add(htmlElement);
+//					if (htmlStack.isEmpty())
+//						parseResult.add(htmlElement);
 				}
 			}
 		}
 		else if (saxNode instanceof HText) {
 			if (!htmlStack.isEmpty()) {
 				HtmlElement htmlElement = htmlStack.peek();
-				htmlElement.setHtmlText((HText) saxNode);
+				//htmlElement.setHtmlText((HText) saxNode);
+				htmlElement.addChildNode(new HtmlText((HText) saxNode));
 			}
 		}
 	}

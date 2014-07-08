@@ -5,6 +5,8 @@ Bundle-SymbolicName: WebParsers
 Bundle-Version: 1.0.0.qualifier
 Export-Package: deprecated,
  deprecated.html.elements,
+ edu.iastate.analysis.references,
+ edu.iastate.analysis.references.detection,
  edu.iastate.parsers.html.core,
  edu.iastate.parsers.html.dom.nodes,
  edu.iastate.parsers.html.generatedlexer,
@@ -12,8 +14,8 @@ Export-Package: deprecated,
  edu.iastate.parsers.html.run,
  edu.iastate.parsers.html.sax.nodes,
  edu.iastate.parsers.tree,
- entities,
- html,
- references,
- references.detection
-Require-Bundle: Symex;bundle-version="1.0.0"
+ entities
+Require-Bundle: Symex;bundle-version="1.0.0",
+ org.eclipse.equinox.common;bundle-version="3.6.200",
+ org.eclipse.core.resources;bundle-version="3.8.101"
+Import-Package: org.eclipse.wst.jsdt.core.dom

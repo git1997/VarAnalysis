@@ -14,6 +14,17 @@
             id="edu.iastate.parsers.ui.views.WebParsersView"
             name="Web Parsers">
       </view>
+      <category
+            id="edu.iastate.parsers.category.webanalysis"
+            name="Web Analysis">
+      </category>
+      <view
+            category="edu.iastate.parsers.category.webanalysis"
+            class="edu.iastate.parsers.ui.views.WebAnalysisView"
+            icon="icons/sample.gif"
+            id="edu.iastate.parsers.ui.views.WebAnalysisView"
+            name="Web Analysis">
+      </view>
    </extension>
 
 </plugin>

@@ -13,7 +13,9 @@ import edu.iastate.parsers.html.dom.nodes.HtmlElement;
 import edu.iastate.parsers.html.dom.nodes.HtmlNode;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.dom.nodes.HtmlText;
+import edu.iastate.parsers.tree.TreeSelectNode;
 import edu.iastate.parsers.ui.UIHelper;
+import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
 
@@ -98,7 +100,7 @@ public class DomResultTreeViewer extends GenericTreeViewer {
 	@Override
 	public String getTreeNodeDescription(Object element) {
 		if (element instanceof HtmlElement)
-			return ((HtmlElement) element).getType();
+			return ((HtmlElement) element).getHtmlOpenTag().toDebugString();
 		
 		else if (element instanceof HtmlText) {
 			return UIHelper.standardizeText(((HtmlText) element).toDebugString());
@@ -112,6 +114,10 @@ public class DomResultTreeViewer extends GenericTreeViewer {
 	public PositionRange getTreeNodePositionRange(Object element) {
 		if (element instanceof HtmlNode)
 			return ((HtmlNode) element).getLocation();
+		else if (element instanceof HtmlSelect) {
+			Constraint constraint = ((HtmlSelect) element).getConstraint();
+			return constraint.getLocation();
+		}
 		else
 			return PositionRange.UNDEFINED;
 	}

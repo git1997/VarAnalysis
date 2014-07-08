@@ -1,6 +1,6 @@
 package edu.iastate.parsers.html.dom.nodes;
 
-import edu.iastate.parsers.html.sax.nodes.HOpenTag;
+import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
 
 /**
@@ -10,25 +10,34 @@ import edu.iastate.symex.position.PositionRange;
  */
 public class HtmlAttribute extends HtmlNode {
 	
-	private HOpenTag parentTag; // The tag that this attribute belongs to.
+	private HtmlElement parentElement = null; // The HtmlElement that this attribute belongs to.
 	
-	private HtmlAttributeName name;
+	private Constraint constraint = Constraint.TRUE;
+	
+	private String name;
+	
 	private HtmlAttributeValue value = null;
 	
 	/**
 	 * Constructor
 	 * @param name
-	 * @param location
 	 */
-	public HtmlAttribute(HOpenTag parentTag, HtmlAttributeName name) {
-		super(name.getLocation());
-		this.parentTag = parentTag;
+	public HtmlAttribute(String name, PositionRange location) {
+		super(location);
 		this.name = name;
 	}
 	
 	/*
 	 * Set properties
 	 */
+	
+	public void setParentElement(HtmlElement htmlElement) {
+		this.parentElement = htmlElement;
+	}
+	
+	public void setConstraint(Constraint constraint) {
+		this.constraint = constraint;
+	}
 	
 	public void addValueFragment(String valueFragment, PositionRange location) {
 		if (value == null)
@@ -41,20 +50,20 @@ public class HtmlAttribute extends HtmlNode {
 	 * Get properties
 	 */
 	
-	public HOpenTag getParentTag() {
-		return parentTag;
+	public HtmlElement getParentElement() {
+		return parentElement;
+	}
+	
+	public Constraint getConstraint() {
+		return constraint;
 	}
 	
 	public String getName() {
-		return name.getName();
+		return name;
 	}
 	
 	public String getValue() {
 		return value.getStringValue();
-	}
-	
-	public HtmlAttributeName getAttributeName() {
-		return name;
 	}
 	
 	public HtmlAttributeValue getAttributeValue() {
@@ -62,7 +71,15 @@ public class HtmlAttribute extends HtmlNode {
 	}
 	
 	public String getTrimmedLowerCaseValue() {
-		return (value != null ? value.getStringValue().trim().toLowerCase() : "");
+		return getValue().trim().toLowerCase();
+	}
+	
+	public HtmlAttribute clone() {
+		HtmlAttribute clonedAttribute = new HtmlAttribute(name, location);
+		clonedAttribute.parentElement = parentElement;
+		clonedAttribute.constraint = constraint;
+		clonedAttribute.value = (value != null ? value.clone() : null);
+		return clonedAttribute;
 	}
 	
 	/**
@@ -101,7 +118,10 @@ public class HtmlAttribute extends HtmlNode {
 	
 	@Override
 	public String toDebugString() {
-		return name.toDebugString() + "=" + value.toDebugString();
+		if (constraint.isTautology())
+			return name + "=" + value.toDebugString();
+		else
+			return "[" + constraint.toDebugString() + "] " + name + "=" + value.toDebugString();
 	}
 
 }

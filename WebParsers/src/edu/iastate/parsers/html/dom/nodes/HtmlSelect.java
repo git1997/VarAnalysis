@@ -21,6 +21,13 @@ public class HtmlSelect extends HtmlNode {
 		this.falseBranchNode = falseBranchNode;
 	}
 	
+	public static HtmlNode createCompactHtmlNode(Constraint constraint, HtmlNode trueBranchNode, HtmlNode falseBranchNode) {
+		if (trueBranchNode == null && falseBranchNode == null)
+			return null;
+		else
+			return new HtmlSelect(constraint, trueBranchNode, falseBranchNode);
+	}
+	
 	public Constraint getConstraint() {
 		return constraint;
 	}

@@ -1,15 +1,12 @@
 package entities;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import constraints.Constraint;
-import deprecated.WebEntitiesConfig;
-import references.DeclaringReference;
-import references.Reference;
+import edu.iastate.analysis.references.DeclaringReference;
+import edu.iastate.analysis.references.Reference;
+import edu.iastate.symex.constraints.Constraint;
 
 /**
  * 
@@ -72,8 +69,8 @@ public class Entity {
 	/**
 	 * Returns the file path of the declaring reference
 	 */
-	public String getFilePath() {
-		return declaringReference.getFilePath();
+	public File getFile() {
+		return declaringReference.getFile();
 	}
 	
 	/**
@@ -143,49 +140,8 @@ public class Entity {
 
 		@Override
 		public int compare(Entity ent1, Entity ent2) {
-			return ent1.getFilePath().compareTo(ent2.getFilePath());
+			return ent1.getFile().getAbsolutePath().compareTo(ent2.getFile().getAbsolutePath());
 		}
-	}
-	
-	/**
-	 * Prints the entity to an XML element
-	 */
-	public Element printToXmlElement(Document document) {
-		Collections.sort(references, new Reference.ReferenceComparator()); // Sort the references first
-		
-		Element entityElement = document.createElement(WebEntitiesConfig.XML_ENTITY);
-		entityElement.setAttribute(WebEntitiesConfig.XML_ENT_NAME, this.getName());
-		entityElement.setAttribute(WebEntitiesConfig.XML_ENT_TYPE, this.getType());
-		
-		entityElement.setAttribute(WebEntitiesConfig.XML_FILE_PATH, this.getFilePath());
-		for (Reference reference : references) {
-			entityElement.appendChild(reference.printToXmlElement(document));
-		}
-		
-		return entityElement;
-	}
-	
-	/**
-	 * Reads the entity from an XML element
-	 */
-	public static Entity readEntityFromXmlElement(Element entityElement) {
-		return null;
-//		Type entityType = Type.valueOf(entityElement.getAttribute(WebEntitiesConfig.XML_REF_TYPE));
-//		String entityName = entityElement.getAttribute(WebEntitiesConfig.XML_REF_NAME);
-//		Entity entity = new Entity(entityType, entityName, entityName); // Now it's Ok to discard the qualifiedName
-//		
-//		if (entityElement.hasAttribute(WebEntitiesConfig.XML_ENTITY_INFO1))
-//			entity.submitToPage = entityElement.getAttribute(WebEntitiesConfig.XML_ENTITY_INFO1);
-//		if (entityElement.hasAttribute(WebEntitiesConfig.XML_REF_INFO2))
-//			entity.onPage = entityElement.getAttribute(WebEntitiesConfig.XML_REF_INFO2);
-//		
-//		NodeList nodeList = entityElement.getChildNodes();
-//		for (int i = 0; i < nodeList.getLength(); i++) {
-//			Element referenceElement = (Element) nodeList.item(i);
-//			Reference.readReferenceFromXmlElement(referenceElement, entity);
-//			EntityManager.linkEntityReference(entity, reference);
-//		}
-//		return entity;
 	}
 	
 }

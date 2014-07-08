@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.htmlparser.HtmlLexer;
+import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.parsers.tree.TreeNode;
 import edu.iastate.parsers.tree.TreeNodeFactory;
 import edu.iastate.symex.datamodel.DataModel;
@@ -13,6 +14,7 @@ import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.RepeatNode;
 import edu.iastate.symex.datamodel.nodes.SelectNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.UnsetNode;
 import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.position.PositionRange;
 
@@ -27,7 +29,8 @@ public class DataModelToHtmlTokens {
 	
 	private void updateLexResult(HtmlLexer lexer) {
 		ArrayList<HtmlToken> currentResult = lexer.getLexResult();
-		lexResult = new TreeNodeFactory<HtmlToken>().createInstanceFromNewNodes(lexResult, currentResult);
+		TreeNode<HtmlToken> curResult = new TreeNodeFactory<HtmlToken>().createInstanceFromNodes(currentResult);
+		lexResult = new TreeNodeFactory<HtmlToken>().createCompactConcatNode(lexResult, curResult);
 	}
 	
 	public TreeNode<HtmlToken> lex(DataModel dataModel) {
@@ -57,6 +60,9 @@ public class DataModelToHtmlTokens {
 		
 		else if (dataNode instanceof LiteralNode)
 			lex((LiteralNode) dataNode, lexer);
+		
+		else if (dataNode instanceof UnsetNode)
+			{/* Do nothing */}
 		
 		else // Consider as SymbolicNode
 			lex(DataNodeFactory.createSymbolicNode(), lexer);
@@ -116,7 +122,8 @@ public class DataModelToHtmlTokens {
 		/*
 		 * Combine results and continue
 		 */
-		lexResult = new TreeNodeFactory<HtmlToken>().createInstanceFromNewBranchingNodes(lexResult, selectNode.getConstraint(), tokensInTrueBranch, tokensInFalseBranch);
+		TreeNode<HtmlToken> mergedResult =  new TreeNodeFactory<HtmlToken>().createInstanceFromBranchingNodes(selectNode.getConstraint(), tokensInTrueBranch, tokensInFalseBranch);
+		lexResult = new TreeNodeFactory<HtmlToken>().createCompactConcatNode(lexResult, mergedResult);
 		lexer.clearLexResult();
 	}
 
@@ -125,7 +132,7 @@ public class DataModelToHtmlTokens {
 	 */
 	private void lex(LiteralNode literalNode, HtmlLexer lexer) {
 		String htmlCode = literalNode.getStringValue();
-		PositionRange htmlLocation = literalNode.getPositionRange();
+		PositionRange htmlLocation = literalNode.getLocation();
 		
 		lexer.lex(htmlCode, htmlLocation);
    	}

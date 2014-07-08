@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import references.ReferenceManager;
 
 import logging.MyLogger;
 import logging.MyLevel;
 
+import edu.iastate.analysis.config.AnalysisConfig;
+import edu.iastate.analysis.references.ReferenceManager;
+import edu.iastate.analysis.references.detection.FindReferencesInFile;
 import entities.EntityManager;
 import util.FileIO;
 import util.Timer;
@@ -47,7 +49,7 @@ public class FindEntitiesInProject {
 	 * Constructor.
 	 */
 	public FindEntitiesInProject(String projectName) {
-		this(WebEntitiesConfig.getProjectFolder(projectName), WebEntitiesConfig.getEntitiesOutputFile(projectName), false);
+		this(AnalysisConfig.getProjectFolder(projectName), AnalysisConfig.getEntitiesOutputFile(projectName), false);
 	}
 	
 	/**
