@@ -135,7 +135,7 @@ public class DataModelTreeViewer extends GenericTreeViewer {
 	@Override
 	public String getTreeNodeDescription(Object element) {
 		if (element instanceof SelectNode)
-			return (((SelectNode) element).getConstraint() != null ? ((AtomicConstraint) ((SelectNode) element).getConstraint()).getConditionString().getStringValue() : "");
+			return (((SelectNode) element).getConstraint() != null ? ((AtomicConstraint) ((SelectNode) element).getConstraint()).toDebugString() : "");
 		
 		else if (element instanceof SymbolicNode)
 			return (((SymbolicNode) element).getPhpNode() != null ? ((SymbolicNode) element).getPhpNode().getSourceCode() : "");
@@ -150,13 +150,13 @@ public class DataModelTreeViewer extends GenericTreeViewer {
 	@Override
 	public PositionRange getTreeNodePositionRange(Object element) {
 		if (element instanceof SelectNode)
-			return (((SelectNode) element).getConstraint() != null ? ((AtomicConstraint)((SelectNode) element).getConstraint()).getConditionString().getPositionRange() : PositionRange.UNDEFINED);
+			return (((SelectNode) element).getConstraint() != null ? ((AtomicConstraint)((SelectNode) element).getConstraint()).getLocation() : PositionRange.UNDEFINED);
 		
 		else if (element instanceof SymbolicNode)
-			return (((SymbolicNode) element).getPhpNode() != null ? ((SymbolicNode) element).getPhpNode().getRange() : PositionRange.UNDEFINED);
+			return (((SymbolicNode) element).getPhpNode() != null ? ((SymbolicNode) element).getPhpNode().getLocation() : PositionRange.UNDEFINED);
 		
 		else if (element instanceof LiteralNode)
-			return ((LiteralNode) element).getPositionRange();
+			return ((LiteralNode) element).getLocation();
 		
 		else
 			return PositionRange.UNDEFINED;

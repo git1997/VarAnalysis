@@ -1,7 +1,6 @@
 package edu.iastate.symex.ui.views;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -187,7 +186,7 @@ public abstract class GenericTreeViewer extends TreeViewer {
 	
 	public String getTreeNodeFilePath(Object element) {
 		Range range = getTreeNodePositionFirstRange(element);
-		return range == null ? "" : UIHelper.standardizeFilePath(range.getFile().getAbsolutePath());
+		return range == null ? "" : UIHelper.standardizeFilePath(range.getFilePath());
 	}
 	
 	public String getTreeNodeLineRange(Object element) {
