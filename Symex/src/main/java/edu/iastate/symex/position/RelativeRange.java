@@ -22,6 +22,14 @@ public class RelativeRange extends PositionRange {
 		this.offset = offset;
 		this.length = length;
 	}
+	
+	public PositionRange getBasePositionRange() {
+		return basePositionRange;
+	}
+	
+	public int getOffset() {
+		return offset;
+	}
 
 	@Override
 	public int getLength() {
@@ -35,6 +43,9 @@ public class RelativeRange extends PositionRange {
 
 	@Override
 	public ArrayList<Range> getRanges() {
+		if (basePositionRange.isUndefined())
+			return new ArrayList<Range>();
+		
 		ArrayList<Range> ranges = new ArrayList<Range>();
 		for (int i = 0; i < length; i++) {
 			Position p = getPositionAtRelativeOffset(i);

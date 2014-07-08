@@ -47,4 +47,11 @@ public abstract class PositionRange {
 		return getPositionAtRelativeOffset(getLength());
 	}
 	
+	/**
+	 * Returns true if the position range is undefined.
+	 */
+	public boolean isUndefined() {
+		return (this == UNDEFINED);
+	}
+	
 }

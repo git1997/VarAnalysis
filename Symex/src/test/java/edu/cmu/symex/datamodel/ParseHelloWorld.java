@@ -25,7 +25,7 @@ public class ParseHelloWorld {
 			public void visitLiteralNode(LiteralNode literalNode) {
 				super.visitLiteralNode(literalNode);
 				System.out.println(literalNode.getStringValue() + " @ "
-						+ literalNode.getPositionRange());
+						+ literalNode.getLocation());
 			}
 		});
 	}

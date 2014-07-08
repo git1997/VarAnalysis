@@ -22,6 +22,14 @@ public class CompositeRange extends PositionRange {
 		this.range1 = range1;
 		this.range2 = range2;
 	}
+	
+	public PositionRange getRange1() {
+		return range1;
+	}
+	
+	public PositionRange getRange2() {
+		return range2;
+	}
 
 	@Override
 	public int getLength() {

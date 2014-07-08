@@ -1,15 +1,17 @@
 package edu.iastate.symex.constraints;
 
+import edu.iastate.symex.position.PositionRange;
+
 /**
  * 
  * @author HUNG
  *
  */
-public class Constraint {
+public abstract class Constraint {
 	
-	public static final Constraint TRUE	 = new Constraint("TRUE");
+	public static final Constraint TRUE	 = ConstraintFactory.createAtomicConstraint("TRUE", PositionRange.UNDEFINED);
 	
-	public static final Constraint FALSE = new Constraint("FALSE");
+	public static final Constraint FALSE = ConstraintFactory.createAtomicConstraint("FALSE", PositionRange.UNDEFINED);
 	
 	// The FeatureExpr representing this constraint
 	protected String featureExpr;
@@ -25,6 +27,25 @@ public class Constraint {
 	/*
 	 * Methods
 	 */
+	
+	/**
+	 * Returns the FeatureExpr representing this constraint.
+	 */
+	public String getFeatureExpr() {
+		return featureExpr;
+	}
+
+	/**
+	 * @return Location(s) of the constraint in the source code
+	 */
+	public abstract PositionRange getLocation();
+
+	/**
+	 * @return A string describing the constraint
+	 */
+	public String toDebugString() {
+		return featureExpr.toString();
+	}
 	
 	/**
 	 * @return True if the constraint is satisfiable
@@ -64,17 +85,11 @@ public class Constraint {
 	}
 	
 	/**
-	 * Returns the FeatureExpr representing this constraint.
+	 * Returns true if this constraint satisfies another constraint 
+	 * (e.g. A & B satisfies A, but A & B does not satisfy B & C).
 	 */
-	public String getFeatureExpr() {
-		return featureExpr;
-	}
-
-	/**
-	 * @return A string describing the constraint
-	 */
-	public String toString() {
-		return featureExpr.toString();
+	public boolean satisfies(Constraint constraint) {
+		return !(ConstraintFactory.createAndConstraint(this, ConstraintFactory.createNotConstraint(constraint)).isSatisfiable());
 	}
 	
 	/**

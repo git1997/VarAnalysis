@@ -32,6 +32,10 @@ public class Position {
 		return file;
 	}
 	
+	public String getFilePath() {
+		return (file != null ? file.getAbsolutePath() : null);
+	}
+	
 	public int getOffset() {
 		return offset;
 	}

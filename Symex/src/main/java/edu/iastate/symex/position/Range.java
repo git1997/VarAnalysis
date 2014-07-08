@@ -33,6 +33,10 @@ public class Range extends PositionRange {
 	public File getFile() {
 		return file;
 	}
+	
+	public String getFilePath() {
+		return file.getAbsolutePath();
+	}
 
 	public int getOffset() {
 		return offset;

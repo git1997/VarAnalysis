@@ -1,5 +1,7 @@
 package edu.iastate.symex.constraints;
 
+import edu.iastate.symex.position.PositionRange;
+
 /**
  * 
  * @author HUNG
@@ -19,6 +21,11 @@ public class NotConstraint extends Constraint {
 	
 	public Constraint getOppositeConstraint() {
 		return oppositeConstraint;
+	}
+	
+	@Override
+	public PositionRange getLocation() {
+		return oppositeConstraint.getLocation();
 	}
 	
 }

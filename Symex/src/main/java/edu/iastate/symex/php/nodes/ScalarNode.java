@@ -72,15 +72,15 @@ public class ScalarNode extends ExpressionNode {
 			// If it is surrounded by quotes/apostrophes
 			case 4:
 				String string1 = stringValue;
-				Position position1 = this.getRange().getPositionAtRelativeOffset(0);
+				Position position1 = this.getLocation().getPositionAtRelativeOffset(0);
 				return generateDataNode(string1, position1, '\"');
 			case 5:
 				String string2 = stringValue.substring(1, stringValue.length() - 1);
-				Position position2 = this.getRange().getPositionAtRelativeOffset(1);
+				Position position2 = this.getLocation().getPositionAtRelativeOffset(1);
 				return generateDataNode(string2, position2, '\"');
 			case 6:
 				String string3 = stringValue.substring(1, stringValue.length() - 1);
-				Position position3 = this.getRange().getPositionAtRelativeOffset(1);
+				Position position3 = this.getLocation().getPositionAtRelativeOffset(1);
 				return generateDataNode(string3, position3, '\'');
 			
 			// If it is a predefined constants (e.g. WEBSITE_PATH, __FILE__)

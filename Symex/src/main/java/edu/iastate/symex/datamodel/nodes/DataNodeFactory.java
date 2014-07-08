@@ -70,14 +70,14 @@ public class DataNodeFactory {
 			LiteralNode node1 = (LiteralNode) compactChildNodes.get(compactChildNodes.size() - 1);
 			LiteralNode node2 = (LiteralNode) childNode;
 
-			if (node1.getPositionRange() instanceof Range && node2.getPositionRange() instanceof Range
-					&& node1.getPositionRange().getEndPosition().sameAs(node2.getPositionRange().getStartPosition())
-					&& node1.getPositionRange().getLength() == node1.getStringValue().length()
-					&& node2.getPositionRange().getLength() == node2.getStringValue().length()) {
+			if (node1.getLocation() instanceof Range && node2.getLocation() instanceof Range
+					&& node1.getLocation().getEndPosition().sameAs(node2.getLocation().getStartPosition())
+					&& node1.getLocation().getLength() == node1.getStringValue().length()
+					&& node2.getLocation().getLength() == node2.getStringValue().length()) {
 				// Combine consecutive literal nodes when the two nodes have adjacent positions.
-				PositionRange range = new Range(node1.getPositionRange().getStartPosition().getFile(),
-						node1.getPositionRange().getStartPosition().getOffset(), 
-						node1.getPositionRange().getLength() + node2.getPositionRange().getLength());
+				PositionRange range = new Range(node1.getLocation().getStartPosition().getFile(),
+						node1.getLocation().getStartPosition().getOffset(), 
+						node1.getLocation().getLength() + node2.getLocation().getLength());
 				String stringValue = node1.getStringValue() + node2.getStringValue();
 
 				LiteralNode combinedLiteralNode = createLiteralNode(range, stringValue);
@@ -85,7 +85,7 @@ public class DataNodeFactory {
 			}
 			else if (SymexConfig.COMBINE_CONSECUTIVE_LITERAL_NODES) {
 				// Combine consecutive literal nodes even when the nodes node DO NOT have adjacent positions
-				PositionRange range = new CompositeRange(node1.getPositionRange(), node2.getPositionRange());
+				PositionRange range = new CompositeRange(node1.getLocation(), node2.getLocation());
 				String stringValue = node1.getStringValue() + node2.getStringValue();
 
 				LiteralNode combinedLiteralNode = createLiteralNode(range, stringValue);
@@ -109,7 +109,7 @@ public class DataNodeFactory {
 	}
 
 	public static LiteralNode createLiteralNode(PhpNode phpNode) {
-		return createLiteralNode(phpNode.getRange(), phpNode.getSourceCode());
+		return createLiteralNode(phpNode.getLocation(), phpNode.getSourceCode());
 	}
 
 	public static LiteralNode createLiteralNode(String stringValue) {

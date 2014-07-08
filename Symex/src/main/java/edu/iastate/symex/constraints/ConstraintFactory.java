@@ -1,6 +1,6 @@
 package edu.iastate.symex.constraints;
 
-import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.position.PositionRange;
 
 /**
  * 
@@ -9,8 +9,8 @@ import edu.iastate.symex.datamodel.nodes.LiteralNode;
  */
 public class ConstraintFactory {
 	
-	public static Constraint createAtomicConstraint(LiteralNode conditionString) {
-		return new AtomicConstraint(conditionString);
+	public static Constraint createAtomicConstraint(String conditionString, PositionRange location) {
+		return new AtomicConstraint(conditionString, location);
 	}
 
 	public static Constraint createAndConstraint(Constraint constraint1, Constraint constraint2) {

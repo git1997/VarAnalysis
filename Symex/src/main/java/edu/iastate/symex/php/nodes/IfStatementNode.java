@@ -87,7 +87,7 @@ public class IfStatementNode extends StatementNode {
 		DataNode falseBranchRetValue = null;		
 		
 		// Execute the branches
-		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString);
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
 		if (trueStatement != null) {
 			trueBranchEnv = new BranchEnv(env, constraint);
 			trueBranchRetValue = trueStatement.execute(trueBranchEnv);

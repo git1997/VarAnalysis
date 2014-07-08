@@ -49,9 +49,9 @@ public class WhileStatementNode extends StatementNode {
 	 * Executes the loop and updates the env accordingly.
 	 */
 	public static void execute(Env env, LiteralNode conditionString, StatementNode statement) {
-		BranchEnv loopEnv = new BranchEnv(env, ConstraintFactory.createAtomicConstraint(conditionString));
+		BranchEnv loopEnv = new BranchEnv(env, ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation()));
 		statement.execute(loopEnv);
-		env.updateWithLoop(ConstraintFactory.createAtomicConstraint(conditionString), loopEnv);
+		env.updateWithLoop(ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation()), loopEnv);
 	}
 
 }

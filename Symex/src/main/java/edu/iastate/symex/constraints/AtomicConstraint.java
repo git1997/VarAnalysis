@@ -1,6 +1,6 @@
 package edu.iastate.symex.constraints;
 
-import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.position.PositionRange;
 
 /**
  * 
@@ -9,18 +9,19 @@ import edu.iastate.symex.datamodel.nodes.LiteralNode;
  */
 public class AtomicConstraint extends Constraint {
 	
-	public LiteralNode conditionString; // Use a literal node to describe and locate the condition string
+	private PositionRange location;
 	
 	/**
 	 * Protected constructor, called from ConstraintFactory only.
 	 */
-	protected AtomicConstraint(LiteralNode conditionString) {
-		super("ATOMIC(" + conditionString.getStringValue() + ")");
-		this.conditionString = conditionString;
+	protected AtomicConstraint(String conditionString, PositionRange location) {
+		super("ATOMIC(" + conditionString + ")");
+		this.location = location;
 	}
 	
-	public LiteralNode getConditionString() {
-		return conditionString;
+	@Override
+	public PositionRange getLocation() {
+		return location;
 	}
 	
 }

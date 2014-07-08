@@ -22,7 +22,7 @@ public class LiteralNode extends DataNode {
 		this.stringValue = stringValue;
 	}
 	
-	public PositionRange getPositionRange() {
+	public PositionRange getLocation() {
 		return positionRange;
 	}
 	

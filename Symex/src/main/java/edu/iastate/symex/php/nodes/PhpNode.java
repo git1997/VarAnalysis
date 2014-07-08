@@ -45,7 +45,7 @@ public abstract class PhpNode {
 	 * Returns the position of the PhpNode in the source code.
 	 * Note that the location may not be available (can be undefined).
 	 */
-	public Range getRange() {
+	public Range getLocation() {
 		return range;
 	}
 	

@@ -1,5 +1,8 @@
 package edu.iastate.symex.constraints;
 
+import edu.iastate.symex.position.CompositeRange;
+import edu.iastate.symex.position.PositionRange;
+
 /**
  * 
  * @author HUNG
@@ -25,6 +28,11 @@ public class OrConstraint extends Constraint {
 	
 	public Constraint getConstraint2() {
 		return constraint2;
+	}
+	
+	@Override
+	public PositionRange getLocation() {
+		return new CompositeRange(constraint1.getLocation(), constraint2.getLocation());
 	}
 	
 }
