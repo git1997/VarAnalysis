@@ -2,6 +2,7 @@ package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 
+import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.PhpArrayElement;
 import edu.iastate.symex.core.PhpVariable;
@@ -36,14 +37,12 @@ public class ArrayAccessNode extends VariableBaseNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		// The following code is used from BabelRef to identify $_REQUEST['var'] or $sql_row['name'] variables 
-		// BEGIN OF BABELREF CODE
-//		if (requestVariableListener != null || sqlTableColumnListener != null)
-//			babelrefCheckArrayAccessNode(env);
-//		
-//		if (VariableNode.variableRefListener != null && name instanceof VariableNode && !((VariableNode) name).getResolveVariableNameOrNull(env).startsWith("_"))
-//			((VariableNode) name).variableRefFound(env);
-		// END OF BABELREF CODE
+		/*
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB ANALYSIS CODE
+		WebAnalysis.onArrayAccessExecute((ArrayAccess) this.getAstNode(), env);
+		// END OF WEB ANALYSIS CODE
 		
 		if (name instanceof VariableNode && index != null) {
 			String arrayName = ((VariableNode) name).getResolvedVariableNameOrNull(env);
@@ -66,15 +65,6 @@ public class ArrayAccessNode extends VariableBaseNode {
 	 */
 	@Override
 	public PhpVariable createVariablePossiblyWithNull(Env env) {
-		// The following code is used from BabelRef to identify $_REQUEST['var'] or $sql_row['name'] variables 
-		// BEGIN OF BABELREF CODE
-//		if (requestVariableListener != null || sqlTableColumnListener != null)
-//			babelrefCheckArrayAccessNode(env);
-//		
-//		if (VariableNode.variableDeclListener != null && name instanceof VariableNode && !((VariableNode) name).getResolveVariableNameOrNull(env).startsWith("_"))
-//			((VariableNode) name).variableDeclFound(env);
-		// END OF BABELREF CODE
-		
 		if (name instanceof VariableNode && index != null) {
 			String arrayName = ((VariableNode) name).getResolvedVariableNameOrNull(env);
 			String key = index.execute(env).getExactStringValueOrNull();
@@ -86,60 +76,5 @@ public class ArrayAccessNode extends VariableBaseNode {
 		else
 			return null;
 	}
-	
-	/*
-	 * The following code is used from BabelRef to identify $_REQUEST['var'] or $sql_row['name'] variables 
-	 */
-	// BEGIN OF BABELREF CODE
-//	public interface IRequestVariableListener {
-//		public void requestVariableFound(DataNode dataNode);
-//	}
-//	
-//	public interface ISqlTableColumnListener {
-//		public void sqlTableColumnFound(DataNode dataNode, String scope);
-//	}
-//	
-//	public static IRequestVariableListener requestVariableListener = null;
-//	
-//	public static ISqlTableColumnListener sqlTableColumnListener = null;
-//	
-//	/**
-//	 * Checks if the ArrayAccess is a $_REQUEST['var'] or $sql_row['name'] variable.
-//	 */
-//	private void babelrefCheckArrayAccessNode(Env env) {
-//		if (!(name instanceof VariableNode))
-//			return;
-//
-//		String variableName = ((VariableNode) name).getResolveVariableNameOrNull(env);
-//			
-//		if (requestVariableListener != null 
-//			&& (variableName.equals("_REQUEST") || variableName.equals("_POST") || variableName.equals("_GET") || variableName.equals("_FILES"))
-//			&& index != null) {
-//				DataNode dataNode;
-//				if (index instanceof IdentifierNode)
-//					dataNode = LiteralNodeFactory.createLiteralNode((IdentifierNode) index);
-//				else 
-//					dataNode = index.execute(env);
-//				requestVariableListener.requestVariableFound(dataNode);
-//		}
-//		
-//		if (sqlTableColumnListener != null) {
-//			PhpVariable phpVariable = env.getVariableFromFunctionScope(variableName);
-//			if (phpVariable != null) {
-//				String variableValue = phpVariable.getDataNode().getApproximateStringValue();
-//				if (variableValue.startsWith("mysql_query_") // @see edu.iastate.symex.php.nodes.FunctionInvocationNode.php_mysql_query(ArrayList<DataNode>, env, Object)
-//															 // and edu.iastate.symex.php.nodes.FunctionInvocationNode.php_mysql_fetch_array(ArrayList<DataNode>, env)
-//					&& index != null) {
-//					DataNode dataNode;
-//					if (index instanceof IdentifierNode)
-//						dataNode = LiteralNodeFactory.createLiteralNode((IdentifierNode) index);
-//					else 
-//						dataNode = index.execute(env);
-//					sqlTableColumnListener.sqlTableColumnFound(dataNode, variableValue);
-//				}
-//			}
-//		}
-//	}
-	// END OF BABELREF CODE
 
 }

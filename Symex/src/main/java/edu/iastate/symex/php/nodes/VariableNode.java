@@ -2,6 +2,7 @@ package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 
+import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
@@ -35,34 +36,17 @@ public class VariableNode extends VariableBaseNode {
 	}
 	
 	/*
-	 * The following code is used from BabelRef to identify PHP variable entities.
-	 */
-	// BEGIN OF BABELREF CODE
-//	public interface IVariableDeclListener {
-//		public void variableDeclFound(IdentifierNode variableName, ArrayList<Constraint> constraints, String scope);
-//	}
-//	
-//	public interface IVariableRefListener {
-//		public void variableRefFound(IdentifierNode variableName, ArrayList<Constraint> constraints, String scope);
-//	}
-//	
-//	public static IVariableDeclListener variableDeclListener = null;
-//	
-//	public static IVariableRefListener variableRefListener = null;
-	// END OF BABELREF CODE
-
-	/*
 	 * (non-Javadoc)
 	 * @see servergraph.nodes.PhpNode#execute(servergraph.env)
 	 */
 	@Override
 	public DataNode execute(Env env) {
 		/*
-		 * The following code is used from BabelRef to identify PHP variable entities.
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
-		// BEGIN OF BABELREF CODE
-//		variableRefFound(env);
-		// END OF BABELREF CODE
+		// BEGIN OF WEB ANALYSIS CODE
+		WebAnalysis.onVariableExecute((Variable) this.getAstNode(), env);
+		// END OF WEB ANALYSIS CODE
 		
 		String variableName = getResolvedVariableNameOrNull(env);
 		PhpVariable phpVariable = env.readVariable(variableName);
@@ -82,43 +66,9 @@ public class VariableNode extends VariableBaseNode {
 	 */
 	@Override
 	public PhpVariable createVariablePossiblyWithNull(Env env) {
-		/*
-		 * The following code is used from BabelRef to identify PHP variable entities.
-		 */
-		// BEGIN OF BABELREF CODE
-//		variableDeclFound(env);
-		// END OF BABELREF CODE
-		
 		String variableName = getResolvedVariableNameOrNull(env);
 		PhpVariable phpVariable = new PhpVariable(variableName);
 		return phpVariable;
 	}
-	
-	/*
-	 * The following code is used from BabelRef to identify PHP variable entities.
-	 */
-	// BEGIN OF BABELREF CODE
-//	public void variableDeclFound(Env env) {
-//		if (variableDeclListener != null) {
-//			if (name instanceof IdentifierNode)
-//				variableDeclListener.variableDeclFound((IdentifierNode) name, env.getConstraints(), getFunctionScope(env));
-//		}
-//	}
-//	
-//	public void variableRefFound(Env env) {
-//		if (variableRefListener != null) {
-//			if (name instanceof IdentifierNode)
-//				variableRefListener.variableRefFound((IdentifierNode) name, env.getConstraints(), getFunctionScope(env));
-//		}
-//	}
-//	
-//	private String getFunctionScope(Env env) {
-//		ArrayList<String> functionStack = env.getFunctionStack();
-//		if (functionStack.size() == 0 || env.getGlobalVariableNames().contains(getResolveVariableNameOrNull(env)))
-//			return "GLOBAL_SCOPE";
-//		else
-//			return "FUNCTION_SCOPE_" + functionStack.get(functionStack.size() - 1);
-//	}
-	// END OF BABELREF CODE	
 	
 }

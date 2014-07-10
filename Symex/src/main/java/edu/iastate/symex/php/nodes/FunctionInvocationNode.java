@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.eclipse.php.internal.core.ast.nodes.Expression;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 
+import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.FunctionEnv;
@@ -16,6 +17,7 @@ import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.ObjectNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -105,11 +107,8 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		 * Note that argumentExpressionNodes (of type ExpressionNode)
 		 * 		have now been resolved to argumentValues (of type DataNode)
 		 */
-		if (functionName.equals("exit") || functionName.equals("die")) 										
+		if (functionName.equals("exit") || functionName.equals("die")) // Equivalent								
 			return php_exit(argumentValues, env);
-			// TODO Handle die or not?
-			// Should not handle the "die" function because "die" indicates something abnormal happened,
-		 	// whereas with "exit", the developer's intention is to create different versions.
 		else if (functionName.equals("print"))
 			return php_print(argumentValues, env);
 		else if (functionName.equals("define"))
@@ -123,7 +122,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		else if (functionName.equals("strtolower"))
 			return php_strtolower(argumentValues, env);
 		else if (functionName.equals("mysql_query"))
-			return php_mysql_query(argumentValues, env, this);
+			return php_mysql_query(argumentValues, env);
 		else if (functionName.equals("mysql_fetch_array") || functionName.equals("mysql_fetch_assoc"))
 			return php_mysql_fetch_array(argumentValues, env);
 		
@@ -197,10 +196,12 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 * Implements the standard PHP function: exit
 	 */
 	private DataNode php_exit(ArrayList<DataNode> parameterValues, Env env) {	
-		env.setHasExitStatement(true);
-		if (SymexConfig.COLLECT_OUTPUTS_FROM_EXIT_STATEMENTS)
+		// TODO How should we handle exit?
+		if (SymexConfig.COLLECT_OUTPUTS_FROM_EXIT_STATEMENTS) {
+			env.setHasExitStatement(true);
 			env.addCurrentOutputToFinalOutput();
-		return DataNodeFactory.createSymbolicNode(this);
+		}
+		return SpecialNode.ControlNode.EXIT;
 	}
 	
 	/**
@@ -272,32 +273,17 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		return DataNodeFactory.createSymbolicNode(this);
 	}
 	
-	/*
-	 * The following code is used from BabelRef to identify mysql_query function calls
-	 */
-	// BEGIN OF BABELREF CODE
-	public interface IMysqlQueryStatementListener {
-		public void mysqlQueryStatementFound(DataNode dataNode, String scope);
-	}
-	
-	public static IMysqlQueryStatementListener mysqlQueryStatementListener = null;
-	// END OF BABELREF CODE
-	
 	/**
 	 * Implements the standard PHP function: mysql_query
 	 */
-	private DataNode php_mysql_query(ArrayList<DataNode> parameterValues, Env env, Object scope) {
+	private DataNode php_mysql_query(ArrayList<DataNode> parameterValues, Env env) {
 		/*
-		 * The following code is used from BabelRef to identify mysql_query function calls
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
-		// BEGIN OF BABELREF CODE
-		if (mysqlQueryStatementListener != null && parameterValues.size() == 1) {
-			mysqlQueryStatementListener.mysqlQueryStatementFound(parameterValues.get(0), "mysql_query_" + scope.hashCode()); // @see edu.iastate.symex.php.nodes.ArrayAccessNode.execute(env)
-		}
-		
-		if (mysqlQueryStatementListener != null)
-			return DataNodeFactory.createLiteralNode("mysql_query_" + scope.hashCode()); // @see edu.iastate.symex.php.nodes.ArrayAccessNode.execute(env)
-		// END OF BABELREF CODE
+		// BEGIN OF WEB ANALYSIS CODE
+		if (WebAnalysis.entityDetectionListener != null)
+			return WebAnalysis.onMysqlQuery((FunctionInvocation) this.getAstNode(), parameterValues.get(0), env);
+		// END OF WEB ANALYSIS CODE
 		
 		return DataNodeFactory.createSymbolicNode(this);
 	}
@@ -307,12 +293,12 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 */
 	private DataNode php_mysql_fetch_array(ArrayList<DataNode> parameterValues, Env env) {
 		/*
-		 * The following code is used from BabelRef to handle mysql_fetch_array function calls
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
-		// BEGIN OF BABELREF CODE
-		if (mysqlQueryStatementListener != null && parameterValues.size() == 1)
-			return parameterValues.get(0);	// @see edu.iastate.symex.php.nodes.ArrayAccessNode.execute(env)
-		// END OF BABELREF CODE
+		// BEGIN OF WEB ANALYSIS CODE
+		if (WebAnalysis.entityDetectionListener != null)
+			return WebAnalysis.onMysqlFetchArray((FunctionInvocation) this.getAstNode(), parameterValues.get(0), env);
+		// END OF WEB ANALYSIS CODE
 		
 		return DataNodeFactory.createSymbolicNode(this);
 	}

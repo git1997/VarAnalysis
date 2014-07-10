@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import edu.iastate.symex.constraints.AtomicConstraint;
 import edu.iastate.symex.datamodel.DataModel;
 import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
@@ -135,7 +134,7 @@ public class DataModelTreeViewer extends GenericTreeViewer {
 	@Override
 	public String getTreeNodeDescription(Object element) {
 		if (element instanceof SelectNode)
-			return (((SelectNode) element).getConstraint() != null ? ((AtomicConstraint) ((SelectNode) element).getConstraint()).toDebugString() : "");
+			return (((SelectNode) element).getConstraint() != null ? ((SelectNode) element).getConstraint().toDebugString() : "");
 		
 		else if (element instanceof SymbolicNode)
 			return (((SymbolicNode) element).getPhpNode() != null ? ((SymbolicNode) element).getPhpNode().getSourceCode() : "");
@@ -150,7 +149,7 @@ public class DataModelTreeViewer extends GenericTreeViewer {
 	@Override
 	public PositionRange getTreeNodePositionRange(Object element) {
 		if (element instanceof SelectNode)
-			return (((SelectNode) element).getConstraint() != null ? ((AtomicConstraint)((SelectNode) element).getConstraint()).getLocation() : PositionRange.UNDEFINED);
+			return (((SelectNode) element).getConstraint() != null ? ((SelectNode) element).getConstraint().getLocation() : PositionRange.UNDEFINED);
 		
 		else if (element instanceof SymbolicNode)
 			return (((SymbolicNode) element).getPhpNode() != null ? ((SymbolicNode) element).getPhpNode().getLocation() : PositionRange.UNDEFINED);

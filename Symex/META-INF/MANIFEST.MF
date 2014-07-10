@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Symex
 Bundle-SymbolicName: Symex
 Bundle-Version: 1.0.0.qualifier
-Export-Package: edu.iastate.symex.config,
+Export-Package: edu.iastate.symex.analysis,
+ edu.iastate.symex.config,
  edu.iastate.symex.constraints,
  edu.iastate.symex.core,
  edu.iastate.symex.datamodel,
