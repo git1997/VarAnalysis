@@ -37,7 +37,7 @@ public class SymbolicNode extends DataNode {
 		return parentNode;
 	}
 	
-	public PositionRange getPositionRange() {
+	public PositionRange getLocation() {
 		return phpNode != null ? phpNode.getLocation() : PositionRange.UNDEFINED;
 	}
 	

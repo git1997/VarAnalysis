@@ -1,4 +1,6 @@
-package edu.iastate.parsers.tree;
+package edu.iastate.parsers.conditional;
+
+import java.util.ArrayList;
 
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
@@ -8,16 +10,23 @@ import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
  * @author HUNG
  *
  */
-public class TreeLeafNode<T> extends TreeNode<T> {
+public class CondListItem<T> extends CondList<T> {
 	
 	private T node;
 	
-	public TreeLeafNode(T node) {
+	public CondListItem(T node) {
 		this.node = node;
 	}
 	
 	public T getNode() {
 		return node;
+	}
+
+	@Override
+	public ArrayList<T> getLeftMostItems() {
+		ArrayList<T> list = new ArrayList<T>(1);
+		list.add(node);
+		return list;
 	}
 
 	@Override

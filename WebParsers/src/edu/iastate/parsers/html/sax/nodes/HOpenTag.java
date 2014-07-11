@@ -15,7 +15,7 @@ import edu.iastate.symex.position.PositionRange;
 public class HOpenTag extends HtmlSaxNode {
 	
 	private String type;
-	private ArrayList<HtmlAttribute> attributes;
+	private ArrayList<HtmlAttribute> attributes = new ArrayList<HtmlAttribute>();
 	
 	/**
 	 * Constructor
@@ -23,7 +23,6 @@ public class HOpenTag extends HtmlSaxNode {
 	public HOpenTag(String type, PositionRange location) {
 		super(location);
 		this.type = type.toLowerCase();
-		this.attributes = new ArrayList<HtmlAttribute>();
 	}
 	
 	/*
@@ -32,6 +31,10 @@ public class HOpenTag extends HtmlSaxNode {
 
 	public void addAttribute(HtmlAttribute attribute) {
 		attributes.add(attribute);
+	}
+	
+	public void removeAllAttributes() {
+		attributes = new ArrayList<HtmlAttribute>();
 	}
 	
 	/*
@@ -45,6 +48,10 @@ public class HOpenTag extends HtmlSaxNode {
 	public ArrayList<HtmlAttribute> getAttributes() {
 		return new ArrayList<HtmlAttribute>(attributes);
 	}
+	
+	/*
+	 * Other methods
+	 */
 	
 	public HtmlAttribute getLastAttribute() {
 		return attributes.get(attributes.size() - 1);

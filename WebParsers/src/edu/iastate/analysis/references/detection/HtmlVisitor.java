@@ -10,15 +10,13 @@ import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttributeValue;
-import edu.iastate.parsers.html.dom.nodes.HtmlConcat;
-import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
 import edu.iastate.parsers.html.dom.nodes.HtmlForm;
 import edu.iastate.parsers.html.dom.nodes.HtmlInput;
-import edu.iastate.parsers.html.dom.nodes.HtmlNode;
+import edu.iastate.parsers.html.dom.nodes.HtmlNodeVisitor;
 import edu.iastate.parsers.html.dom.nodes.HtmlScript;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
-import edu.iastate.parsers.html.dom.nodes.HtmlText;
+import edu.iastate.parsers.html.sax.nodes.HText;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.position.PositionRange;
@@ -34,8 +32,9 @@ import edu.iastate.symex.util.logging.MyLogger;
  * @author HUNG
  *
  */
-public class HtmlVisitor {
+public class HtmlVisitor extends HtmlNodeVisitor {
 	
+	private Constraint constraint = Constraint.TRUE;
 	private ReferenceManager referenceManager;
 	
 	/**
@@ -46,82 +45,51 @@ public class HtmlVisitor {
 	}
 	
 	/**
-	 * 
-	 * @param htmlDocument
+	 * Adds a reference.
+	 * This method should be called instead of calling referenceManager.addReference directly.
 	 */
-	public void visitDocument(HtmlDocument htmlDocument) {
-		Constraint constraint = Constraint.TRUE;
-		for (HtmlNode htmlNode : htmlDocument.getChildNodes())
-			visitNode(htmlNode, constraint);
-	}
-	
-	/**
-	 * Visits a general HtmlNode
-	 * @param htmlNode
-	 */
-	public void visitNode(HtmlNode htmlNode, Constraint constraint) {
-		if (htmlNode instanceof HtmlConcat)
-			visitConcat((HtmlConcat) htmlNode, constraint);
-		
-		else if (htmlNode instanceof HtmlSelect)
-			visitSelect((HtmlSelect) htmlNode, constraint);
-		
-		else if (htmlNode instanceof HtmlElement)
-			visitElement((HtmlElement) htmlNode, constraint);
-		
-		else if (htmlNode instanceof HtmlAttribute)
-			visitAttribute((HtmlAttribute) htmlNode, constraint);
-		
-		else {
-			// Do nothing
-		}
-	}
-	
-	/**
-	 * Visits an HtmlConcat
-	 * @param htmlConcat
-	 */
-	public void visitConcat(HtmlConcat htmlConcat, Constraint constraint) {
-		for (HtmlNode htmlNode : htmlConcat.getChildNodes())
-			visitNode(htmlNode, constraint);
+	private void addReference(Reference reference) {
+		reference.setConstraint(constraint);
+		referenceManager.addReference(reference);
 	}
 	
 	/**
 	 * Visits an HtmlSelect
-	 * @param htmlSelect
 	 */
-	public void visitSelect(HtmlSelect htmlSelect, Constraint constraint) {
-		Constraint trueConstraint = ConstraintFactory.createAndConstraint(constraint, htmlSelect.getConstraint());
-		Constraint falseConstraint = ConstraintFactory.createAndConstraint(constraint, ConstraintFactory.createNotConstraint(htmlSelect.getConstraint()));
-		visitNode(htmlSelect.getTrueBranchNode(), trueConstraint);
-		visitNode(htmlSelect.getFalseBranchNode(), falseConstraint);
+	@Override
+	public void visitSelect(HtmlSelect htmlSelect) {
+		Constraint savedConstraint = constraint;
+		if (htmlSelect.getTrueBranchNode() != null) {
+			constraint = ConstraintFactory.createAndConstraint(savedConstraint, htmlSelect.getConstraint());
+			visit(htmlSelect.getTrueBranchNode());
+		}
+		if (htmlSelect.getFalseBranchNode() != null) {
+			constraint = ConstraintFactory.createAndConstraint(savedConstraint, ConstraintFactory.createNotConstraint(htmlSelect.getConstraint()));
+			visit(htmlSelect.getFalseBranchNode());
+		}
+		constraint = savedConstraint;
 	}
 	
 	/**
-	 * Visits a general HtmlElement
-	 * @param htmlElement
+	 * Visits an HtmlElement
 	 */
-	public void visitElement(HtmlElement htmlElement, Constraint constraint) {
+	@Override
+	public void visitElement(HtmlElement htmlElement) {
 		if (htmlElement instanceof HtmlScript)
-			visitScript((HtmlScript) htmlElement, constraint);
-		else {
-			for (HtmlAttribute attr : htmlElement.getAttributes())
-				visitAttribute(attr, constraint);
-			for (HtmlNode child : htmlElement.getChildNodes())
-				visitNode(child, constraint);
-		}
+			visitScript((HtmlScript) htmlElement);
+		else 
+			super.visitElement(htmlElement);
 	}
 	
 	/**
 	 * Visits an HtmlScript
-	 * @param htmlScript
 	 */
-	public void visitScript(HtmlScript htmlScript, Constraint constraint) {
+	public void visitScript(HtmlScript htmlScript) {
 		/*
 		 * Handle <script type="text/javascript" src="javascript.js"/>
 		 */
 		if (htmlScript.getAttributeValue("src") != null) {
-			// TODO Fix this
+			// TODO Review this code
 			String includedFile = htmlScript.getAttributeValue("src").getStringValue();
 			File currentFile = htmlScript.getLocation().getStartPosition().getFile();
 			String includedFilePath = FileIO.resolveIncludedFilePath(currentFile.getParent(), currentFile.getAbsolutePath(), includedFile);
@@ -142,49 +110,44 @@ public class HtmlVisitor {
 		/*
 		 * Handle <script type="text/javascript">Javascript code</script>
 		 */
-			
-		if (htmlScript.getChildNodes().size() != 1 || !(htmlScript.getChildNodes().get(0) instanceof HtmlText)) {
-			MyLogger.log(MyLevel.USER_EXCEPTION, "In HtmlVisitor.java: HtmlScriptTag does not have 1 child node of type HtmlText.");
-			return;
-		}
-		
-		// Get the Javascript source code and location
-		HtmlText htmlText = (HtmlText) htmlScript.getChildNodes().get(0);
-		String javascriptSource = htmlText.getStringValue();
-		PositionRange javascriptLocation = htmlText.getLocation();
+
+		// Get the JavaScript source code and location
+		HText text = htmlScript.getSourceCode();
+		String javascriptCode = text.getStringValue();
+		PositionRange javascriptLocation = text.getLocation();
 		
 		// Replace the string "<!--" and "-->" so that the Javascript source code can be parsed.
 		// Also make sure that the length is unchanged so that the entities can be correctly traced later.
-		javascriptSource = javascriptSource.replaceAll("<!--", "    ").replaceAll("-->", "   ");
+		javascriptCode = javascriptCode.replaceAll("<!--", "    ").replaceAll("-->", "   ");
 		
-		ReferenceDetector.findReferencesInJavascriptCode(javascriptSource, javascriptLocation, constraint, referenceManager);
+		ReferenceDetector.findReferencesInJavascriptCode(javascriptCode, javascriptLocation, constraint, referenceManager);
 	}
 	
 	/**
 	 * Visits an HtmlAttribute
-	 * @param attribute
 	 */
-	public void visitAttribute(HtmlAttribute attribute, Constraint constraint) {
+	@Override
+	public void visitAttribute(HtmlAttribute attribute) {
 		if (attribute.getValue() == null || attribute.getValue().isEmpty() || attribute.getAttributeValue().getLocation().isUndefined())
 			return;
 		
-		else if (attribute.isNameAttribute())
-			createEntitiesFromNameAttribute(attribute, constraint);
+		if (attribute.isNameAttribute())
+			createEntitiesFromNameAttribute(attribute);
 		
 		else if (attribute.isIdAttribute())
-			createEntitiesFromIdAttribute(attribute, constraint);
+			createEntitiesFromIdAttribute(attribute);
 		
 		else if (attribute.containsJavascript())
-			findEntitiesInEventHandler(attribute.getAttributeValue(), constraint);
+			findEntitiesInEventHandler(attribute.getAttributeValue());
 		
 		else if (attribute.containsQueryString())
-			findEntitiesInQueryString(attribute.getAttributeValue(), constraint);
+			findEntitiesInQueryString(attribute.getAttributeValue());
 	}
 
 	/**
 	 * Creates entities from an HtmlAttribute "name", e.g. <input name="my_input">
 	 */
-	private void createEntitiesFromNameAttribute(HtmlAttribute attribute, Constraint constraint) {
+	private void createEntitiesFromNameAttribute(HtmlAttribute attribute) {
 		Reference reference = null;	
 		
 		//----- Create HtmlForm entity, e.g. <form name="my_form">
@@ -210,7 +173,7 @@ public class HtmlVisitor {
 			if (formTag != null)
 				reference = new HtmlInputDecl(inputName, inputLocation, formTag.getFormName(), formTag.getFormSubmitToPage());
 			else
-				reference = new HtmlInputDecl(inputName, inputLocation, "", "");
+				reference = new HtmlInputDecl(inputName, inputLocation, null, null);
 		}	
 		
 		//----- Create regular HtmlTag entity, e.g. <a name="my_link">
@@ -219,37 +182,34 @@ public class HtmlVisitor {
 		}
 		
 		// Add the reference
-		if (reference != null) {
-			reference.setConstraint(constraint);
-			referenceManager.addReference(reference);
-		}
+		if (reference != null)
+			addReference(reference);
 	}
 	
 	/**
 	 * Creates entities from an HtmlAttribute "id", e.g. <div id="mydiv">
 	 */
-	private void createEntitiesFromIdAttribute(HtmlAttribute attribute, Constraint constraint) {
+	private void createEntitiesFromIdAttribute(HtmlAttribute attribute) {
 		String id = attribute.getValue();
 		PositionRange location = attribute.getAttributeValue().getLocation();
 		
 		Reference reference = new HtmlIdDecl(id, location);
-		reference.setConstraint(constraint);
-		referenceManager.addReference(reference);
+		addReference(reference);
 	}
 	
 	/**
 	 * Finds entities in an HTML event handler, e.g. <body onload="sayHello();">
 	 */
-	private void findEntitiesInEventHandler(HtmlAttributeValue attributeValue, Constraint constraint) {
-		String javascriptSource = attributeValue.getStringValue();
+	private void findEntitiesInEventHandler(HtmlAttributeValue attributeValue) {
+		String javascriptCode = attributeValue.getStringValue();
 		PositionRange javascriptLocation = attributeValue.getLocation();
-		ReferenceDetector.findReferencesInJavascriptCode(javascriptSource, javascriptLocation, constraint, referenceManager);
+		ReferenceDetector.findReferencesInJavascriptCode(javascriptCode, javascriptLocation, constraint, referenceManager);
 	}
 	
 	/**
 	 * Finds entities in an HTML query string, e.g. "<a href = "google.com?my_input1=value1&my_input2=value2/>"
 	 */
-	private void findEntitiesInQueryString(HtmlAttributeValue attributeValue, Constraint constraint) {
+	private void findEntitiesInQueryString(HtmlAttributeValue attributeValue) {
 		String queryString = attributeValue.getStringValue();
 		if (!queryString.contains("?"))
 			return;
@@ -271,8 +231,7 @@ public class HtmlVisitor {
 				
 				// Add the reference
 				Reference reference = new HtmlQueryDecl(name, new RelativeRange(attributeValue.getLocation(), offset, name.length()));
-				reference.setConstraint(constraint);
-				referenceManager.addReference(reference);
+				addReference(reference);
 			}
 		}
 	}

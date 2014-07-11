@@ -1,4 +1,4 @@
-package entities;
+package deprecated.entities;
 
 import java.util.ArrayList;
 

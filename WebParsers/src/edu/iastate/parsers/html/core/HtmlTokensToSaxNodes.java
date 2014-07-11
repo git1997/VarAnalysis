@@ -2,20 +2,17 @@ package edu.iastate.parsers.html.core;
 
 import java.util.ArrayList;
 
+import edu.iastate.parsers.conditional.CondList;
+import edu.iastate.parsers.conditional.CondListConcat;
+import edu.iastate.parsers.conditional.CondListFactory;
+import edu.iastate.parsers.conditional.CondListItem;
+import edu.iastate.parsers.conditional.CondListSelect;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
-import edu.iastate.parsers.html.dom.nodes.HtmlConcat;
-import edu.iastate.parsers.html.dom.nodes.HtmlNode;
-import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
+import edu.iastate.parsers.html.generatedlexer.Token;
 import edu.iastate.parsers.html.htmlparser.HtmlSaxParser;
 import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
-import edu.iastate.parsers.tree.TreeConcatNode;
-import edu.iastate.parsers.tree.TreeLeafNode;
-import edu.iastate.parsers.tree.TreeNode;
-import edu.iastate.parsers.tree.TreeNodeFactory;
-import edu.iastate.parsers.tree.TreeSelectNode;
-import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 
 /**
@@ -25,121 +22,162 @@ import edu.iastate.symex.constraints.ConstraintFactory;
  */
 public class HtmlTokensToSaxNodes {
 	
-	private TreeNode<HtmlSaxNode> parseResult = null;
+	private CondListFactory<HtmlSaxNode> condListFactory = new CondListFactory<HtmlSaxNode>();
 	
-	private void updateParseResult(HtmlSaxParser parser) {
-		ArrayList<HtmlSaxNode> currentResult = parser.getParseResult();
-		TreeNode<HtmlSaxNode> curResult = new TreeNodeFactory<HtmlSaxNode>().createInstanceFromNodes(currentResult);
-		parseResult = new TreeNodeFactory<HtmlSaxNode>().createCompactConcatNode(parseResult, curResult);
-	}
-	
-	public TreeNode<HtmlSaxNode> parse(TreeNode<HtmlToken> tokenTree) {
-		// Parse the tokenTree and update the parseResult along the way
+	/**
+	 * Parse a conditional list of tokens and return a conditional list of HtmlSaxNodes
+	 */
+	public CondList<HtmlSaxNode> parse(CondList<HtmlToken> tokenList) {
 		HtmlSaxParser parser = new HtmlSaxParser();
-		parse(tokenTree, parser);
-
-		// Get the remaining result
-		updateParseResult(parser);
-		parser.clearParseResult();
-		
-		return parseResult;
-	}
-	
-	public void parse(TreeNode<HtmlToken> tokenTree, HtmlSaxParser parser) {
-		if (tokenTree instanceof TreeConcatNode<?>)
-			parse((TreeConcatNode<HtmlToken>) tokenTree, parser);
-		
-		else if (tokenTree instanceof TreeSelectNode<?>)
-			parse((TreeSelectNode<HtmlToken>) tokenTree, parser);
-		
-		else // if (tokenTree instanceof HtmlTreeLeafNode<?>)
-			parse((TreeLeafNode<HtmlToken>) tokenTree, parser);
+		return parse(tokenList, parser);
 	}
 	
 	/**
-	 * Parses a ConcatNode
+	 * Parse a general tokenList
 	 */
-	private void parse(TreeConcatNode<HtmlToken> concatNode, HtmlSaxParser parser) {
-		for (TreeNode<HtmlToken> childNode : concatNode.getChildNodes())
-			parse(childNode, parser);
+	private CondList<HtmlSaxNode> parse(CondList<HtmlToken> tokenList, HtmlSaxParser parser) {
+		if (tokenList instanceof CondListConcat<?>)
+			return parse((CondListConcat<HtmlToken>) tokenList, parser);
+		
+		else if (tokenList instanceof CondListSelect<?>)
+			return parse((CondListSelect<HtmlToken>) tokenList, parser);
+		
+		else // if (tokenTree instanceof CondListItem<?>)
+			return parse((CondListItem<HtmlToken>) tokenList, parser);
 	}
 	
 	/**
-	 * Parses a SelectNode
+	 * Parse a Concat
 	 */
-	private void parse(TreeSelectNode<HtmlToken> selectNode, HtmlSaxParser parser) {
-		// TODO Handle in JavaScript code
+	private CondList<HtmlSaxNode> parse(CondListConcat<HtmlToken> concat, HtmlSaxParser parser) {
+		ArrayList<CondList<HtmlSaxNode>> parseResult = new ArrayList<CondList<HtmlSaxNode>>(); 
+		for (CondList<HtmlToken> childNode : concat.getChildNodes())
+			parseResult.add(parse(childNode, parser));
+		return condListFactory.createCompactConcat(parseResult);
+	}
+	
+	/**
+	 * Parse a Select
+	 */
+	private CondList<HtmlSaxNode> parse(CondListSelect<HtmlToken> select, HtmlSaxParser parser) {
+		if (!(parser.getLastSaxNode() instanceof HOpenTag))
+			return parseSelectCase2(select, parser);
 		
-		// Get result before entering the branches
-		updateParseResult(parser);
+		ArrayList<HtmlToken> nextTokens = select.getLeftMostItems();
+		boolean nextTokensAreAttributes = false;
+		for (HtmlToken token : nextTokens) {
+			if (token.getType() == Token.Type.AttrName || token.getType() == Token.Type.AttrValue
+					|| token.getType() == Token.Type.AttrValStart || token.getType() == Token.Type.AttrValFrag 
+					|| token.getType() == Token.Type.AttrValEnd) {
+				nextTokensAreAttributes = true;
+				break;
+			}
+		}
+		
+		if (nextTokensAreAttributes)
+			return parseSelectCase1(select, parser);
+		else
+			return parseSelectCase2(select, parser);
+	}
+	
+	/**
+	 * Case 1: Parsing inside an HTML open tag
+	 */
+	private CondList<HtmlSaxNode> parseSelectCase1(CondListSelect<HtmlToken> select, HtmlSaxParser parser) {
+		HOpenTag lastOpenTag = (HOpenTag) parser.getLastSaxNode();
+		HOpenTag lastOpenTagForTrueBranch = lastOpenTag.clone();
+		HOpenTag lastOpenTagForFalseBranch = lastOpenTag.clone();
 		
 		/*
-		 *  Enter the true branch
+		 * Enter the true branch
 		 */
-		ArrayList<HtmlSaxNode> parseResultInFalseBranch = new ArrayList<HtmlSaxNode>();
-		
-		parser.clearParseResult();
-		parser.setParseResultBeforeBranching(parseResult);
-		parser.setParseResultInOtherBranch(parseResultInFalseBranch);
-		
-		if (selectNode.getTrueBranchNode() != null)
-			parse(selectNode.getTrueBranchNode(), parser);
-		
-		ArrayList<HtmlSaxNode> nodesInTrueBranch = parser.getParseResult();
-		parseResult = parser.getParseResultBeforeBranching();
+		CondList<HtmlSaxNode> nodesInTrueBranch = null;
+		if (select.getTrueBranchNode() != null) {
+			parser.setLastSaxNode(lastOpenTagForTrueBranch);
+			nodesInTrueBranch = parse(select.getTrueBranchNode(), parser);
+		}
 		
 		/*
 		 * Enter the false branch
 		 */
-		parser.setParseResult(parseResultInFalseBranch);
-		parser.setParseResultBeforeBranching(null);
-		
-		if (selectNode.getFalseBranchNode() != null)
-			parse(selectNode.getFalseBranchNode(), parser);
-		
-		ArrayList<HtmlSaxNode> nodesInFalseBranch = parser.getParseResult();
-		
-		/*
-		 * Combine results and continue
-		 */
-		TreeNode<HtmlSaxNode> mergedResult = null;
-		
-		if (nodesInTrueBranch.size() == 1 && nodesInTrueBranch.get(nodesInTrueBranch.size() - 1) instanceof HOpenTag
-				&& nodesInFalseBranch.size() == 1 && nodesInFalseBranch.get(nodesInFalseBranch.size() - 1) instanceof HOpenTag) {
-			HOpenTag openTagInTrueBranch = (HOpenTag) nodesInTrueBranch.get(nodesInTrueBranch.size() - 1);
-			HOpenTag openTagInFalseBranch = (HOpenTag) nodesInFalseBranch.get(nodesInFalseBranch.size() - 1);
-			
-			if (openTagInTrueBranch.getType().equals(openTagInFalseBranch.getType()) && openTagInTrueBranch.getLocation() == openTagInFalseBranch.getLocation()) {
-				HOpenTag mergedTag = new HOpenTag(openTagInTrueBranch.getType(), openTagInTrueBranch.getLocation());
-				for (HtmlAttribute attr : openTagInTrueBranch.getAttributes()) {
-					attr.setConstraint(selectNode.getConstraint());
-					mergedTag.addAttribute(attr);
-				}
-				for (HtmlAttribute attr : openTagInFalseBranch.getAttributes()) {
-					attr.setConstraint(ConstraintFactory.createNotConstraint(selectNode.getConstraint()));
-					mergedTag.addAttribute(attr);
-				}
-				mergedResult = new TreeLeafNode<HtmlSaxNode>(mergedTag);
-			}
+		CondList<HtmlSaxNode> nodesInFalseBranch = null;
+		if (select.getFalseBranchNode() != null) {
+			parser.setLastSaxNode(lastOpenTagForFalseBranch);
+			nodesInTrueBranch = parse(select.getFalseBranchNode(), parser);
 		}
 		
-		if (mergedResult == null)
-			mergedResult =  new TreeNodeFactory<HtmlSaxNode>().createInstanceFromBranchingNodes(selectNode.getConstraint(), nodesInTrueBranch, nodesInFalseBranch);
+		/*
+		 * Combine results
+		 */
+		parser.setLastSaxNode(null);
+		CondList<HtmlSaxNode> mergedResult = condListFactory.createCompactSelect(select.getConstraint(), nodesInTrueBranch, nodesInFalseBranch);
 		
-		parseResult = new TreeNodeFactory<HtmlSaxNode>().createCompactConcatNode(parseResult, mergedResult);
+		// Combine the attributes in the true branch and false branch and update the original lastOpenTag
+		ArrayList<HtmlAttribute> attrsInTrueBranch = lastOpenTagForTrueBranch.getAttributes();
+		ArrayList<HtmlAttribute> attrsInFalseBranch = lastOpenTagForFalseBranch.getAttributes();
 		
-		parser.clearParseResult();
-		parser.setParseResultBeforeBranching(null);
-		parser.setParseResultInOtherBranch(null);
+		lastOpenTag.removeAllAttributes();
+		int commonAttrs = 0;
+		for (int i = 0; i < Math.min(attrsInTrueBranch.size(), attrsInFalseBranch.size()); i++) {
+			HtmlAttribute attrInTrueBranch = attrsInTrueBranch.get(i);
+			HtmlAttribute attrInFalseBranch = attrsInFalseBranch.get(i);
+			if (attrInTrueBranch.getName().equals(attrInFalseBranch.getName())
+					&& attrInTrueBranch.getValue().equals(attrInFalseBranch.getValue())) {
+				commonAttrs++;
+				lastOpenTag.addAttribute(attrInTrueBranch);
+			}
+		}
+		for (int i = commonAttrs; i < attrsInTrueBranch.size(); i++) {
+			HtmlAttribute attr = attrsInTrueBranch.get(i);
+			attr.setConstraint(select.getConstraint());
+			lastOpenTag.addAttribute(attr);
+		}
+		for (int i = commonAttrs; i < attrsInFalseBranch.size(); i++) {
+			HtmlAttribute attr = attrsInFalseBranch.get(i);
+			attr.setConstraint(ConstraintFactory.createNotConstraint(select.getConstraint()));
+			lastOpenTag.addAttribute(attr);
+		}
+		
+		return mergedResult;
+	}
+
+	/**
+	 * Case 2: Parsing outside an HTML open tag
+	 */
+	private CondList<HtmlSaxNode> parseSelectCase2(CondListSelect<HtmlToken> select, HtmlSaxParser parser) {
+		/*
+		 * Enter the true branch
+		 */
+		CondList<HtmlSaxNode> nodesInTrueBranch = null;
+		if (select.getTrueBranchNode() != null)
+			nodesInTrueBranch = parse(select.getTrueBranchNode(), parser);
+		
+		/*
+		 * Enter the false branch
+		 */
+		CondList<HtmlSaxNode> nodesInFalseBranch = null;
+		if (select.getFalseBranchNode() != null)
+			nodesInFalseBranch = parse(select.getFalseBranchNode(), parser);
+		
+		/*
+		 * Combine results
+		 */
+		parser.setLastSaxNode(null);
+		CondList<HtmlSaxNode> mergedResult = condListFactory.createCompactSelect(select.getConstraint(), nodesInTrueBranch, nodesInFalseBranch);
+		return mergedResult;
 	}
 	
-
-	
 	/**
-	 * Parses a LeafNode
+	 * Parse an HtmlToken
 	 */
-	private void parse(TreeLeafNode<HtmlToken> leafNode, HtmlSaxParser parser) {
-		parser.parse(leafNode.getNode());
+	private CondList<HtmlSaxNode> parse(CondListItem<HtmlToken> item, HtmlSaxParser parser) {
+		HtmlToken htmlToken = item.getNode();
+		parser.parse(htmlToken);
+		
+		CondList<HtmlSaxNode> parseResult = condListFactory.createCondList(parser.getParseResult());
+		parser.clearParseResult();
+		
+		return parseResult;
    	}
 
 }

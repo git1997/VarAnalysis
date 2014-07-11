@@ -1,8 +1,6 @@
 package edu.iastate.parsers.html.dom.nodes;
 
 import java.util.ArrayList;
-
-import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
 
 /**
@@ -14,19 +12,44 @@ public class HtmlConcat extends HtmlNode {
 	
 	private ArrayList<HtmlNode> childNodes;
 	
-	public HtmlConcat(ArrayList<HtmlNode> childNodes) {
+	/**
+	 * Private constructor
+	 */
+	private HtmlConcat(ArrayList<HtmlNode> childNodes) {
 		super(PositionRange.UNDEFINED);
 		this.childNodes = childNodes;
 	}
 	
 	public static HtmlNode createCompactHtmlNode(ArrayList<HtmlNode> childNodes) {
-		if (childNodes.isEmpty())
+		ArrayList<HtmlNode> compactChildNodes = new ArrayList<HtmlNode>();
+		appendChildNodes(compactChildNodes, childNodes);
+		
+		if (compactChildNodes.isEmpty())
 			return null;
-		else if (childNodes.size() == 1)
-			return childNodes.get(childNodes.size() - 1);
+		else if (compactChildNodes.size() == 1)
+			return compactChildNodes.get(0);
 		else
-			return new HtmlConcat(childNodes);
+			return new HtmlConcat(compactChildNodes);
 	}
+	
+	public static HtmlNode createCompactHtmlNode(HtmlNode childNode1, HtmlNode childNode2) {
+		ArrayList<HtmlNode> childNodes = new ArrayList<HtmlNode>(2);
+		childNodes.add(childNode1);
+		childNodes.add(childNode2);
+		return createCompactHtmlNode(childNodes);
+	}
+	
+	private static void appendChildNodes(ArrayList<HtmlNode> compactChildNodes, ArrayList<HtmlNode> childNodes) {
+		for (HtmlNode childNode : childNodes)
+			appendChildNode(compactChildNodes, childNode);
+	}
+
+	private static void appendChildNode(ArrayList<HtmlNode> compactChildNodes, HtmlNode childNode) {
+		if (childNode instanceof HtmlConcat)
+			appendChildNodes(compactChildNodes, ((HtmlConcat) childNode).getChildNodes());
+		else 
+			compactChildNodes.add(childNode);
+	}	
 	
 	public ArrayList<HtmlNode> getChildNodes() {
 		return new ArrayList<HtmlNode>(childNodes);

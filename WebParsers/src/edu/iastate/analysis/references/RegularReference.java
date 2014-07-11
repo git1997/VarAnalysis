@@ -9,15 +9,15 @@ import edu.iastate.symex.position.PositionRange;
  *
  */
 public abstract class RegularReference extends Reference {
-
+	
 	public RegularReference(String name, PositionRange location) {
 		super(name, location);
 	}
 	
 	/**
-	 * Returns true if this regularReference refers to a declaringReference.
-	 * @param declaringReference
+	 * Returns true if a regularReference refers to a declaringReference.
+	 * Subclasses of RegularReference may add more conditions to determine whether this is true.
 	 */
-	public abstract boolean refersTo(DeclaringReference declaringReference);
+	public abstract boolean refersTo(DeclaringReference reference);
 
 }

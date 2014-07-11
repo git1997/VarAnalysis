@@ -1,7 +1,6 @@
 package edu.iastate.symex.datamodel.nodes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.PhpNode;
@@ -45,7 +44,9 @@ public class DataNodeFactory {
 	 * @param childNode2
 	 */
 	public static DataNode createCompactConcatNode(DataNode childNode1, DataNode childNode2) {
-		ArrayList<DataNode> childNodes = new ArrayList<DataNode>(Arrays.asList(new DataNode[]{childNode1, childNode2}));
+		ArrayList<DataNode> childNodes = new ArrayList<DataNode>(2);
+		childNodes.add(childNode1);
+		childNodes.add(childNode2);
 		return createCompactConcatNode(childNodes);
 	}
 	

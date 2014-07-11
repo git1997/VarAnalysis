@@ -20,6 +20,7 @@ import edu.iastate.symex.util.logging.MyLogger;
 public class FindReferencesInFile {
 	
 	public static String PHP_FILE = "/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/index.php";
+									//"/Work/To-do/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
 	public static String XML_FILE = "/Users/HUNG/Desktop/Dataflows.xml";
 	
 	private File phpFile;
@@ -45,18 +46,18 @@ public class FindReferencesInFile {
 		Timer timer = new Timer();
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Started.");
 		
-		// Step 1: Create the data model
+		// Step 1: Create the data model & find PHP references
 		ReferenceManager referenceManager = new ReferenceManager();
-		DataModel dataModel = createDataModel(referenceManager);
+		DataModel dataModel = createDataModelAndFindPhpReferences(referenceManager);
 		
 		// Step 2: Parse the data model
-		HtmlDocument htmlDocument = new ParseDataModel().parse(dataModel);
+		HtmlDocument htmlDocument = parseDataModel(dataModel);
 		
-		// Step 2: Find references in the HTML document
-		//TODO Comment out the statement below to stop detecting embedded entities.
+		// Step 3: Find references in the HTML document
+		// Comment out the statement below to stop detecting embedded entities.
 		findReferencesInHtmlDocument(htmlDocument, referenceManager);
 		
-		// Step 3: Print results
+		// Step 4: Print results
 		printResults(referenceManager);
 		
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Done in " + timer.getElapsedSecondsInText() + ".");
@@ -65,18 +66,27 @@ public class FindReferencesInFile {
 	}
 	
 	/**
-	 * Creates the data model.
+	 * Creates the data model and find PHP references along the way
 	 */
-	private DataModel createDataModel(final ReferenceManager referenceManager) {
-		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Creating data model...");
+	private DataModel createDataModelAndFindPhpReferences(ReferenceManager referenceManager) {
+		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Creating data model and finding PHP references...");
 		
-		//ReferenceDetector.findReferencesInPhpCode(phpFile, referenceManager); // Also find references while building D-model (e.g. $_REQUEST variables)
+		ReferenceDetector.findReferencesInPhpCode(phpFile, referenceManager);
 		
 		DataModel dataModel = new PhpExecuter().execute(phpFile);
 		
-		//ReferenceDetector.findReferencesInPhpCodeFinished();
+		ReferenceDetector.findReferencesInPhpCodeFinished();
 		
 		return dataModel;
+	}
+	
+	/**
+	 * Parses the dataModel
+	 */
+	private HtmlDocument parseDataModel(DataModel dataModel) {
+		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Parsing data model...");
+		
+		return new ParseDataModel().parse(dataModel);
 	}
 	
 	/**
@@ -92,7 +102,9 @@ public class FindReferencesInFile {
 	 * Prints the results
 	 */
 	private void printResults(ReferenceManager referenceManager) {
-		new XmlReadWrite().printReferencesToXmlFile(referenceManager.getReferenceList(), new File(XML_FILE));
+		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Printing results...");
+		
+		//new XmlReadWrite().printReferencesToXmlFile(referenceManager.getSortedReferenceList(), new File(XML_FILE));
 	}
 	
 }

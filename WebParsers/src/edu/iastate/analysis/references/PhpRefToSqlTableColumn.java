@@ -10,7 +10,8 @@ import edu.iastate.symex.position.PositionRange;
 public class PhpRefToSqlTableColumn extends RegularReference {
 
 	private String scope;	// The scope of this PhpRefToSqlTableColumn (e.g. 'mysql_query_123456')
-							// @see php.nodes.FunctionInvocationNode.php_mysql_query(ArrayList<DataNode>, ElementManager, Object)).
+							// @see edu.iastate.analysis.references.detection.PhpVisitor.onMysqlQuery(FunctionInvocation, DataNode, Env)
+							// @see edu.iastate.analysis.references.detection.PhpVisitor.createPhpRefToSqlTableColumn(ArrayAccess, Env)
 	
 	/**
 	 * Constructor
@@ -20,21 +21,10 @@ public class PhpRefToSqlTableColumn extends RegularReference {
 		this.scope = scope;
 	}
 	
-	/*
-	 * Get properties
-	 */
-	
-	/**
-	 * Returns the scope of this PhpRefToSqlTableColumn.
-	 */
 	public String getScope() {
 		return scope;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see references.RegularReference#refersTo(references.DeclaringReference)
-	 */
 	@Override
 	public boolean refersTo(DeclaringReference declaringReference) {
 		if (declaringReference instanceof SqlTableColumnDecl) {

@@ -1,8 +1,7 @@
-package entities;
-
-import java.io.File;
+package deprecated.entities;
 
 import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.position.Position;
 
 /**
  * UndeclaredEntity is a collection of dangling references.
@@ -30,13 +29,8 @@ public class UndeclaredEntity extends Entity {
 	}
 	
 	@Override
-	public File getFile() {
-		return null;
-	}
-	
-	@Override
-	public int getPosition() {
-		return -1;
+	public Position getStartPosition() {
+		return Position.UNDEFINED;
 	}
 	
 	public Constraint getConstraint() {

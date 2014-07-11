@@ -1,0 +1,19 @@
+Reference
+	DeclaringReference
+		HtmlFormDecl
+		HtmlIdDecl
+		HtmlInputDecl
+		HtmlQueryDecl
+		JsFunctionDecl
+		JsVariableDecl
+		PhpVariableDecl
+		SqlTableColumnDecl
+	RegularReference
+		JsFunctionCall
+		JsRefToHtmlForm
+		JsRefToHtmlId
+		JsRefToHtmlInput
+		PhpRefToHtml
+		PhpRefToSqlTableColumn
+		PhpVariableRef
+ReferenceManager

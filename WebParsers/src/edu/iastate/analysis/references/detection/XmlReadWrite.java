@@ -2,7 +2,6 @@ package edu.iastate.analysis.references.detection;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -18,8 +17,11 @@ import edu.iastate.analysis.references.JsFunctionDecl;
 import edu.iastate.analysis.references.JsRefToHtmlForm;
 import edu.iastate.analysis.references.JsRefToHtmlId;
 import edu.iastate.analysis.references.JsRefToHtmlInput;
-import edu.iastate.analysis.references.PhpRefToHtmlEntity;
+import edu.iastate.analysis.references.JsVariableDecl;
+import edu.iastate.analysis.references.PhpRefToHtml;
 import edu.iastate.analysis.references.PhpRefToSqlTableColumn;
+import edu.iastate.analysis.references.PhpVariableDecl;
+import edu.iastate.analysis.references.PhpVariableRef;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.SqlTableColumnDecl;
 import edu.iastate.symex.position.CompositeRange;
@@ -88,13 +90,17 @@ public class XmlReadWrite {
 			if (((JsRefToHtmlInput) reference).getFormName() != null)
 				referenceElement.setAttribute("FormName", ((JsRefToHtmlInput) reference).getFormName());
 		}
-		else if (reference instanceof PhpRefToHtmlEntity) {
-//			if (((PhpRefToHtmlEntity) reference).getOnPage() != null)
-//				referenceElement.setAttribute("OnPage", ((JsRefToHtmlInput) reference).getFormName());
-		}
 		else if (reference instanceof PhpRefToSqlTableColumn) {
 			if (((PhpRefToSqlTableColumn) reference).getScope() != null)
 				referenceElement.setAttribute("Scope", ((PhpRefToSqlTableColumn) reference).getScope() );
+		}
+		else if (reference instanceof PhpVariableDecl) {
+			if (((PhpVariableDecl) reference).getScope() != null)
+				referenceElement.setAttribute("Scope", ((PhpVariableDecl) reference).getScope() );
+		}
+		else if (reference instanceof PhpVariableRef) {
+			if (((PhpVariableRef) reference).getScope() != null)
+				referenceElement.setAttribute("Scope", ((PhpVariableRef) reference).getScope() );
 		}
 		else if (reference instanceof SqlTableColumnDecl) {
 			if (((SqlTableColumnDecl) reference).getScope() != null)
@@ -146,14 +152,25 @@ public class XmlReadWrite {
 			reference = new JsRefToHtmlInput(name, location, formName);
 		}
 		
-		else if (type.equals("PhpRefToHtmlEntity")) {
-			String onPage = referenceElement.getAttribute("OnPage");
-			reference = new PhpRefToHtmlEntity(name, location, onPage);
-		}
+		else if (type.equals("JsVariableDecl"))
+			reference = new JsVariableDecl(name, location);
+		
+		else if (type.equals("PhpRefToHtml"))
+			reference = new PhpRefToHtml(name, location);
 		
 		else if (type.equals("PhpRefToSqlTableColumn")) {
 			String scope = referenceElement.getAttribute("Scope");
 			reference = new PhpRefToSqlTableColumn(name, location, scope);
+		}
+		
+		else if (type.equals("PhpVariableDecl")) {
+			String scope = referenceElement.getAttribute("Scope");
+			reference = new PhpVariableDecl(name, location, scope);
+		}
+		
+		else if (type.equals("PhpVariableRef")) {
+			String scope = referenceElement.getAttribute("Scope");
+			reference = new PhpVariableRef(name, location, scope);
 		}
 		
 		else if (type.equals("SqlTableColumnDecl")) {
@@ -173,27 +190,27 @@ public class XmlReadWrite {
 	 * Prints the location to XML
 	 */
 	public Element printLocationToXml(PositionRange location, Document document) {
-		Element positionElement = document.createElement(location.getClass().getSimpleName());
+		Element locationElement = document.createElement(location.getClass().getSimpleName());
 		
 		if (location instanceof Range) {
-			positionElement.setAttribute(AnalysisConfig.XML_FILE, ((Range) location).getFilePath());
-			positionElement.setAttribute(AnalysisConfig.XML_OFFSET, String.valueOf(((Range) location).getOffset()));
-			positionElement.setAttribute(AnalysisConfig.XML_LENGTH, String.valueOf(((Range) location).getLength()));
+			locationElement.setAttribute(AnalysisConfig.XML_FILE, ((Range) location).getFilePath());
+			locationElement.setAttribute(AnalysisConfig.XML_OFFSET, String.valueOf(((Range) location).getOffset()));
+			locationElement.setAttribute(AnalysisConfig.XML_LENGTH, String.valueOf(((Range) location).getLength()));
 		}
 		else if (location instanceof CompositeRange) {
-			positionElement.appendChild(printLocationToXml(((CompositeRange) location).getRange1(), document));
-			positionElement.appendChild(printLocationToXml(((CompositeRange) location).getRange2(), document));
+			locationElement.appendChild(printLocationToXml(((CompositeRange) location).getRange1(), document));
+			locationElement.appendChild(printLocationToXml(((CompositeRange) location).getRange2(), document));
 		}
 		else if (location instanceof RelativeRange) {
-			positionElement.appendChild(printLocationToXml(((RelativeRange) location).getBasePositionRange(), document));
-			positionElement.setAttribute(AnalysisConfig.XML_OFFSET, String.valueOf(((RelativeRange) location).getOffset()));
-			positionElement.setAttribute(AnalysisConfig.XML_LENGTH, String.valueOf(((RelativeRange) location).getLength()));
+			locationElement.appendChild(printLocationToXml(((RelativeRange) location).getBasePositionRange(), document));
+			locationElement.setAttribute(AnalysisConfig.XML_OFFSET, String.valueOf(((RelativeRange) location).getOffset()));
+			locationElement.setAttribute(AnalysisConfig.XML_LENGTH, String.valueOf(((RelativeRange) location).getLength()));
 		}
 		else { // UndefinedRange
 			// Do nothing
 		}
 		
-		return positionElement;
+		return locationElement;
 	}
 	
 	/**
@@ -204,21 +221,22 @@ public class XmlReadWrite {
 		PositionRange location;
 		
 		if (tagName.equals("Range")) {
-//			positionElement.setAttribute(AnalysisConfig.XML_FILE, ((Range) location).getFilePath());
-//			positionElement.setAttribute(AnalysisConfig.XML_OFFSET, String.valueOf(((Range) location).getOffset()));
-//			positionElement.setAttribute(AnalysisConfig.XML_LENGTH, String.valueOf(((Range) location).getLength()));
-			location = null;
+			File file = new File(locationElement.getAttribute(AnalysisConfig.XML_FILE));
+			int offset = Integer.valueOf(locationElement.getAttribute(AnalysisConfig.XML_OFFSET));
+			int length = Integer.valueOf(locationElement.getAttribute(AnalysisConfig.XML_LENGTH));
+			location = new Range(file, offset, length);
 		}
 		else if (tagName.equals("CompositeRange")) {
-//			positionElement.appendChild(printLocationToXml(((CompositeRange) location).getRange1(), document));
-//			positionElement.appendChild(printLocationToXml(((CompositeRange) location).getRange2(), document));
-			location = null;
+			NodeList nodeList = locationElement.getChildNodes();
+			PositionRange range1 = readLocationFromXml((Element) nodeList.item(0));
+			PositionRange range2 = readLocationFromXml((Element) nodeList.item(1));
+			location = new CompositeRange(range1, range2);
 		}
 		else if (tagName.equals("RelativeRange")) {
-//			positionElement.appendChild(printLocationToXml(((RelativeRange) location).getBasePositionRange(), document));
-//			positionElement.setAttribute(AnalysisConfig.XML_OFFSET, String.valueOf(((RelativeRange) location).getOffset()));
-//			positionElement.setAttribute(AnalysisConfig.XML_LENGTH, String.valueOf(((RelativeRange) location).getLength()));
-			location = null;
+			PositionRange basePositionRange = readLocationFromXml((Element) locationElement.getChildNodes().item(0));
+			int offset = Integer.valueOf(locationElement.getAttribute(AnalysisConfig.XML_OFFSET));
+			int length = Integer.valueOf(locationElement.getAttribute(AnalysisConfig.XML_LENGTH));
+			location = new RelativeRange(basePositionRange, offset, length);
 		}
 		else { // UndefinedRange
 			location = PositionRange.UNDEFINED;
@@ -226,6 +244,8 @@ public class XmlReadWrite {
 		
 		return location;
 	}
+	
+	
 	
 	
 	

@@ -22,12 +22,13 @@ import org.eclipse.wst.jsdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.wst.jsdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.wst.jsdt.core.dom.WhileStatement;
 
+import edu.iastate.analysis.config.AnalysisConfig;
 import edu.iastate.analysis.references.JsFunctionCall;
 import edu.iastate.analysis.references.JsFunctionDecl;
 import edu.iastate.analysis.references.JsRefToHtmlForm;
 import edu.iastate.analysis.references.JsRefToHtmlId;
 import edu.iastate.analysis.references.JsRefToHtmlInput;
-import edu.iastate.analysis.references.JsVariable;
+import edu.iastate.analysis.references.JsVariableDecl;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.symex.constraints.Constraint;
@@ -56,6 +57,15 @@ public class JavascriptVisitor extends ASTVisitor {
 	}
 	
 	/**
+	 * Adds a reference.
+	 * This method should be called instead of calling referenceManager.addReference directly.
+	 */
+	private void addReference(Reference reference) {
+		reference.setConstraint(constraint);
+		referenceManager.addReference(reference);
+	}
+	
+	/**
 	 * Visits a function declaration.
 	 */
 	public boolean visit(FunctionDeclaration functionDeclaration) {
@@ -64,8 +74,7 @@ public class JavascriptVisitor extends ASTVisitor {
 			
 			// Add a JsFunctionDecl reference
 			Reference reference = new JsFunctionDecl(functionName.getIdentifier(), getLocation(functionName));
-			reference.setConstraint(constraint);
-			referenceManager.addReference(reference);
+			addReference(reference);
 		}
 		
 		for (Object object : functionDeclaration.parameters()) {
@@ -95,15 +104,13 @@ public class JavascriptVisitor extends ASTVisitor {
 				id = id.substring(1, id.length() - 1);
 				
 				Reference reference = new JsRefToHtmlId(id, getLocation(stringLiteral, 1));
-				reference.setConstraint(constraint);
-				referenceManager.addReference(reference);
+				addReference(reference);
 			}
 		}
 		else if (!isJavascriptKeyword(functionName.getIdentifier())) {
 			// Add a JsFunctionCall reference
 			Reference reference = new JsFunctionCall(functionName.getIdentifier(), getLocation(functionName));
-			reference.setConstraint(constraint);
-			referenceManager.addReference(reference);
+			addReference(reference);
 		}
 		
 		for (Object object : functionInvocation.arguments()) {
@@ -131,16 +138,14 @@ public class JavascriptVisitor extends ASTVisitor {
 		else if (expression.toString().endsWith("document")) {
 			// Add a JsRefToHtmlForm reference
 			Reference reference = new JsRefToHtmlForm(fieldName.getIdentifier(), getLocation(fieldName));
-			reference.setConstraint(constraint);
-			referenceManager.addReference(reference);
+			addReference(reference);
 		}
 		
 		else if (expression instanceof FieldAccess && ((FieldAccess) expression).getExpression().toString().endsWith("document")) {
 			// Add a JsRefToHtmlInput reference
 			String formName = ((FieldAccess) expression).getName().getIdentifier();
 			Reference reference = new JsRefToHtmlInput(fieldName.getIdentifier(), getLocation(fieldName), formName);
-			reference.setConstraint(constraint);
-			referenceManager.addReference(reference);
+			addReference(reference);
 		}
 		
 		expression.accept(this);
@@ -170,15 +175,13 @@ public class JavascriptVisitor extends ASTVisitor {
 	 * Visits a simple name.
 	 */
 	public boolean visit(SimpleName simpleName) {
-		// TODO
-		//if (WebEntitiesConfig.DETECT_JS_VARIABLES) {
+		if (AnalysisConfig.DETECT_JS_VARIABLES) {
 			if (!isJavascriptKeyword(simpleName.getIdentifier())) {
 				// Add a JsVariable reference
-				Reference reference = new JsVariable(simpleName.getIdentifier(), getLocation(simpleName));
-				reference.setConstraint(constraint);
-				referenceManager.addReference(reference);
+				Reference reference = new JsVariableDecl(simpleName.getIdentifier(), getLocation(simpleName));
+				addReference(reference);
 			}
-		//}
+		}
 		return false;
 	}
 	
@@ -285,12 +288,12 @@ public class JavascriptVisitor extends ASTVisitor {
 	 */
 	private static String[] keywords = {
 		"alert", "Array", "attachEvent", "blur", "body", "checked", "childNodes", "clearTimeout", "close", "color", "confirm", "createElement",
-		"disabled", "document", "domain", "elements", "eval", "FALSE", "firstChild", "focus", "forms",
+		"disabled", "document", "domain", "elements", "escape", "eval", "FALSE", "firstChild", "focus", "forms",
 		"getAttribute", "getElementById", "getElementsByTagName", "indexOf",
 		"JavaScript", "javascript", "join", "lastIndexOf", "length", "Math", "name", "navigator", "open", "opener", "options",
 		"parent", "parentNode",	"parseInt", "print", "replace", "round", 
 		"select", "selectedIndex", "self", "send", "setAttribute", "setRequestHeader", "setTimeout", "split", "status", "style", "submit", "substr", "substring", 
-		"title", "toLowerCase", "toUpperCase", "TRUE", "type", "value", "window", "windows", "write", "writeln"
+		"title", "toLowerCase", "toUpperCase", "TRUE", "type", "unescape", "value", "window", "windows", "write", "writeln"
 	};
 	
 	private static HashSet<String> javascriptKeywords = new HashSet<String>(Arrays.asList(keywords));

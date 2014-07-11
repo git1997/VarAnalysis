@@ -20,7 +20,7 @@ public abstract class HtmlNode {
 	}
 
 	/**
-	 * Returns a string describing this object for debugging purposes.
+	 * Used for debugging
 	 */
 	public abstract String toDebugString();
 	

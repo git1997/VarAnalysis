@@ -39,10 +39,6 @@ public class HtmlInputDecl extends DeclaringReference {
 		return submitToPage;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see references.Reference#sameAs(references.Reference)
-	 */
 	@Override
 	public boolean sameAs(Reference reference) {
 		return super.sameAs(reference)

@@ -1,7 +1,6 @@
 package edu.iastate.parsers.html.dom.nodes;
 
 import edu.iastate.symex.constraints.Constraint;
-import edu.iastate.symex.position.PositionRange;
 
 /**
  * 
@@ -11,11 +10,14 @@ import edu.iastate.symex.position.PositionRange;
 public class HtmlSelect extends HtmlNode {
 	
 	private Constraint constraint;
-	private HtmlNode trueBranchNode;
-	private HtmlNode falseBranchNode;
+	private HtmlNode trueBranchNode;	// Can be null
+	private HtmlNode falseBranchNode;	// Can be null
 	
-	public HtmlSelect(Constraint constraint, HtmlNode trueBranchNode, HtmlNode falseBranchNode) {
-		super(PositionRange.UNDEFINED);
+	/**
+	 * Private constructor
+	 */
+	private HtmlSelect(Constraint constraint, HtmlNode trueBranchNode, HtmlNode falseBranchNode) {
+		super(constraint.getLocation());
 		this.constraint = constraint;
 		this.trueBranchNode = trueBranchNode;
 		this.falseBranchNode = falseBranchNode;

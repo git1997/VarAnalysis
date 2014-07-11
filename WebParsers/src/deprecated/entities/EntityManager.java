@@ -1,4 +1,4 @@
-package entities;
+package deprecated.entities;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import edu.iastate.analysis.references.DeclaringReference;
-import edu.iastate.analysis.references.PhpRefToHtmlEntity;
+import edu.iastate.analysis.references.PhpRefToHtml;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.RegularReference;
 import edu.iastate.symex.constraints.ConstraintFactory;
@@ -74,17 +74,17 @@ public class EntityManager {
 		/*
 		 * Update mapLocationToReference and mapPageToReferences
 		 */
-		if (!mapLocationToReference.containsKey(reference.getFile()))
-			mapLocationToReference.put(reference.getFile(), new HashMap<Integer, Reference>());
+		if (!mapLocationToReference.containsKey(reference.getStartPosition().getFile()))
+			mapLocationToReference.put(reference.getStartPosition().getFile(), new HashMap<Integer, Reference>());
 		
 		if (!mapPageToReferences.containsKey(phpPage))
 			mapPageToReferences.put(phpPage, new HashSet<Reference>());
 		
 		
-		HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(reference.getFile());
+		HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(reference.getStartPosition().getFile());
 		HashSet<Reference> referencesInPage = mapPageToReferences.get(phpPage);
 		
-		Reference existingReference = mapPositionToReference.get(reference.getPosition());
+		Reference existingReference = mapPositionToReference.get(reference.getStartPosition().getOffset());
 		if (existingReference != null) {
 			// The reference already exists.
 			if (referencesInPage.contains(existingReference))
@@ -109,7 +109,7 @@ public class EntityManager {
 		}
 		else {
 			// The reference is new.
-			mapPositionToReference.put(reference.getPosition(), reference);
+			mapPositionToReference.put(reference.getStartPosition().getOffset(), reference);
 			referencesInPage.add(reference);
 			
 			/*
@@ -194,7 +194,7 @@ public class EntityManager {
 	 */
 	public void linkPhpRefsToHtmlEntities() {
 		for (Reference reference : getReferenceList()) {
-			if (!(reference instanceof PhpRefToHtmlEntity))
+			if (!(reference instanceof PhpRefToHtml))
 				continue;
 			
 			for (Entity entity : getEntityList()) {
@@ -232,15 +232,15 @@ public class EntityManager {
 	public void removeReferencesInPage(String phpPage) {
 		for (Entity entity : getEntitiesInPage(phpPage)) {
 			for (Reference reference : entity.getReferences()) {
-				HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(reference.getFile());
-				mapPositionToReference.remove(reference.getPosition());
+				HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(reference.getStartPosition().getFile());
+				mapPositionToReference.remove(reference.getStartPosition().getOffset());
 			}
 			entityList.remove(entity);
 		}
 		
 		for (Reference danglingRef : getDanglingReferencesInPage(phpPage)) {
-			HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(danglingRef.getFile());
-			mapPositionToReference.remove(danglingRef.getPosition());
+			HashMap<Integer, Reference> mapPositionToReference = mapLocationToReference.get(danglingRef.getStartPosition().getFile());
+			mapPositionToReference.remove(danglingRef.getStartPosition().getOffset());
 			danglingReferenceList.remove(danglingRef);
 		}
 		
@@ -401,7 +401,7 @@ public class EntityManager {
 		return reference.refersTo(entity.getDeclaringReference())
 				//&& (WebEntitiesConfig.DISCARD_CONSTRAINTS_WHEN_COMPARING_ENTITIES
 				&& (false
-						|| reference instanceof PhpRefToHtmlEntity 	// Don't consider constraints for PhpRefToHtmlEntity
+						|| reference instanceof PhpRefToHtml 	// Don't consider constraints for PhpRefToHtmlEntity
 						|| reference.getConstraint().satisfies(entity.getConstraint())); 
 	}
 	

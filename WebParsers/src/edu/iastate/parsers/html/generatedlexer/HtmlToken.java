@@ -30,7 +30,7 @@ public class HtmlToken {
 	}
 	
 	/**
-	 * Returns a string describing this object for debugging purposes.
+	 * Used for debugging
 	 */
 	public String toDebugString() {
 		return getType() + ": " + getValue();

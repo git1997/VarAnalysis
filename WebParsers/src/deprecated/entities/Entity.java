@@ -1,12 +1,12 @@
-package entities;
+ package deprecated.entities;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 import edu.iastate.analysis.references.DeclaringReference;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.position.Position;
 
 /**
  * 
@@ -67,17 +67,10 @@ public class Entity {
 	}
 	
 	/**
-	 * Returns the file path of the declaring reference
-	 */
-	public File getFile() {
-		return declaringReference.getFile();
-	}
-	
-	/**
 	 * Returns the position of the declaring reference
 	 */
-	public int getPosition() {
-		return declaringReference.getPosition();
+	public Position getStartPosition() {
+		return declaringReference.getStartPosition();
 	}
 	
 	/**
@@ -140,7 +133,7 @@ public class Entity {
 
 		@Override
 		public int compare(Entity ent1, Entity ent2) {
-			return ent1.getFile().getAbsolutePath().compareTo(ent2.getFile().getAbsolutePath());
+			return ent1.getStartPosition().getFilePath().compareTo(ent2.getStartPosition().getFilePath());
 		}
 	}
 	

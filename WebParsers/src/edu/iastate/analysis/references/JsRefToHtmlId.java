@@ -13,10 +13,6 @@ public class JsRefToHtmlId extends RegularReference {
 		super(name, location);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see references.RegularReference#refersTo(references.DeclaringReference)
-	 */
 	@Override
 	public boolean refersTo(DeclaringReference declaringReference) {
 		if (declaringReference instanceof HtmlIdDecl) {

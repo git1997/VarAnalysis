@@ -7,13 +7,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
+import edu.iastate.parsers.conditional.CondListSelect;
 import edu.iastate.parsers.html.dom.nodes.HtmlConcat;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
 import edu.iastate.parsers.html.dom.nodes.HtmlNode;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.dom.nodes.HtmlText;
-import edu.iastate.parsers.tree.TreeSelectNode;
 import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
@@ -99,8 +99,13 @@ public class DomResultTreeViewer extends GenericTreeViewer {
 
 	@Override
 	public String getTreeNodeDescription(Object element) {
-		if (element instanceof HtmlElement)
-			return ((HtmlElement) element).getHtmlOpenTag().toDebugString();
+		if (element instanceof HtmlSelect) {
+			Constraint constraint = ((HtmlSelect) element).getConstraint();
+			return constraint.toDebugString();
+		}
+		
+		else if (element instanceof HtmlElement)
+			return ((HtmlElement) element).getOpenTag().toDebugString();
 		
 		else if (element instanceof HtmlText) {
 			return UIHelper.standardizeText(((HtmlText) element).toDebugString());
@@ -114,10 +119,6 @@ public class DomResultTreeViewer extends GenericTreeViewer {
 	public PositionRange getTreeNodePositionRange(Object element) {
 		if (element instanceof HtmlNode)
 			return ((HtmlNode) element).getLocation();
-		else if (element instanceof HtmlSelect) {
-			Constraint constraint = ((HtmlSelect) element).getConstraint();
-			return constraint.getLocation();
-		}
 		else
 			return PositionRange.UNDEFINED;
 	}

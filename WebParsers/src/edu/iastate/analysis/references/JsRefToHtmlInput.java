@@ -19,18 +19,10 @@ public class JsRefToHtmlInput extends RegularReference {
 		this.formName = formName;
 	}
 	
-	/*
-	 * Get properties
-	 */
-	
 	public String getFormName() {
 		return formName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see references.RegularReference#refersTo(references.DeclaringReference)
-	 */
 	@Override
 	public boolean refersTo(DeclaringReference declaringReference) {
 		if (declaringReference instanceof HtmlInputDecl) {

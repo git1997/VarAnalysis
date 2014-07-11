@@ -15,7 +15,7 @@ public class Token {
 	private String lexeme;
 	private int position;
 	
-	private String value;	// value is extracted from lexeme (e.g. lexeme = '<form>' => value = 'form')
+	private String value;	// value is extracted from lexeme (e.g. OpeningTag with lexeme = '<form' => value = 'form')
 	
 	/**
 	 * Constructor
@@ -54,7 +54,10 @@ public class Token {
 		return value;
 	}
 
-	public String toString() {
+	/**
+	 * Used for debugging
+	 */
+	public String toDebugString() {
 		return "Type: " + type + "\tLexeme: " + lexeme + "\tPosition: " + position;
 	}
 	

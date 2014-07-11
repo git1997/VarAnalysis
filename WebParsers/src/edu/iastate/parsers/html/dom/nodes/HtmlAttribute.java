@@ -10,17 +10,14 @@ import edu.iastate.symex.position.PositionRange;
  */
 public class HtmlAttribute extends HtmlNode {
 	
-	private HtmlElement parentElement = null; // The HtmlElement that this attribute belongs to.
-	
-	private Constraint constraint = Constraint.TRUE;
-	
 	private String name;
-	
 	private HtmlAttributeValue value = null;
+	
+	private HtmlElement parentElement = null;
+	private Constraint constraint = Constraint.TRUE;
 	
 	/**
 	 * Constructor
-	 * @param name
 	 */
 	public HtmlAttribute(String name, PositionRange location) {
 		super(location);
@@ -31,14 +28,6 @@ public class HtmlAttribute extends HtmlNode {
 	 * Set properties
 	 */
 	
-	public void setParentElement(HtmlElement htmlElement) {
-		this.parentElement = htmlElement;
-	}
-	
-	public void setConstraint(Constraint constraint) {
-		this.constraint = constraint;
-	}
-	
 	public void addValueFragment(String valueFragment, PositionRange location) {
 		if (value == null)
 			value = new HtmlAttributeValue(valueFragment, location);
@@ -46,9 +35,33 @@ public class HtmlAttribute extends HtmlNode {
 			value.addValueFragment(valueFragment, location);
 	}
 	
+	/**
+	 * Sets parentElement - protected access: Should only be called from HtmlElement.HtmlElement(HOpenTag)
+	 * @param element
+	 */
+	protected void setParentElement(HtmlElement parentElement) {
+		this.parentElement = parentElement;
+	}
+	
+	public void setConstraint(Constraint constraint) {
+		this.constraint = constraint;
+	}
+	
 	/*
 	 * Get properties
 	 */
+	
+	public String getName() {
+		return name;
+	}
+	
+	public HtmlAttributeValue getAttributeValue() {
+		return value;
+	}
+	
+	public String getValue() {
+		return value != null ? value.getStringValue() : "";
+	}
 	
 	public HtmlElement getParentElement() {
 		return parentElement;
@@ -58,28 +71,20 @@ public class HtmlAttribute extends HtmlNode {
 		return constraint;
 	}
 	
-	public String getName() {
-		return name;
-	}
+	/*
+	 * Other methods
+	 */
 	
-	public String getValue() {
-		return value.getStringValue();
-	}
-	
-	public HtmlAttributeValue getAttributeValue() {
-		return value;
+	public HtmlAttribute clone() {
+		HtmlAttribute clonedAttribute = new HtmlAttribute(name, location);
+		clonedAttribute.value = (value != null ? value.clone() : null);
+		clonedAttribute.parentElement = parentElement;
+		clonedAttribute.constraint = constraint;
+		return clonedAttribute;
 	}
 	
 	public String getTrimmedLowerCaseValue() {
 		return getValue().trim().toLowerCase();
-	}
-	
-	public HtmlAttribute clone() {
-		HtmlAttribute clonedAttribute = new HtmlAttribute(name, location);
-		clonedAttribute.parentElement = parentElement;
-		clonedAttribute.constraint = constraint;
-		clonedAttribute.value = (value != null ? value.clone() : null);
-		return clonedAttribute;
 	}
 	
 	/**
@@ -119,9 +124,9 @@ public class HtmlAttribute extends HtmlNode {
 	@Override
 	public String toDebugString() {
 		if (constraint.isTautology())
-			return name + "=" + value.toDebugString();
+			return name + (value != null ? "=" + value.toDebugString() : "");
 		else
-			return "[" + constraint.toDebugString() + "] " + name + "=" + value.toDebugString();
+			return "[" + constraint.toDebugString() + "] " + name + (value != null ? "=" + value.toDebugString() : "");
 	}
 
 }

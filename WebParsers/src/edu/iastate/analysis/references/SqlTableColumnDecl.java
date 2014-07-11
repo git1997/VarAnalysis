@@ -8,9 +8,10 @@ import edu.iastate.symex.position.PositionRange;
  *
  */
 public class SqlTableColumnDecl extends DeclaringReference {
-
+	
 	private String scope;	// The scope of this SqlTableColumnDecl (e.g. 'mysql_query_123456')
-							// @see php.nodes.FunctionInvocationNode.php_mysql_query(ArrayList<DataNode>, ElementManager, Object)).
+							// @see edu.iastate.analysis.references.detection.PhpVisitor.onMysqlQuery(FunctionInvocation, DataNode, Env)
+							// @see edu.iastate.analysis.references.detection.PhpVisitor.createPhpRefToSqlTableColumn(ArrayAccess, Env)
 	
 	/**
 	 * Constructor
@@ -20,21 +21,10 @@ public class SqlTableColumnDecl extends DeclaringReference {
 		this.scope = scope;
 	}
 	
-	/*
-	 * Get properties
-	 */
-	
-	/**
-	 * Returns the scope of this SqlTableColumnDecl.
-	 */
 	public String getScope() {
 		return scope;
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see references.Reference#sameAs(references.Reference)
-	 */
+
 	@Override
 	public boolean sameAs(Reference reference) {
 		return super.sameAs(reference)

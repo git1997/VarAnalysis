@@ -19,20 +19,16 @@ import edu.iastate.symex.util.logging.MyLogger;
  */
 public class HtmlLexer {
 	
-	private int lexicalState = Lexer.YYINITIAL;
+	private LexicalState lexicalState = new LexicalState(Lexer.YYINITIAL, "");
 
 	private ArrayList<HtmlToken> lexResult = new ArrayList<HtmlToken>();
 	
-	public HtmlLexer() {
-		System.out.print("");
+	public LexicalState saveLexicalState() {
+		return new LexicalState(lexicalState.getLexicalState(), lexicalState.getCurrentOpeningTag());
 	}
 	
-	public int saveLexicalState() {
-		return lexicalState;
-	}
-	
-	public void restoreLexicalState(int lexicalState) {
-		this.lexicalState = lexicalState;
+	public void restoreLexicalState(LexicalState lexicalState) {
+		this.lexicalState = new LexicalState(lexicalState.getLexicalState(), lexicalState.getCurrentOpeningTag());
 	}
 	
 	public ArrayList<HtmlToken> getLexResult() {
@@ -45,21 +41,55 @@ public class HtmlLexer {
 	
 	public void lex(String htmlCode, PositionRange htmlLocation) {
 		Lexer lexer = new Lexer(new StringReader(htmlCode));
-		lexer.yybegin(lexicalState); // Set the lexical state
+		
+		// Set the lexical state
+		lexer.yybegin(lexicalState.getLexicalState()); 
+		lexer.setCurrentOpeningTag(lexicalState.getCurrentOpeningTag());
+		
 		while (true) {
 			try {
-				Token nextToken = lexer.nextToken();
-				if (nextToken == null)
+				Token token = lexer.nextToken();
+				if (token == null)
 					break;
 				
-				// Adjust position
-				PositionRange location = new RelativeRange(htmlLocation, nextToken.getPosition(), nextToken.getLexeme().length());
-				lexResult.add(new HtmlToken(nextToken, location));				
+				PositionRange location = new RelativeRange(htmlLocation, token.getPosition(), token.getLexeme().length());
+				lexResult.add(new HtmlToken(token, location));			
 			} catch (IOException e) {
 				MyLogger.log(MyLevel.JAVA_EXCEPTION, e.getStackTrace().toString());
 			}			
 		}
-		lexicalState = lexer.yystate(); // Update the lexical state
+		
+		// Update the lexical state
+		lexicalState.setLexicalState(lexer.yystate());
+		lexicalState.setCurrentOpeningTag(lexer.getCurrentOpeningTag());
+	}
+	
+	public class LexicalState {
+		
+		public int lexicalState;
+		public String currentOpeningTag;
+		
+		public LexicalState(int lexicalState, String currentOpeningTag) {
+			this.lexicalState = lexicalState;
+			this.currentOpeningTag = currentOpeningTag;
+		}
+		
+		public void setLexicalState(int lexicalState) {
+			this.lexicalState = lexicalState;
+		}
+
+		public void setCurrentOpeningTag(String currentOpeningTag) {
+			this.currentOpeningTag = currentOpeningTag;
+		}
+		
+		public int getLexicalState() {
+			return lexicalState;
+		}
+		
+		public String getCurrentOpeningTag() {
+			return currentOpeningTag;
+		}
+		
 	}
 	
 }

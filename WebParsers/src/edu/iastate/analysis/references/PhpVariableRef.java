@@ -10,7 +10,7 @@ import edu.iastate.symex.position.PositionRange;
 public class PhpVariableRef extends RegularReference {
 	
 	private String scope;	// The scope of this PhpVariableRef (e.g. 'FUNCTION_SCOPE_hello')
-							// @see php.nodes.VariableNode.variableRefFound(ElementManager)
+							// @see edu.iastate.analysis.references.detection.PhpVisitor.createVariable(Variable, Env, boolean)
 
 	/**
 	 * Constructor
@@ -20,21 +20,10 @@ public class PhpVariableRef extends RegularReference {
 		this.scope = scope;
 	}
 	
-	/*
-	 * Get properties
-	 */
-	
-	/**
-	 * Returns the scope of this PhpVariableRef.
-	 */
 	public String getScope() {
 		return scope;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see references.RegularReference#refersTo(references.DeclaringReference)
-	 */
 	@Override
 	public boolean refersTo(DeclaringReference declaringReference) {
 		if (declaringReference instanceof PhpVariableDecl) {

@@ -19,11 +19,6 @@ public class HText extends HtmlSaxNode {
 		this.stringValue = stringValue;		
 	}
 	
-	public void addText(HText text) {
-		// FIXME this.location = new RangeList_deprecated(this.location, text.location, this.stringValue.length());
-		this.stringValue = this.stringValue + text.stringValue;		
-	}
-	
 	public String getStringValue() {
 		return stringValue;
 	}

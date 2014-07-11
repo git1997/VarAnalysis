@@ -10,12 +10,15 @@ import edu.iastate.symex.position.PositionRange;
  *
  */
 public class HtmlDocument extends HtmlNode {
+
+	private ArrayList<HtmlNode> childNodes = new ArrayList<HtmlNode>();
 	
+	/**
+	 * Constructor
+	 */
 	public HtmlDocument() {
 		super(PositionRange.UNDEFINED);
 	}
-
-	private ArrayList<HtmlNode> childNodes = new ArrayList<HtmlNode>();	// Type Choice or HtmlElement
 	
 	public void addChildNode(HtmlNode childNode) {
 		childNodes.add(childNode);

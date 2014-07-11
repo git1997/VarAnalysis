@@ -18,8 +18,9 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.analysis.references.detection.FindReferencesInFile;
+import edu.iastate.analysis.references.ReferenceManager;
+import edu.iastate.parsers.conditional.CondList;
 import edu.iastate.parsers.html.core.DataModelToHtmlTokens;
 import edu.iastate.parsers.html.core.HtmlSaxNodesToHtmlDocument;
 import edu.iastate.parsers.html.core.HtmlTokensToSaxNodes;
@@ -27,7 +28,6 @@ import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.run.WriteHtmlDocumentToIfDefs;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
-import edu.iastate.parsers.tree.TreeNode;
 import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.run.RunSymexForFile;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
@@ -230,8 +230,8 @@ public class WebAnalysisView extends ViewPart {
 	 */
 	private void runSaxParserAndShowResults(File file) {
 		DataModel dataModel = new RunSymexForFile(file).execute();
-		TreeNode<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
-		TreeNode<HtmlSaxNode> saxResult = new HtmlTokensToSaxNodes().parse(lexResult);
+		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
+		CondList<HtmlSaxNode> saxResult = new HtmlTokensToSaxNodes().parse(lexResult);
 		
 		filePathLabel.setText(file.getAbsolutePath());
 		saxResultTreeViewer.setInput(new GenericTreeViewer.TreeInput(saxResult));
@@ -244,8 +244,8 @@ public class WebAnalysisView extends ViewPart {
 	 */
 	private void runDomParserAndShowResults(File file) {
 		DataModel dataModel = new RunSymexForFile(file).execute();
-		TreeNode<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
-		TreeNode<HtmlSaxNode> saxResult = new HtmlTokensToSaxNodes().parse(lexResult);
+		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
+		CondList<HtmlSaxNode> saxResult = new HtmlTokensToSaxNodes().parse(lexResult);
 		HtmlDocument domResult = new HtmlSaxNodesToHtmlDocument().parse(saxResult);
 		
 		filePathLabel.setText(file.getAbsolutePath());

@@ -9,8 +9,7 @@ import org.eclipse.ui.PlatformUI;
 
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.ReferenceManager;
-import edu.iastate.parsers.tree.TreeConcatNode;
-import edu.iastate.parsers.tree.TreeSelectNode;
+import edu.iastate.parsers.conditional.CondListSelect;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
 
@@ -27,27 +26,15 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 	
 	@Override
 	public Object[] getRootNodes(Object input) {
-		return ((ReferenceManager) input).getSortedReferenceList().toArray(new Object[]{});
+		return ((ReferenceManager) input).getSortedReferenceListByNameThenPosition().toArray(new Object[]{});
 	}
 
 	@Override
 	public Object[] getChildren(Object element) {
 		ArrayList<Object> children = new ArrayList<Object>();
 		
-		if (element instanceof TreeConcatNode<?>) {
-			children.addAll(((TreeConcatNode<?>) element).getChildNodes());
-		}
-		
-		else if (element instanceof TreeSelectNode<?>) {
-			TreeSelectNode<?> selectNode = (TreeSelectNode<?>) element;
-			if (selectNode.getTrueBranchNode() != null)
-				children.add(new SelectChildNode(selectNode.getTrueBranchNode(), true));
-			if (selectNode.getFalseBranchNode() != null)
-				children.add(new SelectChildNode(selectNode.getFalseBranchNode(), false));
-		}
-		
-		else if (element instanceof SelectChildNode) {
-			children.add(((SelectChildNode) element).getChildNode());
+		if (element instanceof Reference) {
+			children.addAll(((Reference) element).getLinkedToReferences());
 		}
 		
 		else {
@@ -69,9 +56,9 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 		String imageID;
 		
 		if (element instanceof Reference)
-			imageID = ISharedImages.IMG_OBJ_FOLDER;
+			imageID = ISharedImages.IMG_OBJ_FILE;
 		
-		else if (element instanceof TreeSelectNode<?>)
+		else if (element instanceof CondListSelect<?>)
 			imageID = ISharedImages.IMG_TOOL_CUT;
 		
 		else if (element instanceof SelectChildNode)

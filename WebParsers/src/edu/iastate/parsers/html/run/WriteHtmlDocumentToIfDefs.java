@@ -42,18 +42,6 @@ public class WriteHtmlDocumentToIfDefs {
     		return str.toString();
 		}
 		
-		else if (htmlNode instanceof HtmlElement) {
-			HtmlElement element = (HtmlElement) htmlNode;
-			StringBuilder str = new StringBuilder();
-			str.append("<" + element.getType() + ">");
-	    	for (HtmlNode child : element.getChildNodes()) {
-	    		String childValue = convertNode(child);
-    			str.append(childValue);
-    		}
-			str.append("</" + element.getType() + ">");
-    		return str.toString();
-		}
-		
 		else if (htmlNode instanceof HtmlSelect) {
 			String constraint = ((HtmlSelect) htmlNode).getConstraint().toString();
 			
@@ -69,7 +57,22 @@ public class WriteHtmlDocumentToIfDefs {
 			return retString;
 		}
 		
-	    return ""; // Should not reach here
+		else if (htmlNode instanceof HtmlElement) {
+			HtmlElement element = (HtmlElement) htmlNode;
+			StringBuilder str = new StringBuilder();
+			str.append("<" + element.getType() + ">");
+	    	for (HtmlNode child : element.getChildNodes()) {
+	    		String childValue = convertNode(child);
+    			str.append(childValue);
+    		}
+			str.append("</" + element.getType() + ">");
+    		return str.toString();
+		}
+		
+		else {
+			// TODO Handle other nodes here
+			return "";
+		}
     }
 	
 }

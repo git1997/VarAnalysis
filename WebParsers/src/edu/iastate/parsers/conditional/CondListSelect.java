@@ -1,4 +1,6 @@
-package edu.iastate.parsers.tree;
+package edu.iastate.parsers.conditional;
+
+import java.util.ArrayList;
 
 import edu.iastate.symex.constraints.Constraint;
 
@@ -8,13 +10,16 @@ import edu.iastate.symex.constraints.Constraint;
  *
  * @param <T>
  */
-public class TreeSelectNode<T> extends TreeNode<T> {
+public class CondListSelect<T> extends CondList<T> {
 
 	private Constraint constraint;
-	private TreeNode<T> trueBranchNode;		// Can be null
-	private TreeNode<T> falseBranchNode;	// Can be null
+	private CondList<T> trueBranchNode;		// Can be null
+	private CondList<T> falseBranchNode;	// Can be null
 	
-	public TreeSelectNode(Constraint constraint, TreeNode<T> trueBranchNode, TreeNode<T> falseBranchNode) {
+	/**
+	 * Protected constructor, called from CondListFactory only.
+	 */ 
+	protected CondListSelect(Constraint constraint, CondList<T> trueBranchNode, CondList<T> falseBranchNode) {
 		this.constraint = constraint;
 		this.trueBranchNode = trueBranchNode;
 		this.falseBranchNode = falseBranchNode;
@@ -24,12 +29,22 @@ public class TreeSelectNode<T> extends TreeNode<T> {
 		return constraint;
 	}
 
-	public TreeNode<T> getTrueBranchNode() {
+	public CondList<T> getTrueBranchNode() {
 		return trueBranchNode;
 	}
 
-	public TreeNode<T> getFalseBranchNode() {
+	public CondList<T> getFalseBranchNode() {
 		return falseBranchNode;
+	}
+
+	@Override
+	public ArrayList<T> getLeftMostItems() {
+		ArrayList<T> list = new ArrayList<T>();
+		if (trueBranchNode != null)
+			list.addAll(trueBranchNode.getLeftMostItems());
+		if (falseBranchNode != null)
+			list.addAll(falseBranchNode.getLeftMostItems());
+		return list;
 	}
 	
 	@Override

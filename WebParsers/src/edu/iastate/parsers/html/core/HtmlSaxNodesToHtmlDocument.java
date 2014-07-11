@@ -1,9 +1,11 @@
 package edu.iastate.parsers.html.core;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
+import edu.iastate.parsers.conditional.CondList;
+import edu.iastate.parsers.conditional.CondListConcat;
+import edu.iastate.parsers.conditional.CondListItem;
+import edu.iastate.parsers.conditional.CondListSelect;
 import edu.iastate.parsers.html.dom.nodes.HtmlConcat;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
@@ -12,10 +14,6 @@ import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.htmlparser.HtmlDomParser;
 import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
-import edu.iastate.parsers.tree.TreeConcatNode;
-import edu.iastate.parsers.tree.TreeLeafNode;
-import edu.iastate.parsers.tree.TreeNode;
-import edu.iastate.parsers.tree.TreeSelectNode;
 import edu.iastate.symex.position.PositionRange;
 
 /**
@@ -24,13 +22,16 @@ import edu.iastate.symex.position.PositionRange;
  *
  */
 public class HtmlSaxNodesToHtmlDocument {
-	
-	public HtmlDocument parse(TreeNode<HtmlSaxNode> saxNodes) {
+
+	/**
+	 * Parse a conditional list of HtmlSaxNodes and return an HtmlDocument
+	 */
+	public HtmlDocument parse(CondList<HtmlSaxNode> saxNodes) {
 		HtmlDomParser parser = new HtmlDomParser(); 
 		
-		// Create a pseudo root element
+		// Use a pseudo root element
 		HOpenTag rootOpenTag = new HOpenTag("ROOT", PositionRange.UNDEFINED);
-		HtmlElement rootElement = new HtmlElement(rootOpenTag);
+		HtmlElement rootElement = HtmlElement.createHtmlElement(rootOpenTag);
 		parser.pushHtmlStack(rootElement);
 
 		// Parse the saxNodes
@@ -43,79 +44,90 @@ public class HtmlSaxNodesToHtmlDocument {
 		return htmlDocument;
 	}
 	
-	public void parse(TreeNode<HtmlSaxNode> saxNodes, HtmlDomParser parser) {
-		if (saxNodes instanceof TreeConcatNode<?>)
-			parse((TreeConcatNode<HtmlSaxNode>) saxNodes, parser);
+	/**
+	 * Parse a general CondList of HtmlSaxNodes
+	 */
+	private void parse(CondList<HtmlSaxNode> saxNodes, HtmlDomParser parser) {
+		if (saxNodes instanceof CondListConcat<?>)
+			parse((CondListConcat<HtmlSaxNode>) saxNodes, parser);
 		
-		else if (saxNodes instanceof TreeSelectNode<?>)
-			parse((TreeSelectNode<HtmlSaxNode>) saxNodes, parser);
+		else if (saxNodes instanceof CondListSelect<?>)
+			parse((CondListSelect<HtmlSaxNode>) saxNodes, parser);
 		
-		else // if (tokenTree instanceof HtmlTreeLeafNode<?>)
-			parse((TreeLeafNode<HtmlSaxNode>) saxNodes, parser);
+		else // if (saxNodes instanceof CondListItem<?>)
+			parse((CondListItem<HtmlSaxNode>) saxNodes, parser);
 	}
 	
 	/**
-	 * Parses a ConcatNode
+	 * Parse a ConcatNode
 	 */
-	private void parse(TreeConcatNode<HtmlSaxNode> concatNode, HtmlDomParser parser) {
-		for (TreeNode<HtmlSaxNode> childNode : concatNode.getChildNodes())
+	private void parse(CondListConcat<HtmlSaxNode> concatNode, HtmlDomParser parser) {
+		for (CondList<HtmlSaxNode> childNode : concatNode.getChildNodes())
 			parse(childNode, parser);
 	}
 	
 	/**
-	 * Parses a SelectNode
+	 * Parse a SelectNode
 	 */
-	private void parse(TreeSelectNode<HtmlSaxNode> selectNode, HtmlDomParser parser) {
-		// Get result before entering the branches
-		Stack<HtmlElement> htmlStack = parser.getHtmlStack();
-		HtmlElement lastElement = htmlStack.peek();
+	private void parse(CondListSelect<HtmlSaxNode> selectNode, HtmlDomParser parser) {
+		Stack<HtmlElement> lastHtmlStack = parser.getHtmlStack();
+		HtmlElement lastElement = lastHtmlStack.peek();
 		
 		/*
-		 *  Enter the true branch
+		 * Enter the true branch
 		 */
 		parser.clearHtmlStack();
-		HtmlElement rootElementTrue = new HtmlElement(lastElement.getHtmlOpenTag());
+		HtmlElement rootElementTrue = HtmlElement.createHtmlElement(lastElement.getOpenTag());
 		parser.pushHtmlStack(rootElementTrue);
 				
 		if (selectNode.getTrueBranchNode() != null)
 			parse(selectNode.getTrueBranchNode(), parser);
-		boolean emptyStackInTrueBranch = parser.getHtmlStack().isEmpty();
+		HtmlElement rootElementTrueAfter = !parser.isEmptyHtmlStack() ? parser.getFirstElementInHtmlStack() : null;
 		
 		/*
 		 * Enter the false branch
 		 */
 		parser.clearHtmlStack();
-		HtmlElement rootElementFalse = new HtmlElement(lastElement.getHtmlOpenTag());
+		HtmlElement rootElementFalse = HtmlElement.createHtmlElement(lastElement.getOpenTag());
 		parser.pushHtmlStack(rootElementFalse);
 		
 		if (selectNode.getFalseBranchNode() != null)
 			parse(selectNode.getFalseBranchNode(), parser);
-		boolean emptyStackInFalseBranch = parser.getHtmlStack().isEmpty();
+		HtmlElement rootElementFalseAfter = !parser.isEmptyHtmlStack() ? parser.getFirstElementInHtmlStack() : null;
 		
 		/*
-		 * Combine results and continue
+		 * Combine results
 		 */
-		if (emptyStackInTrueBranch || emptyStackInFalseBranch) {
-			HtmlNode select = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), rootElementTrue, rootElementFalse);
-			htmlStack.pop();
-			lastElement = htmlStack.peek();
-			lastElement.replaceLastChildNode(select);
-		}
-		else {
-			HtmlNode nodeInTrueBranch = HtmlConcat.createCompactHtmlNode(new ArrayList<HtmlNode>(rootElementTrue.getChildNodes()));
-			HtmlNode nodeInFalseBranch = HtmlConcat.createCompactHtmlNode(new ArrayList<HtmlNode>(rootElementFalse.getChildNodes()));
-			HtmlNode select = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), nodeInTrueBranch, nodeInFalseBranch);
-			lastElement.addChildNode(select);
-		}
 		
-		parser.setHtmlStack(htmlStack);
+		// Handle well-formed HTML
+		HtmlNode nodeInTrueBranch1 = HtmlConcat.createCompactHtmlNode(rootElementTrue.getChildNodes());
+		HtmlNode nodeInFalseBranch1 = HtmlConcat.createCompactHtmlNode(rootElementFalse.getChildNodes());
+		HtmlNode select1 = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), nodeInTrueBranch1, nodeInFalseBranch1);
+		if (select1 != null)
+			lastHtmlStack.peek().addChildNode(select1);
+		
+		// [Optional] Handle the case where one opening tag is closed in two different branches
+		if (rootElementTrueAfter != rootElementTrue && rootElementFalseAfter != rootElementFalse && lastHtmlStack.size() >= 2) {
+			HtmlNode select2 = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), rootElementTrue, rootElementFalse);
+			lastHtmlStack.pop();
+			lastHtmlStack.peek().replaceLastChildNode(select2);
+		}
+					
+		// Handle ill-formed HTML
+		HtmlNode nodeInTrueBranch3 = (rootElementTrueAfter != rootElementTrue ? rootElementTrueAfter : null);
+		HtmlNode nodeInFalseBranch3 = (rootElementFalseAfter != rootElementFalse ? rootElementFalseAfter : null);
+		HtmlNode select3 = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), nodeInTrueBranch3, nodeInFalseBranch3);
+		if (select3 != null)
+			lastHtmlStack.peek().addChildNode(select3);
+		
+		parser.setHtmlStack(lastHtmlStack);
 	}
 	
 	/**
-	 * Parses a LeafNode
+	 * Parse an HtmlSaxNode
 	 */
-	private void parse(TreeLeafNode<HtmlSaxNode> leafNode, HtmlDomParser parser) {
-		parser.parse(leafNode.getNode());
+	private void parse(CondListItem<HtmlSaxNode> saxNode, HtmlDomParser parser) {
+		parser.parse(saxNode.getNode());
    	}
 
 }

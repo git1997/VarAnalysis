@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttributeValue;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
+import edu.iastate.parsers.html.generatedlexer.Token.Type;
 import edu.iastate.parsers.html.sax.nodes.HCloseTag;
 import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.parsers.html.sax.nodes.HText;
-import edu.iastate.parsers.tree.TreeNode;
-import edu.iastate.parsers.tree.TreeNodeFactory;
 import edu.iastate.symex.position.PositionRange;
 
 /**
@@ -22,8 +21,7 @@ public class HtmlSaxParser {
 	
 	private ArrayList<HtmlSaxNode> parseResult = new ArrayList<HtmlSaxNode>();
 	
-	private TreeNode<HtmlSaxNode> parseResultBeforeBranching = null;
-	private ArrayList<HtmlSaxNode> parseResultInOtherBranch = null;
+	private HtmlSaxNode lastSaxNode = null;
 	
 	public ArrayList<HtmlSaxNode> getParseResult() {
 		return new ArrayList<HtmlSaxNode>(parseResult);
@@ -33,20 +31,12 @@ public class HtmlSaxParser {
 		parseResult = new ArrayList<HtmlSaxNode>();
 	}
 	
-	public void setParseResult(ArrayList<HtmlSaxNode> parseResult) {
-		this.parseResult = parseResult;
+	public void setLastSaxNode(HtmlSaxNode lastSaxNode) {
+		this.lastSaxNode = lastSaxNode;
 	}
 	
-	public void setParseResultBeforeBranching(TreeNode<HtmlSaxNode> parseResultBeforeBranching) {
-		this.parseResultBeforeBranching = parseResultBeforeBranching;
-	}
-	
-	public TreeNode<HtmlSaxNode> getParseResultBeforeBranching() {
-		return this.parseResultBeforeBranching;
-	}
-	
-	public void setParseResultInOtherBranch(ArrayList<HtmlSaxNode> parseResultInOtherBranch) {
-		this.parseResultInOtherBranch = parseResultInOtherBranch;
+	public HtmlSaxNode getLastSaxNode() {
+		return lastSaxNode;
 	}
 	
 	public void parse(HtmlToken token) {
@@ -55,85 +45,66 @@ public class HtmlSaxParser {
 			
 		switch (token.getType()) {
 			case OpeningTag: {
-				parseResult.add(new HOpenTag(tokenValue, tokenLocation));
+				HOpenTag tag = new HOpenTag(tokenValue, tokenLocation);
+				parseResult.add(tag);
+				lastSaxNode = tag;
 				break;
 			}
 			case ClosingTag: {
-				parseResult.add(new HCloseTag(tokenValue, tokenLocation));
+				HCloseTag tag = new HCloseTag(tokenValue, tokenLocation);
+				parseResult.add(tag);
+				lastSaxNode = tag;
 				break;
 			}
 			case Text: {
-				if (!tokenValue.trim().isEmpty()) // Remove empty text
-					parseResult.add(new HText(tokenValue, tokenLocation));
+				if (!tokenValue.trim().isEmpty()) { // Only add non-empty text
+					HText text = new HText(tokenValue, tokenLocation);
+					parseResult.add(text);
+					lastSaxNode = text;
+				}
 				break;
 			}
 			case AttrName: {
 				HtmlAttribute attribute = new HtmlAttribute(tokenValue, tokenLocation);
-				
-				// Handle conditional code
-				if (parseResult.isEmpty())
-					tryBorrowingOpenTagIfUnavailable();
-				
-				HOpenTag tag = getLastOpenTag();
+				HOpenTag tag = resolveLastOpenTag();
 				if (tag != null)
 					tag.addAttribute(attribute);
-
 				break;
 			}
-			case AttrValStart: {
-				break;
-			}
+			case AttrValStart:
 			case AttrValFrag:
 			case AttrValue: {
-				// Handle conditional code
-				if (parseResult.isEmpty())
-					tryBorrowingOpenTagIfUnavailable();
-				
-				HtmlAttribute attribute = getLastAttribute();
-				if (attribute != null)
-					attribute.addValueFragment(tokenValue, tokenLocation);
-
+				HtmlAttribute attribute = resolveLastAttribute();
+				if (attribute != null) {
+					if (token.getType() == Type.AttrValStart)
+						// This has the effect of setting the value of the attribute to not-null
+						// (although it's an empty string)
+						attribute.addValueFragment("", PositionRange.UNDEFINED); 
+					else
+						attribute.addValueFragment(tokenValue, tokenLocation);
+				}
 				break;
 			}
 			case AttrValEnd: {
-				// Handle conditional code
-				if (parseResult.isEmpty())
-					tryBorrowingOpenTagIfUnavailable();
-				
-				HtmlAttribute attribute = getLastAttribute();
+				HtmlAttribute attribute = resolveLastAttribute();
 				if (attribute != null) {
 					HtmlAttributeValue attributeValue = attribute.getAttributeValue();
 					attributeValue.unescapePreservingLength(tokenValue.charAt(0)); // Unescape the attribute value
 				}
-
 				break;
 			}
 		}
 	}
 	
-	private void tryBorrowingOpenTagIfUnavailable() {
-		if (parseResult.isEmpty() && parseResultBeforeBranching != null) {
-			HtmlSaxNode saxNode = new TreeNodeFactory<HtmlSaxNode>().getRightMostNode(parseResultBeforeBranching);
-			if (saxNode instanceof HOpenTag) {
-				HOpenTag openTag = (HOpenTag) saxNode;
-				parseResult.add(openTag);
-				
-				parseResultBeforeBranching = new TreeNodeFactory<HtmlSaxNode>().removeRightMostNode(parseResultBeforeBranching);
-				
-				parseResultInOtherBranch.add(openTag.clone());
-			}
-		}
-	}
-	
-	private HOpenTag getLastOpenTag() {
-		if (!parseResult.isEmpty() && parseResult.get(parseResult.size() - 1) instanceof HOpenTag)
-			return (HOpenTag) parseResult.get(parseResult.size() - 1);
+	private HOpenTag resolveLastOpenTag() {
+		if (lastSaxNode instanceof HOpenTag)
+			return (HOpenTag) lastSaxNode;
 		else
 			return null;
 	}
 	
-	private HtmlAttribute getLastAttribute() {
-		HOpenTag tag = getLastOpenTag();
+	private HtmlAttribute resolveLastAttribute() {
+		HOpenTag tag = resolveLastOpenTag();
 		if (tag != null)
 			return tag.getLastAttribute();
 		else

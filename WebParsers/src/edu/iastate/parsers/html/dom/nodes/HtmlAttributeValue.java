@@ -1,6 +1,8 @@
 package edu.iastate.parsers.html.dom.nodes;
 
+import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.util.StringUtils;
 
 /**
  * 
@@ -13,28 +15,19 @@ public class HtmlAttributeValue extends HtmlNode {
 	
 	/**
 	 * Constructor
-	 * @param valueFragment
-	 * @param location
 	 */
-	public HtmlAttributeValue(String valueFragment, PositionRange location) {
+	public HtmlAttributeValue(String stringValue, PositionRange location) {
 		super(location);
-		this.stringValue = valueFragment;
+		this.stringValue = stringValue;
 	}
 	
 	public void addValueFragment(String valueFragment, PositionRange valueFragmentlocation) {
 		if (stringValue.isEmpty()) {
 			this.location = valueFragmentlocation;
 			this.stringValue = valueFragment;
-			
-			// TODO: [AdhocCode] Adjust the string value of attribute,
-			// e.g. <div id=\'email\'> might have been converted to <div id=' email'> when D-model was built
-			if (stringValue.startsWith(" ")) {
-				//FIXME location = location.getPositionRangeAtRelativeOffset(1, 0);
-				stringValue = stringValue.substring(1);
-			}
 		}
 		else {
-			//FIXME this.location = new RangeList(this.location, valueFragmentlocation, this.stringValue.length());
+			this.location = new CompositeRange(this.location, valueFragmentlocation);
 			this.stringValue = this.stringValue + valueFragment;
 		}
 	}
@@ -43,16 +36,19 @@ public class HtmlAttributeValue extends HtmlNode {
 		return stringValue;
 	}
 	
+	/*
+	 * Other methods
+	 */
+	
 	public HtmlAttributeValue clone() {
-		HtmlAttributeValue clonedAttributeValue = new HtmlAttributeValue(stringValue, location);
-		return clonedAttributeValue;
+		return new HtmlAttributeValue(stringValue, location);
 	}
 	
 	/**
-	 * Unescapes the string value of the attribute preserving length
+	 * Unescapes the string value of the attribute, preserving its length
 	 */
 	public void unescapePreservingLength(char stringType) {
-//		stringValue = StringUtils.getUnescapedStringValuePreservingLength(stringValue, stringType);
+		stringValue = StringUtils.getUnescapedStringValuePreservingLength(stringValue, stringType);
 	}
 	
 	@Override

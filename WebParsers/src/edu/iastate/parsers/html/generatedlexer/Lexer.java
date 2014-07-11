@@ -256,6 +256,14 @@ private boolean zzAtBOL = true;
 
   /* user code: */
 	private String currentOpeningTag = "";
+	// This code below is manually added
+	public void setCurrentOpeningTag(String currentOpeningTag) {
+		this.currentOpeningTag = currentOpeningTag;
+	}
+	public String getCurrentOpeningTag() {
+		return currentOpeningTag;
+	}
+	// End of manually added code
 
 
   /**

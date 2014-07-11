@@ -7,6 +7,10 @@ package edu.iastate.parsers.html.dom.nodes;
  */
 public class HtmlNodeVisitor {
 
+	/**
+	 * Visits a general HtmlNode
+	 * @param htmlNode
+	 */
 	public void visit(HtmlNode htmlNode) {
 		if (htmlNode instanceof HtmlConcat)
 			visitConcat((HtmlConcat) htmlNode);
@@ -26,7 +30,7 @@ public class HtmlNodeVisitor {
 		else if (htmlNode instanceof HtmlAttribute)
 			visitAttribute((HtmlAttribute) htmlNode);
 		
-		else if (htmlNode instanceof HtmlAttributeValue)
+		else // if (htmlNode instanceof HtmlAttributeValue)
 			visitAttributeValue((HtmlAttributeValue) htmlNode);
 	}
 	
