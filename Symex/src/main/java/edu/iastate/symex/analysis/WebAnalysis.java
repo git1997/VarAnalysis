@@ -3,9 +3,11 @@ package edu.iastate.symex.analysis;
 import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
+import org.eclipse.php.internal.core.ast.nodes.Program;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 
 import edu.iastate.symex.core.Env;
+import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 
 /**
@@ -26,7 +28,7 @@ public class WebAnalysis {
 		/**
 		 * Used to identify declarations of PHP variables 
 		 */
-		public void onAssignmentExecute(Assignment assignment, Env env);
+		public void onAssignmentExecute(Assignment assignment, PhpVariable phpVariableDecl, Env env);
 		
 		/**
 		 * Used to identify PHP variables 
@@ -51,15 +53,23 @@ public class WebAnalysis {
 		 */
 		public DataNode onMysqlFetchArray(FunctionInvocation functionInvocation, DataNode argumentValue, Env env);
 		
+		/*
+		 * Used to detect data flows
+		 */
+		
+		public void onProgramExecute(Program program);
+		
+		public void onEnvUpdateWithBranches(PhpVariable phpVariable, PhpVariable phpVariableInTrueBranch, PhpVariable phpVariableInFalseBranch);
+		
 	}
 	
 	/*
 	 * Methods
 	 */
 	
-	public static void onAssignmentExecute(Assignment assignment, Env env) {
+	public static void onAssignmentExecute(Assignment assignment, PhpVariable phpVariableDecl, Env env) {
 		if (entityDetectionListener != null)
-			entityDetectionListener.onAssignmentExecute(assignment, env);
+			entityDetectionListener.onAssignmentExecute(assignment, phpVariableDecl, env);
 	}
 	
 	public static void onVariableExecute(Variable variable, Env env) {
@@ -84,6 +94,16 @@ public class WebAnalysis {
 			return entityDetectionListener.onMysqlFetchArray(functionInvocation, argumentValue, env);
 		else
 			return null;
+	}
+	
+	public static void onProgramExecute(Program program) {
+		if (entityDetectionListener != null)
+			entityDetectionListener.onProgramExecute(program);
+	}
+	
+	public static void onEnvUpdateWithBranches(PhpVariable phpVariable, PhpVariable phpVariableInTrueBranch, PhpVariable phpVariableInFalseBranch) {
+		if (entityDetectionListener != null)
+			entityDetectionListener.onEnvUpdateWithBranches(phpVariable, phpVariableInTrueBranch, phpVariableInFalseBranch);
 	}
 
 }

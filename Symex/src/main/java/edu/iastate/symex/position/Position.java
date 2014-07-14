@@ -65,4 +65,9 @@ public class Position {
 			return this.getFile().equals(position.getFile()) && this.getOffset() == position.getOffset();
 	}
 	
+	@Override
+	public String toString() {
+		return getFilePath() + "@" + getOffset();
+	}
+	
 }

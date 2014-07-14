@@ -47,15 +47,15 @@ public class AssignmentNode extends ExpressionNode {
 	
 	@Override
 	public DataNode execute(Env env) {
+		DataNode rightHandSideValue = rightHandSide.execute(env);
+		PhpVariable phpVariable = leftHandSide.createVariablePossiblyWithNull(env);
+		
 		/*
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onAssignmentExecute((Assignment) this.getAstNode(), env);
+		WebAnalysis.onAssignmentExecute((Assignment) this.getAstNode(), phpVariable, env);
 		// END OF WEB ANALYSIS CODE
-		
-		DataNode rightHandSideValue = rightHandSide.execute(env);
-		PhpVariable phpVariable = leftHandSide.createVariablePossiblyWithNull(env);
 		
 		/*
 		 * Handle array assignment, e.g. $x[1] = abc.

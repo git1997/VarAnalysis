@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
+import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.datamodel.nodes.DataNode;
@@ -50,7 +52,7 @@ public abstract class Env {
 	private boolean hasExitStatement = false;
 
 	/**
-	 * Constuctor
+	 * Constructor
 	 * @param outerScopeEnv
 	 */
 	public Env(Env outerScopeEnv) {
@@ -357,6 +359,13 @@ public abstract class Env {
 			PhpVariable phpVariable = new PhpVariable(variableName);
 			phpVariable.setDataNode(compactSelectNode);
 			this.putVariableInCurrentScope(phpVariable);
+			
+			/*
+			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+			 */
+			// BEGIN OF WEB ANALYSIS CODE
+			WebAnalysis.onEnvUpdateWithBranches(phpVariable, variableInTrueBranch, variableInFalseBranch);
+			// END OF WEB ANALYSIS CODE
 		}
 
 		// Also, update the output in the current scope considering its values
