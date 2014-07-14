@@ -52,8 +52,8 @@ public class HtmlNodeVisitor {
 	}
 	
 	public void visitElement(HtmlElement htmlElement) {
-		for (HtmlNode attribute : htmlElement.getAttributes())
-			visit(attribute);
+		for (HtmlAttribute attribute : htmlElement.getAttributes())
+			visitAttribute(attribute);
 		for (HtmlNode childNode : htmlElement.getChildNodes())
 			visit(childNode);
 	}

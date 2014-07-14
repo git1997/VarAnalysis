@@ -34,7 +34,7 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 		ArrayList<Object> children = new ArrayList<Object>();
 		
 		if (element instanceof Reference) {
-			children.addAll(((Reference) element).getLinkedToReferences());
+			children.addAll(((Reference) element).getDataflowFromReferences());
 		}
 		
 		else {

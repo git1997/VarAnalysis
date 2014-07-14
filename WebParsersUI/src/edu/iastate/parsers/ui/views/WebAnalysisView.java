@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.iastate.analysis.references.detection.FindReferencesInFile;
+import edu.iastate.analysis.references.detection.ShowStatisticsOnReferences;
 import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.parsers.conditional.CondList;
 import edu.iastate.parsers.html.core.DataModelToHtmlTokens;
@@ -51,7 +52,7 @@ public class WebAnalysisView extends ViewPart {
 	
 	private TreeViewer analysisResultTreeViewer, saxResultTreeViewer, domResultTreeViewer;
 
-	private StyledText domStyledText;
+	private StyledText statsStyledText;
 	
 	/**
 	 * Main method to test the user interface.
@@ -123,13 +124,13 @@ public class WebAnalysisView extends ViewPart {
 		tabItem3.setText("Dom Result");
 		tabItem3.setControl(domResultTreeViewer.getControl());
 		
-		domStyledText = new StyledText(tabFolder, SWT.BORDER);
-		domStyledText.setText("");
+		statsStyledText = new StyledText(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL) ;
+		statsStyledText.setText("");
 		//domStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		TabItem tabItem4 = new TabItem(tabFolder, SWT.NONE);
-		tabItem4.setText("Dom (Text)");
-		tabItem4.setControl(domStyledText);
+		tabItem4.setText("Analysis Stats");
+		tabItem4.setControl(statsStyledText);
 		
 	    // Event handling
 	    // --------------
@@ -223,6 +224,7 @@ public class WebAnalysisView extends ViewPart {
 		analysisResultTreeViewer.setInput(referenceManager);
 		analysisResultTreeViewer.expandToLevel(2);
 		tabFolder.setSelection(0);
+		statsStyledText.setText(new ShowStatisticsOnReferences().showStatistics(referenceManager));
 	}
 	
 	/**
@@ -252,7 +254,7 @@ public class WebAnalysisView extends ViewPart {
 		domResultTreeViewer.setInput(domResult);
 		domResultTreeViewer.expandToLevel(2);
 		tabFolder.setSelection(2);
-		domStyledText.setText(WriteHtmlDocumentToIfDefs.convert(domResult));
+		statsStyledText.setText(WriteHtmlDocumentToIfDefs.convert(domResult));
 	}
 	
 }

@@ -34,5 +34,11 @@ public class PhpVariableRef extends RegularReference {
 		else
 			return false;
 	}
+	
+	@Override
+	public boolean hasDataflowFromReference(Reference reference) {
+		// TODO PhpVariableRef needs a different way of resolving dataflows
+		return false;
+	}
 
 }

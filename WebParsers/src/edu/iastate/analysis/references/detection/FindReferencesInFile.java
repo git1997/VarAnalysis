@@ -19,8 +19,8 @@ import edu.iastate.symex.util.logging.MyLogger;
  */
 public class FindReferencesInFile {
 	
-	public static String PHP_FILE = "/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/index.php";
-									//"/Work/To-do/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
+	public static String PHP_FILE = //"/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/index.php";
+									"/Work/To-do/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
 	public static String XML_FILE = "/Users/HUNG/Desktop/Dataflows.xml";
 	
 	private File phpFile;
@@ -57,7 +57,10 @@ public class FindReferencesInFile {
 		// Comment out the statement below to stop detecting embedded entities.
 		findReferencesInHtmlDocument(htmlDocument, referenceManager);
 		
-		// Step 4: Print results
+		// Step 4: Resolve dataflows among the references
+		resolveDataflows(htmlDocument, referenceManager);
+		
+		// Step 5: Print results
 		printResults(referenceManager);
 		
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Done in " + timer.getElapsedSecondsInText() + ".");
@@ -99,11 +102,21 @@ public class FindReferencesInFile {
 	}
 	
 	/**
+	 * Resolves dataflows
+	 */
+	private void resolveDataflows(HtmlDocument htmlDocument, ReferenceManager referenceManager) {
+		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Resolving dataflows...");
+		
+		referenceManager.resolveDataflows(htmlDocument);
+	}
+	
+	/**
 	 * Prints the results
 	 */
 	private void printResults(ReferenceManager referenceManager) {
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Printing results...");
 		
+		System.out.println(new ShowStatisticsOnReferences().showStatistics(referenceManager));
 		//new XmlReadWrite().printReferencesToXmlFile(referenceManager.getSortedReferenceList(), new File(XML_FILE));
 	}
 	

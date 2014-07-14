@@ -22,7 +22,7 @@ public abstract class Reference {
 	
 	protected Entity entity = null;						// The entity that this reference declares or refers to
 	protected Constraint constraint = Constraint.TRUE;	// The path constraints of this reference
-	protected ArrayList<Reference> linkedToReferences = new ArrayList<Reference>();		// e.g., $x = $y, $y = $z  =>  $z linked to $y, $y linked to $z
+	protected ArrayList<Reference> dataflowFromReferences = new ArrayList<Reference>();		// e.g., $x = $y, $y = $z  =>  $z has dataflow from $y, $y from $z
 	protected File entryFile = null;					// Then entry file that was run and this reference appeared
 	
 	/**
@@ -47,8 +47,8 @@ public abstract class Reference {
 		this.constraint = constraint;
 	}
 	
-	public void addLinkedToReference(Reference reference) {
-		this.linkedToReferences.add(reference);
+	public void addDataflowFromReference(Reference reference) {
+		this.dataflowFromReferences.add(reference);
 	}
 	
 	public void setEntryFile(File entryFile) {
@@ -79,8 +79,8 @@ public abstract class Reference {
 		return constraint;
 	}
 	
-	public ArrayList<Reference> getLinkedToReferences() {
-		return new ArrayList<Reference>(linkedToReferences);
+	public ArrayList<Reference> getDataflowFromReferences() {
+		return new ArrayList<Reference>(dataflowFromReferences);
 	}
 	
 	public File getEntryFile() {
@@ -95,17 +95,20 @@ public abstract class Reference {
 		return location.getStartPosition();
 	}
 	
-	public String getLocationString() {
-		Position startPosition = getStartPosition();
-		return startPosition.getFilePath() + "@" + startPosition.getOffset();
-	}
-	
 	/**
 	 * Returns true if this reference has the same name and type as the other reference.
 	 * Subclasses of Reference may add more conditions to determine whether two references are "the same".
 	 */
 	public boolean sameAs(Reference reference) {
 		return getName().equals(reference.getName()) && getType().equals(reference.getType());
+	}
+	
+	/**
+	 * Returns true if a reference has a dataflow link from another reference.
+	 * Subclasses of Reference may add more conditions to determine whether this is true.
+	 */
+	public boolean hasDataflowFromReference(Reference reference) {
+		return false;
 	}
 	
 	/*

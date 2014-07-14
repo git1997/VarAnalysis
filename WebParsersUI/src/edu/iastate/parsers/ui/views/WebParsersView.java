@@ -121,7 +121,7 @@ public class WebParsersView extends ViewPart {
 		tabItem3.setText("Dom Result");
 		tabItem3.setControl(domResultTreeViewer.getControl());
 		
-		domStyledText = new StyledText(tabFolder, SWT.BORDER);
+		domStyledText = new StyledText(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		domStyledText.setText("");
 		//domStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
