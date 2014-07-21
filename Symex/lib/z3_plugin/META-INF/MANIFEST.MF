@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Z3
+Bundle-SymbolicName: z3_plugin
+Bundle-Version: 1.0.0
+Bundle-ClassPath: com.microsoft.z3.jar
+Export-Package: com.microsoft.z3,
+ com.microsoft.z3.enumerations
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

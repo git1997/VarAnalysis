@@ -10,8 +10,5 @@
 		</accessrules>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/java-cup-11b-runtime.jar"/>
-	<classpathentry kind="lib" path="lib/featureexprlib_2.9.1-0.3.3.jar"/>
-	<classpathentry kind="lib" path="lib/javabdd-1.0b2.jar"/>
-	<classpathentry kind="lib" path="lib/scala-library.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

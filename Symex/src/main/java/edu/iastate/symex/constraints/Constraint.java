@@ -9,75 +9,59 @@ import edu.iastate.symex.position.PositionRange;
  */
 public abstract class Constraint {
 	
-	public static final Constraint TRUE	 = ConstraintFactory.createAtomicConstraint("TRUE", PositionRange.UNDEFINED);
+	public static final Constraint TRUE	 = ConstraintFactory.createTrueConstraint();
 	
-	public static final Constraint FALSE = ConstraintFactory.createAtomicConstraint("FALSE", PositionRange.UNDEFINED);
-	
-	// The FeatureExpr representing this constraint
-	protected String featureExpr;
+	public static final Constraint FALSE = ConstraintFactory.createFalseConstraint();
 	
 	/**
-	 * Protected constructor
-	 * @param featureExpr
+	 * Location(s) of the constraint in the source code
 	 */
-	protected Constraint(String featureExpr) {
-		this.featureExpr = featureExpr;
-	}
+	protected PositionRange location = PositionRange.UNDEFINED;
 	
 	/*
 	 * Methods
 	 */
-	
-	/**
-	 * Returns the FeatureExpr representing this constraint.
-	 */
-	public String getFeatureExpr() {
-		return featureExpr;
-	}
-
-	/**
-	 * @return Location(s) of the constraint in the source code
-	 */
-	public abstract PositionRange getLocation();
 
 	/**
 	 * @return A string describing the constraint
 	 */
-	public String toDebugString() {
-		return featureExpr.toString();
+	public abstract String toDebugString();
+	
+	public void setLocation(PositionRange location) {
+		this.location = location;
+	}
+	
+	public PositionRange getLocation() {
+		return location;
 	}
 	
 	/**
 	 * @return True if the constraint is satisfiable
 	 */
-	public boolean isSatisfiable() {
-		return ! isContradiction();
-	}
+	public abstract boolean isSatisfiable();
 	
 	/**
 	 * @return True if the constraint is a tautology
 	 */
 	public boolean isTautology() {
-		return this == TRUE;
+		return ! ConstraintFactory.createNotConstraint(this).isSatisfiable();
 	}
 	
 	/**
 	 * @return True if the constraint is a contradiction
 	 */
 	public boolean isContradiction() {
-		return this == FALSE;
+		return ! isSatisfiable();
 	}
 	
 	/**
-	 * @param constraint
 	 * @return True if the two constraints are equivalent
 	 */
 	public boolean equivalentTo(Constraint constraint) {
-		return (this.featureExpr.equals(constraint.featureExpr));
+		return this.implies(constraint) && constraint.implies(this);
 	}
 	
 	/**
-	 * @param constraint
 	 * @return True if the two constraints are opposite of each other
 	 */
 	public boolean oppositeOf(Constraint constraint) {
@@ -85,10 +69,10 @@ public abstract class Constraint {
 	}
 	
 	/**
-	 * Returns true if this constraint satisfies another constraint 
-	 * (e.g. A & B satisfies A, but A & B does not satisfy B & C).
+	 * Returns true if this constraint implies another constraint 
+	 * (e.g. A & B implies A, but A & B does not imply B & C).
 	 */
-	public boolean satisfies(Constraint constraint) {
+	public boolean implies(Constraint constraint) {
 		return !(ConstraintFactory.createAndConstraint(this, ConstraintFactory.createNotConstraint(constraint)).isSatisfiable());
 	}
 	

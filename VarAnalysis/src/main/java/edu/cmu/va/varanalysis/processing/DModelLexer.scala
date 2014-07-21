@@ -42,7 +42,7 @@ class DModelLexer {
 
   def lexLiteralNode(node: LiteralNode, ctx: FeatureExpr): List[CharacterToken] = {
     val str= node.getStringValue();
-    val loc = node.getPositionRange().getStartPosition();
+    val loc = node.getLocation().getStartPosition();
     val file = loc.getFile().getAbsolutePath()
     
     var p=loc.getOffset()
