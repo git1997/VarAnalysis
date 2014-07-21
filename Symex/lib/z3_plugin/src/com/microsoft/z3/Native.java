@@ -9,7 +9,7 @@ public final class Native {
 
   static { 
 	  //System.loadLibrary("z3java"); 
-	  System.load("/Work/Eclipse/workspace/scala/VarAnalysis-Tool/z3/lib/libz3java.dylib");
+	  System.load("/Work/Eclipse/workspace/scala/VarAnalysis-Tool/z3_plugin/lib/libz3java.dylib");
   }
 
   protected static native void INTERNALglobalParamSet(String a0, String a1);
