@@ -61,9 +61,6 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 		else if (element instanceof CondListSelect<?>)
 			imageID = ISharedImages.IMG_TOOL_CUT;
 		
-		else if (element instanceof SelectChildNode)
-			imageID = ISharedImages.IMG_TOOL_FORWARD;
-		
 		else
 			imageID = ISharedImages.IMG_OBJ_FILE;
 		
@@ -84,29 +81,6 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 			return ((Reference) element).getLocation();
 		else
 			return PositionRange.UNDEFINED;
-	}
-	
-	/**
-	 * SelectChildNode represents a branch of a SelectNode.
-	 */
-	private class SelectChildNode {
-		
-		private Object childNode;
-		private boolean isTrueBranch;
-		
-		public SelectChildNode(Object childNode, boolean isTrueBranch) {
-			this.childNode = childNode;
-			this.isTrueBranch = isTrueBranch;
-		}
-		
-		public Object getChildNode() {
-			return childNode;
-		}
-		
-		public boolean isTrueBranch() {
-			return isTrueBranch;
-		}
-
 	}
 	
 }

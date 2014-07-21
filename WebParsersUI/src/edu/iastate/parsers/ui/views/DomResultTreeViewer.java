@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import edu.iastate.parsers.conditional.CondListSelect;
 import edu.iastate.parsers.html.dom.nodes.HtmlConcat;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;

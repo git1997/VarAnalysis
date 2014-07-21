@@ -91,7 +91,7 @@ public class LexResultTreeViewer extends GenericTreeViewer {
 	@Override
 	public String getTreeNodeDescription(Object element) {
 		if (element instanceof CondListSelect<?>)
-			return ((CondListSelect<?>) element).getConstraint().getFeatureExpr();
+			return ((CondListSelect<?>) element).getConstraint().toDebugString();
 		
 		else if (element instanceof CondListItem<?>) {
 			Object node = ((CondListItem<?>) element).getNode();

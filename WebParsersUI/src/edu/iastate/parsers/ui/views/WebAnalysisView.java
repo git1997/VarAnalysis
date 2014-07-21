@@ -3,6 +3,8 @@ package edu.iastate.parsers.ui.views;
 import java.io.File;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.php.internal.core.PHPVersion;
+import org.eclipse.php.internal.core.ast.nodes.Program;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
@@ -17,22 +19,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.wst.jsdt.core.dom.AST;
+import org.eclipse.wst.jsdt.core.dom.ASTNode;
+import org.eclipse.wst.jsdt.core.dom.ASTParser;
 
 import edu.iastate.analysis.references.detection.FindReferencesInFile;
 import edu.iastate.analysis.references.detection.ShowStatisticsOnReferences;
 import edu.iastate.analysis.references.ReferenceManager;
-import edu.iastate.parsers.conditional.CondList;
-import edu.iastate.parsers.html.core.DataModelToHtmlTokens;
-import edu.iastate.parsers.html.core.HtmlSaxNodesToHtmlDocument;
-import edu.iastate.parsers.html.core.HtmlTokensToSaxNodes;
-import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
-import edu.iastate.parsers.html.generatedlexer.HtmlToken;
-import edu.iastate.parsers.html.run.WriteHtmlDocumentToIfDefs;
-import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.parsers.ui.UIHelper;
-import edu.iastate.symex.run.RunSymexForFile;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
-import edu.iastate.symex.datamodel.DataModel;
+import edu.iastate.symex.util.FileIO;
 
 /**
  * 
@@ -46,11 +42,11 @@ public class WebAnalysisView extends ViewPart {
 	 */
 	private Label filePathLabel;
 	
-	private Button runAnalysisButton, runSaxParserButton, runDomParserButton;
+	private Button runAnalysisButton, runPhpAstButton, runJsAstButton;
 	
 	private TabFolder tabFolder;
 	
-	private TreeViewer analysisResultTreeViewer, saxResultTreeViewer, domResultTreeViewer;
+	private TreeViewer analysisResultTreeViewer, phpAstTreeViewer, jsAstTreeViewer;
 
 	private StyledText statsStyledText;
 	
@@ -97,36 +93,36 @@ public class WebAnalysisView extends ViewPart {
 	    runAnalysisButton.setText("Run Analysis");
 	    runAnalysisButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 	    
-	    runSaxParserButton = new Button(parent, SWT.PUSH);
-	    runSaxParserButton.setText("Run SaxParser");
-	    runSaxParserButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+	    runPhpAstButton = new Button(parent, SWT.PUSH);
+	    runPhpAstButton.setText("PHP AST");
+	    runPhpAstButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 	    
-	    runDomParserButton = new Button(parent, SWT.PUSH);
-	    runDomParserButton.setText("Run DomParser");
-	    runDomParserButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
+	    runJsAstButton = new Button(parent, SWT.PUSH);
+	    runJsAstButton.setText("JavaScript AST");
+	    runJsAstButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
 	    
 		tabFolder = new TabFolder(parent, SWT.BORDER);
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4,	1));
 
 		analysisResultTreeViewer = new AnalysisResultTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
-		saxResultTreeViewer = new SaxResultTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
-		domResultTreeViewer = new DomResultTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
+		phpAstTreeViewer = new PhpAstTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
+		jsAstTreeViewer = new JsAstTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
 		
 		TabItem tabItem1 = new TabItem(tabFolder, SWT.NONE);
 		tabItem1.setText("Analysis Result");
 		tabItem1.setControl(analysisResultTreeViewer.getControl());
 		
 		TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
-		tabItem2.setText("Sax Result");
-		tabItem2.setControl(saxResultTreeViewer.getControl());
+		tabItem2.setText("PHP AST");
+		tabItem2.setControl(phpAstTreeViewer.getControl());
 		
 		TabItem tabItem3 = new TabItem(tabFolder, SWT.NONE);
-		tabItem3.setText("Dom Result");
-		tabItem3.setControl(domResultTreeViewer.getControl());
+		tabItem3.setText("JavaScript AST");
+		tabItem3.setControl(jsAstTreeViewer.getControl());
 		
 		statsStyledText = new StyledText(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL) ;
 		statsStyledText.setText("");
-		//domStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		//statsStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		TabItem tabItem4 = new TabItem(tabFolder, SWT.NONE);
 		tabItem4.setText("Analysis Stats");
@@ -154,29 +150,29 @@ public class WebAnalysisView extends ViewPart {
 			}
     	});
 	    
-	    runSaxParserButton.addSelectionListener(new SelectionListener() {
+	    runPhpAstButton.addSelectionListener(new SelectionListener() {
 	    	
 	    	@Override
 	    	public void widgetSelected(SelectionEvent event) {
-	    		runSaxParserButtonClicked();
+	    		runPhpAstButtonClicked();
 	    	}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				runSaxParserButtonClicked();
+				runPhpAstButtonClicked();
 			}
     	});
 	    
-	    runDomParserButton.addSelectionListener(new SelectionListener() {
+	    runJsAstButton.addSelectionListener(new SelectionListener() {
 	    	
 	    	@Override
 	    	public void widgetSelected(SelectionEvent event) {
-	    		runDomParserButtonClicked();
+	    		runJsAstButtonClicked();
 	    	}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				runDomParserButtonClicked();
+				runJsAstButtonClicked();
 			}
     	});
 	}
@@ -193,24 +189,24 @@ public class WebAnalysisView extends ViewPart {
 	}
 	
 	/**
-	 * Invoked when the RunSaxParser button is clicked.
+	 * Invoked when the RunPhpAst button is clicked.
 	 */
-	private void runSaxParserButtonClicked() {
+	private void runPhpAstButtonClicked() {
 		UIHelper.saveAllEditors();
 		if (UIHelper.getActiveEditor() != null) {
 			IFile file = UIHelper.getActiveEditorFile();
-			runSaxParserAndShowResults(UIHelper.iFileToFile(file));
+			runPhpAstAndShowResults(UIHelper.iFileToFile(file));
 		}
 	}
 	
 	/**
-	 * Invoked when the RunDomParser button is clicked.
+	 * Invoked when the RunJsAst button is clicked.
 	 */
-	private void runDomParserButtonClicked() {
+	private void runJsAstButtonClicked() {
 		UIHelper.saveAllEditors();
 		if (UIHelper.getActiveEditor() != null) {
 			IFile file = UIHelper.getActiveEditorFile();
-			runDomParserAndShowResults(UIHelper.iFileToFile(file));
+			runJsAstAndShowResults(UIHelper.iFileToFile(file));
 		}
 	}
 	
@@ -228,33 +224,37 @@ public class WebAnalysisView extends ViewPart {
 	}
 	
 	/**
-	 * Run SaxParser and show results 
+	 * Run PhpAst and show results 
 	 */
-	private void runSaxParserAndShowResults(File file) {
-		DataModel dataModel = new RunSymexForFile(file).execute();
-		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
-		CondList<HtmlSaxNode> saxResult = new HtmlTokensToSaxNodes().parse(lexResult);
-		
-		filePathLabel.setText(file.getAbsolutePath());
-		saxResultTreeViewer.setInput(new GenericTreeViewer.TreeInput(saxResult));
-		saxResultTreeViewer.expandToLevel(2);
-		tabFolder.setSelection(1);
+	private void runPhpAstAndShowResults(File file) {
+		try {
+			org.eclipse.php.internal.core.ast.nodes.ASTParser parser = org.eclipse.php.internal.core.ast.nodes.ASTParser.newParser(PHPVersion.PHP5, true);
+			char[] source = FileIO.readStringFromFile(file).toCharArray();
+			parser.setSource(source);
+			Program program = parser.createAST(null);
+			
+			filePathLabel.setText(file.getAbsolutePath());
+			phpAstTreeViewer.setInput(new GenericTreeViewer.TreeInput(program));
+			phpAstTreeViewer.expandToLevel(2);
+			tabFolder.setSelection(1);
+		} catch (Exception e) {
+			System.out.println("In WebAnalysis.java: Error parsing " + file + " (" + e.getMessage() + ")");
+		}
 	}
 	
 	/**
-	 * Run DomParser and show results 
+	 * Run JsAst and show results 
 	 */
-	private void runDomParserAndShowResults(File file) {
-		DataModel dataModel = new RunSymexForFile(file).execute();
-		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
-		CondList<HtmlSaxNode> saxResult = new HtmlTokensToSaxNodes().parse(lexResult);
-		HtmlDocument domResult = new HtmlSaxNodesToHtmlDocument().parse(saxResult);
-		
+	private void runJsAstAndShowResults(File file) {
+		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		char[] source = FileIO.readStringFromFile(file).toCharArray();
+        parser.setSource(source);
+        ASTNode rootNode = parser.createAST(null);
+        
 		filePathLabel.setText(file.getAbsolutePath());
-		domResultTreeViewer.setInput(domResult);
-		domResultTreeViewer.expandToLevel(2);
+		jsAstTreeViewer.setInput(new GenericTreeViewer.TreeInput(rootNode));
+		jsAstTreeViewer.expandToLevel(2);
 		tabFolder.setSelection(2);
-		statsStyledText.setText(WriteHtmlDocumentToIfDefs.convert(domResult));
 	}
 	
 }

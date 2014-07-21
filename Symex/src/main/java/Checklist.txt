@@ -1,9 +1,8 @@
 OK			analysis
 OK			config
 OK			constraints
-DEPRECATED	constraints.bdd
 OK			core
-OK			datamodel 
+OK			datamodel
 OK			datamodel.nodes
 OK			errormodel
 PENDING		php.nodes
