@@ -26,9 +26,9 @@ public class SqlTableColumnDecl extends DeclaringReference {
 	}
 
 	@Override
-	public boolean sameAs(Reference reference) {
-		return super.sameAs(reference)
-				&& (getScope().equals(((SqlTableColumnDecl) reference).getScope()));
+	public boolean sameEntityAs(DeclaringReference declaringReference) {
+		return super.sameEntityAs(declaringReference)
+				&& (getScope().equals(((SqlTableColumnDecl) declaringReference).getScope()));
 	}
 	
 }

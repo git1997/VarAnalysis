@@ -14,13 +14,9 @@ public class JsRefToHtmlId extends RegularReference {
 	}
 
 	@Override
-	public boolean refersTo(DeclaringReference declaringReference) {
-		if (declaringReference instanceof HtmlIdDecl) {
-			HtmlIdDecl htmlIdDecl = (HtmlIdDecl) declaringReference;
-			return getName().equals(htmlIdDecl.getName());
-		}
-		else
-			return false;
+	public boolean sameEntityAs(DeclaringReference declaringReference) {
+		return declaringReference instanceof HtmlIdDecl
+				&& hasSameName(declaringReference);
 	}
 	
 }

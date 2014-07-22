@@ -7,11 +7,9 @@ package edu.iastate.analysis.config;
  */
 public class AnalysisConfig {
 
-	// Turn ON these options for BabelRef, turn OFF for ERef
+	// Turn ON this option for BabelRef, turn OFF for ERef
 	// @see entities.EntityManager.canLinkEntityReference(Entity, RegularReference)
-	// @see references.detection.JavascriptVisitor.visit(SimpleName)
 	public static boolean DISCARD_CONSTRAINTS_WHEN_COMPARING_ENTITIES = false;	
-	public static boolean DETECT_JS_VARIABLES = true; 	
 	
 	/*
 	 * XML identifiers

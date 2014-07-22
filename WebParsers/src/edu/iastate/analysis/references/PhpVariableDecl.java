@@ -25,9 +25,9 @@ public class PhpVariableDecl extends DeclaringReference {
 	}
 	
 	@Override
-	public boolean sameAs(Reference reference) {
-		return super.sameAs(reference)
-				&& (getScope().equals(((PhpVariableDecl) reference).getScope()));
+	public boolean sameEntityAs(DeclaringReference declaringReference) {
+		return super.sameEntityAs(declaringReference)
+				&& (getScope().equals(((PhpVariableDecl) declaringReference).getScope()));
 	}
 	
 }

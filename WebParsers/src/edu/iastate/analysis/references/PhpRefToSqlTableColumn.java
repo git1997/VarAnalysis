@@ -26,14 +26,10 @@ public class PhpRefToSqlTableColumn extends RegularReference {
 	}
 
 	@Override
-	public boolean refersTo(DeclaringReference declaringReference) {
-		if (declaringReference instanceof SqlTableColumnDecl) {
-			SqlTableColumnDecl sqlTableColumnDecl = (SqlTableColumnDecl) declaringReference;
-			return getName().equals(sqlTableColumnDecl.getName())
-					&& getScope().equals(sqlTableColumnDecl.getScope());
-		}
-		else
-			return false;
+	public boolean sameEntityAs(DeclaringReference declaringReference) {
+		return declaringReference instanceof SqlTableColumnDecl
+				&& hasSameName(declaringReference)
+				&& getScope().equals(((SqlTableColumnDecl) declaringReference).getScope());
 	}
 	
 }

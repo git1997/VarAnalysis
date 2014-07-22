@@ -3,7 +3,6 @@ package edu.iastate.symex.analysis;
 import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
-import org.eclipse.php.internal.core.ast.nodes.Program;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 
 import edu.iastate.symex.core.Env;
@@ -53,12 +52,9 @@ public class WebAnalysis {
 		 */
 		public DataNode onMysqlFetchArray(FunctionInvocation functionInvocation, DataNode argumentValue, Env env);
 		
-		/*
+		/**
 		 * Used to detect data flows
 		 */
-		
-		public void onProgramExecute(Program program);
-		
 		public void onEnvUpdateWithBranches(PhpVariable phpVariable, PhpVariable phpVariableInTrueBranch, PhpVariable phpVariableInFalseBranch);
 		
 	}
@@ -94,11 +90,6 @@ public class WebAnalysis {
 			return entityDetectionListener.onMysqlFetchArray(functionInvocation, argumentValue, env);
 		else
 			return null;
-	}
-	
-	public static void onProgramExecute(Program program) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onProgramExecute(program);
 	}
 	
 	public static void onEnvUpdateWithBranches(PhpVariable phpVariable, PhpVariable phpVariableInTrueBranch, PhpVariable phpVariableInFalseBranch) {

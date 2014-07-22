@@ -1,11 +1,13 @@
 package edu.iastate.analysis.references.detection;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.wst.jsdt.core.dom.ASTNode;
 import org.eclipse.wst.jsdt.core.dom.ASTVisitor;
+import org.eclipse.wst.jsdt.core.dom.Assignment;
 import org.eclipse.wst.jsdt.core.dom.Expression;
 import org.eclipse.wst.jsdt.core.dom.FieldAccess;
 import org.eclipse.wst.jsdt.core.dom.ForInStatement;
@@ -22,16 +24,18 @@ import org.eclipse.wst.jsdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.wst.jsdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.wst.jsdt.core.dom.WhileStatement;
 
-import edu.iastate.analysis.config.AnalysisConfig;
+import edu.iastate.analysis.references.DeclaringReference;
 import edu.iastate.analysis.references.JsFunctionCall;
 import edu.iastate.analysis.references.JsFunctionDecl;
 import edu.iastate.analysis.references.JsRefToHtmlForm;
 import edu.iastate.analysis.references.JsRefToHtmlId;
 import edu.iastate.analysis.references.JsRefToHtmlInput;
 import edu.iastate.analysis.references.JsVariableDecl;
+import edu.iastate.analysis.references.JsVariableRef;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.RelativeRange;
 
@@ -44,16 +48,24 @@ import edu.iastate.symex.position.RelativeRange;
 public class JavascriptVisitor extends ASTVisitor {
 	
 	private PositionRange javascriptLocation;
-	private Constraint constraint;
+	private Constraint javascriptConstraint;
+	
+	private File entryFile;
 	private ReferenceManager referenceManager;
+	
+	private Env env; // Used to detect data flows
 	
 	/**
 	 * Constructor
 	 */
-	public JavascriptVisitor(PositionRange javascriptLocation, Constraint constraint, ReferenceManager referenceManager) {
+	public JavascriptVisitor(PositionRange javascriptLocation, Constraint javascriptConstraint, File entryFile, ReferenceManager referenceManager) {
 		this.javascriptLocation = javascriptLocation;
-		this.constraint = constraint;
+		this.javascriptConstraint = javascriptConstraint;
+		
+		this.entryFile = entryFile;
 		this.referenceManager = referenceManager;
+		
+		this.env = new Env();
 	}
 	
 	/**
@@ -61,7 +73,8 @@ public class JavascriptVisitor extends ASTVisitor {
 	 * This method should be called instead of calling referenceManager.addReference directly.
 	 */
 	private void addReference(Reference reference) {
-		reference.setConstraint(constraint);
+		reference.setConstraint(ConstraintFactory.createAndConstraint(javascriptConstraint, env.getConstraint()));
+		reference.setEntryFile(entryFile);
 		referenceManager.addReference(reference);
 	}
 	
@@ -69,6 +82,10 @@ public class JavascriptVisitor extends ASTVisitor {
 	 * Visits a function declaration.
 	 */
 	public boolean visit(FunctionDeclaration functionDeclaration) {
+		Env prevEnv = env;
+		
+		env = new Env();
+		
 		if (functionDeclaration.getName() != null) {
 			SimpleName functionName = functionDeclaration.getName();
 			
@@ -81,8 +98,11 @@ public class JavascriptVisitor extends ASTVisitor {
 			SingleVariableDeclaration singleVariableDeclaration = (SingleVariableDeclaration) object;
 			singleVariableDeclaration.accept(this);
 		}
+		
 		if (functionDeclaration.getBody() != null)
 			functionDeclaration.getBody().accept(this);
+		
+		env = prevEnv;
 		
 		return false;
 	}
@@ -97,13 +117,14 @@ public class JavascriptVisitor extends ASTVisitor {
 			// Do nothing
 		}
 		else if (functionName.getIdentifier().equals("getElementById")) {
-			// Add a JsRefToHtmlId reference
 			if (functionInvocation.arguments().size() == 1 && functionInvocation.arguments().get(0) instanceof StringLiteral) {
 				StringLiteral stringLiteral = (StringLiteral) functionInvocation.arguments().get(0);
 				String id = stringLiteral.getEscapedValue();
 				id = id.substring(1, id.length() - 1);
+				PositionRange location = new RelativeRange(javascriptLocation, stringLiteral.getStartPosition() + 1, id.length());
 				
-				Reference reference = new JsRefToHtmlId(id, getLocation(stringLiteral, 1));
+				// Add a JsRefToHtmlId reference
+				Reference reference = new JsRefToHtmlId(id, location);
 				addReference(reference);
 			}
 		}
@@ -140,10 +161,10 @@ public class JavascriptVisitor extends ASTVisitor {
 			Reference reference = new JsRefToHtmlForm(fieldName.getIdentifier(), getLocation(fieldName));
 			addReference(reference);
 		}
-		
 		else if (expression instanceof FieldAccess && ((FieldAccess) expression).getExpression().toString().endsWith("document")) {
-			// Add a JsRefToHtmlInput reference
 			String formName = ((FieldAccess) expression).getName().getIdentifier();
+			
+			// Add a JsRefToHtmlInput reference
 			Reference reference = new JsRefToHtmlInput(fieldName.getIdentifier(), getLocation(fieldName), formName);
 			addReference(reference);
 		}
@@ -154,7 +175,7 @@ public class JavascriptVisitor extends ASTVisitor {
 	}
 	
 	/*
-	 * Handle Javascript variables.
+	 * Handle JavaScript variables.
 	 */
 	
 	/**
@@ -162,12 +183,37 @@ public class JavascriptVisitor extends ASTVisitor {
 	 */
 	public boolean visit(VariableDeclarationStatement variableDeclarationStatement) {
 		variableDeclarationStatement.getType().accept(this);
+		
 		for (Object object : variableDeclarationStatement.fragments()) {
 			VariableDeclarationFragment variableDeclarationFragment = (VariableDeclarationFragment) object;
-			variableDeclarationFragment.getName().accept(this);
+			SimpleName simpleName = variableDeclarationFragment.getName();
+			
+			if (!isJavascriptKeyword(simpleName.getIdentifier()))
+				foundVariableDecl(simpleName, variableDeclarationFragment.getInitializer());
+			
 			if (variableDeclarationFragment.getInitializer() != null)
 				variableDeclarationFragment.getInitializer().accept(this);
 		}
+		
+		return false;
+	}
+	
+	/**
+	 * Visits an assignment.
+	 */
+	public boolean visit(Assignment assignment) {
+		Expression leftHandSide = assignment.getLeftHandSide();
+		if (leftHandSide instanceof SimpleName) {
+			SimpleName simpleName = (SimpleName) leftHandSide;
+			
+			if (!isJavascriptKeyword(simpleName.getIdentifier()))
+				foundVariableDecl(simpleName, assignment.getRightHandSide());
+		}
+		else
+			leftHandSide.accept(this);
+		
+		assignment.getRightHandSide().accept(this);
+		
 		return false;
 	}
 	
@@ -175,18 +221,42 @@ public class JavascriptVisitor extends ASTVisitor {
 	 * Visits a simple name.
 	 */
 	public boolean visit(SimpleName simpleName) {
-		if (AnalysisConfig.DETECT_JS_VARIABLES) {
-			if (!isJavascriptKeyword(simpleName.getIdentifier())) {
-				// Add a JsVariable reference
-				Reference reference = new JsVariableDecl(simpleName.getIdentifier(), getLocation(simpleName));
-				addReference(reference);
-			}
-		}
+		if (!isJavascriptKeyword(simpleName.getIdentifier()))
+			foundVariableRef(simpleName);
+
 		return false;
 	}
 	
+	private void foundVariableDecl(SimpleName variable, Expression rightHandSide) {
+		// Add a JsVariableDecl
+		JsVariableDecl jsVariableDecl = new JsVariableDecl(variable.getIdentifier(), getLocation(variable));
+		addReference(jsVariableDecl);
+		
+		/*
+		 * Record data flows
+		 */
+		HashSet<JsVariableDecl> decls = new HashSet<JsVariableDecl>();
+		decls.add(jsVariableDecl);
+		env.setVariableDeclarations(jsVariableDecl.getName(), decls);
+		
+		if (rightHandSide != null)
+			referenceManager.getDataFlowManager().putMapDeclToRefLocations(jsVariableDecl, getLocation(rightHandSide));
+	}
+	
+	private void foundVariableRef(SimpleName variable) {
+		// Add a JsVariableRef
+		JsVariableRef jsVariableRef = new JsVariableRef(variable.getIdentifier(), getLocation(variable));
+		addReference(jsVariableRef);
+		
+		/*
+		 * Record data flows
+		 */
+		HashSet<DeclaringReference> decls = new HashSet<DeclaringReference>(env.getVariableDeclarations(jsVariableRef.getName()));
+		referenceManager.getDataFlowManager().putMapRefToDecls(jsVariableRef, decls);
+	}
+	
 	/*
-	 * Handle branches.
+	 * Handle branches
 	 */
 	
 	/**
@@ -194,10 +264,10 @@ public class JavascriptVisitor extends ASTVisitor {
 	 */
 	public boolean visit(IfStatement ifStatement) {
 		ifStatement.getExpression().accept(this);
-		visitBranchingNode(ifStatement.getThenStatement());
-		if (ifStatement.getElseStatement() != null) {
-			visitBranchingNode(ifStatement.getElseStatement());
-		}
+		
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(ifStatement.getExpression().toString(), getLocation(ifStatement.getExpression()));
+		visitBranches(constraint, ifStatement.getThenStatement(), ifStatement.getElseStatement());
+		
 		return false;
 	}
 	
@@ -205,14 +275,17 @@ public class JavascriptVisitor extends ASTVisitor {
 	 * Visits a Switch-statement
 	 */
 	public boolean visit(SwitchStatement switchStatement) {
+		// TODO Handle switch statements
 		switchStatement.getExpression().accept(this);
+		
 		for (Object object : switchStatement.statements()) {
 			Statement statement = (Statement) object;
 			if (statement.getNodeType() == Statement.SWITCH_CASE)
 				statement.accept(this);
 			else
-				this.visitBranchingNode(statement);
+				statement.accept(this);
 		}
+		
 		return false;
 	}
 	
@@ -224,14 +297,17 @@ public class JavascriptVisitor extends ASTVisitor {
 			Expression expression = (Expression) object;
 			expression.accept(this);
 		}
+		
 		forStatement.getExpression().accept(this);
-		ArrayList<ASTNode> astNodes = new ArrayList<ASTNode>();
-		astNodes.add(forStatement.getBody());
+		
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(forStatement.getExpression().toString(), getLocation(forStatement.getExpression()));
+		visitBranches(constraint, forStatement.getBody(), null);
+		
 		for (Object object : forStatement.updaters()) {
 			Expression expression = (Expression) object;
-			astNodes.add(expression);
+			expression.accept(this);
 		}
-		this.visitBranchingNodes(astNodes);
+		
 		return false;
 	}
 	
@@ -241,7 +317,10 @@ public class JavascriptVisitor extends ASTVisitor {
 	public boolean visit(ForInStatement forInStatement) {
 		forInStatement.getCollection().accept(this);
 		forInStatement.getIterationVariable().accept(this);
-		this.visitBranchingNode(forInStatement.getBody());
+		
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(forInStatement.getCollection().toString(), getLocation(forInStatement.getCollection()));
+		visitBranches(constraint, forInStatement.getBody(), null);
+		
 		return false;
 	}
 	
@@ -250,25 +329,50 @@ public class JavascriptVisitor extends ASTVisitor {
 	 */
 	public boolean visit(WhileStatement whileStatement) {
 		whileStatement.getExpression().accept(this);
-		this.visitBranchingNode(whileStatement.getBody());
+		
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(whileStatement.getExpression().toString(), getLocation(whileStatement.getExpression()));
+		visitBranches(constraint, whileStatement.getBody(), null);
+		
 		return false;
 	}
 	
 	/**
-	 * Visits branching nodes (for example, the then-statement or else-statement in an If-statement).
+	 * Visits branches. A branch can be null.
 	 */
-	private void visitBranchingNodes(ArrayList<ASTNode> branchingNodes) {
-		for (ASTNode astNode : branchingNodes)
-			astNode.accept(this);
+	private void visitBranches(Constraint constraint, Statement statement1, Statement statement2) {
+		Env prevEnv = env;
+		Constraint prevConstraint = env.getConstraint();
+
+		env = new Env(prevEnv, ConstraintFactory.createAndConstraint(prevConstraint, constraint));
+		if (statement1 != null)
+			statement1.accept(this);
+		Env env1 = env;
+		
+		env = new Env(prevEnv, ConstraintFactory.createAndConstraint(prevConstraint, ConstraintFactory.createNotConstraint(constraint)));
+		if (statement2 != null)
+			statement2.accept(this);
+		Env env2 = env;
+		
+		env = prevEnv;
+		
+		/*
+		 * Record data flows
+		 */
+		updateVariableDeclarations(env, env1, env2);
 	}
 	
 	/**
-	 * Visits a branching node (for example, the then-statement or else-statement in an If-statement).
+	 * Updates variable declarations after visiting two branches env1 and env2
 	 */
-	private void visitBranchingNode(ASTNode branchingNode) {
-		ArrayList<ASTNode> branchingNodes = new ArrayList<ASTNode>();
-		branchingNodes.add(branchingNode);
-		visitBranchingNodes(branchingNodes);
+	private void updateVariableDeclarations(Env prevEnv, Env env1, Env env2) {
+		HashSet<String> variableNames = env1.getVariablesInCurrentScope();
+		variableNames.addAll(env2.getVariablesInCurrentScope());
+		
+		for (String variableName : variableNames) {
+			HashSet<JsVariableDecl> variableDeclarations = env1.getVariableDeclarations(variableName);
+			variableDeclarations.addAll(env2.getVariableDeclarations(variableName));
+			prevEnv.setVariableDeclarations(variableName, variableDeclarations);
+		}
 	}
 	
 	/*
@@ -276,15 +380,11 @@ public class JavascriptVisitor extends ASTVisitor {
 	 */
 	
 	private PositionRange getLocation(ASTNode astNode) {
-		return getLocation(astNode, 0);
-	}
-	
-	private PositionRange getLocation(ASTNode astNode, int adjustedOffset) {
-		return new RelativeRange(javascriptLocation, astNode.getStartPosition() + adjustedOffset, astNode.getLength());
+		return new RelativeRange(javascriptLocation, astNode.getStartPosition(), astNode.getLength());
 	}
 	
 	/**
-	 * List of Javascript keywords
+	 * List of JavaScript keywords
 	 */
 	private static String[] keywords = {
 		"alert", "Array", "attachEvent", "blur", "body", "checked", "childNodes", "clearTimeout", "close", "color", "confirm", "createElement",
@@ -300,6 +400,48 @@ public class JavascriptVisitor extends ASTVisitor {
 	
 	public boolean isJavascriptKeyword(String name) {
 		return javascriptKeywords.contains(name);
+	}
+	
+	/**
+	 * Used to detect data flows
+	 */
+	private class Env {
+		
+		private Env outerScopeEnv;
+		private Constraint constraint;
+		
+		private HashMap<String, HashSet<JsVariableDecl>> variableTable = new HashMap<String, HashSet<JsVariableDecl>>();
+		
+		public Env(Env outerScopeEnv, Constraint constraint) {
+			this.outerScopeEnv = outerScopeEnv;
+			this.constraint = constraint;
+		}
+		
+		public Env() {
+			this(null, Constraint.TRUE);
+		}
+		
+		public Constraint getConstraint() {
+			return constraint;
+		}
+		
+		public HashSet<String> getVariablesInCurrentScope() {
+			return new HashSet<String>(variableTable.keySet());
+		}
+		
+		public HashSet<JsVariableDecl> getVariableDeclarations(String variableName) {
+			if (variableTable.containsKey(variableName))
+				return new HashSet<JsVariableDecl>(variableTable.get(variableName));
+			else if (outerScopeEnv != null)
+				return outerScopeEnv.getVariableDeclarations(variableName);
+			else
+				return new HashSet<JsVariableDecl>();
+		}
+		
+		public void setVariableDeclarations(String variableName, HashSet<JsVariableDecl> variableDeclarations) {
+			variableTable.put(variableName, variableDeclarations);
+		}
+		
 	}
 	
 }

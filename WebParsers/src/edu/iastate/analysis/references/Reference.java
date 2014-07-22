@@ -20,10 +20,12 @@ public abstract class Reference {
 	protected String name;								// The name of this reference
 	protected PositionRange location;					// The location of this reference
 	
-	protected Entity entity = null;						// The entity that this reference declares or refers to
-	protected Constraint constraint = Constraint.TRUE;	// The path constraints of this reference
-	protected ArrayList<Reference> dataflowFromReferences = new ArrayList<Reference>();		// e.g., $x = $y, $y = $z  =>  $z has dataflow from $y, $y from $z
+	protected Constraint constraint = Constraint.TRUE;	// The path constraint of this reference
 	protected File entryFile = null;					// Then entry file that was run and this reference appeared
+	
+	protected Entity entity = null;						// The entity that this reference belongs to
+	protected ArrayList<Reference> dataflowFromReferences = new ArrayList<Reference>();		// e.g., $x = $y, $y = $z  =>  $z has dataflow from $y, $y from $z
+	
 	
 	/**
 	 * Constructor
@@ -39,76 +41,71 @@ public abstract class Reference {
 	 * Set properties
 	 */
 	
-	public void setEntity(Entity entity) {
-		this.entity = entity;
-	}
-	
 	public void setConstraint(Constraint constraint) {
 		this.constraint = constraint;
-	}
-	
-	public void addDataflowFromReference(Reference reference) {
-		this.dataflowFromReferences.add(reference);
 	}
 	
 	public void setEntryFile(File entryFile) {
 		this.entryFile = entryFile;
 	}
 	
+	public void setEntity(Entity entity) {
+		this.entity = entity;
+	}
+	public void addDataflowFromReference(Reference reference) {
+		this.dataflowFromReferences.add(reference);
+	}
+	
 	/*
 	 * Get properties
 	 */
 	
-	public String getName() {
-		return name;
-	}
-	
 	public String getType() {
 		return this.getClass().getSimpleName();
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public PositionRange getLocation() {
 		return location;
 	}
 	
-	public Entity getEntity() {
-		return entity;
-	}
-	
 	public Constraint getConstraint() {
 		return constraint;
-	}
-	
-	public ArrayList<Reference> getDataflowFromReferences() {
-		return new ArrayList<Reference>(dataflowFromReferences);
 	}
 	
 	public File getEntryFile() {
 		return entryFile;
 	}
 	
+	public Entity getEntity() {
+		return entity;
+	}
+	
+	public ArrayList<Reference> getDataflowFromReferences() {
+		return new ArrayList<Reference>(dataflowFromReferences);
+	}
+	
 	/*
 	 * Methods
 	 */
+	
+	public boolean hasSameType(Reference reference) {
+		return getType().equals(reference.getType());
+	}
+	
+	public boolean hasSameName(Reference reference) {
+		return getName().equals(reference.getName());
+	}
 	
 	public Position getStartPosition() {
 		return location.getStartPosition();
 	}
 	
-	/**
-	 * Returns true if this reference has the same name and type as the other reference.
-	 * Subclasses of Reference may add more conditions to determine whether two references are "the same".
-	 */
-	public boolean sameAs(Reference reference) {
-		return getName().equals(reference.getName()) && getType().equals(reference.getType());
-	}
-	
-	/**
-	 * Returns true if a reference has a dataflow link from another reference.
-	 * Subclasses of Reference may add more conditions to determine whether this is true.
-	 */
-	public boolean hasDataflowFromReference(Reference reference) {
-		return false;
+	public boolean constraintImplies(Reference reference) {
+		return getConstraint().implies(reference.getConstraint());
 	}
 	
 	/*

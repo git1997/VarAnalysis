@@ -13,6 +13,7 @@ Reference
 		JsRefToHtmlForm
 		JsRefToHtmlId
 		JsRefToHtmlInput
+		JsVariableRef
 		PhpRefToHtml
 		PhpRefToSqlTableColumn
 		PhpVariableRef

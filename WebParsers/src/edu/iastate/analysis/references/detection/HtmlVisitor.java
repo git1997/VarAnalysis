@@ -34,13 +34,16 @@ import edu.iastate.symex.util.logging.MyLogger;
  */
 public class HtmlVisitor extends HtmlNodeVisitor {
 	
-	private Constraint constraint = Constraint.TRUE;
+	private File entryFile;
 	private ReferenceManager referenceManager;
+	
+	private Constraint constraint = Constraint.TRUE;
 	
 	/**
 	 * Constructor
 	 */
-	public HtmlVisitor(ReferenceManager referenceManager) {
+	public HtmlVisitor(File entryFile, ReferenceManager referenceManager) {
+		this.entryFile = entryFile;
 		this.referenceManager = referenceManager;
 	}
 	
@@ -50,6 +53,7 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 	 */
 	private void addReference(Reference reference) {
 		reference.setConstraint(constraint);
+		reference.setEntryFile(entryFile);
 		referenceManager.addReference(reference);
 	}
 	
@@ -102,7 +106,7 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 				String javascriptSource = FileIO.readStringFromFile(included);
 				Range javascriptLocation = new Range(included, 0, javascriptSource.length());
 			
-				ReferenceDetector.findReferencesInJavascriptCode(javascriptSource, javascriptLocation, constraint, referenceManager);
+				ReferenceDetector.findReferencesInJavascriptCode(javascriptSource, javascriptLocation, constraint, entryFile, referenceManager);
 			}
 			return;
 		}
@@ -116,11 +120,11 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 		String javascriptCode = text.getStringValue();
 		PositionRange javascriptLocation = text.getLocation();
 		
-		// Replace the string "<!--" and "-->" so that the Javascript source code can be parsed.
+		// Replace the string "<!--" and "-->" so that the JavaScript source code can be parsed.
 		// Also make sure that the length is unchanged so that the entities can be correctly traced later.
 		javascriptCode = javascriptCode.replaceAll("<!--", "    ").replaceAll("-->", "   ");
 		
-		ReferenceDetector.findReferencesInJavascriptCode(javascriptCode, javascriptLocation, constraint, referenceManager);
+		ReferenceDetector.findReferencesInJavascriptCode(javascriptCode, javascriptLocation, constraint, entryFile, referenceManager);
 	}
 	
 	/**
@@ -203,7 +207,7 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 	private void findEntitiesInEventHandler(HtmlAttributeValue attributeValue) {
 		String javascriptCode = attributeValue.getStringValue();
 		PositionRange javascriptLocation = attributeValue.getLocation();
-		ReferenceDetector.findReferencesInJavascriptCode(javascriptCode, javascriptLocation, constraint, referenceManager);
+		ReferenceDetector.findReferencesInJavascriptCode(javascriptCode, javascriptLocation, constraint, entryFile, referenceManager);
 	}
 	
 	/**

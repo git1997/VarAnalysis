@@ -18,6 +18,7 @@ import edu.iastate.analysis.references.JsRefToHtmlForm;
 import edu.iastate.analysis.references.JsRefToHtmlId;
 import edu.iastate.analysis.references.JsRefToHtmlInput;
 import edu.iastate.analysis.references.JsVariableDecl;
+import edu.iastate.analysis.references.JsVariableRef;
 import edu.iastate.analysis.references.PhpRefToHtml;
 import edu.iastate.analysis.references.PhpRefToSqlTableColumn;
 import edu.iastate.analysis.references.PhpVariableDecl;
@@ -154,6 +155,9 @@ public class XmlReadWrite {
 		
 		else if (type.equals("JsVariableDecl"))
 			reference = new JsVariableDecl(name, location);
+		
+		else if (type.equals("JsVariableRef"))
+			reference = new JsVariableRef(name, location);
 		
 		else if (type.equals("PhpRefToHtml"))
 			reference = new PhpRefToHtml(name, location);

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.eclipse.php.internal.core.ast.nodes.Program;
 import org.eclipse.php.internal.core.ast.nodes.Statement;
 
-import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 
@@ -30,13 +29,6 @@ public class ProgramNode extends PhpNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		/*
-		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
-		 */
-		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onProgramExecute((Program) this.getAstNode());
-		// END OF WEB ANALYSIS CODE
-		
 		return BlockNode.executeStatements(statements, env);
 	}
 	

@@ -25,20 +25,10 @@ public class PhpVariableRef extends RegularReference {
 	}
 	
 	@Override
-	public boolean refersTo(DeclaringReference declaringReference) {
-		if (declaringReference instanceof PhpVariableDecl) {
-			PhpVariableDecl variableDecl = (PhpVariableDecl) declaringReference;
-			return getName().equals(variableDecl.getName())
-					&& getScope().equals(variableDecl.getScope());
-		}
-		else
-			return false;
+	public boolean sameEntityAs(DeclaringReference declaringReference) {
+		return declaringReference instanceof PhpVariableDecl
+				&& hasSameName(declaringReference)
+				&& getScope().equals(((PhpVariableDecl) declaringReference).getScope());
 	}
 	
-	@Override
-	public boolean hasDataflowFromReference(Reference reference) {
-		// TODO PhpVariableRef needs a different way of resolving dataflows
-		return false;
-	}
-
 }

@@ -14,13 +14,9 @@ public class JsRefToHtmlForm extends RegularReference {
 	}
 
 	@Override
-	public boolean refersTo(DeclaringReference declaringReference) {
-		if (declaringReference instanceof HtmlFormDecl) {
-			HtmlFormDecl htmlFormDecl = (HtmlFormDecl) declaringReference;
-			return getName().equals(htmlFormDecl.getName());
-		}
-		else
-			return false;
+	public boolean sameEntityAs(DeclaringReference declaringReference) {
+		return declaringReference instanceof HtmlFormDecl
+				&& hasSameName(declaringReference);
 	}
 
 }

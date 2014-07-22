@@ -4,16 +4,14 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
-import org.eclipse.php.internal.core.ast.nodes.Expression;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Identifier;
-import org.eclipse.php.internal.core.ast.nodes.Program;
 import org.eclipse.php.internal.core.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
-import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
-
+import edu.iastate.analysis.references.DeclaringReference;
 import edu.iastate.analysis.references.PhpRefToHtml;
 import edu.iastate.analysis.references.PhpRefToSqlTableColumn;
 import edu.iastate.analysis.references.PhpVariableDecl;
@@ -44,14 +42,10 @@ public class PhpVisitor implements IEntityDetectionListener {
 	private File entryFile;
 	private ReferenceManager referenceManager;
 
-	/*
-	 * These maps are used to record data flows
+	/**
+	 * Used to detect data flows
 	 */
-	
-	private HashMap<Variable, Reference> mapVariableToReference = new HashMap<Variable, Reference>();
-	
-	private HashMap<Variable, HashSet<Variable>> mapDataflowLeftToRight = new HashMap<Variable, HashSet<Variable>>();
-	private HashMap<PhpVariable, HashSet<PhpVariableDecl>> mapDataflowBottomToTop = new HashMap<PhpVariable, HashSet<PhpVariableDecl>>();
+	private HashMap<PhpVariable, HashSet<PhpVariableDecl>> variableTable = new HashMap<PhpVariable, HashSet<PhpVariableDecl>>();
 	
 	/**
 	 * Constructor
@@ -59,86 +53,42 @@ public class PhpVisitor implements IEntityDetectionListener {
 	public PhpVisitor(File entryFile, ReferenceManager referenceManager) {
 		this.entryFile = entryFile;
 		this.referenceManager = referenceManager;
+		
+		this.variableTable = new HashMap<PhpVariable, HashSet<PhpVariableDecl>>();
 	}
 	
 	/**
 	 * Adds a reference.
 	 * This method should be called instead of calling referenceManager.addReference directly.
 	 */
-	private void addReference(Reference reference) {
+	private void addReference(Reference reference, Env env) {
+		reference.setConstraint(env.getConjunctedConstraintUpToGlobalOrFunctionScope());
 		reference.setEntryFile(entryFile);
 		referenceManager.addReference(reference);
-	}
-	
-	@Override
-	public void onProgramExecute(Program program) {
-		program.accept(new AbstractVisitor() {
-			
-			@Override
-			public boolean visit(Variable variable) {
-				if (variable.getParent() instanceof Assignment 
-						&& ((Assignment) variable.getParent()).getLeftHandSide() == variable) {
-					recordDataflow(variable, ((Assignment) variable.getParent()).getRightHandSide());
-				}
-				return true;
-			}
-			
-			@Override
-			public boolean visit(ArrayAccess arrayAccess) {
-				if (arrayAccess.getParent() instanceof Assignment
-						&& ((Assignment) arrayAccess.getParent()).getLeftHandSide() == arrayAccess) {
-					recordDataflow(arrayAccess, ((Assignment) arrayAccess.getParent()).getRightHandSide());
-				}
-				return true;
-			}
-		});
-	}
-	
-	private void recordDataflow(final Variable variableDecl, Expression rightHandSide) {
-		mapDataflowLeftToRight.put(variableDecl, new HashSet<Variable>());
-		rightHandSide.accept(new AbstractVisitor() {
-			@Override
-			public boolean visit(Variable variable) {
-				mapDataflowLeftToRight.get(variableDecl).add(variable);
-				return true;
-			}
-			@Override
-			public boolean visit(ArrayAccess arrayAccess) {
-				mapDataflowLeftToRight.get(variableDecl).add(arrayAccess);
-				return true;
-			}
-		});
 	}
 	
 	@Override
 	public void onAssignmentExecute(Assignment assignment, PhpVariable phpVariable, Env env) {
 		if (!(assignment.getLeftHandSide() instanceof Variable))
 			return;
-		Variable variableDecl = (Variable) assignment.getLeftHandSide();
 		
 		/*
 		 * Detect PHP variable declarations, e.g. $x = 1
 		 */
+		Variable variableDecl = (Variable) assignment.getLeftHandSide();
 		PhpVariableDecl phpVariableDecl = (PhpVariableDecl) createVariable(variableDecl, true, env);
-		if (phpVariableDecl != null) {
-			addReference(phpVariableDecl);
-			mapVariableToReference.put(variableDecl, phpVariableDecl);
-		}
+		if (phpVariableDecl != null)
+			addReference(phpVariableDecl, env);
 		
 		/*
-		 * Record data flow
+		 * Record data flows
 		 */
-		if (phpVariableDecl != null && mapDataflowLeftToRight.containsKey(variableDecl)) {
-			for (Variable variableRef : mapDataflowLeftToRight.get(variableDecl)) {
-				Reference phpVariableRef =  mapVariableToReference.get(variableRef);
-				if (phpVariableRef != null)
-					phpVariableDecl.addDataflowFromReference(phpVariableRef);
-			}
-		}
-		
 		if (phpVariableDecl != null) {
-			mapDataflowBottomToTop.put(phpVariable, new HashSet<PhpVariableDecl>());
-			mapDataflowBottomToTop.get(phpVariable).add(phpVariableDecl);
+			HashSet<PhpVariableDecl> decls = new HashSet<PhpVariableDecl>();
+			decls.add(phpVariableDecl);
+			variableTable.put(phpVariable, decls);
+		
+			referenceManager.getDataFlowManager().putMapDeclToRefLocations(phpVariableDecl, getLocation(assignment.getRightHandSide(), env));
 		}
 	}
 	
@@ -148,19 +98,18 @@ public class PhpVisitor implements IEntityDetectionListener {
 		 * Detect PHP variables, e.g. $x
 		 */
 		PhpVariableRef phpVariableRef = (PhpVariableRef) createVariable(variable, false, env);
-		if (phpVariableRef != null) {
-			addReference(phpVariableRef);
-			mapVariableToReference.put(variable, phpVariableRef);
-		}
+		if (phpVariableRef != null)
+			addReference(phpVariableRef, env);
 		
 		/*
-		 * Record data flow
+		 * Record data flows
 		 */
 		if (phpVariableRef != null) {
 			PhpVariable phpVariable = env.readVariable(phpVariableRef.getName());
-			if (mapDataflowBottomToTop.containsKey(phpVariable))
-				for (PhpVariableDecl phpVariableDecl : mapDataflowBottomToTop.get(phpVariable))
-						phpVariableRef.addDataflowFromReference(phpVariableDecl);
+			HashSet<DeclaringReference> decls = new HashSet<DeclaringReference>();
+			if (variableTable.containsKey(phpVariable))
+				decls.addAll(variableTable.get(phpVariable));
+			referenceManager.getDataFlowManager().putMapRefToDecls(phpVariableRef, decls);
 		}
 	}
 	
@@ -197,19 +146,15 @@ public class PhpVisitor implements IEntityDetectionListener {
 		 * Detect PHP request variables, e.g. $_GET['input1']
 		 */
 		PhpRefToHtml phpRefToHtml = createPhpRefToHtml(arrayAccess, env);
-		if (phpRefToHtml != null) {
-			addReference(phpRefToHtml);
-			mapVariableToReference.put(arrayAccess, phpRefToHtml);
-		}
+		if (phpRefToHtml != null)
+			addReference(phpRefToHtml, env);
 			
 		/*
 		 * Detect SQL column access, e.g. $row['name']
 		 */
 		PhpRefToSqlTableColumn phpRefToSql = createPhpRefToSqlTableColumn(arrayAccess, env);
-		if (phpRefToSql != null) {
-			addReference(phpRefToSql);
-			mapVariableToReference.put(arrayAccess, phpRefToSql);
-		}
+		if (phpRefToSql != null)
+			addReference(phpRefToSql, env);
 	}
 	
 	private PhpRefToHtml createPhpRefToHtml(ArrayAccess arrayAccess, Env env) {
@@ -224,7 +169,6 @@ public class PhpVisitor implements IEntityDetectionListener {
 				return new PhpRefToHtml(name, location);
 			}
 		}
-		
 		return null;
 	}
 	
@@ -244,14 +188,11 @@ public class PhpVisitor implements IEntityDetectionListener {
 		if (arrayAccess.getIndex() instanceof Scalar) {
 			Scalar arrayIndex = (Scalar) arrayAccess.getIndex();
 			DataNode resolvedIndex = new ScalarNode(arrayIndex).execute(env);
+			
 			if (resolvedIndex instanceof LiteralNode)
 				return (LiteralNode) resolvedIndex;
 		}
 		return null;
-	}
-	
-	private boolean isRequestVariable(String variableName) {
-		return variableName.equals("_REQUEST") || variableName.equals("_POST") || variableName.equals("_GET") || variableName.equals("_FILES");
 	}
 
 	@Override
@@ -274,7 +215,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 		String sqlCode = ((LiteralNode) dataNode).getStringValue(); // e.g. SELECT name FROM users
 		PositionRange sqlLocation = ((LiteralNode) dataNode).getLocation(); 
 		
-		ReferenceDetector.findReferencesInSqlCode(sqlCode, sqlLocation, scope, referenceManager);
+		ReferenceDetector.findReferencesInSqlCode(sqlCode, sqlLocation, scope, entryFile, referenceManager);
 		return retValue;
 	}
 
@@ -304,23 +245,39 @@ public class PhpVisitor implements IEntityDetectionListener {
 						String name = arrayIndex.getStringValue();
 						PositionRange location = arrayIndex.getLocation();
 						String scope = variableValue;
+						
 						if (!name.matches("[0-9]+")) // Ignore numbers, e.g. $sql_row[1]
 							return new PhpRefToSqlTableColumn(name, location, scope);
 					}
 				}
 			}
 		}
-		
 		return null;
 	}
+	
+	/*
+	 * Handle branches
+	 */
 
 	@Override
 	public void onEnvUpdateWithBranches(PhpVariable phpVariable, PhpVariable phpVariableInTrueBranch, PhpVariable phpVariableInFalseBranch) {
-		mapDataflowBottomToTop.put(phpVariable, new HashSet<PhpVariableDecl>());
-		if (mapDataflowBottomToTop.containsKey(phpVariableInTrueBranch))
-			mapDataflowBottomToTop.get(phpVariable).addAll(mapDataflowBottomToTop.get(phpVariableInTrueBranch));
-		if (mapDataflowBottomToTop.containsKey(phpVariableInFalseBranch))
-			mapDataflowBottomToTop.get(phpVariable).addAll(mapDataflowBottomToTop.get(phpVariableInFalseBranch));
+		variableTable.put(phpVariable, new HashSet<PhpVariableDecl>());
+		if (variableTable.containsKey(phpVariableInTrueBranch))
+			variableTable.get(phpVariable).addAll(variableTable.get(phpVariableInTrueBranch));
+		if (variableTable.containsKey(phpVariableInFalseBranch))
+			variableTable.get(phpVariable).addAll(variableTable.get(phpVariableInFalseBranch));
+	}
+	
+	/*
+	 * Utility methods
+	 */
+	
+	private PositionRange getLocation(ASTNode astNode, Env env) {
+		return new Range(env.peekFileFromStack(), astNode.getStart(), astNode.getLength());
+	}
+	
+	private boolean isRequestVariable(String variableName) {
+		return variableName.equals("_REQUEST") || variableName.equals("_POST") || variableName.equals("_GET") || variableName.equals("_FILES");
 	}
 		
 }

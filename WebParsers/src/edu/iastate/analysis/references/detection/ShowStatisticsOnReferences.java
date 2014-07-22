@@ -28,12 +28,13 @@ public class ShowStatisticsOnReferences {
 		"JsFunctionDecl",
 		"JsFunctionCall",
 		"JsVariableDecl",
+		"JsVariableRef",
 		"SqlTableColumnDecl",
 		"PhpRefToSqlTableColumn",
 	};
 	
 	public String showStatistics(ReferenceManager referenceManager) {
-		// TODO Improve this code
+		// TODO Review this code
 		HashMap<String, ArrayList<Reference>> referenceLists = new HashMap<String, ArrayList<Reference>>();
 		for (String type : referenceTypes)
 			referenceLists.put(type, new ArrayList<Reference>());

@@ -1,5 +1,6 @@
 package edu.iastate.analysis.references.detection;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,17 +20,31 @@ public class SqlVisitor {
 	
 	private String sqlCode;
 	private PositionRange sqlLocation;
-	private String scope;
+	private String sqlScope;
+	
+	private File entryFile;
 	private ReferenceManager referenceManager;
 	
 	/**
 	 * Constructor
 	 */
-	public SqlVisitor(String sqlCode, PositionRange sqlLocation, String scope, ReferenceManager referenceManager) {
+	public SqlVisitor(String sqlCode, PositionRange sqlLocation, String sqlScope, File entryFile, ReferenceManager referenceManager) {
 		this.sqlCode = sqlCode;
 		this.sqlLocation = sqlLocation;
-		this.scope = scope;
+		this.sqlScope = sqlScope;
+		
+		this.entryFile = entryFile;
 		this.referenceManager = referenceManager;
+	}
+	
+	/**
+	 * Adds a reference.
+	 * This method should be called instead of calling referenceManager.addReference directly.
+	 */
+	private void addReference(Reference reference) {
+		// TODO Set constraints?
+		reference.setEntryFile(entryFile);
+		referenceManager.addReference(reference);
 	}
 	
 	/**
@@ -46,8 +61,8 @@ public class SqlVisitor {
 				 int offset = sqlCode.indexOf(sqlTableColumn);
 				 PositionRange location = new RelativeRange(sqlLocation, offset, sqlTableColumn.length());
 				 
-				 Reference reference = new SqlTableColumnDecl(sqlTableColumn, location, scope);
-				 referenceManager.addReference(reference);
+				 Reference reference = new SqlTableColumnDecl(sqlTableColumn, location, sqlScope);
+				 addReference(reference);
 			 }
 		 }
 	}

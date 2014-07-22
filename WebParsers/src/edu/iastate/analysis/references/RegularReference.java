@@ -15,14 +15,9 @@ public abstract class RegularReference extends Reference {
 	}
 	
 	/**
-	 * Returns true if a regularReference refers to a declaringReference.
+	 * Returns true if a regularReference refers to a declaringReference (belonging to the same entity).
 	 * Subclasses of RegularReference may add more conditions to determine whether this is true.
 	 */
-	public abstract boolean refersTo(DeclaringReference reference);
-	
-	@Override
-	public boolean hasDataflowFromReference(Reference reference) {
-		return reference instanceof DeclaringReference && this.refersTo((DeclaringReference) reference);
-	}
+	public abstract boolean sameEntityAs(DeclaringReference declaringReference);
 
 }

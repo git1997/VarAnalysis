@@ -40,9 +40,9 @@ public class HtmlInputDecl extends DeclaringReference {
 	}
 	
 	@Override
-	public boolean sameAs(Reference reference) {
-		return super.sameAs(reference)
-				&& (getFormName() == null || ((HtmlInputDecl) reference).getFormName() == null || getFormName().equals(((HtmlInputDecl) reference).getFormName()));
+	public boolean sameEntityAs(DeclaringReference declaringReference) {
+		return super.sameEntityAs(declaringReference)
+				&& (getFormName() == null || ((HtmlInputDecl) declaringReference).getFormName() == null || getFormName().equals(((HtmlInputDecl) declaringReference).getFormName()));
 	}
 	
 }

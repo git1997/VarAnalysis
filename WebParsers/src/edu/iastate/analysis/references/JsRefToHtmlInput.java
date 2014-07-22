@@ -24,14 +24,10 @@ public class JsRefToHtmlInput extends RegularReference {
 	}
 
 	@Override
-	public boolean refersTo(DeclaringReference declaringReference) {
-		if (declaringReference instanceof HtmlInputDecl) {
-			HtmlInputDecl htmlInputDecl = (HtmlInputDecl) declaringReference;
-			return getName().equals(htmlInputDecl.getName())
-					&& (htmlInputDecl.getFormName() == null || getFormName().equals(htmlInputDecl.getFormName()));
-		}
-		else
-			return false;
+	public boolean sameEntityAs(DeclaringReference declaringReference) {
+		return declaringReference instanceof HtmlInputDecl 
+				&& hasSameName(declaringReference)
+				&& (getFormName() == null || ((HtmlInputDecl) declaringReference).getFormName() == null || getFormName().equals(((HtmlInputDecl) declaringReference).getFormName()));
 	}
 	
 }

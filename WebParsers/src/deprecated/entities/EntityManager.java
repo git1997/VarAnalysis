@@ -371,7 +371,7 @@ public class EntityManager {
 	 * Determines whether two entities can be linked together to make a MultiEntity.
 	 */
 	public static boolean canLinkEntities(Entity entity1, Entity entity2) {
-		return entity1.getDeclaringReference().sameAs(entity2.getDeclaringReference());
+		return entity1.getDeclaringReference().sameEntityAs(entity2.getDeclaringReference());
 	}
 	
 	/**
@@ -398,11 +398,11 @@ public class EntityManager {
 	 */
 	public static boolean canLinkEntityReference(Entity entity, RegularReference reference) {
 		// TODO
-		return reference.refersTo(entity.getDeclaringReference())
+		return reference.sameEntityAs(entity.getDeclaringReference())
 				//&& (WebEntitiesConfig.DISCARD_CONSTRAINTS_WHEN_COMPARING_ENTITIES
 				&& (false
 						|| reference instanceof PhpRefToHtml 	// Don't consider constraints for PhpRefToHtmlEntity
-						|| reference.getConstraint().satisfies(entity.getConstraint())); 
+						|| reference.getConstraint().implies(entity.getConstraint())); 
 	}
 	
 	/**

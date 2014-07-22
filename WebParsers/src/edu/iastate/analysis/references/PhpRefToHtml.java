@@ -17,17 +17,9 @@ public class PhpRefToHtml extends RegularReference {
 	}
 
 	@Override
-	public boolean refersTo(DeclaringReference declaringReference) {
-		if (declaringReference instanceof HtmlInputDecl) {
-			HtmlInputDecl htmlInputDecl = (HtmlInputDecl) declaringReference;
-			return getName().equals(htmlInputDecl.getName());
-		}
-		else if (declaringReference instanceof HtmlQueryDecl) {
-			HtmlQueryDecl htmlQueryDecl = (HtmlQueryDecl) declaringReference;
-			return getName().equals(htmlQueryDecl.getName());
-		}
-		else
-			return false;
+	public boolean sameEntityAs(DeclaringReference declaringReference) {
+		return (declaringReference instanceof HtmlInputDecl || declaringReference instanceof HtmlQueryDecl)
+				&& hasSameName(declaringReference);
 		
 		/*
 		 * TODO Compare pages
