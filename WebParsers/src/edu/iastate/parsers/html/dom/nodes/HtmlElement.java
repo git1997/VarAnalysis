@@ -100,6 +100,10 @@ public class HtmlElement extends HtmlNode {
 		return openTag.getAttributes();
 	}
 	
+	public HtmlAttribute getAttribute(String attributeName) {
+		return openTag.getAttribute(attributeName);
+	}
+	
 	public HtmlAttributeValue getAttributeValue(String attributeName) {
 		return openTag.getAttributeValue(attributeName);
 	}

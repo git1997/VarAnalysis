@@ -41,7 +41,7 @@ public abstract class PositionRange {
 	}
 	
 	/**
-	 * Returns the end position of the position range
+	 * Returns the end position of the position range (exclusive)
 	 */
 	public Position getEndPosition() {
 		return getPositionAtRelativeOffset(getLength());

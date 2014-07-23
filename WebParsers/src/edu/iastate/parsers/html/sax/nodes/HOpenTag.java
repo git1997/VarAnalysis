@@ -57,12 +57,20 @@ public class HOpenTag extends HtmlSaxNode {
 		return attributes.get(attributes.size() - 1);
 	}
 	
-	public HtmlAttributeValue getAttributeValue(String attributeName) {
+	public HtmlAttribute getAttribute(String attributeName) {
 		for (HtmlNode attribute : attributes) {
 			if (((HtmlAttribute) attribute).getName().equals(attributeName.toLowerCase()))
-				return ((HtmlAttribute) attribute).getAttributeValue();
+				return (HtmlAttribute) attribute;
 		}
 		return null;
+	}
+	
+	public HtmlAttributeValue getAttributeValue(String attributeName) {
+		HtmlAttribute attribute = getAttribute(attributeName);
+		if (attribute != null)
+			return attribute.getAttributeValue();
+		else
+			return null;
 	}
 	
 	public HOpenTag clone() {

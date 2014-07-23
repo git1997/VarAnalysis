@@ -9,10 +9,15 @@ import java.util.LinkedList;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByName;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByPosition;
 import edu.iastate.analysis.references.detection.DataFlowManager;
+import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
+import edu.iastate.parsers.html.dom.nodes.HtmlAttributeValue;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
+import edu.iastate.parsers.html.dom.nodes.HtmlElement;
+import edu.iastate.parsers.html.dom.nodes.HtmlNodeVisitor;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.position.Position;
 import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 
 /**
  * 
@@ -76,7 +81,8 @@ public class ReferenceManager {
 	/**
 	 * Resolves dataflows
 	 */
-	public void resolveDataflows(HtmlDocument htmlDocument) {        
+	public void resolveDataflows(HtmlDocument htmlDocument) {
+		// Get all the references
 		Collection<Reference> references = mapLocationToReference.values();
 		
 		// Use a map to speed up searching
@@ -87,13 +93,21 @@ public class ReferenceManager {
 			mapNameToReferences.get(reference.getName()).add(reference);
 		}
 		
+		// Detect data flows for HTML references
+		detectDataFlowsForHtmlReferences(htmlDocument);
+		
+		/*
+		 * Create data flow links among references
+		 */
 		for (Reference reference1 : references) {
 			if (reference1 instanceof DeclaringReference) {
-				// [1] Handle DeclaringReference  
-				PositionRange range = getDataFlowManager().getRefLocationsOfDecl((DeclaringReference) reference1);
+				// [1] Handle DeclaringReference
+				PositionRange range = dataFlowManager.getRefLocationsOfDecl((DeclaringReference) reference1);
 				if (range != null)
 					for (Reference reference2 : findReferencesInRange(range))
-						addDataflow(reference1, reference2);
+						if (reference1 instanceof PhpVariableDecl && (reference2 instanceof PhpVariableRef || reference2 instanceof PhpRefToHtml || reference2 instanceof PhpRefToSqlTableColumn)
+								|| !(reference1 instanceof PhpVariableDecl))
+							addDataflow(reference1, reference2);
 			}
 			else {
 				if (reference1 instanceof PhpVariableRef || reference1 instanceof JsVariableRef) {
@@ -111,6 +125,33 @@ public class ReferenceManager {
 		}
 	}
 	
+	/**
+	 * Detects data flows for HTML references
+	 */
+	private void detectDataFlowsForHtmlReferences(HtmlDocument htmlDocument) {
+		(new HtmlNodeVisitor() {
+			public void visitElement(HtmlElement htmlElement) {
+				super.visitElement(htmlElement);
+				
+				HtmlAttributeValue name = htmlElement.getAttributeValue("name");
+				if (name != null) {
+					Reference reference = mapLocationToReference.get(name.getLocation().getStartPosition().toString());
+					if (reference != null) {
+						HtmlAttribute value = htmlElement.getAttribute("value");
+						if (value != null) {
+							Position endPosition = value.getLocation().getEndPosition();
+							PositionRange range = new Range(endPosition.getFile(), endPosition.getOffset(), 10);
+							dataFlowManager.putMapDeclToRefLocations((DeclaringReference) reference, range);
+						}
+					}
+				}
+			}
+		}).visitDocument(htmlDocument);
+	}
+	
+	/**
+	 * Finds references at a location
+	 */
 	private LinkedList<Reference> findReferencesInRange(PositionRange range) {
 		LinkedList<Reference> references = new LinkedList<Reference>();
 
@@ -124,36 +165,13 @@ public class ReferenceManager {
 		return references;
 	}
 	
+	/**
+	 * Adds a data flow link between two references
+	 */
 	private void addDataflow(Reference reference1, Reference reference2) {
 		// TODO Consider constraint or not?
 		if (ConstraintFactory.createAndConstraint(reference1.getConstraint(), reference2.getConstraint()).isSatisfiable()) 
 			reference1.addDataflowFromReference(reference2);
 	}
-	
-//
-//		(new HtmlNodeVisitor() {
-//			public void visitElement(HtmlElement htmlElement) {
-//				super.visitElement(htmlElement);
-//				
-//				HtmlAttributeValue attributeValue = htmlElement.getAttributeValue("name");
-//				if (attributeValue != null) {
-//					Reference reference = findReferenceAtLocation(attributeValue.getLocation());
-//					if (reference != null) {
-//						for (HtmlAttribute attribute : htmlElement.getAttributes()) {
-//							if (isSymbolicValue(attribute.getValue())) {
-//								Reference ref2 = findReferenceAtApproxLocation(attribute.getLocation());
-//								if (ref2 != null)
-//									reference.addDataflowFromReference(ref2);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}).visitDocument(htmlDocument);
-//	}
-//	
-//	private boolean isSymbolicValue(String value) {
-//		return value.matches("1*");
-//	}
 	
 }
