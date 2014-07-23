@@ -24,12 +24,22 @@ public class PhpRefToSqlTableColumn extends RegularReference {
 	public String getScope() {
 		return scope;
 	}
-
+	
+	@Override
+	public boolean sameEntityAs(RegularReference regularReference) {
+		return super.sameEntityAs(regularReference)
+				&& getScope().equals(((PhpRefToSqlTableColumn) regularReference).getScope());
+	}
+	
 	@Override
 	public boolean sameEntityAs(DeclaringReference declaringReference) {
-		return declaringReference instanceof SqlTableColumnDecl
-				&& hasSameName(declaringReference)
+		return super.sameEntityAs(declaringReference)
 				&& getScope().equals(((SqlTableColumnDecl) declaringReference).getScope());
+	}
+
+	@Override
+	public boolean hasMatchedType(DeclaringReference declaringReference) {
+		return declaringReference instanceof SqlTableColumnDecl;
 	}
 	
 }

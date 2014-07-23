@@ -5,14 +5,16 @@ Reference
 		HtmlInputDecl
 		HtmlQueryDecl
 		JsFunctionDecl
+		JsObjectFieldDecl
 		JsVariableDecl
 		PhpVariableDecl
 		SqlTableColumnDecl
 	RegularReference
 		JsFunctionCall
-		JsRefToHtmlForm
+		JsObjectFieldRef
+			JsRefToHtmlForm
+			JsRefToHtmlInput
 		JsRefToHtmlId
-		JsRefToHtmlInput
 		JsVariableRef
 		PhpRefToHtml
 		PhpRefToSqlTableColumn

@@ -17,10 +17,10 @@ public class PhpRefToHtml extends RegularReference {
 	}
 
 	@Override
-	public boolean sameEntityAs(DeclaringReference declaringReference) {
-		return (declaringReference instanceof HtmlInputDecl || declaringReference instanceof HtmlQueryDecl)
-				&& hasSameName(declaringReference);
-		
+	public boolean hasMatchedType(DeclaringReference declaringReference) {
+		return declaringReference instanceof HtmlInputDecl || declaringReference instanceof HtmlQueryDecl;
+	}
+	
 		/*
 		 * TODO Compare pages
 		 */
@@ -58,6 +58,4 @@ public class PhpRefToHtml extends RegularReference {
 //			}
 //		}
 		
-	}
-
 }

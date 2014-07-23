@@ -25,6 +25,8 @@ public class ShowStatisticsOnReferences {
 		"JsRefToHtmlForm",
 		"JsRefToHtmlInput",
 		"JsRefToHtmlId",
+		"JsObjectFieldDecl",
+		"JsObjectFieldRef",
 		"JsFunctionDecl",
 		"JsFunctionCall",
 		"JsVariableDecl",

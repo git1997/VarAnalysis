@@ -31,7 +31,7 @@ public class DataFlowManager {
 	}
 	
 	public HashSet<DeclaringReference> getDeclsOfRef(RegularReference regularReference) {
-		return new HashSet<DeclaringReference>(mapRefToDecls.get(regularReference));
+		return mapRefToDecls.containsKey(regularReference) ? new HashSet<DeclaringReference>(mapRefToDecls.get(regularReference)) : new HashSet<DeclaringReference>();
 	}
 	
 }

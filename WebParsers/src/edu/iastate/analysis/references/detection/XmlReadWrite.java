@@ -14,6 +14,8 @@ import edu.iastate.analysis.references.HtmlInputDecl;
 import edu.iastate.analysis.references.HtmlQueryDecl;
 import edu.iastate.analysis.references.JsFunctionCall;
 import edu.iastate.analysis.references.JsFunctionDecl;
+import edu.iastate.analysis.references.JsObjectFieldDecl;
+import edu.iastate.analysis.references.JsObjectFieldRef;
 import edu.iastate.analysis.references.JsRefToHtmlForm;
 import edu.iastate.analysis.references.JsRefToHtmlId;
 import edu.iastate.analysis.references.JsRefToHtmlInput;
@@ -142,15 +144,21 @@ public class XmlReadWrite {
 		else if (type.equals("JsFunctionDecl"))
 			reference = new JsFunctionDecl(name, location);
 		
+		else if (type.equals("JsObjectFieldDecl"))
+			reference = new JsObjectFieldDecl(name, location, null); // FIXME Should not use null
+		
+		else if (type.equals("JsObjectFieldRef"))
+			reference = new JsObjectFieldRef(name, location, null); // FIXME Should not use null
+		
 		else if (type.equals("JsRefToHtmlForm"))
-			reference = new JsRefToHtmlForm(name, location);
+			reference = new JsRefToHtmlForm(name, location, null); // FIXME Should not use null
 		
 		else if (type.equals("JsRefToHtmlId"))
 			reference = new JsRefToHtmlId(name, location);
 		
 		else if (type.equals("JsRefToHtmlInput")) {
 			String formName = referenceElement.getAttribute("FormName");
-			reference = new JsRefToHtmlInput(name, location, formName);
+			reference = new JsRefToHtmlInput(name, location, null); // FIXME Should not use null
 		}
 		
 		else if (type.equals("JsVariableDecl"))

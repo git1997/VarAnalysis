@@ -14,9 +14,8 @@ public class JsVariableRef extends RegularReference {
 	}
 
 	@Override
-	public boolean sameEntityAs(DeclaringReference declaringReference) {
-		return declaringReference instanceof JsVariableDecl
-				&& hasSameName(declaringReference);
+	public boolean hasMatchedType(DeclaringReference declaringReference) {
+		return declaringReference instanceof JsVariableDecl;
 	}
 
 }

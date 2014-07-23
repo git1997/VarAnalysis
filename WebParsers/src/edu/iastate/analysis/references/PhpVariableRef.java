@@ -25,10 +25,20 @@ public class PhpVariableRef extends RegularReference {
 	}
 	
 	@Override
+	public boolean sameEntityAs(RegularReference regularReference) {
+		return super.sameEntityAs(regularReference)
+				&& getScope().equals(((PhpVariableRef) regularReference).getScope());
+	}
+	
+	@Override
 	public boolean sameEntityAs(DeclaringReference declaringReference) {
-		return declaringReference instanceof PhpVariableDecl
-				&& hasSameName(declaringReference)
+		return super.sameEntityAs(declaringReference)
 				&& getScope().equals(((PhpVariableDecl) declaringReference).getScope());
+	}
+	
+	@Override
+	public boolean hasMatchedType(DeclaringReference declaringReference) {
+		return declaringReference instanceof PhpVariableDecl;
 	}
 	
 }

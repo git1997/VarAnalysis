@@ -7,27 +7,30 @@ import edu.iastate.symex.position.PositionRange;
  * @author HUNG
  *
  */
-public class JsRefToHtmlInput extends RegularReference {
+public class JsRefToHtmlInput extends JsObjectFieldRef {
 
-	private String formName;
-	
 	/**
 	 * Constructor
 	 */
-	public JsRefToHtmlInput(String name, PositionRange location, String formName) {
-		super(name, location);
-		this.formName = formName;
+	public JsRefToHtmlInput(String name, PositionRange location, JsRefToHtmlForm jsRefToHtmlForm) {
+		super(name, location, jsRefToHtmlForm);
 	}
 	
 	public String getFormName() {
-		return formName;
+		return ((JsRefToHtmlForm) object).getName();
+	}
+	
+	@Override
+	public boolean sameEntityAs(DeclaringReference declaringReference) {
+		// Don't use this: return super.sameEntityAs(declaringReference);
+		return hasMatchedType(declaringReference) 
+				&& hasSameName(declaringReference) 
+				&& getFormName().equals(((HtmlInputDecl) declaringReference).getFormName());
 	}
 
 	@Override
-	public boolean sameEntityAs(DeclaringReference declaringReference) {
-		return declaringReference instanceof HtmlInputDecl 
-				&& hasSameName(declaringReference)
-				&& (getFormName() == null || ((HtmlInputDecl) declaringReference).getFormName() == null || getFormName().equals(((HtmlInputDecl) declaringReference).getFormName()));
+	public boolean hasMatchedType(DeclaringReference declaringReference) {
+		return declaringReference instanceof HtmlInputDecl; 
 	}
 	
 }

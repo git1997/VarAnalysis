@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import org.eclipse.wst.jsdt.core.dom.ASTNode;
 import org.eclipse.wst.jsdt.core.dom.ASTVisitor;
@@ -27,6 +28,8 @@ import org.eclipse.wst.jsdt.core.dom.WhileStatement;
 import edu.iastate.analysis.references.DeclaringReference;
 import edu.iastate.analysis.references.JsFunctionCall;
 import edu.iastate.analysis.references.JsFunctionDecl;
+import edu.iastate.analysis.references.JsObjectFieldDecl;
+import edu.iastate.analysis.references.JsObjectFieldRef;
 import edu.iastate.analysis.references.JsRefToHtmlForm;
 import edu.iastate.analysis.references.JsRefToHtmlId;
 import edu.iastate.analysis.references.JsRefToHtmlInput;
@@ -34,6 +37,7 @@ import edu.iastate.analysis.references.JsVariableDecl;
 import edu.iastate.analysis.references.JsVariableRef;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.ReferenceManager;
+import edu.iastate.analysis.references.RegularReference;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.position.PositionRange;
@@ -147,38 +151,6 @@ public class JavascriptVisitor extends ASTVisitor {
 	}
 	
 	/**
-	 * Visits a field access.
-	 */
-	public boolean visit(FieldAccess fieldAccess) {
-		Expression expression = fieldAccess.getExpression();
-		SimpleName fieldName = fieldAccess.getName();
-		
-		if (isJavascriptKeyword(fieldName.getIdentifier())) {
-			// Do nothing
-		}
-		else if (expression.toString().endsWith("document")) {
-			// Add a JsRefToHtmlForm reference
-			Reference reference = new JsRefToHtmlForm(fieldName.getIdentifier(), getLocation(fieldName));
-			addReference(reference);
-		}
-		else if (expression instanceof FieldAccess && ((FieldAccess) expression).getExpression().toString().endsWith("document")) {
-			String formName = ((FieldAccess) expression).getName().getIdentifier();
-			
-			// Add a JsRefToHtmlInput reference
-			Reference reference = new JsRefToHtmlInput(fieldName.getIdentifier(), getLocation(fieldName), formName);
-			addReference(reference);
-		}
-		
-		expression.accept(this);
-		
-		return false;
-	}
-	
-	/*
-	 * Handle JavaScript variables.
-	 */
-	
-	/**
 	 * Visits a variable declaration statement.
 	 */
 	public boolean visit(VariableDeclarationStatement variableDeclarationStatement) {
@@ -188,6 +160,7 @@ public class JavascriptVisitor extends ASTVisitor {
 			VariableDeclarationFragment variableDeclarationFragment = (VariableDeclarationFragment) object;
 			SimpleName simpleName = variableDeclarationFragment.getName();
 			
+			// Found a JsVariableDecl
 			if (!isJavascriptKeyword(simpleName.getIdentifier()))
 				foundVariableDecl(simpleName, variableDeclarationFragment.getInitializer());
 			
@@ -203,16 +176,34 @@ public class JavascriptVisitor extends ASTVisitor {
 	 */
 	public boolean visit(Assignment assignment) {
 		Expression leftHandSide = assignment.getLeftHandSide();
+		Expression rightHandSide = assignment.getRightHandSide();
+		
 		if (leftHandSide instanceof SimpleName) {
 			SimpleName simpleName = (SimpleName) leftHandSide;
 			
+			// Found a JsVariableDecl
 			if (!isJavascriptKeyword(simpleName.getIdentifier()))
-				foundVariableDecl(simpleName, assignment.getRightHandSide());
+				foundVariableDecl(simpleName, rightHandSide);
+		}
+		else if (leftHandSide instanceof FieldAccess
+				// For now consider "value" object fields only
+				&& ((FieldAccess) leftHandSide).getName().getIdentifier().equals("value")) { 
+			
+			FieldAccess fieldAccess = (FieldAccess) leftHandSide;
+			Expression expression = fieldAccess.getExpression();
+			SimpleName name = fieldAccess.getName();
+			
+			expression.accept(this);
+			Reference newReference = findLastCreatedReferenceAtNode(expression);
+			
+			// Found a JsObjectFieldDecl
+			if (newReference != null && !isJavascriptKeyword(name.getIdentifier()))
+				foundJsObjectFieldDecl(fieldAccess, (RegularReference) newReference, rightHandSide);
 		}
 		else
 			leftHandSide.accept(this);
 		
-		assignment.getRightHandSide().accept(this);
+		rightHandSide.accept(this);
 		
 		return false;
 	}
@@ -221,9 +212,32 @@ public class JavascriptVisitor extends ASTVisitor {
 	 * Visits a simple name.
 	 */
 	public boolean visit(SimpleName simpleName) {
+		// Found a JsVariableRef
 		if (!isJavascriptKeyword(simpleName.getIdentifier()))
 			foundVariableRef(simpleName);
 
+		return false;
+	}
+	
+	/**
+	 * Visits a field access.
+	 */
+	public boolean visit(FieldAccess fieldAccess) {
+ 		Expression expression = fieldAccess.getExpression();
+		SimpleName name = fieldAccess.getName();
+		
+		Reference newReference;
+		if (expression instanceof SimpleName && ((SimpleName) expression).getIdentifier().equals("document"))
+			newReference = DOCUMENT;
+		else {
+			expression.accept(this);
+			newReference = findLastCreatedReferenceAtNode(expression);
+		}
+		
+		// Found a JsObjectFieldRef
+		if (newReference != null && !isJavascriptKeyword(name.getIdentifier()))
+			foundJsObjectFieldRef(fieldAccess, (RegularReference) newReference);
+		
 		return false;
 	}
 	
@@ -253,6 +267,51 @@ public class JavascriptVisitor extends ASTVisitor {
 		 */
 		HashSet<DeclaringReference> decls = new HashSet<DeclaringReference>(env.getVariableDeclarations(jsVariableRef.getName()));
 		referenceManager.getDataFlowManager().putMapRefToDecls(jsVariableRef, decls);
+	}
+	
+	private void foundJsObjectFieldDecl(FieldAccess fieldAccess, RegularReference object, Expression rightHandSide) {
+		String name = fieldAccess.getName().getIdentifier();
+		PositionRange location = getLocation(fieldAccess.getName());
+		
+		// Add a JsObjectFieldDecl
+		JsObjectFieldDecl jsObjectFieldDecl = new JsObjectFieldDecl(name, location, object);
+		addReference(jsObjectFieldDecl);
+		
+		/*
+		 * Record data flows
+		 */
+		HashSet<JsVariableDecl> decls = new HashSet<JsVariableDecl>();
+		decls.add(jsObjectFieldDecl);
+		env.setVariableDeclarations(jsObjectFieldDecl.getFullyQualifiedName(), decls);
+		
+		if (rightHandSide != null)
+			referenceManager.getDataFlowManager().putMapDeclToRefLocations(jsObjectFieldDecl, getLocation(rightHandSide));
+	}
+	
+	private void foundJsObjectFieldRef(FieldAccess fieldAccess, RegularReference object) {
+		String name = fieldAccess.getName().getIdentifier();
+		PositionRange location = getLocation(fieldAccess.getName());
+		
+		JsObjectFieldRef reference;
+		if (object.getName().equals("document")) {
+			// Add a JsRefToHtmlForm
+			reference = new JsRefToHtmlForm(name, location, object);
+		}
+		else if (object instanceof JsRefToHtmlForm) {
+			// Add a JsRefToHtmlInput
+			reference = new JsRefToHtmlInput(name, location, (JsRefToHtmlForm) object);
+		}
+		else {
+			// Add a JsObjectFieldRef
+			reference = new JsObjectFieldRef(name, location, object);
+		}
+		addReference(reference);
+		
+		/*
+		 * Record data flows
+		 */
+		HashSet<DeclaringReference> decls = new HashSet<DeclaringReference>(env.getVariableDeclarations(reference.getFullyQualifiedName()));
+		referenceManager.getDataFlowManager().putMapRefToDecls(reference, decls);
 	}
 	
 	/*
@@ -379,8 +438,18 @@ public class JavascriptVisitor extends ASTVisitor {
 	 * Utility methods
 	 */
 	
+	private static final JsVariableRef DOCUMENT = new JsVariableRef("document", PositionRange.UNDEFINED);
+	
 	private PositionRange getLocation(ASTNode astNode) {
 		return new RelativeRange(javascriptLocation, astNode.getStartPosition(), astNode.getLength());
+	}
+	
+	private Reference findLastCreatedReferenceAtNode(ASTNode astNode) {
+		LinkedList<Reference> references = referenceManager.findReferencesInRange(getLocation(astNode));
+		if (!references.isEmpty())
+			return references.getLast();
+		else
+			return null;
 	}
 	
 	/**

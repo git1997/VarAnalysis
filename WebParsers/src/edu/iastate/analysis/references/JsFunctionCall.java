@@ -14,9 +14,8 @@ public class JsFunctionCall extends RegularReference {
 	}
 
 	@Override
-	public boolean sameEntityAs(DeclaringReference declaringReference) {
-		return declaringReference instanceof JsFunctionDecl
-				&& hasSameName(declaringReference);
+	public boolean hasMatchedType(DeclaringReference declaringReference) {
+		return declaringReference instanceof JsFunctionDecl;
 	}
 	
 }
