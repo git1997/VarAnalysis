@@ -12,7 +12,6 @@ import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Identifier;
 import org.eclipse.php.internal.core.ast.nodes.ReturnStatement;
-import org.eclipse.php.internal.core.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 import edu.iastate.analysis.references.DeclaringReference;
 import edu.iastate.analysis.references.PhpFunctionCall;
@@ -30,8 +29,8 @@ import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.php.nodes.ExpressionNode;
 import edu.iastate.symex.php.nodes.FunctionInvocationNode;
-import edu.iastate.symex.php.nodes.ScalarNode;
 import edu.iastate.symex.php.nodes.VariableNode;
 import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.PositionRange;
@@ -192,14 +191,11 @@ public class PhpVisitor implements IEntityDetectionListener {
 	}
 	
 	private LiteralNode getArrayIndexOrNull(ArrayAccess arrayAccess, Env env) {
-		if (arrayAccess.getIndex() instanceof Scalar) {
-			Scalar arrayIndex = (Scalar) arrayAccess.getIndex();
-			DataNode resolvedIndex = new ScalarNode(arrayIndex).execute(env);
-			
-			if (resolvedIndex instanceof LiteralNode)
-				return (LiteralNode) resolvedIndex;
-		}
-		return null;
+		DataNode resolvedIndex = ExpressionNode.createInstance(arrayAccess.getIndex()).execute(env);
+		if (resolvedIndex instanceof LiteralNode)
+			return (LiteralNode) resolvedIndex;
+		else
+			return null;
 	}
 
 	@Override
