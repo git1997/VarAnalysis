@@ -134,7 +134,7 @@ public class ReferenceManager {
 				PositionRange range = dataFlowManager.getRefLocationsOfDecl((DeclaringReference) reference1);
 				if (range != null)
 					for (Reference reference2 : findReferencesInRange(range))
-						if (reference1 instanceof PhpVariableDecl && (reference2 instanceof PhpVariableRef || reference2 instanceof PhpRefToHtml || reference2 instanceof PhpRefToSqlTableColumn)
+						if (reference1 instanceof PhpVariableDecl && (reference2 instanceof PhpVariableRef || reference2 instanceof PhpRefToHtml || reference2 instanceof PhpRefToSqlTableColumn || reference2 instanceof PhpFunctionCall)
 								|| !(reference1 instanceof PhpVariableDecl))
 							addDataflow(reference1, reference2);
 			}
@@ -153,7 +153,7 @@ public class ReferenceManager {
 						addDataflow(reference1, reference2);
 					
 				// [4] Handle data flows between PhpRefToHtml and JsObjectFieldDecl
-				if (reference1 instanceof PhpRefToHtml)
+				if (reference1 instanceof PhpRefToHtml && mapNameToReferences.containsKey("value"))
 					for (Reference reference2 : mapNameToReferences.get("value"))
 						if (reference2 instanceof JsObjectFieldDecl 
 								&& ((JsObjectFieldDecl) reference2).getObject() instanceof JsRefToHtmlInput

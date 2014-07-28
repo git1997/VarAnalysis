@@ -16,6 +16,7 @@ import org.eclipse.wst.jsdt.core.dom.ForStatement;
 import org.eclipse.wst.jsdt.core.dom.FunctionDeclaration;
 import org.eclipse.wst.jsdt.core.dom.FunctionInvocation;
 import org.eclipse.wst.jsdt.core.dom.IfStatement;
+import org.eclipse.wst.jsdt.core.dom.ReturnStatement;
 import org.eclipse.wst.jsdt.core.dom.SimpleName;
 import org.eclipse.wst.jsdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.wst.jsdt.core.dom.Statement;
@@ -40,6 +41,7 @@ import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.analysis.references.RegularReference;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
+import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.RelativeRange;
 
@@ -94,8 +96,11 @@ public class JavascriptVisitor extends ASTVisitor {
 			SimpleName functionName = functionDeclaration.getName();
 			
 			// Add a JsFunctionDecl reference
-			Reference reference = new JsFunctionDecl(functionName.getIdentifier(), getLocation(functionName));
+			JsFunctionDecl reference = new JsFunctionDecl(functionName.getIdentifier(), getLocation(functionName));
 			addReference(reference);
+			
+			// Set current function
+			env.setCurrentJsFunctionDecl(reference);
 		}
 		
 		for (Object object : functionDeclaration.parameters()) {
@@ -145,6 +150,28 @@ public class JavascriptVisitor extends ASTVisitor {
 		
 		if (functionInvocation.getExpression() != null) {
 			functionInvocation.getExpression().accept(this);
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Visits a return statement.
+	 */
+	public boolean visit(ReturnStatement returnStatement) {
+		returnStatement.getExpression().accept(this);
+		
+		JsFunctionDecl currentJsFunctionDecl = env.getCurrentJsFunctionDeclInAllScopes();
+		Reference newReference = findLastCreatedReferenceAtNode(returnStatement.getExpression());
+		
+		/*
+		 * Record data flows
+		 */
+		if (currentJsFunctionDecl != null && newReference != null) {
+			PositionRange range1 = referenceManager.getDataFlowManager().getRefLocationsOfDecl(currentJsFunctionDecl);
+			PositionRange range2 = newReference.getLocation();
+			PositionRange newRange = range1 != null ? new CompositeRange(range1, range2) : range2;
+			referenceManager.getDataFlowManager().putMapDeclToRefLocations(currentJsFunctionDecl, newRange);
 		}
 		
 		return false;
@@ -265,7 +292,7 @@ public class JavascriptVisitor extends ASTVisitor {
 		/*
 		 * Record data flows
 		 */
-		HashSet<DeclaringReference> decls = new HashSet<DeclaringReference>(env.getVariableDeclarations(jsVariableRef.getName()));
+		HashSet<DeclaringReference> decls = new HashSet<DeclaringReference>(env.getVariableDeclarationsInAllScopes(jsVariableRef.getName()));
 		referenceManager.getDataFlowManager().putMapRefToDecls(jsVariableRef, decls);
 	}
 	
@@ -310,7 +337,7 @@ public class JavascriptVisitor extends ASTVisitor {
 		/*
 		 * Record data flows
 		 */
-		HashSet<DeclaringReference> decls = new HashSet<DeclaringReference>(env.getVariableDeclarations(reference.getFullyQualifiedName()));
+		HashSet<DeclaringReference> decls = new HashSet<DeclaringReference>(env.getVariableDeclarationsInAllScopes(reference.getFullyQualifiedName()));
 		referenceManager.getDataFlowManager().putMapRefToDecls(reference, decls);
 	}
 	
@@ -428,8 +455,8 @@ public class JavascriptVisitor extends ASTVisitor {
 		variableNames.addAll(env2.getVariablesInCurrentScope());
 		
 		for (String variableName : variableNames) {
-			HashSet<JsVariableDecl> variableDeclarations = env1.getVariableDeclarations(variableName);
-			variableDeclarations.addAll(env2.getVariableDeclarations(variableName));
+			HashSet<JsVariableDecl> variableDeclarations = env1.getVariableDeclarationsInAllScopes(variableName);
+			variableDeclarations.addAll(env2.getVariableDeclarationsInAllScopes(variableName));
 			prevEnv.setVariableDeclarations(variableName, variableDeclarations);
 		}
 	}
@@ -480,6 +507,7 @@ public class JavascriptVisitor extends ASTVisitor {
 		private Constraint constraint;
 		
 		private HashMap<String, HashSet<JsVariableDecl>> variableTable = new HashMap<String, HashSet<JsVariableDecl>>();
+		private JsFunctionDecl currentJsFunctionDecl = null;
 		
 		public Env(Env outerScopeEnv, Constraint constraint) {
 			this.outerScopeEnv = outerScopeEnv;
@@ -494,21 +522,34 @@ public class JavascriptVisitor extends ASTVisitor {
 			return constraint;
 		}
 		
+		public void setVariableDeclarations(String variableName, HashSet<JsVariableDecl> variableDeclarations) {
+			variableTable.put(variableName, variableDeclarations);
+		}
+		
 		public HashSet<String> getVariablesInCurrentScope() {
 			return new HashSet<String>(variableTable.keySet());
 		}
 		
-		public HashSet<JsVariableDecl> getVariableDeclarations(String variableName) {
+		public HashSet<JsVariableDecl> getVariableDeclarationsInAllScopes(String variableName) {
 			if (variableTable.containsKey(variableName))
 				return new HashSet<JsVariableDecl>(variableTable.get(variableName));
 			else if (outerScopeEnv != null)
-				return outerScopeEnv.getVariableDeclarations(variableName);
+				return outerScopeEnv.getVariableDeclarationsInAllScopes(variableName);
 			else
 				return new HashSet<JsVariableDecl>();
 		}
 		
-		public void setVariableDeclarations(String variableName, HashSet<JsVariableDecl> variableDeclarations) {
-			variableTable.put(variableName, variableDeclarations);
+		public void setCurrentJsFunctionDecl(JsFunctionDecl currentJsFunctionDecl) {
+			this.currentJsFunctionDecl = currentJsFunctionDecl;
+		}
+		
+		public JsFunctionDecl getCurrentJsFunctionDeclInAllScopes() {
+			if (currentJsFunctionDecl != null)
+				return currentJsFunctionDecl;
+			else if (outerScopeEnv != null)
+				return outerScopeEnv.getCurrentJsFunctionDeclInAllScopes();
+			else
+				return null;
 		}
 		
 	}

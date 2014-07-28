@@ -71,6 +71,13 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 */
 	public DataNode execute(Env env, ObjectNode objectNode) {
 		/*
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB ANALYSIS CODE
+		WebAnalysis.onFunctionInvocationExecute((FunctionInvocation) this.getAstNode(), env);
+		// END OF WEB ANALYSIS CODE
+		
+		/*
 		 * Get the function name
 		 */
 		String functionName = getResolvedFunctionNameOrNull(env);

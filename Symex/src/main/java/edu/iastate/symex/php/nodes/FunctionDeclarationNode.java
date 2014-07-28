@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.eclipse.php.internal.core.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 
+import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 
@@ -66,6 +67,13 @@ public class FunctionDeclarationNode extends StatementNode {
 
 	@Override
 	public DataNode execute(Env env) {
+		/*
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB ANALYSIS CODE
+		WebAnalysis.onFunctionDeclarationExecute((FunctionDeclaration) this.getAstNode(), env);
+		// END OF WEB ANALYSIS CODE
+		
 		/*
 		 * The following code is used from BabelRef to identify PHP variable entities.
 		 */

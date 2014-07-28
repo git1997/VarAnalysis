@@ -7,11 +7,16 @@ import java.util.HashSet;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
+import org.eclipse.php.internal.core.ast.nodes.Expression;
+import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Identifier;
+import org.eclipse.php.internal.core.ast.nodes.ReturnStatement;
 import org.eclipse.php.internal.core.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 import edu.iastate.analysis.references.DeclaringReference;
+import edu.iastate.analysis.references.PhpFunctionCall;
+import edu.iastate.analysis.references.PhpFunctionDecl;
 import edu.iastate.analysis.references.PhpRefToHtml;
 import edu.iastate.analysis.references.PhpRefToSqlTableColumn;
 import edu.iastate.analysis.references.PhpVariableDecl;
@@ -28,6 +33,7 @@ import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.php.nodes.FunctionInvocationNode;
 import edu.iastate.symex.php.nodes.ScalarNode;
 import edu.iastate.symex.php.nodes.VariableNode;
+import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.Range;
 
@@ -46,6 +52,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 	 * Used to detect data flows
 	 */
 	private HashMap<PhpVariable, HashSet<PhpVariableDecl>> variableTable = new HashMap<PhpVariable, HashSet<PhpVariableDecl>>();
+	private PhpFunctionDecl currentPhpFunctionDecl = null;
 	
 	/**
 	 * Constructor
@@ -253,6 +260,43 @@ public class PhpVisitor implements IEntityDetectionListener {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public void onFunctionDeclarationExecute(FunctionDeclaration functionDeclaration, Env env) {
+		/*
+		 * Detect function declaration
+		 */
+		PhpFunctionDecl reference = new PhpFunctionDecl(functionDeclaration.getFunctionName().getName(), getLocation(functionDeclaration.getFunctionName(), env));
+		addReference(reference, env);
+		
+		// Set current function
+		currentPhpFunctionDecl = reference;
+	}
+
+	@Override
+	public void onFunctionInvocationExecute(FunctionInvocation functionInvocation, Env env) {
+		/*
+		 * Detect function call
+		 */
+		Expression name = functionInvocation.getFunctionName().getName();
+		if (name instanceof Identifier) {
+			Reference reference = new PhpFunctionCall(((Identifier) name).getName(), getLocation(name, env));
+			addReference(reference, env);
+		}
+	}
+
+	@Override
+	public void onReturnStatementExecute(ReturnStatement returnStatement, Env env) {
+		/*
+		 * Record data flows
+		 */
+		if (currentPhpFunctionDecl != null && currentPhpFunctionDecl.getName().equals(env.peekFunctionFromStack())) {
+			PositionRange range1 = referenceManager.getDataFlowManager().getRefLocationsOfDecl(currentPhpFunctionDecl);
+			PositionRange range2 = getLocation(returnStatement.getExpression(), env);
+			PositionRange newRange = range1 != null ? new CompositeRange(range1, range2) : range2;
+			referenceManager.getDataFlowManager().putMapDeclToRefLocations(currentPhpFunctionDecl, newRange);
+		}
 	}
 	
 	/*

@@ -21,6 +21,8 @@ import edu.iastate.analysis.references.JsRefToHtmlId;
 import edu.iastate.analysis.references.JsRefToHtmlInput;
 import edu.iastate.analysis.references.JsVariableDecl;
 import edu.iastate.analysis.references.JsVariableRef;
+import edu.iastate.analysis.references.PhpFunctionCall;
+import edu.iastate.analysis.references.PhpFunctionDecl;
 import edu.iastate.analysis.references.PhpRefToHtml;
 import edu.iastate.analysis.references.PhpRefToSqlTableColumn;
 import edu.iastate.analysis.references.PhpVariableDecl;
@@ -157,7 +159,7 @@ public class XmlReadWrite {
 			reference = new JsRefToHtmlId(name, location);
 		
 		else if (type.equals("JsRefToHtmlInput")) {
-			String formName = referenceElement.getAttribute("FormName");
+			//String formName = referenceElement.getAttribute("FormName");
 			reference = new JsRefToHtmlInput(name, location, null); // FIXME Should not use null
 		}
 		
@@ -166,6 +168,12 @@ public class XmlReadWrite {
 		
 		else if (type.equals("JsVariableRef"))
 			reference = new JsVariableRef(name, location);
+		
+		else if (type.equals("PhpFunctionCall"))
+			reference = new PhpFunctionCall(name, location);
+		
+		else if (type.equals("PhpFunctionDecl"))
+			reference = new PhpFunctionDecl(name, location);
 		
 		else if (type.equals("PhpRefToHtml"))
 			reference = new PhpRefToHtml(name, location);
