@@ -4,7 +4,6 @@ import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
-import org.eclipse.php.internal.core.ast.nodes.ReturnStatement;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 
 import edu.iastate.symex.core.Env;
@@ -64,12 +63,9 @@ public class WebAnalysis {
 		 */
 		public void onFunctionInvocationExecute(FunctionInvocation functionInvocation, Env env);
 		
-		/*
+		/**
 		 * Used to detect data flows
 		 */
-		
-		public void onReturnStatementExecute(ReturnStatement returnStatement, Env env);
-		
 		public void onEnvUpdateWithBranches(PhpVariable phpVariable, PhpVariable phpVariableInTrueBranch, PhpVariable phpVariableInFalseBranch);
 		
 	}
@@ -115,11 +111,6 @@ public class WebAnalysis {
 	public static void onFunctionInvocationExecute(FunctionInvocation functionInvocation, Env env) {
 		if (entityDetectionListener != null)
 			entityDetectionListener.onFunctionInvocationExecute(functionInvocation, env);
-	}
-	
-	public static void onReturnStatementExecute(ReturnStatement returnStatement, Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onReturnStatementExecute(returnStatement, env);
 	}
 	
 	public static void onEnvUpdateWithBranches(PhpVariable phpVariable, PhpVariable phpVariableInTrueBranch, PhpVariable phpVariableInFalseBranch) {

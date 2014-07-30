@@ -2,7 +2,6 @@ package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.ReturnStatement;
 
-import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 
@@ -28,13 +27,6 @@ public class ReturnStatementNode extends StatementNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		/*
-		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
-		 */
-		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onReturnStatementExecute((ReturnStatement) this.getAstNode(), env);
-		// END OF WEB ANALYSIS CODE
-		
 		env.setHasReturnStatement(true);
 		if (expression != null) {
 			DataNode returnValue = expression.execute(env);

@@ -548,7 +548,7 @@ public abstract class Env {
 	 */
 	public void appendOutput(ArrayList<DataNode> resolvedExpressionNodes) {
 		PhpVariable newOutputVariable = new PhpVariable(SPECIAL_VARIABLE_OUTPUT);
-		PhpVariable oldOutputVariable = readVariable(SPECIAL_VARIABLE_OUTPUT);
+		PhpVariable oldOutputVariable = getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT);
 
 		if (oldOutputVariable != null)
 			newOutputVariable.appendStringValue(oldOutputVariable.getDataNode());

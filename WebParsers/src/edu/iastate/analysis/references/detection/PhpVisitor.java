@@ -13,6 +13,8 @@ import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Identifier;
 import org.eclipse.php.internal.core.ast.nodes.ReturnStatement;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
+import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
+
 import edu.iastate.analysis.references.DeclaringReference;
 import edu.iastate.analysis.references.PhpFunctionCall;
 import edu.iastate.analysis.references.PhpFunctionDecl;
@@ -35,6 +37,7 @@ import edu.iastate.symex.php.nodes.VariableNode;
 import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.Range;
+import edu.iastate.symex.util.ASTHelper;
 
 /**
  * PhpVisitor visits PHP elements and detects entities.
@@ -51,7 +54,6 @@ public class PhpVisitor implements IEntityDetectionListener {
 	 * Used to detect data flows
 	 */
 	private HashMap<PhpVariable, HashSet<PhpVariableDecl>> variableTable = new HashMap<PhpVariable, HashSet<PhpVariableDecl>>();
-	private PhpFunctionDecl currentPhpFunctionDecl = null;
 	
 	/**
 	 * Constructor
@@ -94,7 +96,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 			decls.add(phpVariableDecl);
 			variableTable.put(phpVariable, decls);
 		
-			referenceManager.getDataFlowManager().putMapDeclToRefLocations(phpVariableDecl, getLocation(assignment.getRightHandSide(), env));
+			referenceManager.getDataFlowManager().putMapDeclToRefLocations(phpVariableDecl, getLocation(assignment.getRightHandSide()));
 		}
 	}
 	
@@ -263,11 +265,26 @@ public class PhpVisitor implements IEntityDetectionListener {
 		/*
 		 * Detect function declaration
 		 */
-		PhpFunctionDecl reference = new PhpFunctionDecl(functionDeclaration.getFunctionName().getName(), getLocation(functionDeclaration.getFunctionName(), env));
-		addReference(reference, env);
+		final PhpFunctionDecl phpFunctionDecl = new PhpFunctionDecl(functionDeclaration.getFunctionName().getName(), getLocation(functionDeclaration.getFunctionName()));
+		addReference(phpFunctionDecl, env);
 		
-		// Set current function
-		currentPhpFunctionDecl = reference;
+		/*
+		 * Record data flows
+		 */
+		functionDeclaration.accept(new AbstractVisitor() {
+			
+			@Override
+			public boolean visit(ReturnStatement returnStatement) {
+				if (returnStatement.getExpression() != null) {
+					PositionRange range1 = referenceManager.getDataFlowManager().getRefLocationsOfDecl(phpFunctionDecl);
+					PositionRange range2 = getLocation(returnStatement.getExpression());
+					PositionRange newRange = range1 != null ? new CompositeRange(range1, range2) : range2;
+				
+					referenceManager.getDataFlowManager().putMapDeclToRefLocations(phpFunctionDecl, newRange);
+				}
+				return false;
+			}
+		});
 	}
 
 	@Override
@@ -277,24 +294,11 @@ public class PhpVisitor implements IEntityDetectionListener {
 		 */
 		Expression name = functionInvocation.getFunctionName().getName();
 		if (name instanceof Identifier) {
-			Reference reference = new PhpFunctionCall(((Identifier) name).getName(), getLocation(name, env));
+			Reference reference = new PhpFunctionCall(((Identifier) name).getName(), getLocation(name));
 			addReference(reference, env);
 		}
 	}
 
-	@Override
-	public void onReturnStatementExecute(ReturnStatement returnStatement, Env env) {
-		/*
-		 * Record data flows
-		 */
-		if (currentPhpFunctionDecl != null && !env.getFunctionStack().isEmpty() && currentPhpFunctionDecl.getName().equals(env.peekFunctionFromStack())) {
-			PositionRange range1 = referenceManager.getDataFlowManager().getRefLocationsOfDecl(currentPhpFunctionDecl);
-			PositionRange range2 = getLocation(returnStatement.getExpression(), env);
-			PositionRange newRange = range1 != null ? new CompositeRange(range1, range2) : range2;
-			referenceManager.getDataFlowManager().putMapDeclToRefLocations(currentPhpFunctionDecl, newRange);
-		}
-	}
-	
 	/*
 	 * Handle branches
 	 */
@@ -312,8 +316,9 @@ public class PhpVisitor implements IEntityDetectionListener {
 	 * Utility methods
 	 */
 	
-	private PositionRange getLocation(ASTNode astNode, Env env) {
-		return new Range(env.peekFileFromStack(), astNode.getStart(), astNode.getLength());
+	private PositionRange getLocation(ASTNode astNode) {
+		File file = ASTHelper.inst.getSourceFileOfPhpASTNode(astNode);	
+		return new Range(file, astNode.getStart(), astNode.getEnd() - astNode.getStart());
 	}
 	
 	private boolean isRequestVariable(String variableName) {

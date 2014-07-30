@@ -225,9 +225,7 @@ public class JavascriptVisitor extends ASTVisitor {
 			Reference newReference = findLastCreatedReferenceAtNode(expression);
 			
 			// Found a JsObjectFieldDecl
-			if (newReference != null && !isJavascriptKeyword(name.getIdentifier())
-					// For now consider "value" object fields only
-					&& name.getIdentifier().equals("value"))
+			if (newReference != null && !isJavascriptKeyword(name.getIdentifier()))
 				foundJsObjectFieldDecl(fieldAccess, (RegularReference) newReference, rightHandSide);
 		}
 		else
@@ -298,6 +296,10 @@ public class JavascriptVisitor extends ASTVisitor {
 	}
 	
 	private void foundJsObjectFieldDecl(FieldAccess fieldAccess, RegularReference object, Expression rightHandSide) {
+		// For now consider "value" object fields only
+		if (!fieldAccess.getName().getIdentifier().equals("value"))
+			return;
+		
 		String name = fieldAccess.getName().getIdentifier();
 		PositionRange location = getLocation(fieldAccess.getName());
 		
@@ -317,6 +319,10 @@ public class JavascriptVisitor extends ASTVisitor {
 	}
 	
 	private void foundJsObjectFieldRef(FieldAccess fieldAccess, RegularReference object) {
+		// For now consider "value" object fields only
+		if (!fieldAccess.getName().getIdentifier().equals("value"))
+			return;
+				
 		String name = fieldAccess.getName().getIdentifier();
 		PositionRange location = getLocation(fieldAccess.getName());
 		

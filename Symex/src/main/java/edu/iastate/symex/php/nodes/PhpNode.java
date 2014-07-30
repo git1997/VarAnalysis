@@ -30,7 +30,7 @@ public abstract class PhpNode {
 		File file = ASTHelper.inst.getSourceFileOfPhpASTNode(astNode);	
 		
 		this.astNode = astNode;
-		this.range = new Range(file, astNode.getStart(), astNode.getEnd() - astNode.getStart());
+		this.range = new Range(file, astNode.getStart(), astNode.getLength());
 		this.sourceCode = ASTHelper.inst.getSourceCodeOfPhpASTNode(astNode); // TODO sourceCode.length should equal positionRange.length
 	}
 	
