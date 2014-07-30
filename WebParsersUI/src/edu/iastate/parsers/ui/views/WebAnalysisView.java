@@ -218,7 +218,7 @@ public class WebAnalysisView extends ViewPart {
 		
 		filePathLabel.setText(file.getAbsolutePath());
 		analysisResultTreeViewer.setInput(referenceManager);
-		analysisResultTreeViewer.expandToLevel(2);
+		analysisResultTreeViewer.expandToLevel(1);
 		tabFolder.setSelection(0);
 		statsStyledText.setText(new ShowStatisticsOnReferences().showStatistics(referenceManager));
 	}

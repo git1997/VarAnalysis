@@ -2,10 +2,9 @@ package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.Identifier;
 
-import edu.iastate.symex.util.logging.MyLevel;
-import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 
 /**
  * 
@@ -35,8 +34,9 @@ public class IdentifierNode extends ExpressionNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		MyLogger.log(MyLevel.USER_EXCEPTION, "In IdentifierNode.java: IdentiferNode + " + this.getSourceCode() + " should not get executed.");
-		return null;
+		// Generally, this node should not be executed.
+		// However, it can be executed in cases like $_GET[input1] where input1 is an Identifier.
+		return DataNodeFactory.createLiteralNode(this);
 	}
 	
 }

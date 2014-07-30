@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByName;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByPosition;
+import edu.iastate.analysis.references.Reference.ReferenceComparatorByType;
 import edu.iastate.analysis.references.detection.DataFlowManager;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttributeValue;
@@ -90,13 +91,13 @@ public class ReferenceManager {
 	
 	public ArrayList<Reference> getSortedReferenceListByNameThenPosition() {
 		ArrayList<Reference> references = getReferenceList();
-		Collections.sort(references, new Reference.ReferenceComparator(new ReferenceComparatorByName(), new ReferenceComparatorByPosition()));
+		Collections.sort(references, new Reference.ReferenceComparator(new ReferenceComparatorByName(), new ReferenceComparatorByPosition(), null));
 		return references;
 	}
 	
-	public ArrayList<Reference> getSortedReferenceListByPositionThenName() {
+	public ArrayList<Reference> getSortedReferenceListByTypeThenNameThenPosition() {
 		ArrayList<Reference> references = getReferenceList();
-		Collections.sort(references, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName()));
+		Collections.sort(references, new Reference.ReferenceComparator(new ReferenceComparatorByType(), new ReferenceComparatorByName(), new ReferenceComparatorByPosition()));
 		return references;
 	}
 	
@@ -146,7 +147,8 @@ public class ReferenceManager {
 				// [3] Handle data flows between Ref and Decl across languages
 				for (Reference reference2 : mapNameToReferences.get(reference1.getName()))
 					if (reference1 instanceof PhpVariableRef && reference2 instanceof PhpVariableDecl
-						|| reference1 instanceof JsVariableRef && reference2 instanceof JsVariableDecl) {
+						|| reference1 instanceof JsVariableRef && reference2 instanceof JsVariableDecl
+						|| reference1 instanceof JsObjectFieldRef && reference2 instanceof JsObjectFieldDecl) {
 						// Skip if the two references are of the same language
 					}
 					else if (reference2 instanceof DeclaringReference && ((RegularReference) reference1).sameEntityAs((DeclaringReference) reference2))
@@ -158,7 +160,18 @@ public class ReferenceManager {
 						if (reference2 instanceof JsObjectFieldDecl 
 								&& ((JsObjectFieldDecl) reference2).getObject() instanceof JsRefToHtmlInput
 								&& ((JsRefToHtmlInput) ((JsObjectFieldDecl) reference2).getObject()).getName().equals(reference1.getName()))
-							addDataflow(reference1, reference2);	
+							addDataflow(reference1, reference2);
+				
+				// [5] Handle data flows between JsObjectFieldRef and HtmlInputDecl
+				if (reference1 instanceof JsObjectFieldRef && reference1.getName().equals("value")) {
+					RegularReference object = ((JsObjectFieldRef) reference1).getObject();
+					if (object instanceof JsRefToHtmlInput) {
+						JsRefToHtmlInput jsRefToHtmlInput = (JsRefToHtmlInput) object;
+						for (Reference reference2 : mapNameToReferences.get(jsRefToHtmlInput.getName()))
+							if (reference2 instanceof DeclaringReference && jsRefToHtmlInput.sameEntityAs((DeclaringReference) reference2))
+								addDataflow(reference1, reference2);
+					}
+				}
 			}
 		}
 	}
@@ -174,11 +187,26 @@ public class ReferenceManager {
 				HtmlAttributeValue name = htmlElement.getAttributeValue("name");
 				if (name != null) {
 					Reference reference = findReferenceAtPosition(name.getLocation().getStartPosition());
+					
 					if (reference != null) {
-						HtmlAttribute value = htmlElement.getAttribute("value");
-						if (value != null) {
-							Position endPosition = value.getLocation().getEndPosition();
-							PositionRange range = new Range(endPosition.getFile(), endPosition.getOffset(), 10);
+						HtmlAttribute valueAttribute = null;
+						HtmlAttribute attributeAfterValue = null;
+						
+						ArrayList<HtmlAttribute> attributes = htmlElement.getAttributes();
+						for (int i = 0; i < attributes.size(); i++)
+							if (attributes.get(i).getName().equals("value")) {
+								valueAttribute = attributes.get(i);
+								if (i < attributes.size() - 1)
+									attributeAfterValue = attributes.get(i + 1);
+								break;
+							}
+						
+						if (valueAttribute != null) {
+							Position pos1 = valueAttribute.getLocation().getEndPosition();
+							Position pos2 = attributeAfterValue != null ? attributeAfterValue.getLocation().getStartPosition() : null;
+							int length = pos2 != null && pos2.getFile().equals(pos1.getFile()) && pos2.getOffset() > pos1.getOffset() ? pos2.getOffset() - pos1.getOffset() : 10;
+							
+							PositionRange range = new Range(pos1.getFile(), pos1.getOffset(), length);
 							dataFlowManager.putMapDeclToRefLocations((DeclaringReference) reference, range);
 						}
 					}
@@ -191,8 +219,10 @@ public class ReferenceManager {
 	 * Adds a data flow link between two references
 	 */
 	private void addDataflow(Reference reference1, Reference reference2) {
-		// TODO Consider constraint or not?
-		if (ConstraintFactory.createAndConstraint(reference1.getConstraint(), reference2.getConstraint()).isSatisfiable()) 
+		if (reference1 instanceof PhpRefToHtml) // Don't consider constraints for PhpRefToHtml since the constraints of reference 1 & 2 belong to different HTTP sessions
+			reference1.addDataflowFromReference(reference2);
+		
+		else if (ConstraintFactory.createAndConstraint(reference1.getConstraint(), reference2.getConstraint()).isSatisfiable()) 
 			reference1.addDataflowFromReference(reference2);
 	}
 	

@@ -186,13 +186,14 @@ public class JavascriptVisitor extends ASTVisitor {
 		for (Object object : variableDeclarationStatement.fragments()) {
 			VariableDeclarationFragment variableDeclarationFragment = (VariableDeclarationFragment) object;
 			SimpleName simpleName = variableDeclarationFragment.getName();
+			Expression initializer = variableDeclarationFragment.getInitializer();
+			
+			if (initializer != null)
+				initializer.accept(this);
 			
 			// Found a JsVariableDecl
 			if (!isJavascriptKeyword(simpleName.getIdentifier()))
 				foundVariableDecl(simpleName, variableDeclarationFragment.getInitializer());
-			
-			if (variableDeclarationFragment.getInitializer() != null)
-				variableDeclarationFragment.getInitializer().accept(this);
 		}
 		
 		return false;
@@ -205,6 +206,8 @@ public class JavascriptVisitor extends ASTVisitor {
 		Expression leftHandSide = assignment.getLeftHandSide();
 		Expression rightHandSide = assignment.getRightHandSide();
 		
+		rightHandSide.accept(this);
+		
 		if (leftHandSide instanceof SimpleName) {
 			SimpleName simpleName = (SimpleName) leftHandSide;
 			
@@ -212,9 +215,7 @@ public class JavascriptVisitor extends ASTVisitor {
 			if (!isJavascriptKeyword(simpleName.getIdentifier()))
 				foundVariableDecl(simpleName, rightHandSide);
 		}
-		else if (leftHandSide instanceof FieldAccess
-				// For now consider "value" object fields only
-				&& ((FieldAccess) leftHandSide).getName().getIdentifier().equals("value")) { 
+		else if (leftHandSide instanceof FieldAccess) { 
 			
 			FieldAccess fieldAccess = (FieldAccess) leftHandSide;
 			Expression expression = fieldAccess.getExpression();
@@ -224,13 +225,13 @@ public class JavascriptVisitor extends ASTVisitor {
 			Reference newReference = findLastCreatedReferenceAtNode(expression);
 			
 			// Found a JsObjectFieldDecl
-			if (newReference != null && !isJavascriptKeyword(name.getIdentifier()))
+			if (newReference != null && !isJavascriptKeyword(name.getIdentifier())
+					// For now consider "value" object fields only
+					&& name.getIdentifier().equals("value"))
 				foundJsObjectFieldDecl(fieldAccess, (RegularReference) newReference, rightHandSide);
 		}
 		else
 			leftHandSide.accept(this);
-		
-		rightHandSide.accept(this);
 		
 		return false;
 	}
@@ -489,7 +490,7 @@ public class JavascriptVisitor extends ASTVisitor {
 		"JavaScript", "javascript", "join", "lastIndexOf", "length", "Math", "name", "navigator", "open", "opener", "options",
 		"parent", "parentNode",	"parseInt", "print", "replace", "round", 
 		"select", "selectedIndex", "self", "send", "setAttribute", "setRequestHeader", "setTimeout", "split", "status", "style", "submit", "substr", "substring", 
-		"title", "toLowerCase", "toUpperCase", "TRUE", "type", "unescape", "value", "window", "windows", "write", "writeln"
+		"title", "toLowerCase", "toUpperCase", "TRUE", "type", "unescape", "window", "windows", "write", "writeln"
 	};
 	
 	private static HashSet<String> javascriptKeywords = new HashSet<String>(Arrays.asList(keywords));

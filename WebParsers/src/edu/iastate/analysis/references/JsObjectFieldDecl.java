@@ -36,4 +36,12 @@ public class JsObjectFieldDecl extends JsVariableDecl {
 				&& (getObject().sameEntityAs(((JsObjectFieldDecl) declaringReference).getObject()));
 	}
 	
+	@Override
+	public String toDebugString() {
+		if (constraint.isTautology())
+			return object.getName() + "." + name;
+		else
+			return object.getName() + "." + name + " [" + constraint.toDebugString() + "]";
+	}
+	
 }

@@ -10,6 +10,8 @@ import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
+import edu.iastate.symex.position.CompositeRange;
+import edu.iastate.symex.position.PositionRange;
 
 /**
  * 
@@ -129,8 +131,11 @@ public class SwitchStatementNode extends StatementNode {
 			else {
 				DataNode caseResult = thenBranch.getValue().execute(env);
 				BooleanNode conditionValue = expressionResult.isEqualTo(caseResult);
-				LiteralNode switchCaseConditionString = thenBranch.getConditionString();
-				LiteralNode conditionString = switchCaseConditionString; // TODO Or it could be: conditionString = new LiteralNode(this.conditionString.getStringValue() + " == " + switchCaseConditionString.getStringValue());
+
+				PositionRange location = new CompositeRange(conditionString.getLocation(), thenBranch.getConditionString().getLocation());
+				String stringValue = conditionString.getStringValue() + " == " + thenBranch.getConditionString().getStringValue(); 
+				LiteralNode conditionString = DataNodeFactory.createLiteralNode(location, stringValue);
+
 				return IfStatementNode.execute(env, conditionValue, conditionString, thenBranch, elseBranch);
 			}
 		}

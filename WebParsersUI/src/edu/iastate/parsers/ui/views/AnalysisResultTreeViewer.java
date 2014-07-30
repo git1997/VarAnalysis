@@ -26,7 +26,7 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 	
 	@Override
 	public Object[] getRootNodes(Object input) {
-		return ((ReferenceManager) input).getSortedReferenceListByNameThenPosition().toArray(new Object[]{});
+		return ((ReferenceManager) input).getSortedReferenceListByTypeThenNameThenPosition().toArray(new Object[]{});
 	}
 
 	@Override

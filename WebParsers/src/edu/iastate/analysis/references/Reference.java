@@ -114,20 +114,33 @@ public abstract class Reference {
 	
 	public static class ReferenceComparator implements Comparator<Reference> {
 		
-		private Comparator<Reference> firstComparator, secondComparator;
+		private Comparator<Reference> firstComparator, secondComparator, thirdComparator;
 		
-		public ReferenceComparator(Comparator<Reference> firstComparator, Comparator<Reference> secondComparator) {
+		public ReferenceComparator(Comparator<Reference> firstComparator, Comparator<Reference> secondComparator, Comparator<Reference> thirdComparator) {
 			this.firstComparator = firstComparator;
 			this.secondComparator = secondComparator;
+			this.thirdComparator = thirdComparator;
 		}
 		
 		@Override
 		public int compare(Reference ref1, Reference ref2) {
-			int result = firstComparator.compare(ref1, ref2);
+			int result = firstComparator != null ? firstComparator.compare(ref1, ref2) : 0;
 			if (result != 0)
 				return result;
-			else
-				return secondComparator.compare(ref1, ref2);
+			
+			result = secondComparator != null ? secondComparator.compare(ref1, ref2) : 0;
+			if (result != 0)
+				return result;
+				
+			return thirdComparator != null ? thirdComparator.compare(ref1, ref2) : 0;
+		}
+	}
+	
+	public static class ReferenceComparatorByType implements Comparator<Reference> {
+
+		@Override
+		public int compare(Reference ref1, Reference ref2) {
+			return ref1.getType().compareTo(ref2.getType());
 		}
 	}
 	

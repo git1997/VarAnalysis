@@ -124,7 +124,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 			return null;
 		
 		String variableName =  ((Identifier) variable.getName()).getName();
-		if (isRequestVariable(variableName)) // Ignore request variables
+		if (isSpecialVariable(variableName)) // Ignore special variables
 			return null;
 		
 		String name = variableName;
@@ -287,7 +287,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 		/*
 		 * Record data flows
 		 */
-		if (currentPhpFunctionDecl != null && currentPhpFunctionDecl.getName().equals(env.peekFunctionFromStack())) {
+		if (currentPhpFunctionDecl != null && !env.getFunctionStack().isEmpty() && currentPhpFunctionDecl.getName().equals(env.peekFunctionFromStack())) {
 			PositionRange range1 = referenceManager.getDataFlowManager().getRefLocationsOfDecl(currentPhpFunctionDecl);
 			PositionRange range2 = getLocation(returnStatement.getExpression(), env);
 			PositionRange newRange = range1 != null ? new CompositeRange(range1, range2) : range2;
@@ -318,6 +318,10 @@ public class PhpVisitor implements IEntityDetectionListener {
 	
 	private boolean isRequestVariable(String variableName) {
 		return variableName.equals("_REQUEST") || variableName.equals("_POST") || variableName.equals("_GET") || variableName.equals("_FILES");
+	}
+	
+	private boolean isSpecialVariable(String variableName) {
+		return isRequestVariable(variableName) || variableName.equals("_SESSION");
 	}
 		
 }

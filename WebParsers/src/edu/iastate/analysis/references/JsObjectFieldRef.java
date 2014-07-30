@@ -46,5 +46,13 @@ public class JsObjectFieldRef extends JsVariableRef {
 	public boolean hasMatchedType(DeclaringReference declaringReference) {
 		return declaringReference instanceof JsObjectFieldDecl;
 	}
+	
+	@Override
+	public String toDebugString() {
+		if (constraint.isTautology())
+			return object.getName() + "." + name;
+		else
+			return object.getName() + "." + name + " [" + constraint.toDebugString() + "]";
+	}
 
 }
