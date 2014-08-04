@@ -296,12 +296,12 @@ public class JavascriptVisitor extends ASTVisitor {
 	}
 	
 	private void foundJsObjectFieldDecl(FieldAccess fieldAccess, RegularReference object, Expression rightHandSide) {
-		// For now consider "value" object fields only
-		if (!fieldAccess.getName().getIdentifier().equals("value"))
-			return;
-		
 		String name = fieldAccess.getName().getIdentifier();
 		PositionRange location = getLocation(fieldAccess.getName());
+		
+		// For now consider "value" object fields only
+		if (!name.equals("value"))
+			return;
 		
 		// Add a JsObjectFieldDecl
 		JsObjectFieldDecl jsObjectFieldDecl = new JsObjectFieldDecl(name, location, object);
@@ -319,10 +319,6 @@ public class JavascriptVisitor extends ASTVisitor {
 	}
 	
 	private void foundJsObjectFieldRef(FieldAccess fieldAccess, RegularReference object) {
-		// For now consider "value" object fields only
-		if (!fieldAccess.getName().getIdentifier().equals("value"))
-			return;
-				
 		String name = fieldAccess.getName().getIdentifier();
 		PositionRange location = getLocation(fieldAccess.getName());
 		
@@ -336,6 +332,10 @@ public class JavascriptVisitor extends ASTVisitor {
 			reference = new JsRefToHtmlInput(name, location, (JsRefToHtmlForm) object);
 		}
 		else {
+			// For now consider "value" object fields only
+			if (!name.equals("value"))
+				return;
+			
 			// Add a JsObjectFieldRef
 			reference = new JsObjectFieldRef(name, location, object);
 		}
