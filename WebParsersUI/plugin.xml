@@ -26,5 +26,27 @@
             name="Web Analysis">
       </view>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="edu.iastate.parsers.ui.viewerContribution.ComputeBackwardSlice"
+            targetID="org.eclipse.php.core.phpsource.source.EditorContext">
+         <action
+               class="edu.iastate.parsers.ui.actions.ComputeBackwardSlice"
+               id="edu.iastate.parsers.ui.actions.ComputeBackwardSlice"
+               label="Compute Backward Slice"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            id="edu.iastate.parsers.ui.viewerContribution.ComputeForwardSlice"
+            targetID="org.eclipse.php.core.phpsource.source.EditorContext">
+         <action
+               class="edu.iastate.parsers.ui.actions.ComputeForwardSlice"
+               id="edu.iastate.parsers.ui.actions.ComputeForwardSlice"
+               label="Compute Forward Slice"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+   </extension>
 </plugin>

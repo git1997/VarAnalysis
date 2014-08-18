@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wst.jsdt.core.dom.AST;
 import org.eclipse.wst.jsdt.core.dom.ASTNode;
@@ -25,8 +26,10 @@ import org.eclipse.wst.jsdt.core.dom.ASTParser;
 
 import edu.iastate.analysis.references.detection.FindReferencesInFile;
 import edu.iastate.analysis.references.detection.ShowStatisticsOnReferences;
+import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.parsers.ui.UIHelper;
+import edu.iastate.symex.position.Position;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
 import edu.iastate.symex.util.FileIO;
 
@@ -36,6 +39,8 @@ import edu.iastate.symex.util.FileIO;
  *
  */
 public class WebAnalysisView extends ViewPart {
+	
+	public static WebAnalysisView inst = null;
 
 	/*
 	 * WebAnalysisView controls
@@ -46,7 +51,7 @@ public class WebAnalysisView extends ViewPart {
 	
 	private TabFolder tabFolder;
 	
-	private TreeViewer analysisResultTreeViewer, phpAstTreeViewer, jsAstTreeViewer;
+	private TreeViewer forwardSliceTreeViewer, backwardSliceTreeViewer, phpAstTreeViewer, jsAstTreeViewer;
 
 	private StyledText statsStyledText;
 	
@@ -68,13 +73,20 @@ public class WebAnalysisView extends ViewPart {
 		display.dispose();
 	}
 	
+	/**
+	 * Constructor
+	 */
+	public WebAnalysisView() {
+		WebAnalysisView.inst = this;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	@Override
 	public void setFocus() {
-		analysisResultTreeViewer.getControl().setFocus();
+		forwardSliceTreeViewer.getControl().setFocus();
 	}
 	
 	/*
@@ -104,29 +116,34 @@ public class WebAnalysisView extends ViewPart {
 		tabFolder = new TabFolder(parent, SWT.BORDER);
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4,	1));
 
-		analysisResultTreeViewer = new AnalysisResultTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
+		forwardSliceTreeViewer = new AnalysisResultTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION, true);
+		backwardSliceTreeViewer = new AnalysisResultTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION, false);
 		phpAstTreeViewer = new PhpAstTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
 		jsAstTreeViewer = new JsAstTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
 		
 		TabItem tabItem1 = new TabItem(tabFolder, SWT.NONE);
-		tabItem1.setText("Analysis Result");
-		tabItem1.setControl(analysisResultTreeViewer.getControl());
+		tabItem1.setText("Forward Slicing");
+		tabItem1.setControl(forwardSliceTreeViewer.getControl());
 		
 		TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
-		tabItem2.setText("PHP AST");
-		tabItem2.setControl(phpAstTreeViewer.getControl());
+		tabItem2.setText("Backward Slicing");
+		tabItem2.setControl(backwardSliceTreeViewer.getControl());
 		
 		TabItem tabItem3 = new TabItem(tabFolder, SWT.NONE);
-		tabItem3.setText("JavaScript AST");
-		tabItem3.setControl(jsAstTreeViewer.getControl());
+		tabItem3.setText("PHP AST");
+		tabItem3.setControl(phpAstTreeViewer.getControl());
+		
+		TabItem tabItem4 = new TabItem(tabFolder, SWT.NONE);
+		tabItem4.setText("JavaScript AST");
+		tabItem4.setControl(jsAstTreeViewer.getControl());
 		
 		statsStyledText = new StyledText(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL) ;
 		statsStyledText.setText("");
 		//statsStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
-		TabItem tabItem4 = new TabItem(tabFolder, SWT.NONE);
-		tabItem4.setText("Analysis Stats");
-		tabItem4.setControl(statsStyledText);
+		TabItem tabItem5 = new TabItem(tabFolder, SWT.NONE);
+		tabItem5.setText("Analysis Stats");
+		tabItem5.setControl(statsStyledText);
 		
 	    // Event handling
 	    // --------------
@@ -189,6 +206,34 @@ public class WebAnalysisView extends ViewPart {
 	}
 	
 	/**
+	 * Invoked when the user wants to display the forward slice for a given position
+	 */
+	public void displayForwardSlice(Position position) {
+		displaySlice(forwardSliceTreeViewer, position);
+		tabFolder.setSelection(0);
+	}
+	
+	/**
+	 * Invoked when the user wants to display the backward slice for a given position
+	 */
+	public void displayBackwardSlice(Position position) {
+		displaySlice(backwardSliceTreeViewer, position);
+		tabFolder.setSelection(1);
+	}
+	
+	private void displaySlice(TreeViewer sliceTreeViewer, Position position) {
+		for (TreeItem treeItem : sliceTreeViewer.getTree().getItems()) {
+			Reference reference = (Reference) treeItem.getData();
+			if (reference.getLocation().getStartPosition().getFile().equals(position.getFile())
+					&& reference.getLocation().getStartPosition().getOffset() <= position.getOffset()
+					&& position.getOffset() < reference.getLocation().getEndPosition().getOffset()) {
+			sliceTreeViewer.getTree().select(treeItem);
+			sliceTreeViewer.getTree().setFocus();
+			}
+		}
+	}
+	
+	/**
 	 * Invoked when the RunPhpAst button is clicked.
 	 */
 	private void runPhpAstButtonClicked() {
@@ -217,8 +262,10 @@ public class WebAnalysisView extends ViewPart {
 		ReferenceManager referenceManager = new FindReferencesInFile(file).execute();
 		
 		filePathLabel.setText(file.getAbsolutePath());
-		analysisResultTreeViewer.setInput(referenceManager);
-		analysisResultTreeViewer.expandToLevel(1);
+		forwardSliceTreeViewer.setInput(referenceManager);
+		forwardSliceTreeViewer.expandToLevel(1);
+		backwardSliceTreeViewer.setInput(referenceManager);
+		backwardSliceTreeViewer.expandToLevel(1);
 		tabFolder.setSelection(0);
 		statsStyledText.setText(new ShowStatisticsOnReferences().showStatistics(referenceManager));
 	}
@@ -236,7 +283,7 @@ public class WebAnalysisView extends ViewPart {
 			filePathLabel.setText(file.getAbsolutePath());
 			phpAstTreeViewer.setInput(new GenericTreeViewer.TreeInput(program));
 			phpAstTreeViewer.expandToLevel(2);
-			tabFolder.setSelection(1);
+			tabFolder.setSelection(2);
 		} catch (Exception e) {
 			System.out.println("In WebAnalysis.java: Error parsing " + file + " (" + e.getMessage() + ")");
 		}
@@ -254,7 +301,7 @@ public class WebAnalysisView extends ViewPart {
 		filePathLabel.setText(file.getAbsolutePath());
 		jsAstTreeViewer.setInput(new GenericTreeViewer.TreeInput(rootNode));
 		jsAstTreeViewer.expandToLevel(2);
-		tabFolder.setSelection(2);
+		tabFolder.setSelection(3);
 	}
 	
 }

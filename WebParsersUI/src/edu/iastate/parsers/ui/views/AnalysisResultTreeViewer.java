@@ -20,8 +20,11 @@ import edu.iastate.symex.ui.views.GenericTreeViewer;
  */
 public class AnalysisResultTreeViewer extends GenericTreeViewer {
 	
-	public AnalysisResultTreeViewer(Composite parent, int style) {
+	private boolean forwardSlice;
+	
+	public AnalysisResultTreeViewer(Composite parent, int style, boolean forwardSlice) {
 		super(parent, style);
+		this.forwardSlice = forwardSlice;
 	}
 	
 	@Override
@@ -34,7 +37,10 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 		ArrayList<Object> children = new ArrayList<Object>();
 		
 		if (element instanceof Reference) {
-			children.addAll(((Reference) element).getDataflowFromReferences());
+			if (forwardSlice)
+				children.addAll(((Reference) element).getDataFlowToReferences());
+			else
+				children.addAll(((Reference) element).getDataFlowFromReferences());
 		}
 		
 		else {

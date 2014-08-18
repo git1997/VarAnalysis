@@ -24,7 +24,8 @@ public abstract class Reference {
 	protected File entryFile = null;					// Then entry file that was run and this reference appeared
 	
 	protected Entity entity = null;						// The entity that this reference belongs to
-	protected ArrayList<Reference> dataflowFromReferences = new ArrayList<Reference>();		// e.g., $x = $y, $y = $z  =>  $z has dataflow from $y, $y from $z
+	protected ArrayList<Reference> dataFlowFromReferences = new ArrayList<Reference>();	// e.g., $x = $y, $y = $z  =>  $z has dataflow from $y, $y from $z
+	protected ArrayList<Reference> dataFlowToReferences = new ArrayList<Reference>();		
 	
 	
 	/**
@@ -52,8 +53,10 @@ public abstract class Reference {
 	public void setEntity(Entity entity) {
 		this.entity = entity;
 	}
-	public void addDataflowFromReference(Reference reference) {
-		this.dataflowFromReferences.add(reference);
+	
+	public void addDataflowToReference(Reference reference) {
+		this.dataFlowToReferences.add(reference);
+		reference.dataFlowFromReferences.add(this);
 	}
 	
 	/*
@@ -84,8 +87,12 @@ public abstract class Reference {
 		return entity;
 	}
 	
-	public ArrayList<Reference> getDataflowFromReferences() {
-		return new ArrayList<Reference>(dataflowFromReferences);
+	public ArrayList<Reference> getDataFlowFromReferences() {
+		return new ArrayList<Reference>(dataFlowFromReferences);
+	}
+	
+	public ArrayList<Reference> getDataFlowToReferences() {
+		return new ArrayList<Reference>(dataFlowToReferences);
 	}
 	
 	/*

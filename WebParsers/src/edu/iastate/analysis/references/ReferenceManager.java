@@ -123,7 +123,7 @@ public class ReferenceManager {
 			mapNameToReferences.get(reference.getName()).add(reference);
 		}
 		
-		// Detect data flows for HTML references (between Decl and Ref)
+		// Detect data flows for HTML references (Type 3: generation-information-flow relation)
 		detectDataFlowsForHtmlReferences(htmlDocument);
 		
 		/*
@@ -131,18 +131,24 @@ public class ReferenceManager {
 		 */
 		for (Reference reference1 : references) {
 			if (reference1 instanceof DeclaringReference) {
+				/*
+				 * (Type 2: information-flow relation)
+				 */
 				// [1] Handle data flows between Decl and Ref: Some were detected by PhpVisitor and JavascriptVisitor; Others were detected in detectDataFlowsForHtmlReferences()
 				PositionRange range = dataFlowManager.getRefLocationsOfDecl((DeclaringReference) reference1);
 				if (range != null)
 					for (Reference reference2 : findReferencesInRange(range))
 						if (reference1 instanceof PhpVariableDecl && (reference2 instanceof PhpVariableRef || reference2 instanceof PhpRefToHtml || reference2 instanceof PhpRefToSqlTableColumn || reference2 instanceof PhpFunctionCall)
 								|| !(reference1 instanceof PhpVariableDecl))
-							addDataflow(reference1, reference2);
+							addDataflow(reference2, reference1);
 			}
 			else {
+				/*
+				 * (Type 1: def-use relation)
+				 */
 				// [2] Handle data flows between Ref and Decl in a single language (PHP or JavaScript), detected by PhpVisitor and JavascriptVisitor
 				for (Reference reference2 : dataFlowManager.getDeclsOfRef((RegularReference) reference1))
-					addDataflow(reference1, reference2);
+					addDataflow(reference2, reference1);
 
 				// [3] Handle data flows between Ref and Decl across languages
 				for (Reference reference2 : mapNameToReferences.get(reference1.getName()))
@@ -152,7 +158,7 @@ public class ReferenceManager {
 						// Skip if the two references are of the same language
 					}
 					else if (reference2 instanceof DeclaringReference && ((RegularReference) reference1).sameEntityAs((DeclaringReference) reference2))
-						addDataflow(reference1, reference2);
+						addDataflow(reference2, reference1);
 					
 				// [4] Handle data flows between PhpRefToHtml and JsObjectFieldDecl
 				if (reference1 instanceof PhpRefToHtml && mapNameToReferences.containsKey("value"))
@@ -160,7 +166,7 @@ public class ReferenceManager {
 						if (reference2 instanceof JsObjectFieldDecl 
 								&& ((JsObjectFieldDecl) reference2).getObject() instanceof JsRefToHtmlInput
 								&& ((JsRefToHtmlInput) ((JsObjectFieldDecl) reference2).getObject()).getName().equals(reference1.getName()))
-							addDataflow(reference1, reference2);
+							addDataflow(reference2, reference1);
 				
 				// [5] Handle data flows between JsObjectFieldRef and HtmlInputDecl
 				if (reference1 instanceof JsObjectFieldRef && reference1.getName().equals("value")) {
@@ -169,7 +175,7 @@ public class ReferenceManager {
 						JsRefToHtmlInput jsRefToHtmlInput = (JsRefToHtmlInput) object;
 						for (Reference reference2 : mapNameToReferences.get(jsRefToHtmlInput.getName()))
 							if (reference2 instanceof DeclaringReference && jsRefToHtmlInput.sameEntityAs((DeclaringReference) reference2))
-								addDataflow(reference1, reference2);
+								addDataflow(reference2, reference1);
 					}
 				}
 			}
@@ -177,7 +183,7 @@ public class ReferenceManager {
 	}
 	
 	/**
-	 * Detects data flows for HTML references
+	 * Detects data flows for HTML references (Type 3: generation-information-flow relation)
 	 */
 	private void detectDataFlowsForHtmlReferences(HtmlDocument htmlDocument) {
 		(new HtmlNodeVisitor() {
@@ -220,10 +226,10 @@ public class ReferenceManager {
 	 */
 	private void addDataflow(Reference reference1, Reference reference2) {
 		if (reference1 instanceof PhpRefToHtml) // Don't consider constraints for PhpRefToHtml since the constraints of reference 1 & 2 belong to different HTTP sessions
-			reference1.addDataflowFromReference(reference2);
+			reference1.addDataflowToReference(reference2);
 		
 		else if (ConstraintFactory.createAndConstraint(reference1.getConstraint(), reference2.getConstraint()).isSatisfiable()) 
-			reference1.addDataflowFromReference(reference2);
+			reference1.addDataflowToReference(reference2);
 	}
 	
 }

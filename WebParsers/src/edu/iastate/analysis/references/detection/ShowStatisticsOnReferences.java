@@ -79,7 +79,7 @@ public class ShowStatisticsOnReferences {
 			while (true) {
 				HashSet<Reference> nextRefs = new HashSet<Reference>();
 				for (Reference ref : newRefs)
-					nextRefs.addAll(ref.getDataflowFromReferences());
+					nextRefs.addAll(ref.getDataFlowToReferences());
 				
 				if (nextRefs.removeAll(dataflowFromRefs))
 					hasCycle = true;
