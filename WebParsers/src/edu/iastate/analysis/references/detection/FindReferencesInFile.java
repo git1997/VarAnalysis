@@ -19,9 +19,10 @@ import edu.iastate.symex.util.logging.MyLogger;
  */
 public class FindReferencesInFile {
 	
-	public static String PHP_FILE = "/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/index.php";
-									//"/Work/To-do/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
+	public static String PHP_FILE = //"/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/index.php";
+									"/Work/To-do/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
 									//"/Work/To-do/Data/Web Projects/Server Code/addressbookv6.2.12/index.php";
+									//"/Work/To-do/Data/Web Projects/Server Code/TimeClock-1.04/index.php";
 									//"/Work/To-do/Data/Web Projects/Server Code/UPB-2.2.7/admin_forums.php";
 	
 	public static String XML_FILE = "/Users/HUNG/Desktop/Dataflows.xml";

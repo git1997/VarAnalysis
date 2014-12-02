@@ -17,20 +17,15 @@ import edu.iastate.symex.position.Position;
  */
 public class ComputeForwardSlice implements IEditorActionDelegate {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
-	 */
 	@Override
-	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
+	public void selectionChanged(IAction arg0, ISelection arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
-	public void selectionChanged(IAction action, ISelection selection) {
+	public void setActiveEditor(IAction arg0, IEditorPart arg1) {
+		// TODO Auto-generated method stub
 		
 	}
 

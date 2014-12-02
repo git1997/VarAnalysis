@@ -194,7 +194,10 @@ public class ReferenceManager {
 				if (name != null) {
 					Reference reference = findReferenceAtPosition(name.getLocation().getStartPosition());
 					
-					if (reference != null) {
+					// TODO At this point, reference should be either null or a DeclaringReference,
+					// However, when running on a real system, we encountered a case where reference is a RegularReference,
+					// but we haven't debugged it yet.
+					if (reference instanceof DeclaringReference) {
 						HtmlAttribute valueAttribute = null;
 						HtmlAttribute attributeAfterValue = null;
 						

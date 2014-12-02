@@ -11,6 +11,7 @@ import edu.iastate.analysis.references.ReferenceManager;
  * 
  * @author HUNG
  *
+ * TODO Review this code
  */
 public class ShowStatisticsOnReferences {
 	
@@ -38,12 +39,14 @@ public class ShowStatisticsOnReferences {
 	};
 	
 	public String showStatistics(ReferenceManager referenceManager) {
-		// TODO Review this code
+		return showStatistics(referenceManager.getReferenceList());
+	}
+	
+	public String showStatistics(ArrayList<Reference> references) {
 		HashMap<String, ArrayList<Reference>> referenceLists = new HashMap<String, ArrayList<Reference>>();
 		for (String type : referenceTypes)
 			referenceLists.put(type, new ArrayList<Reference>());
 		
-		ArrayList<Reference> references = referenceManager.getReferenceList();
 		for (Reference ref : references) {
 			String type = ref.getClass().getSimpleName();
 			referenceLists.get(type).add(ref);
@@ -56,56 +59,109 @@ public class ShowStatisticsOnReferences {
 			results.append(type + ": " + referenceList.size() + System.lineSeparator());
 			results.append(showStatisticsForReferenceType(referenceList));
 		}
+		results.append("Total refs: " + references.size() + System.lineSeparator());
+		results.append(showStatisticsForReferenceType(references));
 		return results.toString();
 	}
 	
 	public String showStatisticsForReferenceType(ArrayList<Reference> references) {
+		StringBuilder strBuilder = new StringBuilder();
+		
+		strBuilder.append("(Including size-1 slices)" + System.lineSeparator());
+		strBuilder.append(showStatisticsForReferenceType_(references));
+		
+		strBuilder.append("(Excluding size-1 slices)" + System.lineSeparator());
+		ArrayList<Reference> refs = new ArrayList<Reference>();
+		for (Reference ref : references)
+			if (ref.getDataFlowToReferences().size() > 0)
+				refs.add(ref);
+		strBuilder.append(showStatisticsForReferenceType_(refs));
+		
+		return strBuilder.toString();
+	}
+		
+	public String showStatisticsForReferenceType_(ArrayList<Reference> references) {
 		StringBuilder results = new StringBuilder();
-		int dataflowSizeTotal = 0;
-		int dataflowLengthTotal = 0;
+		
+		int totalSlices = references.size();
+		int size1SliceCount = 0;
+		
+		int phpEntities = 0;
+		int embeddedEntities = 0;
+		
+		int sliceSizeTotal = 0;
+		int sliceLengthTotal = 0;
 		int cycleCount = 0;
 		int crossFilesCount = 0;
 		int crossLanguagesCount = 0;
+		int crossStringsCount = 0;
+		int crossFunctionsCount = 0;
+		
+		ArrayList<Integer> sliceSizes = new ArrayList<Integer>();
 		
 		for (Reference reference : references) {
-			HashSet<Reference> dataflowFromRefs = new HashSet<Reference>();
-			dataflowFromRefs.add(reference);
+			if (reference.getType().startsWith("Php"))
+				phpEntities++;
+			else
+				embeddedEntities++;
 			
-			HashSet<Reference> newRefs = new HashSet<Reference>();
-			newRefs.add(reference);
+			HashSet<Reference> slice = new HashSet<Reference>();
+			
+			HashSet<Reference> unvisitedRefs = new HashSet<Reference>();
+			unvisitedRefs.add(reference);
 			
 			int length = 0;
 			boolean hasCycle = false;
-			while (true) {
+			
+			while (!unvisitedRefs.isEmpty()) {
+				slice.addAll(unvisitedRefs);
+				length++;
+				
 				HashSet<Reference> nextRefs = new HashSet<Reference>();
-				for (Reference ref : newRefs)
+				for (Reference ref : unvisitedRefs)
 					nextRefs.addAll(ref.getDataFlowToReferences());
 				
-				if (nextRefs.removeAll(dataflowFromRefs))
+				if (nextRefs.removeAll(slice))
 					hasCycle = true;
-				newRefs = nextRefs;
-				dataflowFromRefs.addAll(newRefs);
-				if (newRefs.isEmpty())
-					break;
-				else
-					length++;
+				unvisitedRefs = nextRefs;
 			}
-			dataflowSizeTotal += dataflowFromRefs.size();
-			dataflowLengthTotal += length;
+			
+			if (slice.size() == 1)
+				size1SliceCount++;
+			
+			sliceSizes.add(slice.size());
+			
+			sliceSizeTotal += slice.size();
+			sliceLengthTotal += length;
 			if (hasCycle)
 				cycleCount++;
 			
-			if (checkCrossFiles(dataflowFromRefs))
+			if (checkCrossFiles(slice))
 				crossFilesCount++;
-			if (checkCrossLanguages(dataflowFromRefs))
+			if (checkCrossLanguages(slice))
 				crossLanguagesCount++;
+			if (checkCrossStrings(slice))
+				crossStringsCount++;
+			if (checkCrossFunctions(slice))
+				crossFunctionsCount++;
 		}
-		if (references.size() > 0) {
-			results.append("\tAvg dataflow size: " + (float) dataflowSizeTotal / references.size() + System.lineSeparator());
-			results.append("\tAvg dataflow length: " + (float) dataflowLengthTotal / references.size() + System.lineSeparator());
+		if (totalSlices > 0) {
+			results.append("\tNum slices: " + totalSlices + System.lineSeparator());
+			results.append("\tNum slice size 1: " + size1SliceCount + System.lineSeparator());
+			results.append("\tNum slice size > 1: " + (totalSlices - size1SliceCount) + System.lineSeparator());
+			results.append("\tNum PHP entities: " + phpEntities + System.lineSeparator());
+			results.append("\tNum Embedded entities: " + embeddedEntities + System.lineSeparator());
+			results.append("\tAvg dataflow size: " + (float) (sliceSizeTotal) / (totalSlices) + System.lineSeparator());
+			results.append("\tAvg dataflow length: " + (float) (sliceLengthTotal) / (totalSlices) + System.lineSeparator());
 			results.append("\tNum cyclic slices: " + cycleCount + System.lineSeparator());
-			results.append("\tNum cross-files: " + crossFilesCount + System.lineSeparator());
 			results.append("\tNum cross-languages: " + crossLanguagesCount + System.lineSeparator());
+			results.append("\tNum cross-strings: " + crossStringsCount + System.lineSeparator());
+			results.append("\tNum cross-files: " + crossFilesCount + System.lineSeparator());
+			results.append("\tNum cross-functions: " + crossFunctionsCount + System.lineSeparator());
+			results.append("\t");
+			for (int size : sliceSizes)
+				results.append(size + " " );
+			results.append(System.lineSeparator());
 		}
 		return results.toString();
 	}
@@ -126,6 +182,24 @@ public class ShowStatisticsOnReferences {
 			if (!ref2.getClass().getSimpleName().substring(0, 2).equals(lang))
 				return true;
 		return false;
+	}
+	
+	private boolean checkCrossStrings(HashSet<Reference> refs) {
+		return checkCrossFiles(refs) || checkCrossLanguages(refs);
+	}
+	
+	private boolean checkCrossFunctions(HashSet<Reference> refs) {
+		boolean hasFunctionCall = false;
+		boolean hasFunctionDecl = false;
+		
+		for (Reference reference : refs) {
+			if (reference.getType().contains("FunctionCall"))
+				hasFunctionCall = true;
+			if (reference.getType().contains("FunctionDecl"))
+				hasFunctionDecl = true;
+		}
+		
+		return hasFunctionCall && hasFunctionDecl;
 	}
 	
 }

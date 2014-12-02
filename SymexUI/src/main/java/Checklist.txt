@@ -1,3 +1,2 @@
-OK		ui
-OK		ui.notused
-OK		ui.views
+OK		edu.iastate.symex.ui
+OK		edu.iastate.symex.ui.views

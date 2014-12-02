@@ -20,15 +20,12 @@ public class ParseDataModel {
 	public HtmlDocument parse(DataModel dataModel) {
 		// Step 1: Convert DataModel into CondList<HtmlToken>
 		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
-		System.out.println(lexResult.toDebugString());
 		
 		// Step 2: Convert CondList<HtmlToken> into CondList<HtmlSaxNode>
 		CondList<HtmlSaxNode> parseResult = new HtmlTokensToSaxNodes().parse(lexResult);
-		System.out.println(parseResult.toDebugString());
 		
 		// Step 3: Convert CondList<HtmlSaxNode> to HtmlDocument
 		HtmlDocument htmlDocument = new HtmlSaxNodesToHtmlDocument().parse(parseResult);
-		System.out.println(htmlDocument.toDebugString());
 		
 		return htmlDocument;
 	}

@@ -159,10 +159,11 @@ public class JavascriptVisitor extends ASTVisitor {
 	 * Visits a return statement.
 	 */
 	public boolean visit(ReturnStatement returnStatement) {
-		returnStatement.getExpression().accept(this);
+		if (returnStatement.getExpression() != null)
+			returnStatement.getExpression().accept(this);
 		
 		JsFunctionDecl currentJsFunctionDecl = env.getCurrentJsFunctionDeclInAllScopes();
-		Reference newReference = findLastCreatedReferenceAtNode(returnStatement.getExpression());
+		Reference newReference = returnStatement.getExpression() != null ? findLastCreatedReferenceAtNode(returnStatement.getExpression()) : null;
 		
 		/*
 		 * Record data flows

@@ -59,6 +59,11 @@ public abstract class Reference {
 		reference.dataFlowFromReferences.add(this);
 	}
 	
+	public void clearDataflow() {
+		this.dataFlowFromReferences.clear();
+		this.dataFlowToReferences.clear();
+	}
+		
 	/*
 	 * Get properties
 	 */

@@ -121,6 +121,11 @@ public class WebAnalysisView extends ViewPart {
 		phpAstTreeViewer = new PhpAstTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
 		jsAstTreeViewer = new JsAstTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
 		
+		forwardSliceTreeViewer.getTree().getColumn(0).setText("Slice");
+		forwardSliceTreeViewer.getTree().getColumn(1).setText("Data Entity and Constraint");
+		backwardSliceTreeViewer.getTree().getColumn(0).setText("Slice");
+		backwardSliceTreeViewer.getTree().getColumn(1).setText("Data Entity and Constraint");
+		
 		TabItem tabItem1 = new TabItem(tabFolder, SWT.NONE);
 		tabItem1.setText("Forward Slicing");
 		tabItem1.setControl(forwardSliceTreeViewer.getControl());
@@ -227,8 +232,9 @@ public class WebAnalysisView extends ViewPart {
 			if (reference.getLocation().getStartPosition().getFile().equals(position.getFile())
 					&& reference.getLocation().getStartPosition().getOffset() <= position.getOffset()
 					&& position.getOffset() < reference.getLocation().getEndPosition().getOffset()) {
-			sliceTreeViewer.getTree().select(treeItem);
-			sliceTreeViewer.getTree().setFocus();
+				
+				sliceTreeViewer.getTree().select(treeItem);
+				sliceTreeViewer.getTree().setFocus();
 			}
 		}
 	}
@@ -285,7 +291,7 @@ public class WebAnalysisView extends ViewPart {
 			phpAstTreeViewer.expandToLevel(2);
 			tabFolder.setSelection(2);
 		} catch (Exception e) {
-			System.out.println("In WebAnalysis.java: Error parsing " + file + " (" + e.getMessage() + ")");
+			System.out.println("In WebAnalysisView.java: Error parsing " + file + " (" + e.getMessage() + ")");
 		}
 	}
 	

@@ -1,2 +1,3 @@
 OK		edu.iastate.parsers.ui
+OK		edu.iastate.parsers.ui.actions
 OK		edu.iastate.parsers.ui.views

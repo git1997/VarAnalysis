@@ -102,7 +102,7 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 				MyLogger.log(MyLevel.USER_EXCEPTION, "In HtmlVisitor.java: Unable to resolve the included file " + includedFile + ". Current file: " + currentFile.getAbsolutePath());
 			}
 			else {
-				File included = new File(currentFile.getParent() + "\\" + includedFilePath);
+				File included = new File(currentFile.getParent() + File.separatorChar + includedFilePath);
 				String javascriptSource = FileIO.readStringFromFile(included);
 				Range javascriptLocation = new Range(included, 0, javascriptSource.length());
 			
