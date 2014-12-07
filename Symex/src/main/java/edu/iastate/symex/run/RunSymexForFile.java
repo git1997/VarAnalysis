@@ -19,7 +19,8 @@ public class RunSymexForFile {
 	/**
 	 * PHP file to test
 	 */	
-	public static String PHP_FILE = "/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/test.php";
+	public static String PHP_FILE = //"/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/test.php";
+									"/Work/Servers/HTTPServer/Lab/wordpress-3.7/index.php";
 
 	/**
 	 * PHP file to be executed
@@ -52,6 +53,7 @@ public class RunSymexForFile {
 		DataModel dataModel = new PhpExecuter().execute(file);
 		
 		MyLogger.log(MyLevel.PROGRESS, "[RunSymexForFile:" + file + "] Done in " + timer.getElapsedSecondsInText() + ".");
+		MyLogger.printToFile("/Users/HUNG/Desktop/output.txt");
 		return dataModel;
 	}
 		
