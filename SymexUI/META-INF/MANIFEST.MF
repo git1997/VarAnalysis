@@ -3,10 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: SymexUI
 Bundle-SymbolicName: SymexUI;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- Symex;bundle-version="1.0.0",
- org.eclipse.ui.ide
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.ide,
+ Symex;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.core.resources,

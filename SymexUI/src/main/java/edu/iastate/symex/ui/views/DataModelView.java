@@ -93,7 +93,7 @@ public class DataModelView extends ViewPart {
 		tabItem1.setText("Tree");
 		tabItem1.setControl(dataModelTreeViewer.getControl());
 		
-		dataModelStyledText = new StyledText(tabFolder, SWT.BORDER);
+		dataModelStyledText = new StyledText(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		dataModelStyledText.setText("");
 		//dataModelStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		

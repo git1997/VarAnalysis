@@ -16,9 +16,7 @@ Export-Package: edu.iastate.symex.analysis,
  edu.iastate.symex.util,
  edu.iastate.symex.util.logging,
  edu.iastate.symex.util.sourcetracing
-Require-Bundle: org.eclipse.php.core;bundle-version="[3.2.0,3.3.0)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.9.100",
+ org.eclipse.php.core;bundle-version="3.2.0",
  org.eclipse.dltk.core;bundle-version="5.0.0",
- org.eclipse.core.runtime;bundle-version="3.9.100",
- org.junit,
- featureexprlib_2.9.1-0.3.3_plugin;bundle-version="1.0.0",
- z3_plugin;bundle-version="1.0.0"
+ featureexprlib_2.9.1-0.3.3_plugin;bundle-version="1.0.0"

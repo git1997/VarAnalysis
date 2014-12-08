@@ -17,7 +17,7 @@
       <view
             category="edu.iastate.symex.category.symex"
             class="edu.iastate.symex.ui.views.DataModelView"
-            icon="icons/sample.gif"
+            icon="src/main/resources/icons/sample.gif"
             id="edu.iastate.symex.ui.views.DataModelView"
             name="Symbolic Output">
       </view>
