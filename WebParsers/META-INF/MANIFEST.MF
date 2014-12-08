@@ -14,9 +14,9 @@ Export-Package: deprecated,
  edu.iastate.parsers.html.htmlparser,
  edu.iastate.parsers.html.run,
  edu.iastate.parsers.html.sax.nodes
-Require-Bundle: Symex;bundle-version="1.0.0",
- org.eclipse.equinox.common;bundle-version="3.6.200",
+Require-Bundle: org.eclipse.equinox.common;bundle-version="3.6.200",
  org.eclipse.core.resources;bundle-version="3.8.101",
  org.eclipse.php.core;bundle-version="3.2.0",
+ Symex;bundle-version="1.0.0",
  featureexprlib_2.9.1-0.3.3_plugin;bundle-version="1.0.0"
 Import-Package: org.eclipse.wst.jsdt.core.dom

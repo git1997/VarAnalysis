@@ -22,48 +22,48 @@ public class TestSymex {
 	
 	public static void main(String[] args) {
 		testMode = false;
-		new TestSymex().runFile("testScalar.php", "testScalar-DataModel.txt");
+		new TestSymex().testScalar();
 	}
 
-	private void runFile(String inputFilePath, String outputFilePath) {
+	private void runFile(String inputFilePath, String expectedOutputFilePath) {
 		File inputFile = new File("src/test/resources/" + inputFilePath);
-		File outputFile = new File("src/test/resources/" + outputFilePath);
+		File expectedOutputFile = new File("src/test/resources/" + expectedOutputFilePath);
 		
 		DataModel dataModel = new RunSymexForFile(inputFile).execute();
+		String actual = WriteDataModelToIfDefs.convert(dataModel);
+		
 		if (testMode) {
-			String actual = WriteDataModelToIfDefs.convert(dataModel);
-			String expected = FileIO.readStringFromFile(outputFile);
+			String expected = FileIO.readStringFromFile(expectedOutputFile);
 			assertEquals(expected, actual);
 		}
 		else {
-			String actual = WriteDataModelToIfDefs.convert(dataModel);
-			FileIO.writeStringToFile(actual, outputFile);
+			FileIO.writeStringToFile(actual, expectedOutputFile);
 		}
 	}
 	
 	@Test
 	public void testFunction() {
-		runFile("testFunction.php", "testFunction-DataModel.txt");
+		runFile("testFunction.php", "testFunction-expected.txt");
 	}
 	
 	@Test
 	public void testGlobalVariable() {
-		runFile("testGlobalVariable.php", "testGlobalVariable-DataModel.txt");
+		runFile("testGlobalVariable.php", "testGlobalVariable-expected.txt");
 	}
 	
 	@Test
 	public void testIf() {
-		runFile("testIf.php", "testIf-DataModel.txt");
+		runFile("testIf.php", "testIf-expected.txt");
 	}
 	
 	@Test
 	public void testScalar() {
-		runFile("testScalar.php", "testScalar-DataModel.txt");
+		runFile("testScalar.php", "testScalar-expected.txt");
 	}
 	
 	@Test
 	public void testSwitchStatement() {
-		runFile("testSwitchStatement.php", "testSwitchStatement-DataModel.txt");
+		runFile("testSwitchStatement.php", "testSwitchStatement-expected.txt");
 	}
 
 }

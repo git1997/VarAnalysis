@@ -10,7 +10,7 @@
       <view
             category="edu.iastate.parsers.category.webparsers"
             class="edu.iastate.parsers.ui.views.WebParsersView"
-            icon="icons/sample.gif"
+            icon="src/main/resources/icons/sample.gif"
             id="edu.iastate.parsers.ui.views.WebParsersView"
             name="Web Parsers">
       </view>
@@ -21,7 +21,7 @@
       <view
             category="edu.iastate.parsers.category.webanalysis"
             class="edu.iastate.parsers.ui.views.WebAnalysisView"
-            icon="icons/sample.gif"
+            icon="src/main/resources/icons/sample.gif"
             id="edu.iastate.parsers.ui.views.WebAnalysisView"
             name="Web Analysis">
       </view>
