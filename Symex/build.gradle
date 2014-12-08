@@ -1,0 +1,24 @@
+apply plugin: 'java'
+
+archivesBaseName = "Symex"
+version = '1.0'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile files('/Work/Eclipse/eclipse-Scala/plugins/org.eclipse.core.runtime_3.9.100.v20131218-1515.jar')
+	compile files('/Work/Eclipse/eclipse-Scala/plugins/org.eclipse.php.core_3.2.0.201306051924.jar')	
+	compile files('/Work/Eclipse/eclipse-Scala/plugins/org.eclipse.dltk.core_5.0.0.201306060709.jar')	
+	compile files('/Work/Eclipse/eclipse-Scala/plugins/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar')
+	
+	compile project(':featureexprlib_2.9.1-0.3.3_plugin')
+	compile files('/Work/Eclipse/workspace/scala/VarAnalysis-Tool/VarAnalysis-Tool/featureexprlib_2.9.1-0.3.3_plugin/featureexprlib_2.9.1-0.3.3.jar')
+	compile files('/Work/Eclipse/workspace/scala/VarAnalysis-Tool/VarAnalysis-Tool/featureexprlib_2.9.1-0.3.3_plugin/scala-library.jar')
+	compile files('/Work/Eclipse/workspace/scala/VarAnalysis-Tool/VarAnalysis-Tool/featureexprlib_2.9.1-0.3.3_plugin/javabdd-1.0b2.jar')	
+	compile files('/Work/Eclipse/workspace/scala/VarAnalysis-Tool/VarAnalysis-Tool/featureexprlib_2.9.1-0.3.3_plugin/org.sat4j.core.jar')		
+
+	testCompile files('/Work/Eclipse/workspace/scala/VarAnalysis-Tool/VarAnalysis-Tool/Symex/lib/java-cup-11b-runtime.jar')
+	testCompile 'junit:junit:4.+'
+}

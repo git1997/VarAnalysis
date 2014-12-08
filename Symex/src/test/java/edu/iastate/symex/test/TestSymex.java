@@ -33,7 +33,7 @@ public class TestSymex {
 		if (testMode) {
 			String actual = WriteDataModelToIfDefs.convert(dataModel);
 			String expected = FileIO.readStringFromFile(outputFile);
-			assertEquals(actual, expected);
+			assertEquals(expected, actual);
 		}
 		else {
 			String actual = WriteDataModelToIfDefs.convert(dataModel);

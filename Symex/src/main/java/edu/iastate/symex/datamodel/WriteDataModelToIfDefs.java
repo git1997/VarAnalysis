@@ -62,7 +62,7 @@ public class WriteDataModelToIfDefs {
 		}
 		
 		else if (dataNode instanceof SelectNode) {
-			String constraint = ((SelectNode) dataNode).getConstraint() != null ? ((SelectNode) dataNode).getConstraint().toString() : "[Unresolved Constraint]";
+			String constraint = ((SelectNode) dataNode).getConstraint() != null ? ((SelectNode) dataNode).getConstraint().toDebugString() : "[Unresolved Constraint]";
 			
 			String trueBranch = convert(((SelectNode) dataNode).getNodeInTrueBranch());
 			String falseBranch = convert(((SelectNode) dataNode).getNodeInFalseBranch());

@@ -8,7 +8,7 @@ import java.util.logging.LogRecord;
  * @author HUNG
  *
  */
-public class MyHandler extends Handler {
+public class ConsoleHandler extends Handler {
 
 	@Override
 	public void publish(LogRecord logRecord) {

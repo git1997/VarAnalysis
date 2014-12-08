@@ -1,0 +1,16 @@
+allprojects {
+}
+
+subprojects {
+	//apply plugin: 'org.akhikhl.wuff.eclipse-bundle'
+}
+
+buildscript {
+	repositories {
+		//mavenCentral()
+	}
+
+	dependencies {
+		//classpath 'org.akhikhl.wuff:wuff-plugin:+'
+	}
+}

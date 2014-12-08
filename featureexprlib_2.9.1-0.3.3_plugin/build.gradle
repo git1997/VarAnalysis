@@ -1,0 +1,10 @@
+apply plugin: 'java'
+
+archivesBaseName = "featureexprlib"
+version = '2.9.1-0.3.3'
+
+repositories {
+}
+
+dependencies {
+}
