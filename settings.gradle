@@ -1,1 +1,1 @@
-include ':featureexprlib_2.9.1-0.3.3_plugin', ':Symex', ':SymexUI'
+include ':Symex'
