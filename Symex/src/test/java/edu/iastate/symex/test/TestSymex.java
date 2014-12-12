@@ -22,12 +22,12 @@ public class TestSymex {
 	
 	public static void main(String[] args) {
 		testMode = false;
-		new TestSymex().testScalar();
+		new TestSymex().testFieldAccess();
 	}
 
-	private void runFile(String inputFilePath, String expectedOutputFilePath) {
-		File inputFile = new File("src/test/resources/" + inputFilePath);
-		File expectedOutputFile = new File("src/test/resources/" + expectedOutputFilePath);
+	private void runFile(String fileName) {
+		File inputFile = new File("src/test/resources/" + fileName + ".php");
+		File expectedOutputFile = new File("src/test/resources/" + fileName + "-expected.txt");
 		
 		DataModel dataModel = new RunSymexForFile(inputFile).execute();
 		String actual = WriteDataModelToIfDefs.convert(dataModel);
@@ -43,27 +43,32 @@ public class TestSymex {
 	
 	@Test
 	public void testFunction() {
-		runFile("testFunction.php", "testFunction-expected.txt");
+		runFile("testFunction");
 	}
 	
 	@Test
 	public void testGlobalVariable() {
-		runFile("testGlobalVariable.php", "testGlobalVariable-expected.txt");
+		runFile("testGlobalVariable");
 	}
 	
 	@Test
 	public void testIf() {
-		runFile("testIf.php", "testIf-expected.txt");
+		runFile("testIf");
 	}
 	
 	@Test
 	public void testScalar() {
-		runFile("testScalar.php", "testScalar-expected.txt");
+		runFile("testScalar");
 	}
 	
 	@Test
 	public void testSwitchStatement() {
-		runFile("testSwitchStatement.php", "testSwitchStatement-expected.txt");
+		runFile("testSwitchStatement");
+	}
+	
+	@Test
+	public void testFieldAccess() {
+		runFile("testFieldAccess");
 	}
 
 }

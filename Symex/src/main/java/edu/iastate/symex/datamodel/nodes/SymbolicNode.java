@@ -24,7 +24,7 @@ public class SymbolicNode extends DataNode {
 	 * @param phpNode The PhpNode which has unresolved value, can be null.
 	 * @param parentNode To support the tracing of unresolved values, can be null.
 	 */
-	public SymbolicNode(PhpNode phpNode, SymbolicNode parentNode) {
+	protected SymbolicNode(PhpNode phpNode, SymbolicNode parentNode) {
 		this.phpNode = phpNode;
 		this.parentNode = parentNode;
 	}

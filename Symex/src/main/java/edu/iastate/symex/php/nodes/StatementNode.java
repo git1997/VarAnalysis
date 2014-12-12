@@ -60,7 +60,7 @@ public abstract class StatementNode extends PhpNode {
 			case Statement.SWITCH_STATEMENT:		return new SwitchStatementNode((SwitchStatement) statement);
 			case Statement.TRY_STATEMENT:			return new TryStatementNode((TryStatement) statement);
 			case Statement.WHILE_STATEMENT:			return new WhileStatementNode((WhileStatement) statement);			
-			default: 								MyLogger.log(MyLevel.TODO, "Statement unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(statement)); return new UnresolvedStatementNode(statement);
+			default: 								MyLogger.log(MyLevel.TODO, "Statement (" + statement.getClass().getSimpleName() + ") unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(statement)); return new UnresolvedStatementNode(statement);
 		}
 	}
 	

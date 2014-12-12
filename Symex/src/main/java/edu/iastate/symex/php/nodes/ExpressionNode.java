@@ -3,7 +3,6 @@ package edu.iastate.symex.php.nodes;
 import org.eclipse.php.internal.core.ast.nodes.ArrayCreation;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.ast.nodes.CastExpression;
-import org.eclipse.php.internal.core.ast.nodes.ClassInstanceCreation;
 import org.eclipse.php.internal.core.ast.nodes.ConditionalExpression;
 import org.eclipse.php.internal.core.ast.nodes.Expression;
 import org.eclipse.php.internal.core.ast.nodes.Identifier;
@@ -51,7 +50,6 @@ public abstract class ExpressionNode extends PhpNode {
 			case Expression.ARRAY_CREATION:				return new ArrayCreationNode((ArrayCreation) expression);
 			case Expression.ASSIGNMENT: 				return new AssignmentNode((Assignment) expression);
 			case Expression.CAST_EXPRESSION:			return new CastExpressionNode((CastExpression) expression);
-			case Expression.CLASS_INSTANCE_CREATION:	return new ClassInstanceCreationNode((ClassInstanceCreation) expression);
 			case Expression.CONDITIONAL_EXPRESSION:		return new ConditionalExpressionNode((ConditionalExpression) expression);
 			case Expression.IDENTIFIER:					return new IdentifierNode((Identifier) expression);
 			case Expression.IGNORE_ERROR:				return new IgnoreErrorNode((IgnoreError) expression);
@@ -63,7 +61,7 @@ public abstract class ExpressionNode extends PhpNode {
 			case Expression.QUOTE:						return new QuoteNode((Quote) expression);
 			case Expression.SCALAR:						return new ScalarNode((Scalar) expression);
 			case Expression.UNARY_OPERATION:			return new UnaryOperationNode((UnaryOperation) expression);
-			default:									MyLogger.log(MyLevel.TODO, "Expression unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(expression)); return new UnresolvedExpressionNode(expression);
+			default:									MyLogger.log(MyLevel.TODO, "Expression (" + expression.getClass().getSimpleName() + ") unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(expression)); return new UnresolvedExpressionNode(expression);
 		}
 	}
 	
@@ -71,6 +69,9 @@ public abstract class ExpressionNode extends PhpNode {
 	 * Resolves the name of a variable/function/class from this expression. 
 	 * Note that this information may not be available until run time.
 	 * Returns null if the name cannot be resolved.
+	 * 
+	 * This method is different than VariableNode.getResolvedVariableNameOrNull.
+	 * @see edu.iastate.symex.php.nodes.VariableNode.getResolvedVariableNameOrNull(Env)
 	 */
 	public String getResolvedNameOrNull(Env env) {
 		if (this instanceof IdentifierNode)

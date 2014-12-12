@@ -1,6 +1,7 @@
 package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
+import org.eclipse.php.internal.core.ast.nodes.ClassInstanceCreation;
 import org.eclipse.php.internal.core.ast.nodes.Dispatch;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
@@ -36,10 +37,11 @@ public abstract class VariableBaseNode extends ExpressionNode {
 			return DispatchNode.createInstance((Dispatch) variableBase);
 		
 		switch (variableBase.getType()) {
-			case VariableBase.ARRAY_ACCESS:			return new ArrayAccessNode((ArrayAccess) variableBase);
-			case VariableBase.FUNCTION_INVOCATION:	return new FunctionInvocationNode((FunctionInvocation) variableBase);
-			case VariableBase.VARIABLE:				return new VariableNode((Variable) variableBase);
-			default:								MyLogger.log(MyLevel.TODO, "VariableBase unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(variableBase)); return new UnresolvedVariableBaseNode(variableBase);
+			case VariableBase.ARRAY_ACCESS:				return new ArrayAccessNode((ArrayAccess) variableBase);
+			case VariableBase.CLASS_INSTANCE_CREATION:	return new ClassInstanceCreationNode((ClassInstanceCreation) variableBase);			
+			case VariableBase.FUNCTION_INVOCATION:		return new FunctionInvocationNode((FunctionInvocation) variableBase);
+			case VariableBase.VARIABLE:					return new VariableNode((Variable) variableBase);
+			default:									MyLogger.log(MyLevel.TODO, "VariableBase (" + variableBase.getClass().getSimpleName() + ") unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(variableBase)); return new UnresolvedVariableBaseNode(variableBase);
 		}
 	}
 	

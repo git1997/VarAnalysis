@@ -31,7 +31,7 @@ public abstract class DispatchNode extends VariableBaseNode {
 		switch (dispatch.getType()) {
 			case Dispatch.FIELD_ACCESS: 		return new FieldAccessNode((FieldAccess) dispatch);
 			case Dispatch.METHOD_INVOCATION:	return new MethodInvocationNode((MethodInvocation) dispatch);
-			default:							MyLogger.log(MyLevel.TODO, "Dispatch AST node type unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(dispatch)); return new UnresolvedDispatchNode(dispatch);
+			default:							MyLogger.log(MyLevel.TODO, "Dispatch AST node type (" + dispatch.getClass().getSimpleName() + ") unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(dispatch)); return new UnresolvedDispatchNode(dispatch);
 		}
 	}
 

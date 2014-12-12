@@ -5,7 +5,6 @@ PhpNode
 		ArrayCreationNode
 		AssignmentNode						x
 		CastExpressionNode
-		ClassInstanceCreationNode			x
 		ConditionalExpressionNode
 		IdentifierNode						
 		IgnoreErrorNode
@@ -20,15 +19,17 @@ PhpNode
 		UnresolvedExpressionNode
 		VariableBaseNode
 			ArrayAccessNode					x
+			ClassInstanceCreationNode			
 			DispatchNode
-				FieldAccessNode				x
+				FieldAccessNode
 				MethodInvocationNode		x
 				UnresolvedDispatchNode
 			FunctionInvocationNode			x
 			UnresolvedVariableBaseNode
-			VariableNode					x
+			VariableNode
 	FormalParameterNode
 	ProgramNode
+	SingleFieldDeclarationNode
 	StatementNode	
 		BlockNode
 		BreakStatementNode

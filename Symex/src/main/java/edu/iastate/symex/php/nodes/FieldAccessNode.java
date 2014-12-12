@@ -8,6 +8,7 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
+import edu.iastate.symex.datamodel.nodes.ObjectNode;
 
 /**
  * 
@@ -16,8 +17,8 @@ import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
  */
 public class FieldAccessNode extends DispatchNode {
 	
-	//private VariableBaseNode variableBaseNode;
-	//private VariableNode fieldNode;
+	private VariableBaseNode dispatcher;
+	private VariableNode field;
 	
 	/*
 	Represents a field access 
@@ -26,8 +27,8 @@ public class FieldAccessNode extends DispatchNode {
 	*/
 	public FieldAccessNode(FieldAccess fieldAccess) {
 		super(fieldAccess);
-		//variableBaseNode = VariableBaseNode.createInstance(fieldAccess.getDispatcher());
-		//fieldNode = new VariableNode(fieldAccess.getField());
+		dispatcher = VariableBaseNode.createInstance(fieldAccess.getDispatcher());
+		field = new VariableNode(fieldAccess.getField());
 	}
 
 	@Override
@@ -38,8 +39,19 @@ public class FieldAccessNode extends DispatchNode {
 
 	@Override
 	public DataNode execute(Env env) {
-		MyLogger.log(MyLevel.TODO, "In FieldAccessNode.java: FieldAccess unimplemented.");
-		return DataNodeFactory.createSymbolicNode(this);
+		DataNode dataNode = dispatcher.execute(env);
+		if (dataNode instanceof ObjectNode) {
+			ObjectNode object = (ObjectNode) dataNode;
+			String fieldName = field.execute(env).getExactStringValueOrNull();
+			if (fieldName != null)
+				return object.getFieldValue(fieldName);
+			else
+				return DataNodeFactory.createSymbolicNode(this);
+		}
+		else {
+			MyLogger.log(MyLevel.TODO, "In FieldAccessNode.java: FieldAccess unimplemented for non-object values.");
+			return DataNodeFactory.createSymbolicNode(this);
+		}
 	}
 
 }
