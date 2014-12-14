@@ -4,7 +4,6 @@ import java.io.File;
 
 import edu.iastate.symex.datamodel.DataModel;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.php.nodes.FileNode;
 
 /**
@@ -23,9 +22,9 @@ public class PhpExecuter {
 		FileNode fileNode = new FileNode(file);
 
 		fileNode.execute(env);
-		env.addCurrentOutputToFinalOutput(); // The final output is a selection of outputs from the normal flows and exit flows
+		env.finishExecution();
 		
-		DataNode output = env.getFinalOutput() != null ? env.getFinalOutput().getDataNode() : DataNodeFactory.createLiteralNode("");
+		DataNode output = env.getFinalOutput();
 		return new DataModel(output);
 	}
 	

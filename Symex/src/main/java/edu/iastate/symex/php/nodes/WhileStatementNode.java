@@ -41,17 +41,20 @@ public class WhileStatementNode extends StatementNode {
 	@Override
 	public DataNode execute(Env env) {
 		condition.execute(env);
-		execute(env, conditionString, statement);
-		return null;
+		return execute(env, conditionString, statement);
 	}
 	
 	/**
 	 * Executes the loop and updates the env accordingly.
 	 */
-	public static void execute(Env env, LiteralNode conditionString, StatementNode statement) {
+	public static DataNode execute(Env env, LiteralNode conditionString, StatementNode statement) {
 		BranchEnv loopEnv = new BranchEnv(env, ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation()));
+
 		statement.execute(loopEnv);
-		env.updateWithLoop(ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation()), loopEnv);
+		
+		env.updateAfterLoopExecution(loopEnv);
+		
+		return null; // TODO Implement cases of return value
 	}
 
 }

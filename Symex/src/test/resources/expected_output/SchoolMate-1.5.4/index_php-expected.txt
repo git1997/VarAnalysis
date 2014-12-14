@@ -1,0 +1,9162 @@
+
+#if (NORMAL_OUTPUT)
+<html>
+ <head>
+ <title>SchoolMate - 
+#if ($_POST["infoupdate"] == 1)
+[Symbolic:$_POST["schoolname"]]
+#else
+[Symbolic:mysql_result($query,0)]
+#endif
+</title>
+ <style type="text/css">
+
+ /* BODY */
+ body
+ {
+  background-color: #336699;
+ }
+
+ /* LINKS */
+  A.footer
+  {
+    font-family: arial;
+    font-size: 10pt;
+    font-weight: normal;
+    color: silver;
+    text-decoration: underline;
+  }
+
+  A.footer:hover
+  {
+    font-family: arial;
+    font-size: 10pt;
+    font-weight: normal;
+    color: black;
+	text-decoration: underline;
+  }
+
+  A.menu
+  {
+	font-family: arial;
+	font-size: 12pt;
+	font-weight: bold;
+	color: #e6ca3d;
+	text-decoration: none;
+  }
+
+  A.menu:hover
+  {
+	font-family: arial;
+    font-size: 12pt;
+    font-wight: bold;
+	color: #FFFFBB;
+    text-decoration: none;
+  }
+
+  A.pagenum
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #808080;
+   text-decoration: none;
+  }
+
+  A.pagenum:hover
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #ACACAC;
+   text-decoration: none;
+  }
+
+  A.selectedpagenum
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #000000;
+   text-decoration: underline;
+  }
+
+  A.selectedpagenum:hover
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #ACACAC;
+   text-decoration: underline;
+  }
+
+  A.items
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #000000;
+   text-decoration: underline;
+  }
+
+  A.items:hover
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #5F5F5F;
+   text-decoration: underline;
+  }
+
+  /* TABLES */
+  table
+  {
+	background-color: #FFFFFF;
+  }
+
+  table.y
+  {
+	background-color: #FFFFBB;
+  }
+
+  table.dynamiclist
+  {
+   border-color: #585858;
+   border-width: .075EM;
+   border-style: solid;
+   padding-right: 1px;
+   padding-bottom: 1px;
+   padding-left: 0px;
+   padding-top: 0px;
+  }
+
+  td.b
+  {
+   background-color: #336699;
+  }
+
+  td.bv
+  {
+   background-color: #336699;
+   background-repeat: repeat-y;
+  }
+
+  td.w
+  {
+   background-color: #FFFFFF;
+  }
+
+  td.announcement
+  {
+   text-align: justify;
+   padding-left: 20px;
+   padding-right: 20px;
+  }
+
+  .odd
+  {
+   background-color: #ACACAC;
+   text-align: center;
+  }
+
+  .even
+  {
+   background-color: #E0E0E0;
+   text-align: center;
+  }
+
+  .header
+  {
+   background-color: #FFFFBB;
+  }
+
+ /* HEADERS */
+  h1
+  {
+   	font-family: times;
+    font-size: 22pt;
+    font-weight: bold;
+    color: #000000;
+    text-decoration: none;
+    text-align: center;
+  }
+
+  h2.message
+  {
+	font-family: times;
+    font-size: 16pt;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+  }
+
+ /* CUSTOM CLASSES */
+  .messagebox
+  {
+	background-color: #FFFFBB;
+	border-style: solid;
+	border-width: .075EM;
+	border-color: #e6ca3d;
+	padding: 10px 10px 10px 10px;
+	min-width: 150px;
+	min-height: 150px;
+	width: 300;
+	height: 200;
+	font-family: arial;
+	font-size: 10pt;
+	text-align: left;
+	overflow: none;
+  }
+
+  .messageboxcenter
+  {
+	background-color: #FFFFBB;
+	border-style: solid;
+	border-width: .075EM;
+	border-color: #e6ca3d;
+	padding: 10px 10px 10px 10px;
+	min-width: 150px;
+	min-height: 50px;
+	width: 300;
+	height: 200;
+	font-family: arial;
+	text-align: center;
+	vertical-align: middle;
+	overflow: auto;
+  }
+
+  .footer
+  {
+    font-family: arial;
+    font-size: 10pt;
+    font-weight: normal;
+    color: silver;
+  }
+
+  .yellowtext
+  {
+	font-family: times;
+	font-size: 25pt;
+	font-weight: normal;
+	color: #e6ca3d;
+	text-decoration: none;
+  }
+
+
+</style>
+</head>
+ 
+#if ($page == 0)
+
+ <body onLoad='document.login.username.focus();'>
+ <table cellpadding=0 cellspacing=0 border=0 width='100%' height='80'>
+ <tr>
+ <td class='b' width='300'>
+  <img src='./images/title.gif' height='75' width='300' />
+ </td>
+ <td class='b'>
+  <table cellpadding=0 cellspacing=0 border=0 width='80%'>
+  <tr>
+  <td class='b'>
+   <div class='yellowtext' align='center'>
+#if ($_POST["infoupdate"] == 1)
+[Symbolic:$_POST["schoolname"]]
+#else
+[Symbolic:mysql_result($query,0)]
+#endif
+</div>
+  </td>
+  </tr>
+  </table>
+ </td>
+</tr>
+</table>
+
+ <table width='100%' height='88%' border=0 cellspacing=0 cellpadding=0 align='center'>
+ <tr>
+  <td class='b' width='130' height=10><empty></td>
+  <td class='b' width=10 background='./images/topleft.gif'><empty></td>
+  <td class='b' height=10 background='./images/top.gif'><empty></td>
+  <td class='b' width=10 background='./images/topright.gif'><empty></td>
+ </tr>
+
+
+  <tr>
+  <td class='b' width=130 valign='top'>
+   <br>
+  </td>
+  <td class='bv' width=10 background='./images/left.gif'>&nbsp;</td>
+  <td class='w' valign='top'>
+   <table border=0 cellspacing=0 cellpadding=25 width='100%' height='100%'>
+	<tr>
+	 <td valign='top'>
+	  <br>
+	  <table width='150' border=0 align='center' cellspacing=0 cellpadding=5>
+	  <tr>
+
+	   <td width='50%' align='left' valign='top'>
+		<div class='messagebox'>
+		  [Symbolic:$text]
+		</div>
+	   </td>
+
+	 <td width='50%' align='right' valign='top'>
+		<div class='messagebox'>
+		 <br>
+		 <form action='./index.php' method='post' name='login'>
+#if ($loginerror == 1)
+<font color='red'><center>Invalid username or password!</center></font>
+#else
+[Special]
+#endif
+ <table width='100%' height='85%' border=0 cellspacing=0 cellpadding=0 align='center' class='y'>
+		  <tr>
+		   <td align='right' height=50 valign='middle'><b>Username:&nbsp;</b></td>
+		   <td><input type=text name='username' maxlength=15 width=18></td>
+		  </tr>
+		  <tr>
+		   <td align='right' height=45 valign='middle'><b>Password:&nbsp;</b></td>
+		   <td><input type=password name='password' maxlength=15 width=18></td>
+		  </tr>
+		  <tr>
+		   <td>&nbsp;</td>
+		   <td align='center' height=45><input type=submit value='Login' onClick='document.login.login.value=1;'></td>
+
+		  </tr>
+		 </table>
+	   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+	   <input type='hidden' name='login'>
+	  </form>
+	 </div>
+	</td>
+
+   </tr>
+   <tr>
+
+   <td width='50%' align='right' valign='top'>
+	<div class='messageboxcenter'>
+	 <table border=0 cellpadding=0 cellspacing=0 class='y'>
+	 <tr>
+	  <td align='center' valign='middle'>
+		<br>
+		<img src='./images/school.jpg' style='padding-left: 30px; padding-top: 20px;' width='233' height='111' align='center' valign='middle' />
+	  </td>
+	 </tr>
+	 </table>
+	</div>
+   </td>
+
+	<td width='50%' align='left' valign='top'>
+	 <div class='messageboxcenter'>
+	  <h2 class='message'>Today's Message</h2> <br>
+	   [Symbolic:$message]
+	 </div>
+	</td>
+
+   </tr>
+  </table>
+ </td>
+
+  </tr>
+ </table>
+</td>
+#else
+
+#if ($page == 1)
+<script language='JavaScript'>
+  function logoutAdmin()
+  {
+	document.admin.logout.value=1;
+	document.admin.submit();
+  }
+
+  function classes()
+  {
+	document.admin.page2.value=0;
+	document.admin.submit();
+  }
+
+  function schoolInfo()
+  {
+	document.admin.page2.value=1;
+	document.admin.submit();
+  }
+
+  function students()
+  {
+	document.admin.page2.value=2;
+	document.admin.submit();
+  }
+
+  function teachers()
+  {
+	document.admin.page2.value=3;
+	document.admin.submit();
+  }
+
+  function announcements()
+  {
+	document.admin.page2.value=4;
+	document.admin.submit();
+  }
+
+  function semesters()
+  {
+	document.admin.page2.value=5;
+	document.admin.submit();
+  }
+
+  function terms()
+  {
+	document.admin.page2.value=6;
+	document.admin.submit();
+  }
+
+  function users()
+  {
+	document.admin.page2.value=10;
+	document.admin.submit();
+  }
+
+  function parents()
+  {
+	document.admin.page2.value=22;
+	document.admin.submit();
+  }
+
+  function register()
+  {
+	document.admin.page2.value=26;
+	document.admin.submit();
+  }
+
+  function attendance()
+  {
+	document.admin.page2.value=30;
+	document.admin.submit();
+  }
+ </script>
+
+ <body><table cellpadding=0 cellspacing=0 border=0 width='100%' height='80'>
+ <tr>
+ <td class='b' width='300'>
+  <img src='./images/title.gif' height='75' width='300' />
+ </td>
+ <td class='b'>
+  <table cellpadding=0 cellspacing=0 border=0 width='80%'>
+  <tr>
+  <td class='b'>
+   <div class='yellowtext' align='center'>
+#if ($_POST["infoupdate"] == 1)
+[Symbolic:$_POST["schoolname"]]
+#else
+[Symbolic:mysql_result($query,0)]
+#endif
+</div>
+  </td>
+  </tr>
+  </table>
+ </td>
+</tr>
+</table>
+
+ <table width='100%' height='88%' border=0 cellspacing=0 cellpadding=0 align='center'>
+ <tr>
+  <td class='b' width='130' height=10><empty></td>
+  <td class='b' width=10 background='./images/topleft.gif'><empty></td>
+  <td class='b' height=10 background='./images/top.gif'><empty></td>
+  <td class='b' width=10 background='./images/topright.gif'><empty></td>
+ </tr>
+
+
+ <tr>
+  <td class='b' width=130 valign='top'>
+   <br>
+   <form name='admin' action='./index.php' method='POST'>
+
+   <a class='menu' href='javascript: schoolInfo();' onMouseover="window.status='Manage School Information'; return true;" onMouseout="window.status=''; return true;">School</a>
+   <br><br>
+   <a class='menu' href='javascript: terms();' onMouseover="window.status='Manage Terms'; return true;" onMouseout="window.status=''; return true;">Terms</a>
+   <br><br>
+   <a class='menu' href='javascript: semesters();' onMouseover="window.status='Manage Semesters'; return true;" onMouseout="window.status=''; return true;">Semesters</a>
+   <br><br>
+   <a class='menu' href='javascript: classes();' onMouseover="window.status='Manage Classes'; return true;" onMouseout="window.status=''; return true;">Classes</a>
+   <br><br>
+   <a class='menu' href='javascript: users();' onMouseover="window.status='Manage Users'; return true;" onMouseout="window.status=''; return true;">Users</a>
+   <br><br>
+   <a class='menu' href='javascript: teachers();' onMouseover="window.status='Manage Teachers'; return true;" onMouseout="window.status=''; return true;">Teachers</a>
+   <br><br>
+   <a class='menu' href='javascript: students();' onMouseover="window.status='Manage Students'; return true;" onMouseout="window.status=''; return true;">Students</a>
+   <br><br>
+   <a class='menu' href='javascript: register();' onMouseover="window.status='Register Students for Classes'; return true;" onMouseout="window.status=''; return true;">Registration</a>
+   <br><br>
+   <a class='menu' href='javascript: attendance();' onMouseover="window.status='Keep Attendance'; return true;" onMouseout="window.status=''; return true;">Attendance</a>
+   <br><br>
+   <a class='menu' href='javascript: parents();' onMouseover="window.status='Manage Parents'; return true;" onMouseout="window.status=''; return true;">Parents</a>
+   <br><br>
+   <a class='menu' href='javascript: announcements();' onMouseover="window.status='Manage Announcements'; return true;" onMouseout="window.status=''; return true;">Announcements</a>
+   <br><br>
+   <a class='menu' href='javascript: logoutAdmin();' onMouseover="window.status='Log Out';return true;" onMouseout="window.status='';return true;">Log Out</a>
+
+   <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+   <input type='hidden' name='logout'>
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+  </td>
+  <td class='b' width=10 background='./images/left.gif'><div style='letter-spacing: 1pt;'>&nbsp;</div></td>
+  <td class='w' valign='top'>
+   <table border=0 cellspacing=0 cellpadding=10 width='100%' height='100%'>
+	<tr>
+	 <td valign='top'>
+#if ($page2 == 0)
+<script language='JavaScript'>
+  // Function to make sure the user wants to delete the class(es) //
+  function validate()
+  {
+   if( document.classes.selectclass.value > 0 )
+   {
+	var confirmed = confirm("Deleteing a class will also delete the class bulletins, tardies, attendance, assignments, and registrations that occured during that class. \n \nAre you sure?");
+
+	if( confirmed == true )
+	{
+	 document.classes.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a class to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.classes.selectclass.value == 1 )
+   {
+	document.classes.submit();
+   }
+   else
+   {
+	if( document.classes.selectclass.value > 1 )
+	{
+	 alert('You can only edit one class at a time.');
+	}
+	else
+	{
+	 alert(document.classes.selectclass.value);
+	 alert('You must select a class to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 2;
+   if(document.classes.elements[row].checked)
+   {
+	document.classes.selectclass.value = Math.round(document.classes.selectclass.value) - 1;
+   }
+   else
+   {
+	document.classes.selectclass.value = Math.round(document.classes.selectclass.value) + 1;
+   }
+  }
+ </script>
+
+ <h1>Manage Classes</h1>
+ <br>
+ <form name='classes' action='./index.php' method='POST'>
+
+ <table align='center' width='900' cellspacing='0' cellpadding='0' border='0'>
+ <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
+[RepeatBegin]
+<option value='[Symbolic:$semester[0]]' 
+#if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$semester[1]]</option>
+[RepeatEnd]
+   <option value='-1' 
+#if ($_POST['semester']==-1)
+SELECTED
+#else
+
+#endif
+>All</option>	 </select>
+	 <br><br>
+   </td>
+  </tr>
+ <tr>
+ <td>
+  <input type='button' value='Add' onClick="document.classes.page2.value='9';document.classes.submit();">
+  <input type='button' value='Edit' onClick='document.classes.page2.value=11;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.classes.deleteclass.value=1;validate();'>
+  <input type='button' value='Show in Grid' onClick='document.classes.page2.value=25;document.classes.submit();' />
+  <br><br>
+  <table cellspacing='0' width='900' cellpadding='5' class='dynamiclist'>
+   <tr class='header'>
+	<td>&nbsp;</td>
+	<th>Class Name</th>
+	<th>Teacher</th>
+	<th>Semester</th>
+	<th>Section Number</th>
+	<th>Room Number</th>
+	<th>Period Number</th>
+	<th>Days</th>
+	<th>Substitute</th>
+   </tr>
+#if ($_POST['semester']!="")
+[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$class[0]]' onClick='updateboxes([Symbolic:$actualrow]);' /></td>
+	  <td>[Symbolic:$class[2]]</td>
+	  <td>[Symbolic:$teacher[0]] [Symbolic:$teacher[1]]</td>
+	  <td>[Symbolic:$semester[0]]</td>
+	  <td>[Symbolic:$class[3]]</td>
+	  <td>[Symbolic:$class[4]]</td>
+	  <td>[Symbolic:$class[5]]</td>
+	  <td>[Symbolic:$class[7]]</td>
+	  <td>[Symbolic:$sub[0]] [Symbolic:$sub[1]]</td>
+	 </tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd]
+#else
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$class[0]]' onClick='updateboxes([Symbolic:$actualrow]);' /></td>
+	  <td>[Symbolic:$class[2]]</td>
+	  <td>[Symbolic:$teacher[0]] [Symbolic:$teacher[1]]</td>
+	  <td>[Symbolic:$semester[0]]</td>
+	  <td>[Symbolic:$class[3]]</td>
+	  <td>[Symbolic:$class[4]]</td>
+	  <td>[Symbolic:$class[5]]</td>
+	  <td>[Symbolic:$class[7]]</td>
+	  <td>[Symbolic:$sub[0]] [Symbolic:$sub[1]]</td>
+	 </tr>
+#else
+[Special]
+#endif
+
+#endif
+ </table>
+  <br>
+  <input type='button' value='Add' onClick='document.classes.page2.value=9;document.classes.submit();'>
+  <input type='button' value='Edit' onClick='document.classes.page2.value=11;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.classes.deleteclass.value=1;validate();'>
+  <input type='button' value='Show in Grid' onClick='document.classes.page2.value=25;document.classes.submit();' />
+
+  <br><br>
+  <font color='red'>* Deleting a class will also delete the information for that class</font>
+  <br><br>
+
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.classes.deleteclass.value=0;document.classes.page2.value=0;document.classes.onpage.value=[Symbolic:$i];document.classes.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.classes.deleteclass.value=0;document.classes.page2.value=0;document.classes.onpage.value=[Symbolic:$i];document.classes.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='deleteclass'>
+  <input type='hidden' name='selectclass'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 1)
+<table width='100%' border=0 cellpadding=10 cellspacing=0>
+<tr>
+<td>
+
+ <h1>Manage School Information</h1>
+ <br>
+
+ <form name='info' method='POST' action='./index.php'>
+
+ <table border=0 width=500 cellspacing=0 cellpadding='3' align='center' cellpadding=0 class='dynamiclist'>
+ <tr class='even'>
+  <td align='right'>
+   School Name:
+  </td>
+  <td align='left'>
+   <input type='text' value='
+#if ($_POST["infoupdate"] == 1)
+[Symbolic:$_POST["schoolname"]]
+#else
+[Symbolic:mysql_result($query,0)]
+#endif
+' maxlength='50' name='schoolname' size=40>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right'>
+   Address:
+  </td>
+  <td align='left'>
+   <input type='text' value='[Symbolic:$address]' name='schooladdress' maxlength='50' size=40>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right'>
+   Phone #:
+  </td>
+  <td align='left'>
+   <input type='text' value='[Symbolic:$phone]' name='schoolphone' maxlength='14'>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right'>
+   Semesters Per Year:
+  </td>
+  <td align='left'>
+   <input type='text' value='[Symbolic:$numsemesters]' name='numsemesters' maxlength='3' size=3>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right'>
+   Periods Per Day:
+  </td>
+  <td align='left'>
+   <input type='text' value='[Symbolic:$numperiods]' name='numperiods' maxlength='3' size=3>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right'>
+   Points for A:
+  </td>
+  <td align='left'>
+   <input type='text' value='[Symbolic:number_format($points[0],1)]' name='apoint' maxlength='3' size=3>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right'>
+   Points for B:
+  </td>
+  <td align='left'>
+   <input type='text' value='[Symbolic:number_format($points[1],1)]' name='bpoint' maxlength='3' size=3>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right'>
+   Points for C:
+  </td>
+  <td align='left'>
+   <input type='text' value='[Symbolic:number_format($points[2],1)]' name='cpoint' maxlength='3' size=3>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right'>
+   Points for D:
+  </td>
+  <td align='left'>
+   <input type='text' value='[Symbolic:number_format($points[3],1)]' name='dpoint' maxlength='3' size=3>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right'>
+   Points for F:
+  </td>
+  <td align='left'>
+   <input type='text' value='[Symbolic:number_format($points[4],1)]' name='fpoint' maxlength='3' size=3>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right' valign='top'>
+   Text For Login Page:
+  </td>
+  <td align='left'>
+   <textarea name='sitetext' cols=40 rows=10>[Symbolic:$sitetext]</textarea>
+  </td>
+ </tr>
+ <tr class='even'>
+  <td align='right' valign='top'>Today's Message:</td>
+  <td align='left'>
+   <textarea name='sitemessage' cols=40 rows=10>[Symbolic:$sitemessage]</textarea>
+  </td>
+  </tr>
+ </table>
+<br>
+ <table width='500' align='center' cellpadding='0' cellspacing='0' border='0'>
+  <tr>
+   <td align='center'><input type='button' value=' Update ' onClick='document.info.infoupdate.value=1;document.info.submit();'></td>
+  </tr>
+ </table>
+
+ <input type='hidden' name='infoupdate' value=''>
+ <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+ <input type='hidden' name='logout'>
+ <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+
+</td>
+</tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 2)
+<script language='JavaScript'>
+
+  // Function to make sure the student wants to delete the student(s) //
+  function validate()
+  {
+   if( document.students.selectstudent.value > 0 )
+   {
+	var confirmed = confirm("Are you sure you want to delete this student?");
+
+	if( confirmed == true )
+	{
+	 document.students.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a student to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.students.selectstudent.value == 1 )
+   {
+	document.students.submit();
+   }
+   else
+   {
+	if( document.students.selectstudent.value > 1 )
+	{
+	 alert('You can only edit one student at a time.');
+	}
+	else
+	{
+	 alert('You must select a student to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 2;
+   if(document.students.elements[row].checked)
+   {
+	document.students.selectstudent.value = Math.round(document.students.selectstudent.value) + 1;
+   }
+   else
+   {
+	document.students.selectstudent.value = Math.round(document.students.selectstudent.value) - 1;
+   }
+  }
+ </script>
+
+ <h1>Manage Students</h1>
+ <br><br>
+ <table align='center' width='425' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='students' action='./index.php' method='POST'>
+  <input type='button' value='Add' onClick='document.students.page2.value=20;document.students.submit();'>
+  <input type='button' value='Edit' onClick='document.students.page2.value=21;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.students.deletestudent.value=1;validate();'>
+  <br><br>
+  <table cellspacing='0' width='425' cellpadding='8' class='dynamiclist'>
+   <tr class='header'>
+	<td>&nbsp;</td>
+	<th>First Name</th>
+	<th>Middle Initial</th>
+	<th>Last Name</th>
+	<th>Username</th>
+   </tr>[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$student[0]]' onClick='updateboxes(0);' /></td>
+	  <td>[Symbolic:$student[1]]</td>
+	  <td>[Symbolic:$student[2]]</td>
+	  <td>[Symbolic:$student[3]]</td>
+	  <td>[Symbolic:$student[4]]</td>
+	 </tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd] </table>
+  <br>
+  <b>Reports:</b>
+  <select name='report' onChange='document.students.page2.value=document.students.report.value;document.students.deletestudent.value=0;document.students.submit();'>
+   <option>Choose a Report...</option>
+   <option value='27'>Deficiency Report</option>
+   <option value='28'>Grade Report</option>
+   <option value='32'>Points Report</option>
+   <option value='1337'>Report Cards</option>
+  </select>
+ &nbsp;&nbsp;&nbsp;&nbsp;<b>Term: </b> <select name='term' onChange='document.students.submit();'>[RepeatBegin]
+<option value='[Symbolic:$term[0]]' 
+#if ($_POST['term']==$term[0]&&$_POST['term']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$term[1]]</option>
+[RepeatEnd]
+	 </select>
+  <br /><br />
+  <input type='button' value='Add' onClick='document.students.page2.value=20;document.students.submit();'>
+  <input type='button' value='Edit' onClick='document.students.page2.value=21;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.students.deletestudent.value=1;validate();'>
+  <br><br>
+
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.students.deletestudent.value=0;document.students.page2.value=2;document.students.onpage.value=[Symbolic:$i];document.students.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.students.deletestudent.value=0;document.students.page2.value=2;document.students.onpage.value=[Symbolic:$i];document.students.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='deletestudent'>
+  <input type='hidden' name='selectstudent'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 3)
+<script language='JavaScript'>
+
+  // Function to make sure the teacher wants to delete the teacher(s) //
+  function validate()
+  {
+   if( document.teachers.selectteacher.value > 0 )
+   {
+	var confirmed = confirm("Are you sure you want to delete this teacher?");
+
+	if( confirmed == true )
+	{
+	 document.teachers.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a teacher to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.teachers.selectteacher.value == 1 )
+   {
+	document.teachers.submit();
+   }
+   else
+   {
+	if( document.teachers.selectteacher.value > 1 )
+	{
+	 alert('You can only edit one teacher at a time.');
+	}
+	else
+	{
+	 alert('You must select a teacher to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 2;
+   if(document.teachers.elements[row].checked)
+   {
+	document.teachers.selectteacher.value = Math.round(document.teachers.selectteacher.value) + 1;
+   }
+   else
+   {
+	document.teachers.selectteacher.value = Math.round(document.teachers.selectteacher.value) - 1;
+   }
+  }
+ </script>
+
+ <h1>Manage Teachers</h1>
+ <br><br>
+ <table align='center' width='400' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='teachers' action='./index.php' method='POST'>
+  <input type='button' value='Add' onClick='document.teachers.page2.value=16;document.teachers.submit();'>
+  <input type='button' value='Edit' onClick='document.teachers.page2.value=17;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.teachers.deleteteacher.value=1;validate();'>
+  <br><br>
+  <table cellspacing='0' width='400' cellpadding='8' class='dynamiclist'>
+   <tr class='header'>
+	<td>&nbsp;</td>
+	<th>First Name</th>
+	<th>Last Name</th>
+	<th>Username</th>
+   </tr>[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$teacher[0]]' onClick='updateboxes(0);' /></td>
+	  <td>[Symbolic:$teacher[1]]</td>
+	  <td>[Symbolic:$teacher[2]]</td>
+	  <td>[Symbolic:$teacher[3]]</td>
+	 </tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd] </table>
+  <br>
+  <input type='button' value='Add' onClick='document.teachers.page2.value=16;document.teachers.submit();'>
+  <input type='button' value='Edit' onClick='document.teachers.page2.value=17;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.teachers.deleteteacher.value=1;validate();'>
+  <br><br>
+
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.teachers.deleteteacher.value=0;document.teachers.page2.value=3;document.teachers.onpage.value=[Symbolic:$i];document.teachers.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.teachers.deleteteacher.value=0;document.teachers.page2.value=3;document.teachers.onpage.value=[Symbolic:$i];document.teachers.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='deleteteacher'>
+  <input type='hidden' name='selectteacher'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 4)
+<script language='JavaScript'>
+
+  // Function to make sure the announcement wants to delete the announcement(s) //
+  function validate()
+  {
+   if( document.announcements.selectannouncement.value > 0 )
+   {
+	var confirmed = confirm("Are you sure you want to delete this announcement?");
+
+	if( confirmed == true )
+	{
+	 document.announcements.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a announcement to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.announcements.selectannouncement.value == 1 )
+   {
+	document.announcements.submit();
+   }
+   else
+   {
+	if( document.announcements.selectannouncement.value > 1 )
+	{
+	 alert('You can only edit one announcement at a time.');
+	}
+	else
+	{
+	 alert('You must select a announcement to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 2;
+   if(document.announcements.elements[row].checked)
+   {
+	document.announcements.selectannouncement.value = Math.round(document.announcements.selectannouncement.value) + 1;
+   }
+   else
+   {
+	document.announcements.selectannouncement.value = Math.round(document.announcements.selectannouncement.value) - 1;
+   }
+  }
+ </script>
+
+ <h1>Manage Announcements</h1>
+ <br><br>
+ <table align='center' width='600' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='announcements' action='./index.php' method='POST'>
+  <input type='button' value='Add' onClick='document.announcements.page2.value=18;document.announcements.submit();'>
+  <input type='button' value='Edit' onClick='document.announcements.page2.value=19;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.announcements.deleteannouncement.value=1;validate();'>
+  <br><br>
+  <table cellspacing='0' width='600' cellpadding='8' class='dynamiclist'>
+   <tr class='header'>
+	<td>&nbsp;</td>
+	<th>Title</th>
+	<th>Message</th>
+	<th>Date</th>
+   </tr>[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$announcement[0]]' onClick='updateboxes(0);' /></td>
+	  <td>[Symbolic:$announcement[1]]</td>
+	  <td class='announcement'>[Symbolic:$announcement[2]]</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	 </tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd] </table>
+  <br>
+  <input type='button' value='Add' onClick='document.announcements.page2.value=18;document.announcements.submit();'>
+  <input type='button' value='Edit' onClick='document.announcements.page2.value=19;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.announcements.deleteannouncement.value=1;validate();'>
+  <br><br>
+
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.announcements.deleteannouncement.value=0;document.announcements.page2.value=4;document.announcements.onpage.value=[Symbolic:$i];document.announcements.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.announcements.deleteannouncement.value=0;document.announcements.page2.value=4;document.announcements.onpage.value=[Symbolic:$i];document.announcements.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='deleteannouncement'>
+  <input type='hidden' name='selectannouncement'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 5)
+<script language='JavaScript'>
+
+  // Function to make sure the user wants to delete the semester(s) //
+  function validate()
+  {
+   if( document.semesters.selectsemester.value > 0 )
+   {
+	var confirmed = confirm("Deleteing a semester will also delete the classes, bulletins, tardies, attendance, assignments, and registrations that occured during that semester. \n \nAre you sure?");
+
+	if( confirmed == true )
+	{
+	 document.semesters.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a semester to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.semesters.selectsemester.value == 1 )
+   {
+	document.semesters.submit();
+   }
+   else
+   {
+	if( document.semesters.selectsemester.value > 1 )
+	{
+	 alert('You can only edit one semester at a time.');
+	}
+	else
+	{
+	 alert('You must select a semester to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 2;
+   if(document.semesters.elements[row].checked)
+   {
+	document.semesters.selectsemester.value = Math.round(document.semesters.selectsemester.value) + 1;
+   }
+   else
+   {
+	document.semesters.selectsemester.value = Math.round(document.semesters.selectsemester.value) - 1;
+   }
+  }
+ </script>
+
+ <h1>Manage Semesters</h1>
+ <br><br>
+ <table align='center' width='600' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='semesters' action='./index.php' method='POST'>
+  <input type='button' value='Add' onClick='document.semesters.page2.value=7;document.semesters.submit();'>
+  <input type='button' value='Edit' onClick='document.semesters.page2.value=13;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.semesters.deletesemester.value=1;validate();'>
+  <br><br>
+  <table cellspacing='0' width='600' cellpadding='8' class='dynamiclist'>
+   <tr class='header'>
+	<td>&nbsp;</td>
+	<th>Semester Name</th>
+	<th>Term</th>
+	<th>Start Date</th>
+	<th>Midterm Date</th>
+	<th>End Date</th>
+	<th>Half</th>
+   </tr>[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$smstr[0]]' onClick='updateboxes(0);' /></td>
+	  <td>[Symbolic:$smstr[2]]</td>
+	  <td>[Symbolic:$term]</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	  <td>
+#if ($smstr[6]==1)
+First
+#else
+Second
+#endif
+</td>
+	 </tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd] </table>
+  <br>
+  <input type='button' value='Add' onClick='document.semesters.page2.value=7;document.semesters.submit();'>
+  <input type='button' value='Edit' onClick='document.semesters.page2.value=13;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.semesters.deletesemester.value=1;validate();'>
+  <br><br>
+  <font color='red'>* Deleting a semester will also delete the classes in that semester and the information for those classes</font>
+	<br><br>
+
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.semesters.deletesemester.value=0;document.semesters.page2.value=5;document.semesters.onpage.value=[Symbolic:$i];document.semesters.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.semesters.deletesemester.value=0;document.semesters.page2.value=5;document.semesters.onpage.value=[Symbolic:$i];document.semesters.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='deletesemester'>
+  <input type='hidden' name='selectsemester'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 6)
+<script language='JavaScript'>
+  // Function to make sure the user wants to delete the term(s) //
+  function validate()
+  {
+   if( document.terms.selectterm.value > 0 )
+   {
+	var confirmed = confirm("Deleteing a term will also delete the semesters, classes, bulletins, tardies, attendance, assignments, and registrations that occured during that term. \n \nAre you sure?");
+
+	if( confirmed == true )
+	{
+	 document.terms.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a term to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.terms.selectterm.value == 1 )
+   {
+	document.terms.submit();
+   }
+   else
+   {
+	if( document.terms.selectterm.value > 1 )
+	{
+	 alert('You can only edit one term at a time.');
+	}
+	else
+	{
+	 alert('You must select a term to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 2;
+   if(document.terms.elements[row].checked)
+   {
+	document.terms.selectterm.value = Math.round(document.terms.selectterm.value) + 1;
+   }
+   else
+   {
+	document.terms.selectterm.value = Math.round(document.terms.selectterm.value) - 1;
+   }
+  }
+ </script>
+
+ <h1>Manage Terms</h1>
+ <br><br>
+ <table align='center' width='450' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='terms' action='./index.php' method='POST'>
+  <input type='button' value='Add' onClick='document.terms.page2.value=8;document.terms.submit();'>
+  <input type='button' value='Edit' onClick='document.terms.page2.value=12;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.terms.deleteterm.value=1;validate();'>
+  <br><br>
+  <table cellspacing='0' width='450' cellpadding='8' class='dynamiclist'>
+   <tr class='header'>
+   <td>&nbsp;</td>
+   <th>Term Name</th>
+   <th>Start Date</th>
+   <th>End Date</th>
+   </tr>[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$term[0]]' onClick='updateboxes(0);' /></td>
+	  <td>[Symbolic:$term[1]]</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	 <tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd] </table>
+  <br>
+  <input type='button' value='Add' onClick='document.terms.page2.value=8;document.terms.submit();'>
+  <input type='button' value='Edit' onClick='document.terms.page2.value=12;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.terms.deleteterm.value=1;validate();'>
+
+  <br><br>
+  <font color='red'>* Deleting a term will also delete the semesters, classes in each semester, and the information for those classes</font>
+	<br><br>
+
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.terms.deleteterm.value=0;document.terms.page2.value=6;document.terms.onpage.value=[Symbolic:$i];document.terms.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.terms.deleteterm.value=0;document.terms.page2.value=6;document.terms.onpage.value=[Symbolic:$i];document.terms.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='deleteterm'>
+  <input type='hidden' name='selectterm'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 7)
+<h1>Add New Semester</h1>
+
+  <form name='addsemester' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='600'>
+   <tr class='header'>
+	<th>Semester Name</th>
+	<th>Term</th>
+	<th>Start Date</th>
+	<th>Midterm Date</th>
+	<th>End Date</th>
+	<th>Half</th>
+   </tr>
+   <tr class='even'>
+    <td><input type='text' name='title' maxlength='15' /></td>
+	<td><select name='term'>[RepeatBegin]
+<option value='[Symbolic:$terms[0]]'>[Symbolic:$terms[1]]</option>
+
+[RepeatEnd]</select>
+	</td>
+	<td><input type='text' name='startdate' maxlength='10' size='10' /></td>
+	<td><input type='text' name='middate' maxlength='10' size='10' /></td>
+	<td><input type='text' name='enddate' maxlength='10' size='10' /></td>
+	<td>
+	 <select name='half'>
+	  <option value='1'>First</option>
+	  <option value='2'>Second</option>
+	 </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='600'>
+   <tr>
+   <td><input type='button' value='Add Semester' onClick='document.addsemester.addsemester.value=1;document.addsemester.page2.value=5;document.addsemester.submit();'> <input type='button' value='Cancel' onClick='document.addsemester.page2.value=5;document.addsemester.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='addsemester' value=''>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 8)
+<h1>Add New Term</h1>
+
+  <form name='addterm' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='600'>
+   <tr class='header'>
+	<th>Term Name</th>
+	<th>Start Date</th>
+	<th>End Date</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='title' maxlength='15' /></td>
+	<td><input type='text' name='startdate' maxlength='10' size='10' /></td>
+	<td><input type='text' name='enddate' maxlength='10' size='10' /></td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='600'>
+   <tr>
+   <td><input type='button' value='Add Term' onClick='document.addterm.addterm.value=1;document.addterm.page2.value=6;document.addterm.submit();'> <input type='button' value='Cancel' onClick='document.addterm.page2.value=6;document.addterm.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='addterm' value=''>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 9)
+
+#if ($_POST['fullyear']!=1)
+<h1>Add New Class</h1>
+
+  <form name='addclass' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='800'>
+   <tr class='header'>
+	<th>Class Name</th>
+	<th>Teacher</th>
+	<th>Semester</th>
+	<th>Section Number</th>
+	<th>Room Number</th>
+	<th>Period Number</th>
+	<th>Substitute</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='title' maxlength='20' /></td>
+	<td><select name='teacher'>[RepeatBegin]
+
+#if ($type == "Teacher")
+<option value='[Symbolic:$teacher[0]]'>[Symbolic:$teacher[1]] [Symbolic:$teacher[2]]</option>
+
+#else
+[Special]
+#endif
+
+[RepeatEnd]</select>
+	</td>
+	<td><select name='semester'>[RepeatBegin]
+<option value='[Symbolic:$semester[0]]'>[Symbolic:$semester[1]]</option>
+
+[RepeatEnd]</select></td>
+	<td><input type='text' name='sectionnum' maxlength='15' size='6' /></td>
+	<td><input type='text' name='roomnum' maxlength='4' size='6' /></td>
+	<td><input type='text' name='periodnum' maxlength='2' size='6' /></td>
+	<td>
+	 <select name='substitute'>[RepeatBegin]
+
+#if ($type == "Substitute")
+<option value='[Symbolic:$teacher[0]]'>[Symbolic:$teacher[1]] [Symbolic:$teacher[2]]</option>
+
+#else
+[Special]
+#endif
+
+[RepeatEnd]	 </select>
+	</td>
+   </tr>
+   </table>
+
+   <br />
+
+   <table cellpadding='0' border='0' align='center' width='800'>
+   <tr>
+   <td>
+   <b>Days of the Week:</b>
+   <br />
+   <input type='checkbox' value='M' name='Days[]' /> Monday<br />
+   <input type='checkbox' value='T' name='Days[]' /> Tuesday<br />
+   <input type='checkbox' value='W' name='Days[]' /> Wednesday<br />
+   <input type='checkbox' value='H' name='Days[]' /> Thursday<br />
+   <input type='checkbox' value='F' name='Days[]' /> Friday
+   <br /><br />
+   <input type='button' value='Add Class' onClick='document.addclass.addclass.value=1;document.addclass.page2.value=0;document.addclass.submit();'>
+   <input type='button' value='Full Year' onClick='document.addclass.fullyear.value=1;document.addclass.page2.value=9;document.addclass.submit();'>
+   <input type='button' value='Cancel' onClick='document.addclass.page2.value=0;document.addclass.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='addclass' value='' />
+  <input type='hidden' name='fullyear' />
+  <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+  <input type='hidden' name='logout' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+<h1>Add New Class</h1>
+
+  <form name='addclass' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='800'>
+   <tr class='header'>
+	<th>Class Name</th>
+	<th>Teacher</th>
+	<th>First Semester</th>
+	<th>Second Semester</th>
+	<th>Section Number</th>
+	<th>Room Number</th>
+	<th>Period Number</th>
+	<th>Substitute</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='title' maxlength='20' /></td>
+	<td><select name='teacher'>[RepeatBegin]
+
+#if ($type == "Teacher")
+<option value='[Symbolic:$teacher[0]]'>[Symbolic:$teacher[1]] [Symbolic:$teacher[2]]</option>
+
+#else
+[Special]
+#endif
+
+[RepeatEnd]</select>
+	</td>
+	<td><select name='semester'>[RepeatBegin]
+<option value='[Symbolic:$semester[0]]'>[Symbolic:$semester[1]]</option>
+
+[RepeatEnd]</select></td>
+	<td><select name='semester2'>[RepeatBegin]
+<option value='[Symbolic:$semester[0]]'>[Symbolic:$semester[1]]</option>
+
+[RepeatEnd]</select></td>
+	<td><input type='text' name='sectionnum' maxlength='15' size='6' /></td>
+	<td><input type='text' name='roomnum' maxlength='4' size='6' /></td>
+	<td><input type='text' name='periodnum' maxlength='2' size='6' /></td>
+	<td>
+	 <select name='substitute'>[RepeatBegin]
+
+#if ($type == "Substitute")
+<option value='[Symbolic:$teacher[0]]'>[Symbolic:$teacher[1]] [Symbolic:$teacher[2]]</option>
+
+#else
+[Special]
+#endif
+
+[RepeatEnd]     </select>
+	</td>
+   </tr>
+   </table>
+
+   <br />
+
+   <table cellpadding='0' border='0' align='center' width='880'>
+   <tr>
+   <td>
+   <b>Days of the Week:</b>
+   <br />
+   <input type='checkbox' value='M' name='Days[]' /> Monday<br />
+   <input type='checkbox' value='T' name='Days[]' /> Tuesday<br />
+   <input type='checkbox' value='W' name='Days[]' /> Wednesday<br />
+   <input type='checkbox' value='H' name='Days[]' /> Thursday<br />
+   <input type='checkbox' value='F' name='Days[]' /> Friday
+   <br /><br />
+   <input type='button' value='Add Class' onClick='document.addclass.addclass.value=1;document.addclass.page2.value=0;document.addclass.submit();'>
+   <input type='button' value='Full Year' onClick='document.addclass.fullyear.value=1;document.addclass.page2.value=9;document.addclass.submit();'>
+   <input type='button' value='Cancel' onClick='document.addclass.page2.value=0;document.addclass.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='addclass' value='' />
+  <input type='hidden' name='fullyear' value='[Symbolic:$_POST[fullyear]]' />
+  <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+  <input type='hidden' name='logout' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#endif
+
+#else
+
+#if ($page2 == 10)
+<script language='JavaScript'>
+
+  // Function to make sure the user wants to delete the user(s) //
+  function validate()
+  {
+   if( document.users.selectuser.value > 0 )
+   {
+	var confirmed = confirm("Deleting a user will also delete that student/teacher/parent from the database.\n\nAre you sure you want to delete this user?");
+
+	if( confirmed == true )
+	{
+	 document.users.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a user to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.users.selectuser.value == 1 )
+   {
+	document.users.submit();
+   }
+   else
+   {
+	if( document.users.selectuser.value > 1 )
+	{
+	 alert('You can only edit one user at a time.');
+	}
+	else
+	{
+	 alert('You must select a user to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 2;
+   if(document.users.elements[row].checked)
+   {
+	document.users.selectuser.value = Math.round(document.users.selectuser.value) + 1;
+   }
+   else
+   {
+	document.users.selectuser.value = Math.round(document.users.selectuser.value) - 1;
+   }
+  }
+ </script>
+
+ <h1>Manage Users</h1>
+ <br><br>
+ <table align='center' width='250' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='users' action='./index.php' method='POST'>
+  <input type='button' value='Add' onClick='document.users.page2.value=14;document.users.submit();'>
+  <input type='button' value='Edit' onClick='document.users.page2.value=15;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.users.deleteuser.value=1;validate();'>
+  <br><br>
+  <table cellspacing='0' width='250' cellpadding='8' class='dynamiclist'>
+   <tr class='header'>
+	<td>&nbsp;</td>
+	<th>Username</th>
+	<th>Type</th>
+   </tr>[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$user[0]]' onClick='updateboxes(0);' /></td>
+	  <td>[Symbolic:$user[1]]</td>
+	  <td>[Symbolic:$user[2]]</td>
+	 <tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd] </table>
+  <br>
+  <input type='button' value='Add' onClick='document.users.page2.value=14;document.users.submit();'>
+  <input type='button' value='Edit' onClick='document.users.page2.value=15;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.users.deleteuser.value=1;validate();'>
+
+  <br><br>
+
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.users.deleteuser.value=0;document.users.page2.value=10;document.users.onpage.value=[Symbolic:$i];document.users.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.users.deleteuser.value=0;document.users.page2.value=10;document.users.onpage.value=[Symbolic:$i];document.users.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='deleteuser'>
+  <input type='hidden' name='selectuser'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 11)
+<h1>Edit Class</h1>
+
+  <form name='editclass' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='800'>
+   <tr class='header'>
+	<th>Class Name</th>
+	<th>Teacher</th>
+	<th>Semester</th>
+	<th>Section Number</th>
+	<th>Room Number</th>
+	<th>Period Number</th>
+	<th>Substitute</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='title' maxlength='20' value='[Symbolic:$class[0]]' /></td>
+	<td><select name='teacher'></select>
+	</td>
+	<td><select name='semester'></select></td>
+	<td><input type='text' name='sectionnum' maxlength='15' size='6' value='[Symbolic:$class[3]]' /></td>
+	<td><input type='text' name='roomnum' maxlength='4' size='6' value='[Symbolic:$class[4]]' /></td>
+	<td><input type='text' name='periodnum' maxlength='2' size='6' value='[Symbolic:$class[5]]' /></td>
+	<td>
+	 <select name='substitute'>	 </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='800'>
+   <tr>
+   <td>
+   <b>Days of the Week:</b>
+   <br />
+   <input type='checkbox' value='M' name='Days[]'
+#if (preg_match("/M/", $class[6]))
+CHECKED
+#else
+[Special]
+#endif
+ /> Monday<br />
+   <input type='checkbox' value='T' name='Days[]'
+#if (preg_match("/T/", $class[6]))
+CHECKED
+#else
+[Special]
+#endif
+ /> Tuesday<br />
+   <input type='checkbox' value='W' name='Days[]'
+#if (preg_match("/W/", $class[6]))
+CHECKED
+#else
+[Special]
+#endif
+ /> Wednesday<br />
+   <input type='checkbox' value='H' name='Days[]'
+#if (preg_match("/H/", $class[6]))
+CHECKED
+#else
+[Special]
+#endif
+ /> Thursday<br />
+   <input type='checkbox' value='F' name='Days[]'
+#if (preg_match("/F/", $class[6]))
+CHECKED
+#else
+[Special]
+#endif
+ /> Friday
+   <br /><br />
+	<input type='button' value='Edit Class' onClick='document.editclass.editclass.value=1;document.editclass.page2.value=0;document.editclass.submit();'>
+	<input type='button' value='Cancel' onClick='document.editclass.page2.value=0;document.editclass.submit();'>
+   </td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='editclass' value=''>
+  <input type='hidden' name='courseid' value='[Symbolic:$id[0]]'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 12)
+<h1>Edit Term</h1>
+
+  <form name='editterm' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='450'>
+   <tr class='header'>
+	<th>Term Name</th>
+	<th>Start Date</th>
+	<th>End Date</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='title' maxlength='15' value='[Symbolic:$term[0]]' /></td>
+	<td><input type='text' name='startdate' value='
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+' /></td>
+	<td><input type='text' name='enddate' value='
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+' /></td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='450'>
+   <tr>
+   <td>
+	<input type='button' value='Edit Term' onClick='document.editterm.editterm.value=1;document.editterm.page2.value=6;document.editterm.submit();'>
+	<input type='button' value='Cancel' onClick='document.editterm.page2.value=6;document.editterm.submit();'>
+   </td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='editterm'>
+  <input type='hidden' name='termid' value='[Symbolic:$id[0]]'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 13)
+<h1>Edit Semester</h1>
+
+  <form name='editsemester' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='600'>
+   <tr class='header'>
+	<th>Semester Name</th>
+	<th>Term</th>
+	<th>Start Date</th>
+	<th>Midterm Date</th>
+	<th>End Date</th>
+	<th>Half</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='title' maxlength='15' value='[Symbolic:$semester[0]]' /></td>
+	<td><select name='term'>[RepeatBegin]
+<option value='[Symbolic:$terms[0]]'>[Symbolic:$terms[1]]</option>
+
+[RepeatEnd]</select>
+	</td>
+	<td><input type='text' maxlength='10' name='startdate' size='8' value='
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+' /></td>
+	<td><input type='text' maxlength='10' name='middate' size='8' value='
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+' /></td>
+	<td><input type='text' maxlength='10' name='enddate' size='8' value='
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+' /></td>
+	<td>
+	 <select name='half'>
+	  <option value='1' 
+#if ($semester[4]==1)
+SELECTED
+#else
+
+#endif
+>First</option>
+	  <option value='2' 
+#if ($semester[4]==2)
+SELECTED
+#else
+
+#endif
+>Second</option>
+	 </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='600'>
+   <tr>
+   <td>
+	<input type='button' value='Edit Semester' onClick='document.editsemester.editsemester.value=1;document.editsemester.page2.value=5;document.editsemester.submit();'>
+	<input type='button' value='Cancel' onClick='document.editsemester.page2.value=5;document.editsemester.submit();'>
+   </td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='editsemester'>
+  <input type='hidden' name='semesterid' value='[Symbolic:$id[0]]'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 14)
+<script language='JavaScript'>
+ <!--
+ function validate()
+ {
+  if(document.adduser.password.value == document.adduser.password2.value && document.adduser.password.value != '')
+  {
+   document.adduser.submit();
+  }
+  else
+  {
+   alert('Passwords do not match!');
+   document.adduser.password.value = '';
+   document.adduser.password2.value = '';
+   document.adduser.password.select();
+  }
+ }
+ -->
+ </script>
+
+ <h1>Add New User</h1>
+
+  <form name='adduser' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='450'>
+   <tr class='header'>
+	<th>Username</th>
+	<th>Password</th>
+	<th>Confirm Password</th>
+	<th>Type</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='username' maxlength='15' size='15' /></td>
+	<td><input type='password' name='password' maxlength='15' size='15' /></td>
+	<td><input type='password' name='password2' maxlength='15' size='15' /></td>
+	<td>
+	 <select name='type'>
+	  <option value='Admin'>Admin</option>
+	  <option value='Teacher'>Teacher</option>
+      <option value='Substitute'>Substitute</option>
+	  <option value='Student'>Student</option>
+	  <option value='Parent'>Parent</option>
+	 </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='450'>
+   <tr>
+   <td><input type='button' value='Add User' onClick='document.adduser.adduser.value=1;document.adduser.page2.value=10;validate();'> <input type='button' value='Cancel' onClick='document.adduser.page2.value=10;document.adduser.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='adduser' value=''>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 15)
+<script language='JavaScript'>
+ <!--
+  function validate()
+  {
+   if(document.edituser.password.value == '' && document.edituser.password2.value == '')
+   {
+	document.edituser.submit();
+   }
+   else
+   {
+	if(document.edituser.password.value == document.edituser.password2.value)
+	{
+	 document.edituser.submit();
+	}
+	else
+	{
+	 alert('Passwords do not match!');
+	}
+   }
+  }
+ -->
+ </script>
+
+ <h1>Edit User</h1>
+
+  <form name='edituser' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='550'>
+   <tr class='header'>
+	<th>Username</th>
+	<th>Password</th>
+	<th>Confirm Password</th>
+	<th>Type</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='username' maxlength='15' value='[Symbolic:$user[0]]' /></td>
+	<td><input type='password' name='password' /></td>
+	<td><input type='password' name='password2' /></td>
+	<td>
+	 <select name='type'></select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='550'>
+   <tr>
+   <td>
+	<input type='button' value='Edit user' onClick='document.edituser.edituser.value=1;document.edituser.page2.value=10;validate();'>
+	<input type='button' value='Cancel' onClick='document.edituser.page2.value=10;document.edituser.submit();'>
+   </td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='edituser'>
+  <input type='hidden' name='userid' value='[Symbolic:$id[0]]'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 16)
+<h1>Add New Teacher</h1>
+
+  <form name='addteacher' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='450'>
+   <tr class='header'>
+	<th>First Name</th>
+	<th>Last Name</th>
+	<th>Username</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='fname' maxlength='15' size='15' /></td>
+	<td><input type='text' name='lname' maxlength='15' size='15' /></td>
+	<td>
+	 <select name='username'>[RepeatBegin]
+<option value='[Symbolic:$users[0]]'>[Symbolic:$users[1]]</option>
+
+[RepeatEnd]	 </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='450'>
+   <tr>
+   <td><input type='button' value='Add Teacher' onClick='document.addteacher.addteacher.value=1;document.addteacher.page2.value=3;document.addteacher.submit();'> <input type='button' value='Cancel' onClick='document.addteacher.page2.value=3;document.addteacher.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='addteacher' value=''>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 17)
+<h1>Edit Teacher</h1>
+
+  <form name='editteacher' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='550'>
+   <tr class='header'>
+	<th>First Name</th>
+	<th>Last Name</th>
+	<th>Username</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='fname' maxlength='15' value='[Symbolic:$teacher[1]]' /></td>
+	<td><input type='test' name='lname' maxlength='15' value='[Symbolic:$teacher[2]]' /></td>
+	<td>
+	 <select name='username'>     </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='550'>
+   <tr>
+   <td>
+	<input type='button' value='Edit teacher' onClick='document.editteacher.editteacher.value=1;document.editteacher.page2.value=3;document.editteacher.submit();'>
+	<input type='button' value='Cancel' onClick='document.editteacher.page2.value=3;document.editteacher.submit();'>
+   </td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='editteacher'>
+  <input type='hidden' name='teacherid' value='[Symbolic:$id[0]]'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 18)
+<h1>Add New Announcement</h1>
+
+  <form name='addannouncement' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='600'>
+   <tr class='header'>
+	<th>Title</th>
+	<th>Message</th>
+   </tr>
+   <tr class='even' valign='top'>
+	<td><input type='text' name='title' maxlength='15' size='15' /></td>
+	<td><textarea name='message' rows=5 cols=30></textarea></td>
+
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='600'>
+   <tr>
+   <td><input type='button' value='Add announcement' onClick='document.addannouncement.addannouncement.value=1;document.addannouncement.page2.value=4;document.addannouncement.submit();'> <input type='button' value='Cancel' onClick='document.addannouncement.page2.value=4;document.addannouncement.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='addannouncement' value=''>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='date'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 19)
+<h1>Edit Announcement</h1>
+
+  <form name='editannouncement' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='600'>
+   <tr class='header'>
+	<th>Title</th>
+	<th>Message</th>
+	<th>Date</th>
+   </tr>
+   <tr class='even' valign='top'>
+	<td><input type='text' name='title' maxlength='15' value='[Symbolic:$announcement[1]]' /></td>
+	<td><textarea name='message' rows='5' cols='30'>[Symbolic:$announcement[2]]</textarea></td>
+	<td><input type='text' name='date' value='
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+' /></td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='600'>
+   <tr>
+   <td>
+	<input type='button' value='Edit Announcement' onClick='document.editannouncement.editannouncement.value=1;document.editannouncement.page2.value=4;document.editannouncement.submit();'>
+	<input type='button' value='Cancel' onClick='document.editannouncement.page2.value=4;document.editannouncement.submit();'>
+   </td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='editannouncement'>
+  <input type='hidden' name='announcementid' value='[Symbolic:$id[0]]'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 20)
+<h1>Add New Student</h1>
+
+  <form name='addstudent' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='500'>
+   <tr class='header'>
+	<th>First Name</th>
+	<th>Middle Initial</th>
+	<th>Last Name</th>
+	<th>Username</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='fname' maxlength='15' size='15' /></td>
+	<td><input type='text' name='mi' maxlength='2' size='2' /></td>
+	<td><input type='text' name='lname' maxlength='15' size='15' /></td>
+	<td>
+	 <select name='username'>[RepeatBegin]
+<option value='[Symbolic:$users[0]]'>[Symbolic:$users[1]]</option>
+
+[RepeatEnd]	 </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='500'>
+   <tr>
+   <td><input type='button' value='Add Student' onClick='document.addstudent.addstudent.value=1;document.addstudent.page2.value=2;document.addstudent.submit();'> <input type='button' value='Cancel' onClick='document.addstudent.page2.value=2;document.addstudent.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='addstudent' value=''>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 21)
+<h1>Edit Student</h1>
+
+  <form name='editstudent' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='525'>
+   <tr class='header'>
+	<th>First Name</th>
+	<th>Middle Initial</th>
+	<th>Last Name</th>
+	<th>Username</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='fname' maxlength='15' value='[Symbolic:$student[1]]' /></td>
+	<td><input type='text' name='mi' maxlength='2' size='2' value='[Symbolic:$student[2]]' /></td>
+	<td><input type='test' name='lname' maxlength='15' value='[Symbolic:$student[3]]' /></td>
+	<td>
+	 <select name='username'>     </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='525'>
+   <tr>
+   <td>
+	<input type='button' value='Edit Student' onClick='document.editstudent.editstudent.value=1;document.editstudent.page2.value=2;document.editstudent.submit();'>
+	<input type='button' value='Cancel' onClick='document.editstudent.page2.value=2;document.editstudent.submit();'>
+   </td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='editstudent'>
+  <input type='hidden' name='studentid' value='[Symbolic:$id[0]]'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 22)
+<script language='JavaScript'>
+
+  // Function to make sure the parent wants to delete the parent(s) //
+  function validate()
+  {
+   if( document.parents.selectparent.value > 0 )
+   {
+	var confirmed = confirm("Are you sure you want to delete this parent?");
+
+	if( confirmed == true )
+	{
+	 document.parents.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a parent to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.parents.selectparent.value == 1 )
+   {
+	document.parents.submit();
+   }
+   else
+   {
+	if( document.parents.selectparent.value > 1 )
+	{
+	 alert('You can only edit one parent at a time.');
+	}
+	else
+	{
+	 alert('You must select a parent to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 2;
+
+   if(document.parents.elements[row].checked)
+   {
+	document.parents.selectparent.value = Math.round(document.parents.selectparent.value) + 1;
+   }
+   else
+   {
+	document.parents.selectparent.value = Math.round(document.parents.selectparent.value) - 1;
+   }
+  }
+ </script>
+
+ <h1>Manage Parents</h1>
+ <br><br>
+ <table align='center' width='500' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='parents' action='./index.php' method='POST'>
+  <input type='button' value='Add' onClick='document.parents.page2.value=23;document.parents.submit();'>
+  <input type='button' value='Edit' onClick='document.parents.page2.value=24;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.parents.deleteparent.value=1;validate();'>
+  <br><br>
+  <table cellspacing='0' width='500' cellpadding='8' class='dynamiclist'>
+   <tr class='header'>
+	<td>&nbsp;</td>
+	<th>First Name</th>
+	<th>Last Name</th>
+	<th>Student Name</th>
+	<th>Username</th>
+   </tr>[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$parent[0]]' onClick='updateboxes(0);document.parents.studentid.value=
+#if ($student[2]==NULL)
+-1
+#else
+[Symbolic:$student[2]]
+#endif
+;' /></td>
+	  <td>[Symbolic:$parent[1]]</td>
+	  <td>[Symbolic:$parent[2]]</td>
+	  <td>[Symbolic:$student[0]] [Symbolic:$student[1]]</td>
+	  <td>[Symbolic:$parent[3]]</td>
+	 </tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd] </table>
+  <br>
+  <input type='button' value='Add' onClick='document.parents.page2.value=23;document.parents.submit();'>
+  <input type='button' value='Edit' onClick='document.parents.page2.value=24;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.parents.deleteparent.value=1;validate();'>
+  <br><br>
+
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.parents.deleteparent.value=0;document.parents.page2.value=3;document.parents.onpage.value=[Symbolic:$i];document.parents.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.parents.deleteparent.value=0;document.parents.page2.value=3;document.parents.onpage.value=[Symbolic:$i];document.parents.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='deleteparent'>
+  <input type='hidden' name='selectparent'>
+  <input type='hidden' name='studentid'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 23)
+<h1>Add New Parent</h1>
+
+  <form name='addparent' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='500'>
+   <tr class='header'>
+	<th>First Name</th>
+	<th>Last Name</th>
+	<th>Student Name</th>
+	<th>Username</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='fname' maxlength='15' size='15' /></td>
+	<td><input type='text' name='lname' maxlength='15' size='15' /></td>
+	<td>
+	 <select name='student'>[RepeatBegin]
+<option value='[Symbolic:$students[0]]'>[Symbolic:$students[1]] [Symbolic:$students[2]]</option>
+
+[RepeatEnd]  </select>
+	</td>
+	<td>
+	 <select name='username'>[RepeatBegin]
+<option value='[Symbolic:$users[0]]'>[Symbolic:$users[1]]</option>
+
+[RepeatEnd]	 </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='500'>
+   <tr>
+   <td><input type='button' value='Add Parent' onClick='document.addparent.addparent.value=1;document.addparent.page2.value=22;document.addparent.submit();'> <input type='button' value='Cancel' onClick='document.addparent.page2.value=22;document.addparent.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='addparent' value=''>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 24)
+<h1>Edit Parent</h1>
+
+  <form name='editparent' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='550'>
+   <tr class='header'>
+	<th>First Name</th>
+	<th>Last Name</th>
+	<th>Student Name</th>
+	<th>Username</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='fname' maxlength='15' value='[Symbolic:$parent[1]]' /></td>
+	<td><input type='test' name='lname' maxlength='15' value='[Symbolic:$parent[2]]' /></td>
+	<td>
+	 <select name='student'>  </select>
+	</td>
+	<td>
+	 <select name='username'>     </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='550'>
+   <tr>
+   <td>
+	<input type='button' value='Edit parent' onClick='document.editparent.editparent.value=1;document.editparent.page2.value=22;document.editparent.submit();'>
+	<input type='button' value='Cancel' onClick='document.editparent.page2.value=22;document.editparent.submit();'>
+   </td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='editparent'>
+  <input type='hidden' name='parentid' value='[Symbolic:$id[0]]'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 25)
+
+ <h1>School Class Schedule</h1>
+ <table align='center' width='800' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='classes' action='./index.php' method='POST'>
+  <table width='600' border='0' align='center'>
+  <tr>
+   <td>
+   <b>Semester:</b> [Symbolic:$title[0]]
+   </td>
+  </tr>
+  </table>
+  <table cellspacing='0' width='600' cellpadding='5' border='1' bordercolor='black' cellspacing='0' cellpadding='5' align='center'>
+  <tr class='header'>
+   <th width='15'>Period</th>
+   <th>Monday</th>
+   <th>Tuesday</th>
+   <th>Wednesday</th>
+   <th>Thursday</th>
+   <th>Friday</th>
+  </tr>
+   [RepeatBegin]
+<tr class='
+#if ($i%2==0)
+even
+#else
+odd
+#endif
+' valign='top'>
+  <td>[Symbolic:$i]</td><td align='left'>
+#if ($days[$j] == 'M')
+<b>[Symbolic:$class[0]]</b><br />
+		   Section: [Symbolic:$class[3]]<br />
+		   Room: [Symbolic:$class[4]]<br />
+		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
+#if ($monday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+&nbsp;</td><td align='left'>
+#if ($days[$j] == 'M')
+[Special]
+#else
+
+#if ($days[$j] == 'T')
+<b>[Symbolic:$class[0]]</b><br />
+		   Section: [Symbolic:$class[3]]<br />
+		   Room: [Symbolic:$class[4]]<br />
+		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
+#if ($tuesday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+
+#endif
+&nbsp;</td><td align='left'>
+#if ($days[$j] == 'M')
+[Special]
+#else
+
+#if ($days[$j] == 'T')
+[Special]
+#else
+
+#if ($days[$j] == 'W')
+<b>[Symbolic:$class[0]]</b><br />
+		   Section: [Symbolic:$class[3]]<br />
+		   Room: [Symbolic:$class[4]]<br />
+		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
+#if ($wednesday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+
+#endif
+
+#endif
+&nbsp;</td><td align='left'>
+#if ($days[$j] == 'M')
+[Special]
+#else
+
+#if ($days[$j] == 'T')
+[Special]
+#else
+
+#if ($days[$j] == 'W')
+[Special]
+#else
+
+#if ($days[$j] == 'H')
+<b>[Symbolic:$class[0]]</b><br />
+		   Section: [Symbolic:$class[3]]<br />
+		   Room: [Symbolic:$class[4]]<br />
+		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
+#if ($thursday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+
+#endif
+
+#endif
+
+#endif
+&nbsp;</td><td align='left'>
+#if ($days[$j] == 'M')
+[Special]
+#else
+
+#if ($days[$j] == 'T')
+[Special]
+#else
+
+#if ($days[$j] == 'W')
+[Special]
+#else
+
+#if ($days[$j] == 'H')
+[Special]
+#else
+
+#if ($days[$j] == 'F')
+<b>[Symbolic:$class[0]]</b><br />
+		   Section: [Symbolic:$class[3]]<br />
+		   Room: [Symbolic:$class[4]]<br />
+		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
+#if ($friday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+&nbsp;</td></tr>
+[RepeatEnd]  </table>
+<table width='600' border=0 align='center'>
+<tr>
+<td>
+<p align='left'>
+  <input type='button' value=' Back ' onClick='document.classes.page2.value=0;document.classes.submit();'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+</p>
+</td>
+</tr>
+</table>
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 26)
+
+#if ($_POST["addreg"] == 1)
+
+#if ($insert)
+[Special]
+#else
+<font color='red'>*That class interferes with another registration for this student</font>
+#endif
+
+#else
+[Special]
+#endif
+<script language='JavaScript'>
+
+  // Function to make sure the student wants to delete the registration(s) //
+  function validate()
+  {
+   if( document.registration.selectreg.value > 0 )
+   {
+	var confirmed = confirm("Are you sure you want to delete this registration?");
+
+	if( confirmed == true )
+	{
+	 document.registration.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a registration to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.registration.selectreg.value == 1 )
+   {
+	document.registration.submit();
+   }
+   else
+   {
+	if( document.registration.selectreg.value > 1 )
+	{
+	 alert('You can only edit one student at a time.');
+	}
+	else
+	{
+	 alert('You must select a registration to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 4;
+   if(document.registration.elements[row].checked)
+   {
+	document.registration.selectreg.value = Math.round(document.registration.selectreg.value) + 1;
+   }
+   else
+   {
+	document.registration.selectreg.value = Math.round(document.registration.selectreg.value) - 1;
+   }
+  }
+ </script>
+ <h1>Registration</h1>
+ <br>
+ <table align='center' width='400' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='registration' action='./index.php' method='POST'>
+ <b>Student:</b>
+ <select name='student' onChange='document.registration.addreg.value=0;document.registration.deletereg.value=0;document.registration.submit();'>[RepeatBegin]
+<option value='[Symbolic:$student[0]]' 
+#if ($_POST['student']==$student[0]&&$_POST['student']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$student[1]] [Symbolic:$student[2]]</option>
+[RepeatEnd]  </select>
+&nbsp;&nbsp;<b>Semester: </b> <select name='semester' onChange='document.registration.addreg.value=0;document.registration.deletereg.value=0;document.registration.submit();'>
+[RepeatBegin]
+<option value='[Symbolic:$semester[0]]' 
+#if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$semester[1]]</option>
+[RepeatEnd]
+	 </select>
+   <br /><br />
+   <input type='button' value='Show in Grid' onClick='document.registration.addreg.value=0;document.registration.deletereg.value=0;document.registration.page2.value=29;document.registration.submit();' />
+   <br /><br />
+  <table width='400' class='dynamiclist' cellpadding='5' cellspacing='0'>
+  <tr class='header'>
+   <th colspan='3'><span style='font-size: 14pt;'><b>Add Class</b></span></th>
+  </tr>
+  <tr class='header'>
+   <td align='center' colspan='3'>
+	<select name='class'>
+#if ($_POST['semester']!=NULL)
+[RepeatBegin]
+<option value='[Symbolic:$classes[0]]'>[Symbolic:$classes[1]]</option>
+
+[RepeatEnd]
+#else
+<option value='[Symbolic:$classes[0]]'>[Symbolic:$classes[1]]</option>
+
+#endif
+	</select>
+   <input type='button' value='Add' onClick='document.registration.addreg.value=1;document.registration.submit();' />
+  </td>
+  </tr>
+  <tr class='header'>
+   <th colspan='2'>Class Name</th><th>Period Number</th>
+  </tr>[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td><input type='checkbox' name='delete[]' value='[Symbolic:$reg[0]]' onClick='updateboxes(0);' /></td>
+   <td align='left'>[Symbolic:$class[0]]</td>
+   <td>[Symbolic:$class[1]]</td>
+   </tr>
+   
+[RepeatEnd]  </table>
+  <br />
+  <input type='button' value='Delete' onClick='document.registration.deletereg.value=1;validate();'>
+  <input type='hidden' name='addreg' />
+  <input type='hidden' name='deletereg' />
+  <input type='hidden' name='selectreg' />
+  <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+  <input type='hidden' name='logout' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 27)
+
+ <h1>Deficiency Report</h1>
+ <table align='center' width='400' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='classes' action='./index.php' method='POST'>
+
+ <table border='0' width='400'>
+ <tr>
+ <td>
+ <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
+[RepeatBegin]
+<option value='[Symbolic:$semester[0]]' 
+#if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$semester[1]]</option>
+[RepeatEnd]
+   <option value='-1' 
+#if ($_POST['semester']==-1)
+SELECTED
+#else
+
+#endif
+>All</option>
+	 </select>
+<br>
+ </td>
+ </tr>
+ </table>
+
+  <table cellspacing='0' width='400' class='dynamiclist'>
+  <tr class='header' align='left'>
+   <th style='padding-left: 10px;'>Student</th>
+   <th>Class</th>
+   <th>Percentage</th>
+  </tr>[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td align='left' style='padding-left: 10px;'>[Symbolic:$student[0]] [Symbolic:$student[1]]</td>
+   <td align='left'>[Symbolic:$class[0]]</td>
+   <td align='left'>[Symbolic:$percentage]&#37;</td>
+  </tr>
+  
+[RepeatEnd]  </table>
+  <br />
+  <input type='button' value=' Back ' onClick='document.classes.page2.value=2;document.classes.submit();'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 28)
+
+ <h1>Grade Report</h1>
+ <br>
+ <table align='center' width='600' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='classes' action='./index.php' method='POST'>
+ <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>[RepeatBegin]
+<option value='[Symbolic:$semester[0]]' 
+#if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$semester[1]]</option>
+[RepeatEnd]
+	 </select>
+  <b>Student:</b><select name='student' onChange='document.classes.submit();'>  </select>
+  <br><br>
+  <table cellspacing='0' width='600' class='dynamiclist'>
+  <tr class='header'>
+   <th>Class</th>
+   <th>1st Quarter Grade</th>
+   <th>2nd Quarter Grade</th>
+   <th>Current Grade</th>
+  </tr>[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td align='left' style='padding-left: 30px;'>[Symbolic:$cinfo[0]]</td>
+   <td>
+#if ($cinfo[1]==0)
+
+#else
+
+#if ($q1grade >= ($cinfo[4]/100))
+A
+#else
+
+#if ($q1grade >= $cinfo[5]/100)
+B
+#else
+
+#if ($q1grade >= $cinfo[6]/100)
+C
+#else
+
+#if ($q1grade >= $cinfo[7]/100)
+D
+#else
+F
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+</td>
+   <td>
+#if ($q2grade == 0)
+
+#else
+
+#if ($q2grade >= ($cinfo[4]/100))
+A
+#else
+
+#if ($q2grade >= $cinfo[5]/100)
+B
+#else
+
+#if ($q2grade >= $cinfo[6]/100)
+C
+#else
+
+#if ($q2grade >= $cinfo[7]/100)
+D
+#else
+F
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+</td>
+   <td>
+#if ($cinfo[3] == 0)
+
+#else
+
+#if ($currgrade >= ($cinfo[4]/100))
+A
+#else
+
+#if ($currgrade >= $cinfo[5]/100)
+B
+#else
+
+#if ($currgrade >= $cinfo[6]/100)
+C
+#else
+
+#if ($currgrade >= $cinfo[7]/100)
+D
+#else
+F
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+</td>
+   
+[RepeatEnd]  </table>
+  <br />
+  <input type='button' value=' Back ' onClick='document.classes.page2.value=2;document.classes.submit();'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 29)
+
+ <h1>[Symbolic:$name[0]] [Symbolic:$name[1]]'s Schedule</h1>
+ <table align='center' width='600' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='classes' action='./index.php' method='POST'>
+  <b>Semester:</b> [Symbolic:$title[0]]
+  <table cellspacing='0' width='600' cellpadding='5' border='1' align='center' bordercolor='black' cellspacing='0' cellpadding='5'>
+  <tr class='header'>
+   <th width='10'>Period</th>
+   <th>Monday</th>
+   <th>Tuesday</th>
+   <th>Wednesday</th>
+   <th>Thursday</th>
+   <th>Friday</th>
+  </tr>
+   [RepeatBegin]
+<tr class='
+#if ($i%2==0)
+even
+#else
+odd
+#endif
+' valign='top'>
+  <td>[Symbolic:$i]</td><td align='left'>[RepeatBegin]
+
+#if ($days[$j] == 'M')
+<b>[Symbolic:$class[0]]</b><br />
+		   Section: [Symbolic:$class[2]]<br />
+		   Room: [Symbolic:$class[3]]<br />
+		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
+#if ($monday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+
+[RepeatEnd]&nbsp;</td><td align='left'>[RepeatBegin]
+
+#if ($days[$j] == 'M')
+[Special]
+#else
+
+#if ($days[$j] == 'T')
+<b>[Symbolic:$class[0]]</b><br />
+		   Section: [Symbolic:$class[2]]<br />
+		   Room: [Symbolic:$class[3]]<br />
+		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
+#if ($tuesday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+
+#endif
+
+[RepeatEnd]&nbsp;</td><td align='left'>[RepeatBegin]
+
+#if ($days[$j] == 'M')
+[Special]
+#else
+
+#if ($days[$j] == 'T')
+[Special]
+#else
+
+#if ($days[$j] == 'W')
+<b>[Symbolic:$class[0]]</b><br />
+		   Section: [Symbolic:$class[2]]<br />
+		   Room: [Symbolic:$class[3]]<br />
+		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
+#if ($wednesday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+
+#endif
+
+#endif
+
+[RepeatEnd]&nbsp;</td><td align='left'>[RepeatBegin]
+
+#if ($days[$j] == 'M')
+[Special]
+#else
+
+#if ($days[$j] == 'T')
+[Special]
+#else
+
+#if ($days[$j] == 'W')
+[Special]
+#else
+
+#if ($days[$j] == 'H')
+<b>[Symbolic:$class[0]]</b><br />
+		   Section: [Symbolic:$class[2]]<br />
+		   Room: [Symbolic:$class[3]]<br />
+		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
+#if ($thursday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+[RepeatEnd]&nbsp;</td><td align='left'>[RepeatBegin]
+
+#if ($days[$j] == 'M')
+[Special]
+#else
+
+#if ($days[$j] == 'T')
+[Special]
+#else
+
+#if ($days[$j] == 'W')
+[Special]
+#else
+
+#if ($days[$j] == 'H')
+[Special]
+#else
+
+#if ($days[$j] == 'F')
+<b>[Symbolic:$class[0]]</b><br />
+		   Section: [Symbolic:$class[2]]<br />
+		   Room: [Symbolic:$class[3]]<br />
+		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
+#if ($friday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+[RepeatEnd]&nbsp;</td></tr>
+[RepeatEnd]  </table>
+<table border='0' width='600' align='center'>
+<tr>
+<td>
+<p align='left'>
+  <input type='button' value=' Back ' onClick='document.classes.page2.value=26;document.classes.submit();'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+</p>
+</td>
+</tr>
+</table>
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 30)
+<script language='JavaScript'>
+
+  // Function to make sure the student wants to delete the registration(s) //
+  function validate()
+  {
+   if( document.registration.selectreg.value > 0 )
+   {
+	var confirmed = confirm("Are you sure you want to delete this attendance record?");
+
+	if( confirmed == true )
+	{
+	 document.registration.submit();
+	}
+   }
+   else
+   {
+	alert('You must select an attendance record to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.registration.selectreg.value == 1 )
+   {
+	document.registration.submit();
+   }
+   else
+   {
+	if( document.registration.selectreg.value > 1 )
+	{
+	 alert('You can only edit one student at a time.');
+	}
+	else
+	{
+	 alert('You must select a registration to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 1;
+   if(document.registration.elements[row].checked)
+   {
+	document.registration.selectreg.value = Math.round(document.registration.selectreg.value) + 1;
+   }
+   else
+   {
+	document.registration.selectreg.value = Math.round(document.registration.selectreg.value) - 1;
+   }
+   //alert(document.registration.selectreg.value);
+  }
+ </script>
+ <h1>Attendance</h1>
+ <br>
+ <table align='center' width='400' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='registration' action='./index.php' method='POST'>
+ <b>Semester: </b> <select name='semester' onChange='document.registration.addattend.value=0;document.registration.deletereg.value=0;document.registration.submit();'>
+ [RepeatBegin]
+<option value='[Symbolic:$semester[0]]' 
+#if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$semester[1]]</option>
+[RepeatEnd]
+	 </select>
+ <b>Student:</b>
+ <select name='student' onChange='document.registration.addattend.value=0;document.registration.deletereg.value=0;document.registration.submit();'>[RepeatBegin]
+<option value='[Symbolic:$student[0]]' 
+#if ($_POST['student']==$student[0]&&$_POST['student']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$student[1]] [Symbolic:$student[2]]</option>
+[RepeatEnd]  </select>
+   <br /><br />
+  <table width='400' class='dynamiclist' cellpadding='5' cellspacing='0'>
+  <tr class='header' align='center'>
+   <th>&nbsp;</th><th>Tardy</th><th>Absent</th>
+  </tr>
+#if ($_POST['semester']!=NULL)
+[RepeatBegin]
+<tr style='color: red; font-weight: bold;' align='center' class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td><input type='checkbox' name='delete[]' value='[Symbolic:$reg[0]]' onClick='updateboxes(0);' /></td>
+   <td>
+#if ($class[0]!="")
+
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+
+#else
+
+#endif
+</td>
+   <td>
+#if ($class[1]!="")
+
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+
+#else
+
+#endif
+</td>
+   </tr>
+   
+[RepeatEnd]<tr class='even'><td>&nbsp;</td><td>N/A</td><td>N/A</td></tr>
+#else
+<tr style='color: red; font-weight: bold;' align='center' class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td><input type='checkbox' name='delete[]' value='[Symbolic:$reg[0]]' onClick='updateboxes(0);' /></td>
+   <td>
+#if ($class[0]!="")
+
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+
+#else
+
+#endif
+</td>
+   <td>
+#if ($class[1]!="")
+
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+
+#else
+
+#endif
+</td>
+   </tr>
+   
+#endif
+
+   <tr class='header' align='center'>
+	<td><b>Totals:</td><td>[Symbolic:$tardytotal[0]]</td><td>[Symbolic:$absenttotal[0]]</td>
+   </tr>
+  </table>
+  <br />
+  <input type='button' value='Add' onClick='document.registration.addattend.value=1;document.registration.page2.value=31;document.registration.submit();'> <input type='button' value='Delete' onClick='document.registration.deletereg.value=1;validate();'>
+
+  <input type='hidden' name='addattend' />
+  <input type='hidden' name='deletereg' />
+  <input type='hidden' name='selectreg' />
+  <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+  <input type='hidden' name='logout' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 31)
+<h1>Add New Attendance Record</h1>
+
+  <form name='addattendance' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='300'>
+   <tr class='header'>
+	<th>Date</th>
+	<th>Type</th>
+   </tr>
+   <tr class='even' valign='top'>
+	<td><input type='text' name='attdate' maxlength='10' size='15' /></td>
+	<td>
+	 <select name='type'>
+	  <option value='tardy'>Tardy</option>
+	  <option value='absent'>Absent</option>
+	 </select>
+	</td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='300'>
+   <tr>
+   <td><input type='button' value='Add Attendance' onClick='document.addattendance.addattendance.value=1;document.addattendance.page2.value=30;document.addattendance.submit();'> <input type='button' value='Cancel' onClick='document.addattendance.page2.value=30;document.addattendance.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='addattendance' value='' />
+  <input type='hidden' name='semester' value='[Symbolic:$_POST[semester]]' />
+  <input type='hidden' name='student' value='[Symbolic:$_POST[student]]' />
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='date'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 32)
+
+ <h1>Points Report</h1>
+ <br>
+ <table align='center' width='600' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='classes' action='./index.php' method='POST'>
+ <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>[RepeatBegin]
+<option value='[Symbolic:$semester[0]]' 
+#if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$semester[1]]</option>
+[RepeatEnd]
+	 </select>
+ &nbsp;&nbsp;<b>Classes:</b>
+ <select name='selectclass' onChange='document.classes.submit();'>
+#if ($_POST['semester']!=NULL)
+[RepeatBegin]
+<option value='[Symbolic:$classes[0]]' 
+#if ($_POST['selectclass']==$classes[0])
+SELECTED
+#else
+
+#endif
+>[Symbolic:$classes[1]]</option>
+
+[RepeatEnd]
+#else
+<option value='[Symbolic:$classes[0]]' 
+#if ($_POST['selectclass']==$classes[0])
+SELECTED
+#else
+
+#endif
+>[Symbolic:$classes[1]]</option>
+
+#endif
+  </select>
+  <br><br>
+  <table cellspacing='0' width='600' class='dynamiclist'>
+  <tr class='header'>
+   <th>Student</th>
+   <th>Current Points</th>
+   <th>Total Points</th>
+   <th>Percent</th>
+   <th>Grade</th>
+  </tr>
+#if ($_POST['selectclass']!=NULL)
+[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	<td align='left' style='padding-left: 30px;'>[Symbolic:$name[0]] [Symbolic:$name[1]]</td>
+	<td>[Symbolic:$current]</td>
+	<td>[Symbolic:$total]</td>
+	<td>
+#if ($total != 0)
+[Symbolic:number_format(100*($current / $total),2)]
+#else
+0.00
+#endif
+&#37;</td>
+	<td>
+#if ($perc >= $classinfo[1])
+A
+#else
+
+#if ($perc >= $classinfo[2])
+B
+#else
+
+#if ($perc >= $classinfo[3])
+C
+#else
+
+#if ($perc >= $classinfo[4])
+D
+#else
+F
+#endif
+
+#endif
+
+#endif
+
+#endif
+</td>
+[RepeatEnd]
+#else
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	<td align='left' style='padding-left: 30px;'>[Symbolic:$name[0]] [Symbolic:$name[1]]</td>
+	<td>[Symbolic:$current]</td>
+	<td>[Symbolic:$total]</td>
+	<td>
+#if ($total != 0)
+[Symbolic:number_format(100*($current / $total),2)]
+#else
+0.00
+#endif
+&#37;</td>
+	<td>
+#if ($perc >= $classinfo[1])
+A
+#else
+
+#if ($perc >= $classinfo[2])
+B
+#else
+
+#if ($perc >= $classinfo[3])
+C
+#else
+
+#if ($perc >= $classinfo[4])
+D
+#else
+F
+#endif
+
+#endif
+
+#endif
+
+#endif
+</td><tr class='even'><td colspan='5'>There are no students registered for this class.</td></tr>
+#endif
+  </table>
+  <br />
+  <input type='button' value=' Back ' onClick='document.classes.page2.value=2;document.classes.submit();'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+  <input type='hidden' name='logout' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+AdminMain.php: Invalid Page
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+ 	 </td>
+	</tr>
+   </table>
+
+  </td>
+#else
+
+#if ($page == 2)
+<script language='JavaScript'>
+
+  function classes()
+  {
+	document.teacher.page2.value=0;
+	document.teacher.submit();
+  }
+
+  function settings()
+  {
+	document.teacher.page2.value=1;
+	document.teacher.submit();
+  }
+
+  function assignments()
+  {
+	document.teacher.page2.value=2;
+	document.teacher.submit();
+  }
+
+  function grades()
+  {
+   document.teacher.page2.value=3;
+   document.teacher.submit();
+  }
+
+  function announcements()
+  {
+	document.teacher.page2.value=9;
+	document.teacher.submit();
+  }
+
+  function students()
+  {
+	document.teacher.page2.value=8;
+	document.teacher.submit();
+  }
+
+  function logoutteacher()
+  {
+	document.teacher.logout.value=1;
+	document.teacher.submit();
+  }
+ </script>
+
+ <body><table cellpadding=0 cellspacing=0 border=0 width='100%' height='80'>
+ <tr>
+ <td class='b' width='300'>
+  <img src='./images/title.gif' height='75' width='300' />
+ </td>
+ <td class='b'>
+  <table cellpadding=0 cellspacing=0 border=0 width='80%'>
+  <tr>
+  <td class='b'>
+   <div class='yellowtext' align='center'>
+#if ($_POST["infoupdate"] == 1)
+[Symbolic:$_POST["schoolname"]]
+#else
+[Symbolic:mysql_result($query,0)]
+#endif
+</div>
+  </td>
+  </tr>
+  </table>
+ </td>
+</tr>
+</table>
+
+ <table width='100%' height='88%' border=0 cellspacing=0 cellpadding=0 align='center'>
+ <tr>
+  <td class='b' width='130' height=10><empty></td>
+  <td class='b' width=10 background='./images/topleft.gif'><empty></td>
+  <td class='b' height=10 background='./images/top.gif'><empty></td>
+  <td class='b' width=10 background='./images/topright.gif'><empty></td>
+ </tr>
+
+
+ <tr>
+  <td class='b' width=130 valign='top'>
+   <br>
+   <form name='teacher' action='./index.php' method='POST'>
+
+   <a class='menu' href='javascript: classes();' onMouseover="window.status='View Classes'; return true;" onMouseout="window.status=''; return true;">Classes</a>
+   <br><br>
+#if ($_POST['selectclass'] != "" && $page2 != 0)
+
+	 <a class='menu' href='javascript: settings();' onMouseover="window.status='Manage Class Settings'; return true;" onMouseout="window.status=''; return true;">Settings</a>
+	 <br><br>
+	 <a class='menu' href='javascript: assignments();' onMouseover="window.status='Manage Assignments'; return true;" onMouseout="window.status=''; return true;">Assignments</a>
+	 <br><br>
+	 <a class='menu' href='javascript: grades();' onMouseover="window.status='Manage Grades'; return true;" onMouseout="window.status=''; return true;">Grades</a>
+	 <br><br>
+	 <a class='menu' href='javascript: students();' onMouseover="window.status='View Student Information'; return true;" onMouseout="window.status=''; return true;">Students</a>
+	 <br><br>
+	 <a class='menu' href='javascript: announcements();' onMouseover="window.status='View Announcements'; return true;" onMouseout="window.status=''; return true;">Announcements</a>
+	 <br><br>
+#else
+[Special]
+#endif
+   <a class='menu' href='javascript: logoutteacher();' onMouseover="window.status='Log Out';return true;" onMouseout="window.status='';return true;">Log Out</a>
+
+   <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+   <input type='hidden' name='logout'>
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+   <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+ </form>
+  </td>
+  <td class='b' width='10' background='./images/left.gif'><div style='letter-spacing: 1pt;'>&nbsp;</div></td>
+  <td class='w' valign='top'>
+   <table border=0 cellspacing=0 cellpadding=10 width='100%' height='100%'>
+	<tr>
+	 <td valign='top'>
+#if ($page2 == 0)
+ <h1>[Symbolic:$teacherid[1]] [Symbolic:$teacherid[2]]'s Classes</h1>
+ <br><br>
+ <table align='center' width='300' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='classes' action='./index.php' method='POST'>
+ <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
+[RepeatBegin]
+<option value='[Symbolic:$semester[0]]' 
+#if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$semester[1]]</option>
+[RepeatEnd]
+	 </select>
+	 <br><br>
+  </td>
+ </tr>
+ <tr>
+ <td>
+  <table cellspacing='0' width='300' cellpadding='5' class='dynamiclist' align='center'>
+   <tr class='header'>
+	<th>Class Name</th>
+   </tr>
+   
+#if ($_POST['semester']!=NULL)
+[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$class[1]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$class[1]]</a></td>
+  </tr>
+[RepeatEnd]
+#else
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$class[1]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$class[1]]</a></td>
+  </tr>
+#endif
+</table>
+   <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+   <input type='hidden' name='logout' />
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+   <input type='hidden' name='selectclass' />
+   <input type='hidden' name='teacherid' value='[Symbolic:$teacherid[0]]' />
+ </td>
+ </tr>
+ </table>
+ </form>
+
+  <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+#else
+
+#if ($page2 == 1)
+ <h1>Class Settings</h1>
+ <br><br>
+ <form name='classes' action='./index.php' method='POST'>
+ <table align='center' width='500' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+  <table cellspacing='0' width='500' cellpadding='5' class='dynamiclist' align='center'>
+   <tr class='header'>
+	<th colspan='5' align='center'><h2>[Symbolic:$info[5]]</h2></th>
+   </tr>
+   <tr class='header' align='center'>
+	<th>A Percent</th>
+	<th>B Percent</th>
+	<th>C Percent</th>
+	<th>D Percent</th>
+   </tr>
+   <tr class='even'>
+	<td><input type='text' name='aperc' value='[Symbolic:$info[0]]' size=5 /></td>
+	<td><input type='text' name='bperc' value='[Symbolic:$info[1]]' size=5 /></td>
+	<td><input type='text' name='cperc' value='[Symbolic:$info[2]]' size=5 /></td>
+	<td><input type='text' name='dperc' value='[Symbolic:$info[3]]' size=5 /></td>
+   </tr>
+   </table>
+  <br>
+  <input type='button' value='Update' onClick='document.classes.update.value=1;document.classes.submit();'>
+   <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+   <input type='hidden' name='logout' />
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+   <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+   <input type='hidden' name='update' />
+   </form>
+ </td>
+ </tr>
+ </table>
+
+#else
+
+#if ($page2 == 2)
+<script language='JavaScript'>
+
+  // Function to make sure the assignment wants to delete the assignment(s) //
+  function validate()
+  {
+   if( document.assignments.selectassignment.value > 0 )
+   {
+	var confirmed = confirm("Are you sure you want to delete this assignment?");
+
+	if( confirmed == true )
+	{
+	 document.assignments.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a assignment to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.assignments.selectassignment.value == 1 )
+   {
+	document.assignments.submit();
+   }
+   else
+   {
+	if( document.assignments.selectassignment.value > 1 )
+	{
+	 alert('You can only edit one assignment at a time.');
+	}
+	else
+	{
+	 alert('You must select a assignment to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row + 2;
+   if(document.assignments.elements[row].checked)
+   {
+	document.assignments.selectassignment.value = Math.round(document.assignments.selectassignment.value) + 1;
+   }
+   else
+   {
+	document.assignments.selectassignment.value = Math.round(document.assignments.selectassignment.value) - 1;
+   }
+  }
+ </script>
+
+ <h1>Manage Assignments</h1>
+ <br><br>
+ <table align='center' width='600' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='assignments' action='./index.php' method='POST'>
+  <input type='button' value='Add' onClick='document.assignments.page2.value=4;document.assignments.submit();'>
+  <input type='button' value='Edit' onClick='document.assignments.page2.value=5;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.assignments.deleteassignment.value=1;validate();'>
+  <br><br>
+  <table cellspacing='0' width='600' cellpadding='8' class='dynamiclist'>
+   <tr class='header'>
+	<th colspan='6'><h2>[Symbolic:$coursename]</th>
+   </tr>
+   <tr class='header'>
+	<td>&nbsp;</td>
+	<th>Title</th>
+	<th>Assigned Task</th>
+	<th>Possible Points</th>
+	<th>Date Assigned</th>
+	<th>Date Due</th>
+   </tr>[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><input type='checkbox' name='delete[]' value='[Special]' onClick='updateboxes(0);' /></td>
+	  <td>[Special]</td>
+	  <td style='text-align: left;'>[Special]</td>
+	  <td>[Symbolic:number_format($assignment[2],0)]</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	 </tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd] </table>
+  <br>
+  <input type='button' value='Add' onClick='document.assignments.page2.value=4;document.assignments.submit();'>
+  <input type='button' value='Edit' onClick='document.assignments.page2.value=5;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.assignments.deleteassignment.value=1;validate();'>
+  <br><br>
+
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.assignments.deleteassignment.value=0;document.assignments.page2.value=2;document.assignments.onpage.value=[Symbolic:$i];document.assignments.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.assignments.deleteassignment.value=0;document.assignments.page2.value=2;document.assignments.onpage.value=[Symbolic:$i];document.assignments.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='deleteassignment'>
+  <input type='hidden' name='selectassignment'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 3)
+<script language='JavaScript'>
+
+  // Function to make sure the student wants to delete the grade(s) //
+  function validate()
+  {
+   if( document.grades.selectgrade.value > 0 )
+   {
+	var confirmed = confirm("Are you sure you want to delete this grade?");
+
+	if( confirmed == true )
+	{
+	 document.grades.submit();
+	}
+   }
+   else
+   {
+	alert('You must select a grade to delete.');
+   }
+  }
+
+
+  // Function to make sure only one checkbox has been selected //
+  function checkboxes()
+  {
+   if( document.grades.selectgrade.value == 1 )
+   {
+	document.grades.submit();
+   }
+   else
+   {
+	if( document.grades.selectgrade.value > 1 )
+	{
+	 alert('You can only edit one grade at a time.');
+	}
+	else
+	{
+	 alert('You must select a grade to edit.');
+	}
+   }
+  }
+
+
+  // Function to keep track of how many checkboxes are checked //
+  function updateboxes(row)
+  {
+   row = row;
+   if(document.grades.elements[row].checked)
+   {
+	document.grades.selectgrade.value = Math.round(document.grades.selectgrade.value) + 1;
+   }
+   else
+   {
+	document.grades.selectgrade.value = Math.round(document.grades.selectgrade.value) - 1;
+   }
+  }
+ </script>
+ <h1>Grades</h1>
+ <br>
+ <table align='center' width='595' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='grades' action='./index.php' method='POST'>
+ <b>Assignment:</b>
+ <select name='assignment' onChange='document.grades.addgrade.value=0;document.grades.deletegrade.value=0;document.grades.submit();'>[RepeatBegin]
+<option value='[Symbolic:$assignment[0]]' 
+#if ($_POST['assignment']==$assignment[0]&&$_POST['assignment']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$assignment[1]]</option>
+[RepeatEnd]  </select>
+  <br /><br />
+  <table width='595' class='dynamiclist' cellpadding='5' cellspacing='0'>
+  <tr class='header'>
+   <th>&nbsp;</th>
+   <th>Student Name</th>
+   <th>Date Submitted</th>
+   <th>Earned Points</th>
+   <th>Possible Points</th>
+   <th>Grade</th>
+   <th>Late</th>
+  </tr>[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td><input type='checkbox' name='delete[]' value='[Symbolic:$student[0]]' onClick='updateboxes(0);' /></td>
+   <td>[Symbolic:$student[1]] [Symbolic:$student[2]]</td>
+   <td>
+#if (convertfromdb($grade[3]) != "//")
+
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+
+#else
+
+#endif
+</td>
+   <td>[Symbolic:$grade[1]]</td>
+   <td>[Symbolic:$assignment[1]]</td>
+	<td>
+#if ($grade[4] != NULL)
+
+#if ($letter == -1)
+Total Not Found
+#else
+
+#if ($letter >= $percs[0])
+A
+#else
+
+#if ($letter >= $percs[1])
+B
+#else
+
+#if ($letter >= $percs[2])
+C
+#else
+
+#if ($letter >= $percs[3])
+D
+#else
+F
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+[Special]
+#endif
+</td>
+	<td>
+#if ($grade[4] == 1)
+Yes
+#else
+
+#if ($grade[4] != NULL)
+No
+#else
+[Special]
+#endif
+
+#endif
+
+	</td>
+   </tr>
+   
+[RepeatEnd]<tr class='even'><td colspan='9'><center>There are currently no students registered for this class.</center></td></tr>  </table>
+  <br />
+  <input type='button' value='Edit' onClick='document.grades.page2.value=7;checkboxes();'>
+  <input type='button' value='Delete' onClick='document.grades.deletegrade.value=1;validate();'>
+
+  <input type='hidden' name='addgrade' />
+  <input type='hidden' name='deletegrade' />
+  <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+  <input type='hidden' name='selectgrade' />
+  <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+  <input type='hidden' name='logout' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 4)
+<h1>Add New Assignment</h1>
+
+  <form name='addassignment' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='700'>
+   <tr class='header'>
+	<th>Title</th>
+	<th>Assigned Task</th>
+	<th>Total Points</th>
+	<th>Date Assigned</th>
+	<th>Date Due</th>
+   </tr>
+   <tr class='even' valign='top'>
+	<td><input type='text' name='title' maxlength='15' size='15' /></td>
+	<td><textarea name='task'></textarea></td>
+	<td><input type='text' name='total' maxlength='6' size='15' /></td>
+	<td><input type='text' name='assigneddate' maxlength='10' size='15' /></td>
+	<td><input type='text' name='duedate' maxlength='10' size='15' /></td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='700'>
+   <tr>
+   <td><input type='button' value='Add Assignment' onClick='document.addassignment.addassignment.value=1;document.addassignment.page2.value=2;document.addassignment.submit();'> <input type='button' value='Cancel' onClick='document.addassignment.page2.value=2;document.addassignment.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='addassignment' value=''>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 5)
+<h1>Edit Assignment</h1>
+
+  <form name='editassignment' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='700'>
+   <tr class='header'>
+	<th>Title</th>
+	<th>Assigned Task</th>
+	<th>Total Points</th>
+	<th>Date Assigned</th>
+	<th>Date Due</th>
+   </tr>
+   <tr class='even' valign='top'>
+	<td><input type='text' name='title' maxlength='15' size='15' value='[Symbolic:$assignment[2]]' /></td>
+	<td><textarea name='task'>[Symbolic:$assignment[6]]</textarea></td>
+	<td><input type='text' name='total' maxlength='6' size='15' value='[Symbolic:number_format($assignment[3],0)]' /></td>
+	<td><input type='text' name='assigneddate' maxlength='10' size='15' value='
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+' /></td>
+	<td><input type='text' name='duedate' maxlength='10' size='15' value='
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+' /></td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='700'>
+   <tr>
+   <td>
+	<input type='button' value='Edit Assignment' onClick='document.editassignment.editassignment.value=1;document.editassignment.page2.value=2;document.editassignment.submit();'>
+	<input type='button' value='Cancel' onClick='document.editassignment.page2.value=2;document.editassignment.submit();'>
+   </td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='editassignment'>
+  <input type='hidden' name='assignmentid' value='[Symbolic:$id[0]]'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='wastotal' value='[Symbolic:$assignment[3]]'>
+  <input type='hidden' name='wasdate' value='[Symbolic:$assignment[5]]'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 6)
+[Special]
+#else
+
+#if ($page2 == 7)
+<h1>Edit Grade</h1>
+
+  <form name='editgrade' action='./index.php' method='POST'>
+  <br><br><br>
+  <table cellspacing='0' cellpadding='5' class='dynamiclist' align='center' width='500'>
+   <tr class='header'>
+	<th>Student Name</th>
+	<th>Date Submitted</th>
+	<th>Earned Points</th>
+	<th>Comment</th>
+	<th>Late</th>
+   </tr>
+   <tr class='even' valign='top'>
+	<td>[Symbolic:$student[0]] [Symbolic:$student[1]]	</td>
+	<td><input type='text' name='gradedate' maxlength='10' size='10' value='
+#if (convertfromdb($grade[0]) != "//")
+
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+
+#else
+
+#endif
+' /></td>
+	<td><input type='text' name='points' maxlength='5' size='5' value='[Symbolic:number_format($grade[1],1)]' /></td>
+	<td><textarea cols='20' rows='3' name='comment'>[Symbolic:$grade[2]]</textarea></td>
+	<td><input type='checkbox' name='late' value='1'
+#if ($grade[3]==1)
+CHECKED
+#else
+
+#endif
+ /></td>
+   </tr>
+   </table>
+
+   <br>
+
+   <table cellpadding='0' border='0' align='center' width='500'>
+   <tr>
+   <td><input type='button' value='Edit Grade' onClick='document.editgrade.editgrade.value=1;document.editgrade.page2.value=3;document.editgrade.submit();'> <input type='button' value='Cancel' onClick='document.editgrade.page2.value=3;document.editgrade.submit();'></td>
+   </tr>
+   </table>
+
+  <input type='hidden' name='editgrade' value=''>
+  <input type='hidden' name='gradeid' value='[Symbolic:$grade[4]]' />
+  <input type='hidden' name='wasgrade' value='[Symbolic:number_format($grade[1],1)]' />
+  <input type='hidden' name='wasdate' value='
+#if (convertfromdb($grade[0]) != "//")
+
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+
+#else
+
+#endif
+' />
+  <input type='hidden' name='student' value='[Symbolic:$id[0]]' />
+  <input type='hidden' name='assignment' value='[Symbolic:$_POST[assignment]]' />
+  <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='date'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+
+ </form>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+	&nbsp;
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 8)
+
+ <h1>Students</h1>
+ <br>
+ <table align='center' width='600' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='classes' action='./index.php' method='POST'>
+  <br><br>
+  <table cellspacing='0' width='600' class='dynamiclist'>
+  <tr class='header'>
+   <th>Student</th>
+   <th>Current Points</th>
+   <th>Possible Points</th>
+   <th>Percent</th>
+   <th>Grade</th>
+  </tr>[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td align='left'>[Symbolic:$fnames[$i]] [Symbolic:$lnames[$i]]</td>
+   <td>[Symbolic:$cinfo[0]]</td>
+   <td>[Symbolic:$classes[0]]</td>
+   <td>[Symbolic:number_format($currperc*100,2)]&#37;</td>
+   <td>
+#if ($currperc >= ($classes[1]/100))
+A
+#else
+
+#if ($currperc >= $classes[2]/100)
+B
+#else
+
+#if ($currperc >= $classes[3]/100)
+C
+#else
+
+#if ($currperc >= $classes[4]/100)
+D
+#else
+F
+#endif
+
+#endif
+
+#endif
+
+#endif
+</td>
+   
+[RepeatEnd]  </table>
+  <br />
+  <input type='button' value=' Back ' onClick='document.classes.page2.value=2;document.classes.submit();'>
+  <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+  <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+  <input type='hidden' name='logout' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 9)
+<h1>View Announcements</h1>
+ <br><br>
+ <table align='center' width='600' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='announcements' action='./index.php' method='POST'>
+  <table cellspacing='0' width='600' cellpadding='8' class='dynamiclist'>
+   <tr class='header'>
+	<th>Title</th>
+	<th>Message</th>
+	<th>Date</th>
+   </tr>[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td><b>[Symbolic:$announcement[1]]</b></td>
+	  <td class='announcement'>[Symbolic:$announcement[2]]</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	 </tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd] </table>
+  <br><br>
+
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.announcements.deleteannouncement.value=0;document.announcements.page2.value=4;document.announcements.onpage.value=[Symbolic:$i];document.announcements.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.announcements.deleteannouncement.value=0;document.announcements.page2.value=4;document.announcements.onpage.value=[Symbolic:$i];document.announcements.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+teacherMain.php: Invalid Page
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+ 	 </td>
+	</tr>
+   </table>
+
+  </td>
+#else
+
+#if ($page == 3)
+[Special]
+#else
+
+#if ($page == 4)
+<script language='JavaScript'>
+
+  function classes()
+  {
+	document.student.page2.value=0;
+	document.student.submit();
+  }
+
+  function settings()
+  {
+	document.student.page2.value=1;
+	document.student.submit();
+  }
+
+  function assignments()
+  {
+	document.student.page2.value=2;
+	document.student.submit();
+  }
+
+  function grades()
+  {
+   document.student.page2.value=3;
+   document.student.submit();
+  }
+
+  function announcements()
+  {
+	document.student.page2.value=4;
+	document.student.submit();
+  }
+
+  function logoutstudent()
+  {
+	document.student.logout.value=1;
+	document.student.submit();
+  }
+ </script>
+
+ <body><table cellpadding=0 cellspacing=0 border=0 width='100%' height='80'>
+ <tr>
+ <td class='b' width='300'>
+  <img src='./images/title.gif' height='75' width='300' />
+ </td>
+ <td class='b'>
+  <table cellpadding=0 cellspacing=0 border=0 width='80%'>
+  <tr>
+  <td class='b'>
+   <div class='yellowtext' align='center'>
+#if ($_POST["infoupdate"] == 1)
+[Symbolic:$_POST["schoolname"]]
+#else
+[Symbolic:mysql_result($query,0)]
+#endif
+</div>
+  </td>
+  </tr>
+  </table>
+ </td>
+</tr>
+</table>
+
+ <table width='100%' height='88%' border=0 cellspacing=0 cellpadding=0 align='center'>
+ <tr>
+  <td class='b' width='130' height=10><empty></td>
+  <td class='b' width=10 background='./images/topleft.gif'><empty></td>
+  <td class='b' height=10 background='./images/top.gif'><empty></td>
+  <td class='b' width=10 background='./images/topright.gif'><empty></td>
+ </tr>
+
+
+ <tr>
+  <td class='b' width=130 valign='top'>
+   <br>
+   <form name='student' action='./index.php' method='POST'>
+
+   <a class='menu' href='javascript: classes();' onMouseover="window.status='View Classes'; return true;" onMouseout="window.status=''; return true;">Classes</a>
+   <br><br>
+#if ($_POST['selectclass'] != "" && $page2 != 0)
+
+	 <a class='menu' href='javascript: settings();' onMouseover="window.status='View Class Settings'; return true;" onMouseout="window.status=''; return true;">Settings</a>
+	 <br><br>
+	 <a class='menu' href='javascript: assignments();' onMouseover="window.status='View Assignments'; return true;" onMouseout="window.status=''; return true;">Assignments</a>
+	 <br><br>
+	 <a class='menu' href='javascript: grades();' onMouseover="window.status='View Grades'; return true;" onMouseout="window.status=''; return true;">Grades</a>
+	 <br><br>
+	 <a class='menu' href='javascript: announcements();' onMouseover="window.status='View Announcements'; return true;" onMouseout="window.status=''; return true;">Announcements</a>
+	 <br><br>
+#else
+[Special]
+#endif
+   <a class='menu' href='javascript: logoutstudent();' onMouseover="window.status='Log Out';return true;" onMouseout="window.status='';return true;">Log Out</a>
+
+   <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+   <input type='hidden' name='logout'>
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+   <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+ </form>
+  </td>
+  <td class='b' width='10' background='./images/left.gif'><div style='letter-spacing: 1pt;'>&nbsp;</div></td>
+  <td class='w' valign='top'>
+   <table border=0 cellspacing=0 cellpadding=10 width='100%' height='100%'>
+	<tr>
+	 <td valign='top'>
+#if ($page2 == 0)
+ <h1>[Symbolic:$studentid[1]] [Symbolic:$studentid[2]]'s Classes</h1>
+ <br><br>
+ <table align='center' width='300' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='classes' action='./index.php' method='POST'>
+ <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
+[RepeatBegin]
+<option value='[Symbolic:$semester[0]]' 
+#if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$semester[1]]</option>
+[RepeatEnd]
+	 </select>
+	 <br><br>
+  </td>
+ </tr>
+ <tr>
+ <td>
+  <table cellspacing='0' width='300' cellpadding='5' class='dynamiclist' align='center'>
+   <tr class='header'>
+	<th>Class Name</th>
+   </tr>
+   
+#if ($_POST['semester']!=NULL)
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$info[0]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$info[0]]</a></td>
+   </tr>
+#else
+[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$info[0]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$info[0]]</a></td>
+   </tr>
+[RepeatEnd]
+#endif
+</table>
+   <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+   <input type='hidden' name='logout' />
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+   <input type='hidden' name='selectclass' />
+   <input type='hidden' name='studentid' value='[Symbolic:$studentid[0]]' />
+ </td>
+ </tr>
+ </table>
+ </form>
+
+  <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+#else
+
+#if ($page2 == 1)
+ <h1>Class Settings</h1>
+ <br><br>
+ <form name='classes' action='./index.php' method='POST'>
+ <table align='center' width='500' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+  <table cellspacing='0' width='500' cellpadding='5' class='dynamiclist' align='center'>
+   <tr class='header'>
+	<th colspan='5' align='center'><h2>[Symbolic:$info[5]]</h2></th>
+   </tr>
+   <tr class='header' align='center'>
+	<th>A Percent</th>
+	<th>B Percent</th>
+	<th>C Percent</th>
+	<th>D Percent</th>
+   </tr>
+   <tr class='even'>
+	<td>[Symbolic:$info[0]]</td>
+	<td>[Symbolic:$info[1]]</td>
+	<td>[Symbolic:$info[2]]</td>
+	<td>[Symbolic:$info[3]]</td>
+   </tr>
+   </table>
+   <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+   <input type='hidden' name='logout' />
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+   <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+   <input type='hidden' name='update' />
+   </form>
+ </td>
+ </tr>
+ </table>
+
+#else
+
+#if ($page2 == 2)
+
+ <h1>View Assignments</h1>
+ <br><br>
+ <table align='center' width='600' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='assignments' action='./index.php' method='POST'>
+  <br><br>
+  <table cellspacing='0' width='600' cellpadding='8' class='dynamiclist'>
+   <tr class='header'>
+	<th colspan='6'><h2>[Symbolic:$coursename]</th>
+   </tr>
+   <tr class='header'>
+	<th width='120' align='left' style='padding-left: 20px;'>Title</th>
+	<th>Assigned Task</th>
+	<th>Possible Points</th>
+	<th>Date Assigned</th>
+	<th>Date Due</th>
+   </tr>[RepeatBegin]
+
+#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+	  <td align='left' style='padding-left: 20px;'>[Special]</td>
+	  <td style='text-align: left;'>[Special]</td>
+	  <td>[Symbolic:number_format($assignment[2],0)]</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	  <td>
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+</td>
+	 </tr>
+#else
+[Special]
+#endif
+
+[RepeatEnd] </table>
+  <br>
+  <center>Page: [RepeatBegin]
+
+#if ($i == $_POST["onpage"])
+<a href='JavaScript: document.assignments.deleteassignment.value=0;document.assignments.page2.value=2;document.assignments.onpage.value=[Symbolic:$i];document.assignments.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#else
+<a href='JavaScript: document.assignments.deleteassignment.value=0;document.assignments.page2.value=2;document.assignments.onpage.value=[Symbolic:$i];document.assignments.submit();' class='pagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
+
+#endif
+
+[RepeatEnd]
+</center>
+  <input type='hidden' name='deleteassignment'>
+  <input type='hidden' name='selectassignment'>
+  <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+  <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
+  <input type='hidden' name='logout'>
+  <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+ </td>
+ </tr>
+ </table>
+
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 3)
+
+ <h1>View Grades</h1>
+ <br>
+ <table align='center' width='600' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='grades' action='./index.php' method='POST'>
+  <br />
+  <table width='595' class='dynamiclist' cellpadding='5' cellspacing='0'>
+  <tr class='header'>
+   <th>Assignment Name</th>
+   <th>Date Submitted</th>
+   <th>Earned Points</th>
+   <th>Possible Points</th>
+   <th>Grade</th>
+   <th>Comment</th>
+   <th>Late</th>
+  </tr>[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td>[Symbolic:$assignment[1]]</td>
+   <td>
+#if (convertfromdb($grade[2]) != "//")
+
+#if ($ret_date == "00/00/0000")
+
+#else
+[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
+#endif
+
+#else
+
+#endif
+</td>
+   <td>[Symbolic:$grade[1]]</td>
+   <td>[Symbolic:$assignmentinfo[1]]</td>
+	<td>
+#if ($grade[3] != NULL)
+
+#if ($letter == -1)
+Total Not Found
+#else
+
+#if ($letter >= $percs[0])
+A
+#else
+
+#if ($letter >= $percs[1])
+B
+#else
+
+#if ($letter >= $percs[2])
+C
+#else
+
+#if ($letter >= $percs[3])
+D
+#else
+F
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+[Special]
+#endif
+</td>
+	<td align='left'>[Symbolic:$grade[4]]</td>
+	<td>
+#if ($grade[3] == 1)
+Yes
+#else
+
+#if ($grade[3] != NULL)
+No
+#else
+[Special]
+#endif
+
+#endif
+
+	</td>
+   </tr>
+   
+[RepeatEnd]<tr class='even'><td colspan='9'><center>There are currently no students registered for this class.</center></td></tr>  </table>
+  <br />
+
+  <input type='hidden' name='addgrade' />
+  <input type='hidden' name='deletegrade' />
+  <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+  <input type='hidden' name='selectgrade' />
+  <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+  <input type='hidden' name='logout' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 4)
+[Special]
+#else
+StudentMain.php: Invalid Page
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+      </td>
+	</tr>
+   </table>
+
+  </td>
+#else
+
+#if ($page == 5)
+<script language='JavaScript'>
+
+  function students()
+  {
+	document.student.page2.value=0;
+	document.student.submit();
+  }
+
+  function settings()
+  {
+	document.student.page2.value=1;
+	document.student.submit();
+  }
+
+  function assignments()
+  {
+	document.student.page2.value=2;
+	document.student.submit();
+  }
+
+  function grades()
+  {
+   document.student.page2.value=3;
+   document.student.submit();
+  }
+
+  function announcements()
+  {
+	document.student.page2.value=4;
+	document.student.submit();
+  }
+
+  function classes()
+  {
+	document.student.page2.value=5;
+	document.student.submit();
+  }
+
+  function logoutstudent()
+  {
+	document.student.logout.value=1;
+	document.student.submit();
+  }
+ </script>
+
+ <body><table cellpadding=0 cellspacing=0 border=0 width='100%' height='80'>
+ <tr>
+ <td class='b' width='300'>
+  <img src='./images/title.gif' height='75' width='300' />
+ </td>
+ <td class='b'>
+  <table cellpadding=0 cellspacing=0 border=0 width='80%'>
+  <tr>
+  <td class='b'>
+   <div class='yellowtext' align='center'>
+#if ($_POST["infoupdate"] == 1)
+[Symbolic:$_POST["schoolname"]]
+#else
+[Symbolic:mysql_result($query,0)]
+#endif
+</div>
+  </td>
+  </tr>
+  </table>
+ </td>
+</tr>
+</table>
+
+ <table width='100%' height='88%' border=0 cellspacing=0 cellpadding=0 align='center'>
+ <tr>
+  <td class='b' width='130' height=10><empty></td>
+  <td class='b' width=10 background='./images/topleft.gif'><empty></td>
+  <td class='b' height=10 background='./images/top.gif'><empty></td>
+  <td class='b' width=10 background='./images/topright.gif'><empty></td>
+ </tr>
+
+
+ <tr>
+  <td class='b' width=130 valign='top'>
+   <br>
+   <form name='student' action='./index.php' method='POST'>
+
+   <a class='menu' href='javascript: students();' onMouseover="window.status='View Students'; return true;" onMouseout="window.status=''; return true;">Students</a>
+   <br><br>
+#if ($_POST['student'] != "" && $page2 != 0)
+
+#if ($_POST['selectclass'] != "" && $page2 != 5)
+
+	 <a class='menu' href='javascript: classes();' onMouseover="window.status='View Classes'; return true;" onMouseout="window.status=''; return true;">Classes</a>
+	 <br><br>
+	 <a class='menu' href='javascript: settings();' onMouseover="window.status='View Class Settings'; return true;" onMouseout="window.status=''; return true;">Settings</a>
+	 <br><br>
+	 <a class='menu' href='javascript: assignments();' onMouseover="window.status='View Assignments'; return true;" onMouseout="window.status=''; return true;">Assignments</a>
+	 <br><br>
+	 <a class='menu' href='javascript: grades();' onMouseover="window.status='View Grades'; return true;" onMouseout="window.status=''; return true;">Grades</a>
+	 <br><br>
+	 <a class='menu' href='javascript: announcements();' onMouseover="window.status='View Announcements'; return true;" onMouseout="window.status=''; return true;">Announcements</a>
+	 <br><br>
+#else
+
+	 <a class='menu' href='javascript: classes();' onMouseover="window.status='View Classes'; return true;" onMouseout="window.status=''; return true;">Classes</a>
+	 <br><br>
+	 
+#endif
+
+#else
+[Special]
+#endif
+   <a class='menu' href='javascript: logoutstudent();' onMouseover="window.status='Log Out';return true;" onMouseout="window.status='';return true;">Log Out</a>
+
+   <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+   <input type='hidden' name='logout'>
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+   <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
+   <input type='hidden' name='student' value='[Symbolic:$_POST[student]]' />
+ </form>
+  </td>
+  <td class='b' width='10' background='./images/left.gif'><div style='letter-spacing: 1pt;'>&nbsp;</div></td>
+  <td class='w' valign='top'>
+   <table border=0 cellspacing=0 cellpadding=10 width='100%' height='100%'>
+	<tr>
+	 <td valign='top'>
+#if ($page2 == 0)
+
+ <h1>Students of [Symbolic:$parent[1]] [Symbolic:$parent[2]]</h1>
+ <br>
+ <table align='center' width='300' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='classes' action='./index.php' method='POST'>
+  <br>
+  <table cellspacing='0' width='300' align='center' class='dynamiclist'>
+  <tr class='header'>
+   <th>Student Name</th>
+  </tr>[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+  <td><a class='items' href="javascript:document.classes.student.value=[Symbolic:$temp[2]];document.classes.page2.value=5;document.classes.submit();">[Symbolic:$temp[0]] [Symbolic:$temp[1]]</a></td>
+  </tr>
+[RepeatEnd]  </table>
+  <br />
+  <input type='hidden' name='student' value='' />
+  <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+  <input type='hidden' name='logout' />
+  <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+ </form>
+ </td>
+ </tr>
+ </table>
+ <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+ 
+#else
+
+#if ($page2 == 1)
+[Special]
+#else
+
+#if ($page2 == 2)
+[Special]
+#else
+
+#if ($page2 == 3)
+[Special]
+#else
+
+#if ($page2 == 4)
+[Special]
+#else
+
+#if ($page2 == 5)
+ <h1>[Symbolic:$studentid[1]] [Symbolic:$studentid[2]]'s Classes</h1>
+ <br><br>
+ <table align='center' width='300' cellspacing='0' cellpadding='0' border='0'>
+ <tr>
+ <td>
+ <form name='classes' action='./index.php' method='POST'>
+ <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
+[RepeatBegin]
+<option value='[Symbolic:$semester[0]]' 
+#if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
+SELECTED
+#else
+
+#endif
+>[Symbolic:$semester[1]]</option>
+[RepeatEnd]
+	 </select>
+	 <br><br>
+  </td>
+ </tr>
+ <tr>
+ <td>
+  <table cellspacing='0' width='300' cellpadding='5' class='dynamiclist' align='center'>
+   <tr class='header'>
+	<th>Class Name</th>
+   </tr>
+   
+#if ($_POST['semester']!=NULL)
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$info[0]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$info[0]]</a></td>
+   </tr>
+#else
+[RepeatBegin]
+<tr class='
+#if ($row%2==0)
+even
+#else
+odd
+#endif
+'>
+   <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$info[0]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$info[0]]</a></td>
+   </tr>
+[RepeatEnd]
+#endif
+</table>
+   <input type='hidden' name='page2' value='[Symbolic:$page2]' />
+   <input type='hidden' name='logout' />
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+' />
+   <input type='hidden' name='selectclass' />
+   <input type='hidden' name='student' value='[Symbolic:$_POST[student]]' />
+   <input type='hidden' name='studentid' value='[Symbolic:$studentid[0]]' />
+ </td>
+ </tr>
+ </table>
+ </form>
+
+  <table width='520' border=0 cellspacing=0 cellpadding=0 height=1>
+  <tr>
+   <td valign='top'>
+   <empty>
+   </td>
+  </tr>
+ </table>
+#else
+ParentMain.php: Invalid Page
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+      </td>
+	</tr>
+   </table>
+
+  </td>
+#else
+[Special]
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+   <td class='bv' width=10 background='./images/right.gif'>&nbsp;&nbsp;</font></td>
+ </tr>
+ <tr>
+  <td class='b' width=130 height='10'><empty></td>
+  <td class='b' width=10  height='10' background='./images/bottomleft.gif'><empty></td>
+  <td class='b' height='10' background='./images/bottom.gif'><empty></td>
+  <td class='b' width=10  height='10' background='./images/bottomright.gif'><empty></td>
+ </tr>
+ <tr>
+  <td colspan=4 bgColor='#336699' height='20'>
+   <center>
+    <span class='footer'>Powered By - </span><a target='_BLANK' href='http://www.primateapplications.com' class='footer'>SchoolMate</a>
+   <center>
+  </td>
+ </tr>
+ </table>
+ </body>
+ </html>
+#else
+
+#if (die("Could not connect: " . mysql_error()))
+Could not connect: [Symbolic:mysql_error()]
+#else
+
+#if (die ('Unable to select the database: ' . mysql_error()))
+Unable to select the database: [Symbolic:mysql_error()]
+#else
+
+#if ($_POST['page2']==1337 & $_SESSION['userid'] == "" || $_SESSION['usertype']!="Admin")
+Invalid User!
+#else
+
+#if ($_POST['page2']==1337 & !$_SESSION['userid'] == "" || $_SESSION['usertype']!="Admin" & $type[0]!="Admin")
+[Special]
+#else
+
+#if ($_POST['page2']==1337)
+[Symbolic:$data]
+#else
+
+#if (die("Unable to retrieve school name: " . mysql_error()))
+Unable to retrieve school name: [Symbolic:mysql_error()]
+#else
+<html>
+ <head>
+ <title>SchoolMate - 
+#if ($_POST["infoupdate"] == 1)
+[Symbolic:$_POST["schoolname"]]
+#else
+[Symbolic:mysql_result($query,0)]
+#endif
+</title>
+ <style type="text/css">
+
+ /* BODY */
+ body
+ {
+  background-color: #336699;
+ }
+
+ /* LINKS */
+  A.footer
+  {
+    font-family: arial;
+    font-size: 10pt;
+    font-weight: normal;
+    color: silver;
+    text-decoration: underline;
+  }
+
+  A.footer:hover
+  {
+    font-family: arial;
+    font-size: 10pt;
+    font-weight: normal;
+    color: black;
+	text-decoration: underline;
+  }
+
+  A.menu
+  {
+	font-family: arial;
+	font-size: 12pt;
+	font-weight: bold;
+	color: #e6ca3d;
+	text-decoration: none;
+  }
+
+  A.menu:hover
+  {
+	font-family: arial;
+    font-size: 12pt;
+    font-wight: bold;
+	color: #FFFFBB;
+    text-decoration: none;
+  }
+
+  A.pagenum
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #808080;
+   text-decoration: none;
+  }
+
+  A.pagenum:hover
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #ACACAC;
+   text-decoration: none;
+  }
+
+  A.selectedpagenum
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #000000;
+   text-decoration: underline;
+  }
+
+  A.selectedpagenum:hover
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #ACACAC;
+   text-decoration: underline;
+  }
+
+  A.items
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #000000;
+   text-decoration: underline;
+  }
+
+  A.items:hover
+  {
+   font-family: arial;
+   font-size: 10pt;
+   font-weight: normal;
+   color: #5F5F5F;
+   text-decoration: underline;
+  }
+
+  /* TABLES */
+  table
+  {
+	background-color: #FFFFFF;
+  }
+
+  table.y
+  {
+	background-color: #FFFFBB;
+  }
+
+  table.dynamiclist
+  {
+   border-color: #585858;
+   border-width: .075EM;
+   border-style: solid;
+   padding-right: 1px;
+   padding-bottom: 1px;
+   padding-left: 0px;
+   padding-top: 0px;
+  }
+
+  td.b
+  {
+   background-color: #336699;
+  }
+
+  td.bv
+  {
+   background-color: #336699;
+   background-repeat: repeat-y;
+  }
+
+  td.w
+  {
+   background-color: #FFFFFF;
+  }
+
+  td.announcement
+  {
+   text-align: justify;
+   padding-left: 20px;
+   padding-right: 20px;
+  }
+
+  .odd
+  {
+   background-color: #ACACAC;
+   text-align: center;
+  }
+
+  .even
+  {
+   background-color: #E0E0E0;
+   text-align: center;
+  }
+
+  .header
+  {
+   background-color: #FFFFBB;
+  }
+
+ /* HEADERS */
+  h1
+  {
+   	font-family: times;
+    font-size: 22pt;
+    font-weight: bold;
+    color: #000000;
+    text-decoration: none;
+    text-align: center;
+  }
+
+  h2.message
+  {
+	font-family: times;
+    font-size: 16pt;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+  }
+
+ /* CUSTOM CLASSES */
+  .messagebox
+  {
+	background-color: #FFFFBB;
+	border-style: solid;
+	border-width: .075EM;
+	border-color: #e6ca3d;
+	padding: 10px 10px 10px 10px;
+	min-width: 150px;
+	min-height: 150px;
+	width: 300;
+	height: 200;
+	font-family: arial;
+	font-size: 10pt;
+	text-align: left;
+	overflow: none;
+  }
+
+  .messageboxcenter
+  {
+	background-color: #FFFFBB;
+	border-style: solid;
+	border-width: .075EM;
+	border-color: #e6ca3d;
+	padding: 10px 10px 10px 10px;
+	min-width: 150px;
+	min-height: 50px;
+	width: 300;
+	height: 200;
+	font-family: arial;
+	text-align: center;
+	vertical-align: middle;
+	overflow: auto;
+  }
+
+  .footer
+  {
+    font-family: arial;
+    font-size: 10pt;
+    font-weight: normal;
+    color: silver;
+  }
+
+  .yellowtext
+  {
+	font-family: times;
+	font-size: 25pt;
+	font-weight: normal;
+	color: #e6ca3d;
+	text-decoration: none;
+  }
+
+
+</style>
+</head>
+ 
+#if ($_POST["login"] == 1 & die("Unable to validate login and password with the database: " . mysql_error()))
+Unable to validate login and password with the database: [Symbolic:mysql_error()]
+#else
+
+#if ($_POST["login"] == 1 & !md5($_POST["password"]) != $result & die("Unable to get user type: " . mysql_error()))
+Unable to get user type: [Symbolic:mysql_error()]
+#else
+
+#if ($_POST["login"] == 1 & !md5($_POST["password"]) != $result & die("Unable to get userid from users: " . mysql_error()))
+Unable to get userid from users: [Symbolic:mysql_error()]
+#else
+
+#if ($_POST["login"] == 1 & !md5($_POST["password"]) != $result & !$_SESSION["usertype"] == "Admin" & !$_SESSION["usertype"] == "Teacher" & !$_SESSION["usertype"] == "Substitute" & !$_SESSION["usertype"] == "Student" & !$_SESSION["usertype"] == "Parent")
+ValidateLogin.php: Unable to determine the type of user.  Please verify.
+#else
+
+#if (!$page == 0 & $page == 1 & $_SESSION['userid'] == "" || $_SESSION['usertype'] != 'Admin')
+Invalid User!
+#else
+
+#if (!$page == 0 & $page == 1 & $page2 == 0 & $_POST["addclass"] == 1 && $_POST["title"] != "" && $_POST["teacher"] != "" && $_POST["semester"] != "" && $_POST["roomnum"] != "" && $_POST["periodnum"] != "" & $_POST['fullyear']!=1 & die("ManageClasses.php: Unable to insert new class - " . mysql_error()))
+<script language='JavaScript'>
+  function logoutAdmin()
+  {
+	document.admin.logout.value=1;
+	document.admin.submit();
+  }
+
+  function classes()
+  {
+	document.admin.page2.value=0;
+	document.admin.submit();
+  }
+
+  function schoolInfo()
+  {
+	document.admin.page2.value=1;
+	document.admin.submit();
+  }
+
+  function students()
+  {
+	document.admin.page2.value=2;
+	document.admin.submit();
+  }
+
+  function teachers()
+  {
+	document.admin.page2.value=3;
+	document.admin.submit();
+  }
+
+  function announcements()
+  {
+	document.admin.page2.value=4;
+	document.admin.submit();
+  }
+
+  function semesters()
+  {
+	document.admin.page2.value=5;
+	document.admin.submit();
+  }
+
+  function terms()
+  {
+	document.admin.page2.value=6;
+	document.admin.submit();
+  }
+
+  function users()
+  {
+	document.admin.page2.value=10;
+	document.admin.submit();
+  }
+
+  function parents()
+  {
+	document.admin.page2.value=22;
+	document.admin.submit();
+  }
+
+  function register()
+  {
+	document.admin.page2.value=26;
+	document.admin.submit();
+  }
+
+  function attendance()
+  {
+	document.admin.page2.value=30;
+	document.admin.submit();
+  }
+ </script>
+
+ <body><table cellpadding=0 cellspacing=0 border=0 width='100%' height='80'>
+ <tr>
+ <td class='b' width='300'>
+  <img src='./images/title.gif' height='75' width='300' />
+ </td>
+ <td class='b'>
+  <table cellpadding=0 cellspacing=0 border=0 width='80%'>
+  <tr>
+  <td class='b'>
+   <div class='yellowtext' align='center'>
+#if ($_POST["infoupdate"] == 1)
+[Symbolic:$_POST["schoolname"]]
+#else
+[Symbolic:mysql_result($query,0)]
+#endif
+</div>
+  </td>
+  </tr>
+  </table>
+ </td>
+</tr>
+</table>
+
+ <table width='100%' height='88%' border=0 cellspacing=0 cellpadding=0 align='center'>
+ <tr>
+  <td class='b' width='130' height=10><empty></td>
+  <td class='b' width=10 background='./images/topleft.gif'><empty></td>
+  <td class='b' height=10 background='./images/top.gif'><empty></td>
+  <td class='b' width=10 background='./images/topright.gif'><empty></td>
+ </tr>
+
+
+ <tr>
+  <td class='b' width=130 valign='top'>
+   <br>
+   <form name='admin' action='./index.php' method='POST'>
+
+   <a class='menu' href='javascript: schoolInfo();' onMouseover="window.status='Manage School Information'; return true;" onMouseout="window.status=''; return true;">School</a>
+   <br><br>
+   <a class='menu' href='javascript: terms();' onMouseover="window.status='Manage Terms'; return true;" onMouseout="window.status=''; return true;">Terms</a>
+   <br><br>
+   <a class='menu' href='javascript: semesters();' onMouseover="window.status='Manage Semesters'; return true;" onMouseout="window.status=''; return true;">Semesters</a>
+   <br><br>
+   <a class='menu' href='javascript: classes();' onMouseover="window.status='Manage Classes'; return true;" onMouseout="window.status=''; return true;">Classes</a>
+   <br><br>
+   <a class='menu' href='javascript: users();' onMouseover="window.status='Manage Users'; return true;" onMouseout="window.status=''; return true;">Users</a>
+   <br><br>
+   <a class='menu' href='javascript: teachers();' onMouseover="window.status='Manage Teachers'; return true;" onMouseout="window.status=''; return true;">Teachers</a>
+   <br><br>
+   <a class='menu' href='javascript: students();' onMouseover="window.status='Manage Students'; return true;" onMouseout="window.status=''; return true;">Students</a>
+   <br><br>
+   <a class='menu' href='javascript: register();' onMouseover="window.status='Register Students for Classes'; return true;" onMouseout="window.status=''; return true;">Registration</a>
+   <br><br>
+   <a class='menu' href='javascript: attendance();' onMouseover="window.status='Keep Attendance'; return true;" onMouseout="window.status=''; return true;">Attendance</a>
+   <br><br>
+   <a class='menu' href='javascript: parents();' onMouseover="window.status='Manage Parents'; return true;" onMouseout="window.status=''; return true;">Parents</a>
+   <br><br>
+   <a class='menu' href='javascript: announcements();' onMouseover="window.status='Manage Announcements'; return true;" onMouseout="window.status=''; return true;">Announcements</a>
+   <br><br>
+   <a class='menu' href='javascript: logoutAdmin();' onMouseover="window.status='Log Out';return true;" onMouseout="window.status='';return true;">Log Out</a>
+
+   <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+   <input type='hidden' name='logout'>
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+  </td>
+  <td class='b' width=10 background='./images/left.gif'><div style='letter-spacing: 1pt;'>&nbsp;</div></td>
+  <td class='w' valign='top'>
+   <table border=0 cellspacing=0 cellpadding=10 width='100%' height='100%'>
+	<tr>
+	 <td valign='top'>ManageClasses.php: Unable to insert new class - [Symbolic:mysql_error()]
+#else
+
+#if (!$page == 0 & $page == 1 & $page2 == 0 & $_POST["addclass"] == 1 && $_POST["title"] != "" && $_POST["teacher"] != "" && $_POST["semester"] != "" && $_POST["roomnum"] != "" && $_POST["periodnum"] != "" & !$_POST['fullyear']!=1 & die("ManageClasses.php: Unable to insert new class - " . mysql_error()) & $_POST['semester']!=$_POST['semester2'])
+<script language='JavaScript'>
+  function logoutAdmin()
+  {
+	document.admin.logout.value=1;
+	document.admin.submit();
+  }
+
+  function classes()
+  {
+	document.admin.page2.value=0;
+	document.admin.submit();
+  }
+
+  function schoolInfo()
+  {
+	document.admin.page2.value=1;
+	document.admin.submit();
+  }
+
+  function students()
+  {
+	document.admin.page2.value=2;
+	document.admin.submit();
+  }
+
+  function teachers()
+  {
+	document.admin.page2.value=3;
+	document.admin.submit();
+  }
+
+  function announcements()
+  {
+	document.admin.page2.value=4;
+	document.admin.submit();
+  }
+
+  function semesters()
+  {
+	document.admin.page2.value=5;
+	document.admin.submit();
+  }
+
+  function terms()
+  {
+	document.admin.page2.value=6;
+	document.admin.submit();
+  }
+
+  function users()
+  {
+	document.admin.page2.value=10;
+	document.admin.submit();
+  }
+
+  function parents()
+  {
+	document.admin.page2.value=22;
+	document.admin.submit();
+  }
+
+  function register()
+  {
+	document.admin.page2.value=26;
+	document.admin.submit();
+  }
+
+  function attendance()
+  {
+	document.admin.page2.value=30;
+	document.admin.submit();
+  }
+ </script>
+
+ <body><table cellpadding=0 cellspacing=0 border=0 width='100%' height='80'>
+ <tr>
+ <td class='b' width='300'>
+  <img src='./images/title.gif' height='75' width='300' />
+ </td>
+ <td class='b'>
+  <table cellpadding=0 cellspacing=0 border=0 width='80%'>
+  <tr>
+  <td class='b'>
+   <div class='yellowtext' align='center'>
+#if ($_POST["infoupdate"] == 1)
+[Symbolic:$_POST["schoolname"]]
+#else
+[Symbolic:mysql_result($query,0)]
+#endif
+</div>
+  </td>
+  </tr>
+  </table>
+ </td>
+</tr>
+</table>
+
+ <table width='100%' height='88%' border=0 cellspacing=0 cellpadding=0 align='center'>
+ <tr>
+  <td class='b' width='130' height=10><empty></td>
+  <td class='b' width=10 background='./images/topleft.gif'><empty></td>
+  <td class='b' height=10 background='./images/top.gif'><empty></td>
+  <td class='b' width=10 background='./images/topright.gif'><empty></td>
+ </tr>
+
+
+ <tr>
+  <td class='b' width=130 valign='top'>
+   <br>
+   <form name='admin' action='./index.php' method='POST'>
+
+   <a class='menu' href='javascript: schoolInfo();' onMouseover="window.status='Manage School Information'; return true;" onMouseout="window.status=''; return true;">School</a>
+   <br><br>
+   <a class='menu' href='javascript: terms();' onMouseover="window.status='Manage Terms'; return true;" onMouseout="window.status=''; return true;">Terms</a>
+   <br><br>
+   <a class='menu' href='javascript: semesters();' onMouseover="window.status='Manage Semesters'; return true;" onMouseout="window.status=''; return true;">Semesters</a>
+   <br><br>
+   <a class='menu' href='javascript: classes();' onMouseover="window.status='Manage Classes'; return true;" onMouseout="window.status=''; return true;">Classes</a>
+   <br><br>
+   <a class='menu' href='javascript: users();' onMouseover="window.status='Manage Users'; return true;" onMouseout="window.status=''; return true;">Users</a>
+   <br><br>
+   <a class='menu' href='javascript: teachers();' onMouseover="window.status='Manage Teachers'; return true;" onMouseout="window.status=''; return true;">Teachers</a>
+   <br><br>
+   <a class='menu' href='javascript: students();' onMouseover="window.status='Manage Students'; return true;" onMouseout="window.status=''; return true;">Students</a>
+   <br><br>
+   <a class='menu' href='javascript: register();' onMouseover="window.status='Register Students for Classes'; return true;" onMouseout="window.status=''; return true;">Registration</a>
+   <br><br>
+   <a class='menu' href='javascript: attendance();' onMouseover="window.status='Keep Attendance'; return true;" onMouseout="window.status=''; return true;">Attendance</a>
+   <br><br>
+   <a class='menu' href='javascript: parents();' onMouseover="window.status='Manage Parents'; return true;" onMouseout="window.status=''; return true;">Parents</a>
+   <br><br>
+   <a class='menu' href='javascript: announcements();' onMouseover="window.status='Manage Announcements'; return true;" onMouseout="window.status=''; return true;">Announcements</a>
+   <br><br>
+   <a class='menu' href='javascript: logoutAdmin();' onMouseover="window.status='Log Out';return true;" onMouseout="window.status='';return true;">Log Out</a>
+
+   <input type='hidden' name='page2' value='[Symbolic:$page2]'>
+   <input type='hidden' name='logout'>
+   <input type='hidden' name='page' value='
+#if ($_POST["logout"] == 1)
+0
+#else
+
+#if ($_POST["login"] == 1)
+
+#if (md5($_POST["password"]) != $result)
+0
+#else
+
+#if ($_SESSION["usertype"] == "Admin")
+1
+#else
+
+#if ($_SESSION["usertype"] == "Teacher")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Substitute")
+2
+#else
+
+#if ($_SESSION["usertype"] == "Student")
+4
+#else
+5
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#else
+
+#if ($page == null)
+0
+#else
+[Symbolic:$_POST["page"]]
+#endif
+
+#endif
+
+#endif
+'>
+ </form>
+  </td>
+  <td class='b' width=10 background='./images/left.gif'><div style='letter-spacing: 1pt;'>&nbsp;</div></td>
+  <td class='w' valign='top'>
+   <table border=0 cellspacing=0 cellpadding=10 width='100%' height='100%'>
+	<tr>
+	 <td valign='top'>ManageClasses.php: Unable to insert new class - [Symbolic:mysql_error()]
+#else
+[Special]
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif
+
+#endif

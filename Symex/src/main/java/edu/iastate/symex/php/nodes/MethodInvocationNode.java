@@ -35,20 +35,13 @@ public class MethodInvocationNode extends DispatchNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		// Get the object
-		if (!(dispatcher instanceof VariableNode)) {
-			MyLogger.log(MyLevel.TODO, "In MethodInvocationNode.java: VariableBase Expression unimplemented for the MethodInvocation.");
+		DataNode dataNode = dispatcher.execute(env);
+		if (dataNode instanceof ObjectNode) {
+			ObjectNode object = (ObjectNode) dataNode;
+			return method.execute(env, object);
+		}
+		else
 			return DataNodeFactory.createSymbolicNode(this);
-		}		
-		String variableName = ((VariableNode) dispatcher).getResolvedVariableNameOrNull(env);
-		PhpVariable phpVariable = env.readVariable(variableName);
-		if (phpVariable == null || !(phpVariable.getDataNode() instanceof ObjectNode)) {
-			return DataNodeFactory.createSymbolicNode(this);
-		}		
-		ObjectNode objectNode = (ObjectNode) phpVariable.getDataNode();
-		
-		// Execute the function
-		return method.execute(env, objectNode);
 	}
 
 	@Override

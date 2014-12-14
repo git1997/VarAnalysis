@@ -51,6 +51,24 @@ public abstract class DataNode {
 	public String getExactStringValueOrNull() {
 		return null;
 	}
+	
+	/**
+	 * Returns a string value composed of only literal nodes in the current DataNode.
+	 * (Select, Repeat, Symbolic, etc. are treated as empty strings.)
+	 */
+	public String getStringValueFromLiteralNodes() {
+		if (this instanceof LiteralNode) {
+			return ((LiteralNode) this).getStringValue();
+		}
+		else if (this instanceof ConcatNode) {
+			StringBuilder str = new StringBuilder();
+			for (DataNode child : ((ConcatNode) this).getChildNodes())
+				str.append(child.getStringValueFromLiteralNodes());
+			return str.toString();
+		}
+		else
+			return "";
+	}
 
 	/**
 	 * Visitor pattern

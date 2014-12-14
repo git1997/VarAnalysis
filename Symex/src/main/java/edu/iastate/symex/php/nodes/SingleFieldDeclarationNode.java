@@ -15,7 +15,7 @@ import edu.iastate.symex.util.logging.MyLogger;
 public class SingleFieldDeclarationNode extends PhpNode {
 	
 	private VariableNode name;
-	private ExpressionNode value;
+	private ExpressionNode value = null; // Can be null
 	
 	/*
 	Represents a fields declaration
@@ -28,13 +28,20 @@ public class SingleFieldDeclarationNode extends PhpNode {
 	public SingleFieldDeclarationNode(SingleFieldDeclaration singleFieldDeclaration) {
 		super(singleFieldDeclaration);
 		name = new VariableNode(singleFieldDeclaration.getName());
-		value = ExpressionNode.createInstance(singleFieldDeclaration.getValue());
+		if (singleFieldDeclaration.getValue() != null)
+			value = ExpressionNode.createInstance(singleFieldDeclaration.getValue());
 	}
 	
+	/**
+	 * Returns the name of the SingleFieldDeclaration.
+	 */
 	public VariableNode getName() {
 		return name;
 	}
 	
+	/**
+	 * Returns the value of the SingleFieldDeclaration, can be NULL.
+	 */
 	public ExpressionNode getValue() {
 		return value;
 	}

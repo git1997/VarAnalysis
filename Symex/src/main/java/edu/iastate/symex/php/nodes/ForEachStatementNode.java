@@ -42,8 +42,7 @@ public class ForEachStatementNode extends StatementNode {
 	@Override
 	public DataNode execute(Env env) {
 		expression.execute(env);
-		WhileStatementNode.execute(env, conditionString, statement);
-		return null;
+		return WhileStatementNode.execute(env, conditionString, statement);
 	}
 
 }

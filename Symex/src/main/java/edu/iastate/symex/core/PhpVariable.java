@@ -1,60 +1,57 @@
 package edu.iastate.symex.core;
 
-import edu.iastate.symex.util.logging.MyLevel;
-import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
  * @author HUNG
+ * 
+ * A PhpVariable represents one of the following: 
+ * 		(1) A regular PHP variable (e.g., $x)
+ * 		(2) An array element (e.g, $x['foo'])
+ * 		(3) An object field (e.g., $x->foo)
+ * @see {@link edu.iastate.symex.datamodel.nodes.ArrayNode}, {@link edu.iastate.symex.datamodel.nodes.ObjectNode} 
  *
  */
 public class PhpVariable {
 	
-	private String name;		// The name of the phpVariable
+	private String name;	// The name of the phpVariable
 	
-	private DataNode dataNode;	// The value of the phpVariable, represented by a dataNode.
+	private DataNode value;	// The value of the phpVariable, represented by a dataNode.
 	
 	/**
-	 * Constructor
+	 * Protected constructor. Should be called by Env only.
+	 * IMPORTANT: The variable's value must be set shortly after the creation of the variable.
 	 * @param name
 	 */
-	public PhpVariable(String name) {
+	protected PhpVariable(String name) {
 		this.name = name;
-		this.dataNode = null; // Its value must be set shortly after the creation of this object.
+		this.value = SpecialNode.UnsetNode.UNSET;
 	}
 	
-	/*
-	 * Get properties
+	/**
+	 * Returns the name of the variable
 	 */
-	
 	public String getName() {
 		return name;
 	}
 	
-	public DataNode getDataNode() {
-		if (dataNode != null)
-			return dataNode;
-		else {
-			MyLogger.log(MyLevel.USER_EXCEPTION, "In PhpVariable.java: Variable " + name + " has no associated data node.");
-			return DataNodeFactory.createSymbolicNode();
-		}
-	}
-	
-	/*
-	 * Set properties
+	/**
+	 * Gets the value of the variable. 
+	 * Returns UNSET if its value has not been set.
 	 */
-	
-	public void setDataNode(DataNode dataNode) {
-		this.dataNode = dataNode;
+	public DataNode getValue() {
+		return value;
 	}
 	
-	public void appendStringValue(DataNode dataNode) {
-		if (this.dataNode == null)
-			this.dataNode = dataNode;
-		else
-			this.dataNode = DataNodeFactory.createCompactConcatNode(this.dataNode, dataNode);
+	/**
+	 * Protected method. Should be called by Env only.
+	 * Sets the value of the variable.
+	 * @param value
+	 */
+	protected void setValue(DataNode value) {
+		this.value = value;
 	}
-
+	
 }

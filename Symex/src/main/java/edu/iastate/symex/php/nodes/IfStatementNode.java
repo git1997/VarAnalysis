@@ -1,14 +1,18 @@
 package edu.iastate.symex.php.nodes;
 
+import java.util.HashMap;
+
 import org.eclipse.php.internal.core.ast.nodes.IfStatement;
 
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.BranchEnv;
 import edu.iastate.symex.core.Env;
+import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
 
 /**
@@ -88,19 +92,28 @@ public class IfStatementNode extends StatementNode {
 		
 		// Execute the branches
 		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+		HashMap<PhpVariable, DataNode> dirtyValuesInTrueBranch = new HashMap<PhpVariable, DataNode>();
+		HashMap<PhpVariable, DataNode> dirtyValuesInFalseBranch = new HashMap<PhpVariable, DataNode>();
+		
 		if (trueStatement != null) {
 			trueBranchEnv = new BranchEnv(env, constraint);
 			trueBranchRetValue = trueStatement.execute(trueBranchEnv);
+			dirtyValuesInTrueBranch = env.backtrackAfterBranchExecution(trueBranchEnv);
 		}
 		if (falseStatement != null) {
 			falseBranchEnv = new BranchEnv(env, ConstraintFactory.createNotConstraint(constraint));
 			falseBranchRetValue = falseStatement.execute(falseBranchEnv);
+			dirtyValuesInFalseBranch = env.backtrackAfterBranchExecution(falseBranchEnv);
 		}
 		
 		// Update the env
-		env.updateWithBranches(constraint, trueBranchEnv, falseBranchEnv);
+		env.updateAfterBranchExecution(constraint, dirtyValuesInTrueBranch, dirtyValuesInFalseBranch, trueBranchRetValue, falseBranchRetValue);
 		
-		// Return value
+		// Return value, use NULL instead of null since SelectNode should not contain null values.
+		if (trueBranchRetValue == null)
+			trueBranchRetValue = SpecialNode.UnsetNode.NULL;
+		if (falseBranchRetValue == null)
+			falseBranchRetValue = SpecialNode.UnsetNode.NULL;
 		return DataNodeFactory.createCompactSelectNode(constraint, trueBranchRetValue, falseBranchRetValue);		
 	}
 

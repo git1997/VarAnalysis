@@ -70,7 +70,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 	 * This method should be called instead of calling referenceManager.addReference directly.
 	 */
 	private void addReference(Reference reference, Env env) {
-		reference.setConstraint(env.getConjunctedConstraintUpToGlobalOrFunctionScope());
+		reference.setConstraint(env.getConjunctedConstraintUpToPhpEnvScope());
 		reference.setEntryFile(entryFile);
 		referenceManager.addReference(reference);
 	}
@@ -113,7 +113,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 		 * Record data flows
 		 */
 		if (phpVariableRef != null) {
-			PhpVariable phpVariable = env.readVariable(phpVariableRef.getName());
+			PhpVariable phpVariable = env.getVariable(phpVariableRef.getName());
 			HashSet<DeclaringReference> decls = new HashSet<DeclaringReference>();
 			if (variableTable.containsKey(phpVariable))
 				decls.addAll(variableTable.get(phpVariable));
@@ -238,10 +238,10 @@ public class PhpVisitor implements IEntityDetectionListener {
 	private PhpRefToSqlTableColumn createPhpRefToSqlTableColumn(ArrayAccess arrayAccess, Env env) {
 		String arrayVariableName = getArrayVariableNameOrNull(arrayAccess);
 		if (arrayVariableName != null) {
-			PhpVariable phpVariable = env.readVariable(arrayVariableName);
+			PhpVariable phpVariable = env.getVariable(arrayVariableName);
 			
 			if (phpVariable != null) {
-				String variableValue = phpVariable.getDataNode().getExactStringValueOrNull();
+				String variableValue = phpVariable.getValue().getExactStringValueOrNull();
 				
 				if (variableValue != null && variableValue.startsWith("mysql_query_")) {
 					LiteralNode arrayIndex = getArrayIndexOrNull(arrayAccess, env);

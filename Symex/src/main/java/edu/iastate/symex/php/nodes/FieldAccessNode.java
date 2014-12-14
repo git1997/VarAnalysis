@@ -2,8 +2,6 @@ package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.FieldAccess;
 
-import edu.iastate.symex.util.logging.MyLevel;
-import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
@@ -13,6 +11,8 @@ import edu.iastate.symex.datamodel.nodes.ObjectNode;
 /**
  * 
  * @author HUNG
+ * 
+ * @see edu.iastate.symex.php.nodes.ArrayAccessNode
  *
  */
 public class FieldAccessNode extends DispatchNode {
@@ -33,8 +33,17 @@ public class FieldAccessNode extends DispatchNode {
 
 	@Override
 	public PhpVariable createVariablePossiblyWithNull(Env env) {
-		MyLogger.log(MyLevel.TODO, "In FieldAccessNode.java: Don't know how to create a variable from a fieldAccess.");
-		return null;
+		DataNode dataNode = dispatcher.execute(env);
+		if (dataNode instanceof ObjectNode) {
+			ObjectNode object = (ObjectNode) dataNode;
+			String fieldName = field.execute(env).getExactStringValueOrNull();
+			if (fieldName != null)
+				return env.getOrPutObjectField(object, fieldName);
+			else
+				return null;
+		}
+		else
+			return null;
 	}
 
 	@Override
@@ -48,10 +57,8 @@ public class FieldAccessNode extends DispatchNode {
 			else
 				return DataNodeFactory.createSymbolicNode(this);
 		}
-		else {
-			MyLogger.log(MyLevel.TODO, "In FieldAccessNode.java: FieldAccess unimplemented for non-object values.");
+		else
 			return DataNodeFactory.createSymbolicNode(this);
-		}
 	}
 
 }

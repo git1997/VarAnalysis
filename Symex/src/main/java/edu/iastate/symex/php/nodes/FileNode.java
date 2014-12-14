@@ -31,19 +31,30 @@ public class FileNode {
 	public FileNode(File file) {
 		this.file=file;
 		
-		// Parse the source file
+		/*
+		 * Prepare to parse the source file
+		 */
+		ASTParser parser = ASTParser.newParser(PHPVersion.PHP5, true);
+		char[] source = FileIO.readStringFromFile(file).toCharArray();
+		
+		/*
+		 * Parse the source file
+		 */
+		Program program = null;
 		try {
-			ASTParser parser = ASTParser.newParser(PHPVersion.PHP5, true);
-			char[] source = FileIO.readStringFromFile(file).toCharArray();
 			parser.setSource(source);
-			Program program = parser.createAST(null);
-			
-			ASTHelper.inst.setSourceFileForPhpProgram(program, file);
-			ASTHelper.inst.setSourceCodeForPhpProgram(program, source);
-			
-			this.programNode = new ProgramNode(program);
+			program = parser.createAST(null);
 		} catch (Exception e) {
 			MyLogger.log(MyLevel.JAVA_EXCEPTION, "In FileNode.java: Error parsing " + file + " (" + e.getMessage() + ")");
+		}
+		
+		/*
+		 * Create the ProgramNode
+		 */
+		if (program != null) {
+			ASTHelper.inst.setSourceFileForPhpProgram(program, file);
+			ASTHelper.inst.setSourceCodeForPhpProgram(program, source);
+			this.programNode = new ProgramNode(program);
 		}
 	}
 	

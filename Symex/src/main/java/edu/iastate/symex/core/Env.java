@@ -5,197 +5,218 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import edu.iastate.symex.util.logging.MyLevel;
-import edu.iastate.symex.util.logging.MyLogger;
-import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
-import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.ArrayNode;
 import edu.iastate.symex.datamodel.nodes.ConcatNode;
+import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
+import edu.iastate.symex.datamodel.nodes.ObjectNode;
 import edu.iastate.symex.datamodel.nodes.RepeatNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
-import edu.iastate.symex.php.nodes.ExpressionNode;
 import edu.iastate.symex.php.nodes.FileNode;
-import edu.iastate.symex.php.nodes.FormalParameterNode;
 import edu.iastate.symex.php.nodes.FunctionDeclarationNode;
-import edu.iastate.symex.php.nodes.VariableNode;
+import edu.iastate.symex.util.logging.MyLevel;
+import edu.iastate.symex.util.logging.MyLogger;
 
 /**
- * Env contains information during run time about variables, classes, methods, etc.
+ * 
  * @author HUNG
+ * 
+ * Env contains information during run time about variables, functions, classes, files, etc.
  * 
  */
 public abstract class Env {
-
-	protected Env outerScopeEnv; 	// The Env in the outer scope, can be null if it is already the outermost Env (GlobalEnv)
-
-	/*
-	 * Manage the variables in the current scope
-	 */
-	private HashMap<String, PhpVariable> variableTable = new HashMap<String, PhpVariable>();
-	private static String SPECIAL_VARIABLE_OUTPUT = "[OUTPUT]"; // Used throughout the execution (GLOBAL/FUNCTION/BRANCH scopes)
-	private static String SPECIAL_VARIABLE_FINAL_OUTPUT = "[FINAL_OUTPUT]"; // Used in GLOBAL scope only
-	private static String SPECIAL_VARIABLE_RETURN = "[RETURN]"; // Used in GLOBAL/FUNCTION scopes only
-
+	
+	private Env outerScopeEnv; // The Env in the outer scope, can be null if it is already the outermost Env (GlobalEnv)
+	
 	/*
 	 * Manage global variables in the current scope
 	 * (Variables that are declared with the global keyword)
 	 */
-	private HashSet<String> globalVariables = new HashSet<String>(); 
-
+	private HashSet<String> globalVariables = new HashSet<String>();
+	
+	private static String SPECIAL_VARIABLE_OUTPUT = "[OUTPUT]";	// A special global variable representing the output value
+	
 	/*
-	 * These fields are used to handle return/exit statements.
+	 * Manage variables that have been modified in the branches during symbolic execution.
+	 * Depending on the specific algorithm, dirtyVariables might store either the original or the updated values of modified variables.
 	 */
-	private boolean hasReturnStatement = false;
-	private boolean hasExitStatement = false;
-
+	private HashMap<PhpVariable, DataNode> dirtyVariables = new HashMap<PhpVariable, DataNode>();
+	
 	/**
 	 * Constructor
 	 * @param outerScopeEnv
 	 */
 	public Env(Env outerScopeEnv) {
 		this.outerScopeEnv = outerScopeEnv;
+		
+		// Set global variables
+		setGlobalVariable(SPECIAL_VARIABLE_OUTPUT);
 	}
 	
 	/*
-	 * Get the env from different scopes
+	 * MANAGE ENVs
 	 */
-
-	/**
-	 * Returns the global Env.
-	 */
-	public GlobalEnv getGlobalEnv() {
-		if (this instanceof GlobalEnv)
-			return (GlobalEnv) this;
-		else
-			return outerScopeEnv.getGlobalEnv();
-	}
 	
 	/**
-	 * Returns the global or function env that contains this env.
+	 * Returns the GlobalEnv
 	 */
-	public Env getGlobalOrFunctionEnv() {
-		if (this instanceof GlobalEnv || this instanceof FunctionEnv)
-			return this;
-		else
-			return outerScopeEnv.getGlobalOrFunctionEnv();
+	private GlobalEnv getGlobalEnv() {
+		Env env = this;
+		while (!(env instanceof GlobalEnv))
+			env = env.outerScopeEnv;
+		return (GlobalEnv) env;
 	}
 
+	/**
+	 * Returns the (inner-most) PhpEnv
+	 */
+	private PhpEnv getPhpEnv() {
+		Env env = this;
+		while (!(env instanceof PhpEnv))
+			env = env.outerScopeEnv;
+		return (PhpEnv) env;
+	}
+	
 	/*
-	 * Manage VARIABLES.
-	 * Typically, a write access will be done on the current scope's env,
-	 * whereas a read access will be done on a global/function scope's env.
+	 * MANAGE VARIABLES
 	 */
 	
 	/**
-	 * Writes a variable
-	 * @param phpVariable
-	 */
-	public void writeVariable(PhpVariable phpVariable) {
-		putVariableInCurrentScope(phpVariable);
-	}
-	
-	/**
-	 * Reads a variable from its name
+	 * Creates a variable from its name.
+	 * IMPORTANT: The variable's value must be set shortly after the creation of the variable.
 	 * @param name
 	 */
-	public PhpVariable readVariable(String name) {
-		return getVariableFromGlobalOrFunctionScope(name); 
-	}
-
-	/**
-	 * Puts a variable in the CURRENT scope
-	 * @param phpVariable
-	 */
-	protected void putVariableInCurrentScope(PhpVariable phpVariable) {
-		variableTable.put(phpVariable.getName(), phpVariable);
-	}
-
-	/**
-	 * Gets a variable from the CURRENT scope
-	 * @param variableName
-	 */
-	protected PhpVariable getVariableFromCurrentScope(String variableName) {
-		return variableTable.get(variableName);
-	}
-
-	/**
-	 * Gets a variable from the first enclosing Env that has GLOBAL/FUNCTION scope
-	 * @param variableName
-	 */
-	protected PhpVariable getVariableFromGlobalOrFunctionScope(String variableName) {
-		PhpVariable phpVariable = getVariableFromCurrentScope(variableName);
-		if (phpVariable != null)
-			return phpVariable;
-		else if (this instanceof GlobalEnv || this instanceof FunctionEnv)
-			return null;
-		else
-			return outerScopeEnv.getVariableFromGlobalOrFunctionScope(variableName);
-	}
-
-	/**
-	 * Gets a variable from the first enclosing Env that has GLOBAL scope
-	 * @param variableName
-	 */
-	protected PhpVariable getVariableFromGlobalScope(String variableName) {
-		PhpVariable phpVariable = getVariableFromCurrentScope(variableName);
-		if (phpVariable != null)
-			return phpVariable;
-		else if (this instanceof GlobalEnv)
-			return null;
-		else
-			return outerScopeEnv.getVariableFromGlobalScope(variableName);
-	}
-
-	/**
-	 * Adds a global variable in the current Env
-	 */
-	public void addGlobalVariable(String variableName) {
-		globalVariables.add(variableName);
-		
-		PhpVariable globalVariable = new PhpVariable(variableName);
-		PhpVariable referredGlobalVariable = readVariable(variableName);
-		if (referredGlobalVariable != null)
-			globalVariable.setDataNode(referredGlobalVariable.getDataNode());
-		else
-			globalVariable.setDataNode(DataNodeFactory.createSymbolicNode());
-		writeVariable(globalVariable);
+	public PhpVariable createVariable(String name) {
+		return new PhpVariable(name);
 	}
 	
 	/**
-	 * Gets the set of global variables in the current Env
+	 * Writes a value to a variable. The variable may have an existing value.
+	 * Also, the variable will be marked as dirty (as part of the solution for symbolic execution)
+	 * @param phpVariable
 	 */
+	public void writeVariable(PhpVariable phpVariable, DataNode value) {
+		// Record dirty variables
+		if (!dirtyVariables.containsKey(phpVariable))
+			dirtyVariables.put(phpVariable, phpVariable.getValue());
+		
+		phpVariable.setValue(value);
+	}
+	
+	/**
+	 * Puts a variable to the env.
+	 * NOTE: name and phpVariable.getName() do not necessarily match.
+	 * E.g., function foo(&$x) {} foo($y). We have map("x" => PhpVariable("y", value_of_y))
+	 * @param name
+	 * @param phpVariable
+	 */
+	public void putVariable(String name, PhpVariable phpVariable) {
+		if (isGlobalVariable(name))
+			getGlobalEnv().putVariableInCurrentScope(name, phpVariable);
+		else
+			getPhpEnv().putVariableInCurrentScope(name, phpVariable);
+	}
+	
+	/**
+	 * Gets a variable from the env.
+	 * NOTE: name and phpVariable.getName() do not necessarily match.
+	 * E.g., function foo(&$x) {} foo($y). We have map("x" => PhpVariable("y", value_of_y))
+	 * @param name
+	 */
+	public PhpVariable getVariable(String name) {
+		if (isGlobalVariable(name))
+			return getGlobalEnv().getVariableFromCurrentScope(name);
+		else
+			return getPhpEnv().getVariableFromCurrentScope(name);
+	}
+	
+	/**
+	 * Get a variable or put one if it doesn't already exist.
+	 * @see getVariable, putVariable
+	 * @param name
+	 */
+	public PhpVariable getOrPutVariable(String name) {
+		PhpVariable phpVariable = getVariable(name);
+		if (phpVariable == null) {
+			phpVariable = createVariable(name);
+			putVariable(name, phpVariable);
+		}
+		return phpVariable;
+	}
+	
+	/**
+	 * Either get or put the variable, then write to its value.
+	 * @see getVariable, putVariable, writeVariable
+	 * @param name
+	 * @param value
+	 */
+	public void getOrPutThenWriteVariable(String name, DataNode value) {
+		PhpVariable phpVariable = getOrPutVariable(name);
+		writeVariable(phpVariable, value);
+	}
+	
+	/**
+	 * Reads the value of a variable. 
+	 * Returns UNSET if the variable does not exist.
+	 * @param name
+	 */
+	public DataNode readVariable(String name) {
+		PhpVariable phpVariable = getVariable(name);
+		if (phpVariable != null)
+			return phpVariable.getValue();
+		else {
+			MyLogger.log(MyLevel.USER_EXCEPTION, "In Env.java: Reading an undefined variable (" + name + ").");
+			return SpecialNode.UnsetNode.UNSET;
+		}
+	}
+	
+	/**
+	 * Either get or put the variable, then read its value.
+	 * @see getVariable, putVariable
+	 * @param name
+	 */
+	public DataNode getOrPutThenReadVariable(String name) {
+		PhpVariable phpVariable = getOrPutVariable(name);
+		return phpVariable.getValue();
+	}
+	
+	/*
+	 * MANAGE GLOBAL VARIABLES
+	 */
+	
+	public void setGlobalVariable(String variableName) {
+		globalVariables.add(variableName);
+	}
+	
+	public boolean isGlobalVariable(String variableName) {
+		return globalVariables.contains(variableName);
+	}
+	
 	public HashSet<String> getGlobalVariables() {
 		return new HashSet<String>(globalVariables);
 	}
-
+	
 	/*
-	 * Manage PREDEFINED CONSTANTS
+	 * MANAGE PREDEFINED CONSTANTS
 	 */
 
 	/**
-	 * Sets the value of a predefined constant in the Global Env.
+	 * Sets the value of a predefined constant.
 	 */
 	public void setPredefinedConstantValue(String constantName,	DataNode constantValue) {
-		PhpVariable phpConstant = new PhpVariable(constantName);
-		phpConstant.setDataNode(constantValue);
-		getGlobalEnv().putVariableInCurrentScope(phpConstant);
+		setGlobalVariable(constantName);
+		getOrPutThenWriteVariable(constantName, constantValue);
 	}
 
 	/**
-	 * Returns the value of a predefined constant from the Global Env, or null if not found.
+	 * Returns the value of a predefined constant.
 	 */
 	public DataNode getPredefinedConstantValue(String constantName) {
-		PhpVariable phpConstant = getGlobalEnv().getVariableFromCurrentScope(constantName);
-
-		/* Get the value if it has been defined */
-		if (phpConstant != null)
-			return phpConstant.getDataNode();
-
 		/* Handle PHP keywords */ 
-		else if (constantName.toUpperCase().equals("TRUE"))
+		if (constantName.toUpperCase().equals("TRUE"))
 			return SpecialNode.BooleanNode.TRUE;
 		else if (constantName.toUpperCase().equals("FALSE"))
 			return SpecialNode.BooleanNode.FALSE;
@@ -206,13 +227,174 @@ public abstract class Env {
 		else if (constantName.toUpperCase().equals("__FILE__"))
 			return DataNodeFactory.createLiteralNode(peekFileFromStack().getAbsolutePath());
 
-		/* Else, return null */
-		else
-			return null;
-	}	
+		/* Other cases */
+		else {
+			setGlobalVariable(constantName);
+			return readVariable(constantName);
+		}
+	}
 	
 	/*
-	 * Manage FUNCTIONS, CLASSES, and FILES.
+	 * MANAGE ARRAYS & OBJECTS
+	 */
+	
+	/**
+	 * Get an array element or put one if it doesn't already exist.
+	 * @see getOrPutVariable
+	 */
+	public PhpVariable getOrPutArrayElement(ArrayNode array, String key) {
+		PhpVariable phpVariable = array.getElement(key);
+		if (phpVariable == null) {
+			phpVariable = createVariable(key);
+			array.putElement(key, phpVariable);
+		}
+		return phpVariable;
+	}
+	
+	/**
+	 * Either get or put the array element, then write to its value.
+	 * @see getOrPutThenWriteVariable
+	 */
+	public void getOrPutThenWriteArrayElement(ArrayNode array, String key, DataNode value) {
+		PhpVariable phpVariable = getOrPutArrayElement(array, key);
+		writeVariable(phpVariable, value);
+	}
+	
+	/**
+	 * Either get or put the array element, then read its value.
+	 * @see getOrPutThenReadVariable
+	 */
+	public DataNode getOrPutThenReadArrayElement(ArrayNode array, String key) {
+		PhpVariable phpVariable = getOrPutArrayElement(array, key);
+		return phpVariable.getValue();
+	}
+	
+	/**
+	 * Get an object field or put one if it doesn't already exist.
+	 * @see getOrPutVariable
+	 */
+	public PhpVariable getOrPutObjectField(ObjectNode object, String fieldName) {
+		PhpVariable phpVariable = object.getField(fieldName);
+		if (phpVariable == null) {
+			phpVariable = createVariable(fieldName);
+			object.putField(fieldName, phpVariable);
+		}
+		return phpVariable;
+	}
+	
+	/**
+	 * Either get or put the object field, then write to its value.
+	 * @see getOrPutThenWriteVariable
+	 */
+	public void getOrPutThenWriteObjectField(ObjectNode object, String fieldName, DataNode value) {
+		PhpVariable phpVariable = getOrPutObjectField(object, fieldName);
+		writeVariable(phpVariable, value);
+	}
+	
+	/**
+	 * Either get or put the object field, then read its value.
+	 * @see getOrPutThenReadVariable
+	 */
+	public DataNode getOrPutThenReadObjectField(ObjectNode object, String fieldName) {
+		PhpVariable phpVariable = getOrPutObjectField(object, fieldName);
+		return phpVariable.getValue();
+	}
+	
+	/*
+	 * MANAGE OUTPUT & RETURN VALUES
+	 */
+	
+	/**
+	 * Gets the current output
+	 */
+	public DataNode getCurrentOutput() {
+		return getOrPutThenReadVariable(SPECIAL_VARIABLE_OUTPUT);
+	}
+	
+	/**
+	 * Sets the current output
+	 */
+	private void setCurrentOutput(DataNode value) {
+		getOrPutThenWriteVariable(SPECIAL_VARIABLE_OUTPUT, value);
+	}
+
+	/**
+	 * Appends string values to the current output (used by echo/print)
+	 */
+	public void appendOutput(ArrayList<DataNode> stringValues) {
+		for (DataNode stringValue : stringValues)
+			appendOutput(stringValue);
+	}
+	
+	/**
+	 * Appends a string value to the current output (used by echo/print)
+	 */
+	public void appendOutput(DataNode stringValue) {
+		DataNode oldValue = getCurrentOutput();
+		
+		DataNode newValue;
+		if (oldValue == SpecialNode.UnsetNode.UNSET)
+			newValue = stringValue;
+		else
+			newValue = DataNodeFactory.createCompactConcatNode(oldValue, stringValue);
+		
+		setCurrentOutput(newValue);
+	}
+
+	/**
+	 * Gets the final output
+	 */
+	public DataNode getFinalOutput() {
+		return getGlobalEnv().getFinalOutput_();
+	}
+	
+	/**
+	 * Adds an output value at some exit statement to the final output
+	 */
+	public void addOutputAtExitToFinalOutput() {
+		getGlobalEnv().addOuptutAtExitToFinalOutput_(getConjunctedConstraintUpToGlobalEnvScope(), getCurrentOutput());
+	}
+	
+	/**
+	 * Adds the output value in the normal flow to the final output
+	 */
+	public void addNormalOutputToFinalOutput() {
+		getGlobalEnv().addNormalOutputToFinalOutput_(getCurrentOutput());
+	}
+	
+	/**
+	 * Gets the return value
+	 */
+	public DataNode getReturnValue() {
+		return getPhpEnv().getReturnValue_();
+	}
+	
+	/**
+	 * Adds a return value (at some return statement)
+	 */
+	public void addReturnValue(DataNode value) {
+		getPhpEnv().addReturnValue_(getConjunctedConstraintUpToPhpEnvScope(), value);
+	}
+	
+	/*
+	 * Handle return values for include statements
+	 * @see IncludeNode.execute(env)
+	 */
+	
+	public Object backupReturnValue() {
+		return getPhpEnv().backupReturnValue_();
+	}
+	
+	public void removeReturnValue() {
+		getPhpEnv().removeReturnValue_();
+	}
+	
+	public void restoreReturnValue(Object value) {
+		getPhpEnv().restoreReturnValue_(value);
+	}
+	
+	/*
+	 * MANAGE FUNCTIONS, CLASSES, and FILES
 	 */
 
 	public void putFunction(String functionName, FunctionDeclarationNode phpFunction) {
@@ -286,165 +468,196 @@ public abstract class Env {
 	public HashSet<File> getInvokedFiles() {
 		return new HashSet<File>(getGlobalEnv().getInvokedFiles_());
 	}
+	
+	/**
+	 * Resolves a file based on a value representing the file path.
+	 * Returns null if the file cannot be resolved
+	 * @param value
+	 */
+	public File resolveFile(DataNode value) {
+		// TODO Get the file path.
+		// The correct statements should be as follows:
+		//		String filePath = value.getExactStringValueOrNull();
+		//		if (filePath == null)
+		//			return null;
+		// However, we don't want to miss any files, so we currently get an approximate copy of the input DataNode.
+		String filePath = value.getStringValueFromLiteralNodes();
+		if (filePath.isEmpty())
+			return null;
+		
+		// Standardize the file path
+		filePath = filePath.replace('\\', File.separatorChar).replace('/', File.separatorChar);
+		
+		// Case 1: filePath is absolute
+		File file = new File(filePath);
+		if (file.isFile())
+			return file;
 
+		// Case 2: filePath is relative
+		for (File invokedFile : getFileStack()) {
+			file = new File(invokedFile.getParent(), filePath);
+			if (file.isFile())
+				return file;
+		}
+		
+		return null;
+	}
+	
 	/*
-	 * Manage constraints
+	 * MANAGE CONSTRAINTS
 	 */
 	
 	/**
-	 * Returns the conjuncted constraints of the current scope and its enclosing scopes.
+	 * Returns the conjuncted constraints of the current scope and its enclosing scopes, up to the GlobalEnv scope.
 	 */
-	public Constraint getConjunctedConstraint() {
-		if (this instanceof BranchEnv) {
-			Constraint outerConstraint = outerScopeEnv.getConjunctedConstraint();
-			Constraint thisConstraint = ((BranchEnv) this).getConstraint();
-			return ConstraintFactory.createAndConstraint(outerConstraint, thisConstraint);
-		}
-		else if (outerScopeEnv != null)
-			return outerScopeEnv.getConjunctedConstraint();
-		else
+	public Constraint getConjunctedConstraintUpToGlobalEnvScope() {
+		if (this instanceof GlobalEnv)
 			return Constraint.TRUE;
+		
+		Constraint outerConstraint = outerScopeEnv.getConjunctedConstraintUpToGlobalEnvScope();
+		if (this instanceof BranchEnv)
+			return ConstraintFactory.createAndConstraint(outerConstraint, ((BranchEnv) this).getConstraint());
+		else
+			return outerConstraint;
+	}
+
+	/**
+	 * Returns the conjuncted constraints of the current scope and its enclosing scopes, up to the (inner-most) PhpEnv scope.
+	 */
+	public Constraint getConjunctedConstraintUpToPhpEnvScope() {
+		if (this instanceof PhpEnv)
+			return Constraint.TRUE;
+		
+		Constraint outerConstraint = outerScopeEnv.getConjunctedConstraintUpToPhpEnvScope();
+		// Here, 'this' must be instanceof BranchEnv
+		return ConstraintFactory.createAndConstraint(outerConstraint, ((BranchEnv) this).getConstraint());
+	}
+	
+	/*
+	 * MANAGE DIRTY VARIABLES & UPDATE ENV DURING EXECUTION
+	 */
+	
+	/**
+	 * Returns a copy of dirtyVariables
+	 */
+	protected HashMap<PhpVariable, DataNode> copyDirtyVariables() {
+		return new HashMap<PhpVariable, DataNode>(dirtyVariables);
 	}
 	
 	/**
-	 * Returns the conjuncted constraints of the current scope and its enclosing scopes
-	 * up to its first enclosing Function/Global scope.
+	 * Backtracks the current Env after executing a branch.
+	 * 
+	 * IDEA: During branch execution, dirtyVariables contain old values of variables before the branch,
+	 *	whereas the variables themselves contain new values updated in the branch.
+	 *	After branch execution, we swap this property. That is, the returned dirtyVariables now contain
+	 *	new values, and the variables themselves are restored to the old values.
+	 * @param branchEnv
+	 * @return dirtyVariables containing the updated values of the variables after executing the branch
 	 */
-	public Constraint getConjunctedConstraintUpToGlobalOrFunctionScope() {
-		if (this instanceof BranchEnv) {
-			Constraint outerConstraint = outerScopeEnv.getConjunctedConstraintUpToGlobalOrFunctionScope();
-			Constraint thisConstraint = ((BranchEnv) this).getConstraint();
-			return ConstraintFactory.createAndConstraint(outerConstraint, thisConstraint);
+	public HashMap<PhpVariable, DataNode> backtrackAfterBranchExecution(BranchEnv branchEnv) {
+		HashMap<PhpVariable, DataNode> dirtyVarsInBranch = branchEnv.copyDirtyVariables();
+		for (PhpVariable variable : new HashSet<PhpVariable>(dirtyVarsInBranch.keySet())) { // Get a new HashSet since the map is updated in the loop
+			DataNode value = variable.getValue();
+			variable.setValue(dirtyVarsInBranch.get(variable));
+			dirtyVarsInBranch.put(variable, value);
 		}
-		else
-			return Constraint.TRUE;
+		return dirtyVarsInBranch;
 	}
-
-	/*
-	 * Update Env when executing the program.
-	 */
-
+	
 	/**
-	 * Updates the env after executing some branches.
+	 * Updates the current Env after executing two branches
+	 * 
+	 * IDEA: At this point, the variables'values have been restored to their values before entering the branches, see backtrackAfterBranchExecution(BranchEnv).
+	 * Now dirtyVarsInTrueBranch and dirtyVarsInFalseBranch contain modified values in the branches.
+	 * This method will combine the old values and dirty values in the branches to update the values of variables after executing the two branches. 
+	 * @param constraint
+	 * @param dirtyVarsInTrueBranch
+	 * @param dirtyVarsInFalseBranch
+	 * @paramm trueBranchRetValue
+	 * @param falseBranchRetValue
 	 */
-	public void updateWithBranches(Constraint constraint, Env trueBranchEnv, Env falseBranchEnv) {
-		// If a branch has a return/exit statement, update the variables in the
-		// current scope with the other branch
-		boolean trueBranchTerminated = (trueBranchEnv != null && (trueBranchEnv.hasReturnStatement() || trueBranchEnv.hasExitStatement()));
-		boolean falseBranchTerminated = (falseBranchEnv != null && (falseBranchEnv.hasReturnStatement() || falseBranchEnv.hasExitStatement()));
-
-		if (trueBranchTerminated || falseBranchTerminated) {
-			if (trueBranchTerminated && !falseBranchTerminated && falseBranchEnv != null)
-				this.updateVariableTableWithOneBranch(falseBranchEnv);
-			else if (!trueBranchTerminated && falseBranchTerminated && trueBranchEnv != null)
-				this.updateVariableTableWithOneBranch(trueBranchEnv);
+	public void updateAfterBranchExecution(Constraint constraint, HashMap<PhpVariable, DataNode> dirtyVarsInTrueBranch, HashMap<PhpVariable, DataNode>  dirtyVarsInFalseBranch, DataNode trueBranchRetValue, DataNode falseBranchRetValue) {
+		/*
+		 * Handle return/exit statements in the branches.
+		 * For an ifStatement: E; if (C) { A; return; } else { B; } D;
+		 * the best transformation is
+		 * 		=> E; if (C) A; else { B; D; }
+		 * However, currently we can probably only use an approximate transformation as follows
+		 * 		=> E; B; D; (disregard A)
+		 */
+		if (isTerminated(trueBranchRetValue) && !isTerminated(falseBranchRetValue)) {
+			updateWithOneBranchOnly(dirtyVarsInFalseBranch);
 			return;
 		}
-
-		// Else, update the variables in the current scope considering their
-		// values in both branches.
-		HashSet<String> variableNamesInTrueBranch = (trueBranchEnv != null ? trueBranchEnv.getRegularVariableNames() : new HashSet<String>());
-		HashSet<String> variableNamesInFalseBranch = (falseBranchEnv != null ? falseBranchEnv.getRegularVariableNames() : new HashSet<String>());
-		HashSet<String> variableNamesInEitherBranch = new HashSet<String>(variableNamesInTrueBranch);
-		variableNamesInEitherBranch.addAll(variableNamesInFalseBranch);
-
-		for (String variableName : variableNamesInEitherBranch) {
-			PhpVariable variableInTrueBranch = (trueBranchEnv != null ? trueBranchEnv.getVariableFromGlobalOrFunctionScope(variableName) : this.getVariableFromGlobalOrFunctionScope(variableName));
-			PhpVariable variableInFalseBranch = (falseBranchEnv != null ? falseBranchEnv.getVariableFromGlobalOrFunctionScope(variableName) : this.getVariableFromGlobalOrFunctionScope(variableName));
-
-			DataNode dataNodeInTrueBranch = (variableInTrueBranch != null ? variableInTrueBranch.getDataNode() : null);
-			DataNode dataNodeInFalseBranch = (variableInFalseBranch != null ? variableInFalseBranch.getDataNode() : null);
-			DataNode compactSelectNode = DataNodeFactory.createCompactSelectNode(constraint, dataNodeInTrueBranch, dataNodeInFalseBranch);
-
-			PhpVariable phpVariable = new PhpVariable(variableName);
-			phpVariable.setDataNode(compactSelectNode);
-			this.putVariableInCurrentScope(phpVariable);
+		else if (isTerminated(falseBranchRetValue) && !isTerminated(trueBranchRetValue)) {
+			updateWithOneBranchOnly(dirtyVarsInTrueBranch);
+			return;
+		}
+		
+		/*
+		 * Handle regular cases
+		 */
+		HashSet<PhpVariable> variables = new HashSet<PhpVariable>();
+		variables.addAll(dirtyVarsInTrueBranch.keySet());
+		variables.addAll(dirtyVarsInFalseBranch.keySet());
+		
+		for (PhpVariable variable : variables) {
+			DataNode valueInTrueBranch = dirtyVarsInTrueBranch.containsKey(variable) ? dirtyVarsInTrueBranch.get(variable) : variable.getValue();
+			DataNode valueInFalseBranch = dirtyVarsInFalseBranch.containsKey(variable) ? dirtyVarsInFalseBranch.get(variable) : variable.getValue();
+			DataNode compactSelectNode = DataNodeFactory.createCompactSelectNode(constraint, valueInTrueBranch, valueInFalseBranch);
+			writeVariable(variable, compactSelectNode);	// This method also updates dirtyVariables for the current Env
 			
-			/*
-			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
-			 */
-			// BEGIN OF WEB ANALYSIS CODE
-			WebAnalysis.onEnvUpdateWithBranches(phpVariable, variableInTrueBranch, variableInFalseBranch);
-			// END OF WEB ANALYSIS CODE
-		}
-
-		// Also, update the output in the current scope considering its values
-		// in both branches.
-		if (trueBranchEnv != null && trueBranchEnv.containsSpecialVariableOutput()
-				|| falseBranchEnv != null && falseBranchEnv.containsSpecialVariableOutput()) {
-			PhpVariable variableInTrueBranch = (trueBranchEnv != null ? trueBranchEnv.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT)
-					: this.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT));
-			PhpVariable variableInFalseBranch = (falseBranchEnv != null ? falseBranchEnv.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT)
-					: this.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT));
-
-			DataNode dataNodeInTrueBranch = (variableInTrueBranch != null ? variableInTrueBranch.getDataNode() : null);
-			DataNode dataNodeInFalseBranch = (variableInFalseBranch != null ? variableInFalseBranch.getDataNode() : null);
-			DataNode compactSelectNode = DataNodeFactory.createCompactSelectNode(constraint, dataNodeInTrueBranch, dataNodeInFalseBranch);
-
-			PhpVariable phpVariable = new PhpVariable(SPECIAL_VARIABLE_OUTPUT);
-			phpVariable.setDataNode(compactSelectNode);
-			this.putVariableInCurrentScope(phpVariable);
+			// TODO
+//			/*
+//			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+//			 */
+//			// BEGIN OF WEB ANALYSIS CODE
+//			WebAnalysis.onEnvUpdateWithBranches(phpVariable, variableInTrueBranch, variableInFalseBranch);
+//			// END OF WEB ANALYSIS CODE
 		}
 	}
-
-	/**
-	 * Updates the variableTable with the one in one of the branches.
-	 */
-	private void updateVariableTableWithOneBranch(Env branchEnv) {
-		// Update regular variables
-		for (String variableName : branchEnv.getRegularVariableNames()) {
-			PhpVariable phpVariable = branchEnv.getVariableFromCurrentScope(variableName);
-			this.putVariableInCurrentScope(phpVariable);
-		}
-		// Update output
-		if (branchEnv.containsSpecialVariableOutput()) {
-			PhpVariable phpVariable = branchEnv.getVariableFromCurrentScope(SPECIAL_VARIABLE_OUTPUT);
-			this.putVariableInCurrentScope(phpVariable);
-		}
+	
+	private void updateWithOneBranchOnly(HashMap<PhpVariable, DataNode> dirtyVarsInBranch) {
+		for (PhpVariable variable : dirtyVarsInBranch.keySet())
+			writeVariable(variable, dirtyVarsInBranch.get(variable)); // This method also updates dirtyVariables for the current Env
 	}
-
+	
 	/**
-	 * Updates the Env after executing a loop.
+	 * Returns true if the branch is terminated by EXIT/RETURN statements.
 	 */
-	public void updateWithLoop(Constraint constraint, Env loopEnv) {
-		// Update regular variables
-		HashSet<String> variableNamesInsideLoop = loopEnv.getRegularVariableNames();
-		for (String variableName : variableNamesInsideLoop) {
-			PhpVariable variableBeforeLoop = this.getVariableFromGlobalOrFunctionScope(variableName);
-			PhpVariable variableInsideLoop = loopEnv.getVariableFromCurrentScope(variableName);
-
-			DataNode dataNodeBeforeLoop = (variableBeforeLoop != null ? variableBeforeLoop.getDataNode() : null);
-			DataNode dataNodeAfterLoop = variableInsideLoop.getDataNode();
-
-			DataNode appendedStringValue = getAppendedStringValue(dataNodeBeforeLoop, dataNodeAfterLoop);
+	private boolean isTerminated(DataNode branchRetValue) {
+		return branchRetValue == SpecialNode.ControlNode.EXIT || branchRetValue == SpecialNode.ControlNode.RETURN;
+	}
+	
+	/**
+	 * Updates the current Env after executing a loop.
+	 * 
+	 * IDEA: dirtyVarsInLoop contain original values of modified variables after the execution of the loop.
+	 * This method will compare the old values and modified values in the loop to update the values of variables after executing the loop.
+	 * @param loopEnv
+	 */
+	public void updateAfterLoopExecution(BranchEnv loopEnv) {
+		Constraint constraint = loopEnv.getConstraint();
+		HashMap<PhpVariable, DataNode> dirtyVarsInLoop = loopEnv.copyDirtyVariables();
+		
+		for (PhpVariable variable : dirtyVarsInLoop.keySet()) {
+			DataNode valueBeforeLoop = dirtyVarsInLoop.get(variable);
+			DataNode valueInsideLoop = variable.getValue();
+			
+			DataNode appendedStringValue = getAppendedStringValue(valueBeforeLoop, valueInsideLoop);
+			DataNode valueAfterLoop;
+			
 			if (appendedStringValue != null) {
-				PhpVariable phpVariable = new PhpVariable(variableName);
-				if (dataNodeBeforeLoop != null)
-					phpVariable.appendStringValue(dataNodeBeforeLoop);
-
 				RepeatNode repeatNode = DataNodeFactory.createRepeatNode(constraint, appendedStringValue);
-				phpVariable.appendStringValue(repeatNode);
-				this.putVariableInCurrentScope(phpVariable);
+				if (valueBeforeLoop == SpecialNode.UnsetNode.UNSET)
+					valueAfterLoop = repeatNode;
+				else
+					valueAfterLoop = DataNodeFactory.createCompactConcatNode(valueBeforeLoop, repeatNode);
 			}
-		}
-		// Update output
-		if (loopEnv.containsSpecialVariableOutput()) {
-			PhpVariable variableBeforeLoop = this.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT);
-			PhpVariable variableInsideLoop = loopEnv.getVariableFromCurrentScope(SPECIAL_VARIABLE_OUTPUT);
-
-			DataNode dataNodeBeforeLoop = (variableBeforeLoop != null ? variableBeforeLoop.getDataNode() : null);
-			DataNode dataNodeAfterLoop = variableInsideLoop.getDataNode();
-			DataNode appendedStringValue = getAppendedStringValue(dataNodeBeforeLoop, dataNodeAfterLoop);
-
-			if (appendedStringValue != null) {
-				PhpVariable phpVariable = new PhpVariable(SPECIAL_VARIABLE_OUTPUT);
-				if (dataNodeBeforeLoop != null)
-					phpVariable.appendStringValue(dataNodeBeforeLoop);
-
-				RepeatNode repeatNode = DataNodeFactory.createRepeatNode(constraint, appendedStringValue);
-				phpVariable.appendStringValue(repeatNode);
-				this.putVariableInCurrentScope(phpVariable);
-			}
+			else
+				valueAfterLoop = valueBeforeLoop;
+			
+			writeVariable(variable, valueAfterLoop); // This method also updates dirtyVariables for the current Env
 		}
 	}
 
@@ -494,183 +707,39 @@ public abstract class Env {
 		}
 		return appendedStringValue;
 	}
-
+	
 	/**
-	 * Updates the Env after executing a function.
-	 */
-	public void updateAfterFunctionExecution(Env functionEnv, ArrayList<FormalParameterNode> formalParameterNodes, ArrayList<ExpressionNode> argumentExpressionNodes) {
-		// Update reference parameters
-		for (FormalParameterNode formalParameterNode : formalParameterNodes) {
-			if (formalParameterNode.isReference()) {
-				int parameterIndex = formalParameterNodes.indexOf(formalParameterNode);
-				String parameterName = formalParameterNode.getResolvedParameterNameOrNull(null);
-
-				if (parameterIndex >= argumentExpressionNodes.size()) {
-					break;
-				}
-				if (!(argumentExpressionNodes.get(parameterIndex) instanceof VariableNode)) {
-					MyLogger.log(MyLevel.TODO, "In Env.updateAfterFunctionExecution: Reference parameter is not of type VariableNode.");
-					continue;
-				}
-
-				String referencedVariableName = ((VariableNode) argumentExpressionNodes.get(parameterIndex)).getResolvedVariableNameOrNull(null);
-				PhpVariable phpVariable = new PhpVariable(referencedVariableName);
-				phpVariable.setDataNode(functionEnv.getVariableFromCurrentScope(parameterName).getDataNode());
-				this.putVariableInCurrentScope(phpVariable);
-			}
-		}
-
-		// Update global variables
-		for (String globalVariableName : functionEnv.getGlobalVariables()) {
-			PhpVariable variableInsideFunction = functionEnv.getVariableFromCurrentScope(globalVariableName);
-			if (variableInsideFunction != null) {
-				PhpVariable phpVariable = new PhpVariable(globalVariableName);
-				phpVariable.setDataNode(variableInsideFunction.getDataNode());
-				this.putVariableInCurrentScope(phpVariable);
-			}
-		}
-
-		// Update output
-		if (functionEnv.containsSpecialVariableOutput()) {
-			PhpVariable phpVariable = new PhpVariable(SPECIAL_VARIABLE_OUTPUT);
-			phpVariable.setDataNode(functionEnv.getVariableFromCurrentScope(SPECIAL_VARIABLE_OUTPUT).getDataNode());
-			this.putVariableInCurrentScope(phpVariable);
-		}
-	}
-
-	/*
-	 * Append string values to output
-	 */
-
-	/**
-	 * Appends string values to the current output. This function is used by the
-	 * "echo" statement and the "print" function invocation.
-	 */
-	public void appendOutput(ArrayList<DataNode> resolvedExpressionNodes) {
-		PhpVariable newOutputVariable = new PhpVariable(SPECIAL_VARIABLE_OUTPUT);
-		PhpVariable oldOutputVariable = getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT);
-
-		if (oldOutputVariable != null)
-			newOutputVariable.appendStringValue(oldOutputVariable.getDataNode());
-		for (DataNode stringValue : resolvedExpressionNodes)
-			newOutputVariable.appendStringValue(stringValue);
-
-		this.putVariableInCurrentScope(newOutputVariable);
-	}
-
-	/**
-	 * Appends a string value to the current output.
-	 */
-	public void appendOutput(DataNode resolvedExpressionNode) {
-		ArrayList<DataNode> resolvedExpressionNodes = new ArrayList<DataNode>();
-		resolvedExpressionNodes.add(resolvedExpressionNode);
-		this.appendOutput(resolvedExpressionNodes);
-	}
-
-	/*
-	 * These methods are used to handle return/exit statements
-	 */
-
-	public void setHasReturnStatement(boolean hasReturnStatement) {
-		this.hasReturnStatement = hasReturnStatement;
-	}
-
-	public void setHasExitStatement(boolean hasExitStatement) {
-		this.hasExitStatement = hasExitStatement;
-	}
-
-	public boolean hasReturnStatement() {
-		return this.hasReturnStatement;
-	}
-
-	public boolean hasExitStatement() {
-		return this.hasExitStatement;
-	}
-
-	/**
-	 * During the execution, the final output values will be collected from the
-	 * current output values at exit points, plus the output value in the normal
-	 * flow.
-	 */
-	public void addCurrentOutputToFinalOutput() {
-		PhpVariable currentOutput = this.getCurrentOutput();
-		if (currentOutput == null)
-			return;
-
-		PhpVariable finalOutput = this.getGlobalEnv().getVariableFromCurrentScope(SPECIAL_VARIABLE_FINAL_OUTPUT);
-		if (finalOutput == null) {
-			PhpVariable finalOutputVariable = new PhpVariable(SPECIAL_VARIABLE_FINAL_OUTPUT);
-			finalOutputVariable.setDataNode(currentOutput.getDataNode());
-			this.getGlobalEnv().putVariableInCurrentScope(finalOutputVariable);
-		} else {
-			DataNode selectNode;
-			Constraint constraint = getConjunctedConstraint();
-			selectNode = DataNodeFactory.createCompactSelectNode(constraint, currentOutput.getDataNode(), finalOutput.getDataNode());
-			finalOutput.setDataNode(selectNode);
-		}
-	}
-
-	/**
-	 * Similar to final output values, the return values of a function are
-	 * composed of all the return values at return statements.
-	 */
-	public void addReturnValue(DataNode currentReturnValue) {
-		PhpVariable finalReturn = this.getGlobalOrFunctionEnv().getVariableFromCurrentScope(SPECIAL_VARIABLE_RETURN);
-		if (finalReturn == null) {
-			PhpVariable finalReturnVariable = new PhpVariable(SPECIAL_VARIABLE_RETURN);
-			finalReturnVariable.setDataNode(currentReturnValue);
-			this.getGlobalOrFunctionEnv().putVariableInCurrentScope(finalReturnVariable);
-		} else {
-			DataNode selectNode;
-			Constraint constraint = getConjunctedConstraintUpToGlobalOrFunctionScope();
-			selectNode = DataNodeFactory.createCompactSelectNode(constraint, currentReturnValue, finalReturn.getDataNode());
-			finalReturn.setDataNode(selectNode);
-		}
-	}
-
-	/**
-	 * Temporarily removes the RETURN variable.
+	 * Updates the current Env after executing a function.
 	 * 
-	 * @see IncludeNode.execute(env)
+	 * IDEA: dirtyVarsInFunction contain original values of modified variables after the execution of the function.
+	 * These might include local variables in the function, we disregard those variables.
+	 * For the remaining variables (dirty and not local to the function), their values are already updated (by the function),
+	 * we now only have to mark them as dirty values for the current Env.
+	 * @param functionEnv
 	 */
-	public void removeReturnValue() {
-		this.getGlobalOrFunctionEnv().variableTable.remove(SPECIAL_VARIABLE_RETURN);
+	public void updateAfterFunctionExecution(FunctionEnv functionEnv) {
+		HashMap<PhpVariable, DataNode> dirtyVarsInFunction = functionEnv.copyDirtyVariables();
+		HashSet<PhpVariable> varsInFunction = functionEnv.getVariablesCreatedFromCurrentScope();
+		
+		for (PhpVariable var : dirtyVarsInFunction.keySet()) {
+			if (!varsInFunction.contains(var)) {
+				// Here, var is dirty and not local to the functionEnv
+				// Update the set of dirtyVariables for the current scope
+				if (!this.dirtyVariables.containsKey(var))
+					this.dirtyVariables.put(var, dirtyVarsInFunction.get(var));
+			}
+		}
 	}
-
+	
 	/*
-	 * Utility functions
+	 * FINISHING EXECUTION
 	 */
-
-	public HashSet<String> getAllVariableNames() {
-		return new HashSet<String>(variableTable.keySet());
+	
+	/**
+	 * Performs a few tasks when the execution is finished.
+	 */
+	public void finishExecution() {
+		addNormalOutputToFinalOutput();
 	}
-
-//	public HashSet<PhpVariable> getAllVariables() {
-//		return new HashSet<PhpVariable>(variableTable.values());
-//	}
-
-	public HashSet<String> getRegularVariableNames() {
-		HashSet<String> variableNames = getAllVariableNames();
-		variableNames.remove(SPECIAL_VARIABLE_OUTPUT);
-		variableNames.remove(SPECIAL_VARIABLE_FINAL_OUTPUT);
-		variableNames.remove(SPECIAL_VARIABLE_RETURN);
-		return variableNames;
-	}
-
-	public boolean containsSpecialVariableOutput() {
-		return variableTable.containsKey(SPECIAL_VARIABLE_OUTPUT);
-	}
-
-	public PhpVariable getCurrentOutput() {
-		return this.getVariableFromGlobalScope(SPECIAL_VARIABLE_OUTPUT);
-	}
-
-	public PhpVariable getFinalOutput() {
-		return this.getGlobalEnv().getVariableFromCurrentScope(SPECIAL_VARIABLE_FINAL_OUTPUT);
-	}
-
-	public PhpVariable getReturnValue() {
-		return this.getGlobalOrFunctionEnv().getVariableFromCurrentScope(SPECIAL_VARIABLE_RETURN);
-	}
-
+	
 }

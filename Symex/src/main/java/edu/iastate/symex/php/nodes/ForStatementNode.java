@@ -68,8 +68,7 @@ public class ForStatementNode extends StatementNode {
 			//expressionNode.execute(env);
 		for (ExpressionNode condition : conditions)
 			condition.execute(env);
-		WhileStatementNode.execute(env, conditionString, statement);
-		return null;
+		return WhileStatementNode.execute(env, conditionString, statement);
 	}
 
 }

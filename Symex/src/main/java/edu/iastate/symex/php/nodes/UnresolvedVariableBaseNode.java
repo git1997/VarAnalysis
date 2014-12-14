@@ -7,6 +7,8 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
+import edu.iastate.symex.util.logging.MyLevel;
+import edu.iastate.symex.util.logging.MyLogger;
 
 /**
  * 
@@ -29,6 +31,7 @@ public class UnresolvedVariableBaseNode extends VariableBaseNode {
 	
 	@Override
 	public PhpVariable createVariablePossiblyWithNull(Env env) {
+		MyLogger.log(MyLevel.TODO, "In UnresolvedVariableBaseNode.java: Don't know how to create a variable from a UnresolvedVariableBaseNode.");
 		return null;
 	}
 

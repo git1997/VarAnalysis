@@ -1,0 +1,6 @@
+
+#if ($c)
+hey
+#else
+test
+#endif

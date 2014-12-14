@@ -4,6 +4,7 @@ import org.eclipse.php.internal.core.ast.nodes.ReturnStatement;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -27,12 +28,11 @@ public class ReturnStatementNode extends StatementNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		env.setHasReturnStatement(true);
 		if (expression != null) {
 			DataNode returnValue = expression.execute(env);
 			env.addReturnValue(returnValue);
 		}		
-		return null;
+		return SpecialNode.ControlNode.RETURN;
 	}
 
 }

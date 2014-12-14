@@ -8,6 +8,8 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
+import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.position.Range;
 import edu.iastate.symex.position.Position;
 
@@ -87,7 +89,12 @@ public class ScalarNode extends ExpressionNode {
 			case 7:
 			case 8:
 				DataNode constantValue = env.getPredefinedConstantValue(stringValue);
-				return constantValue != null ? constantValue : DataNodeFactory.createSymbolicNode(this);
+				if (constantValue == SpecialNode.UnsetNode.UNSET)
+					return DataNodeFactory.createSymbolicNode(this);
+				else if (constantValue instanceof SymbolicNode)
+					return DataNodeFactory.createSymbolicNode(this, (SymbolicNode) constantValue);
+				else
+					return constantValue;
 			
 			// Other cases
 			default:

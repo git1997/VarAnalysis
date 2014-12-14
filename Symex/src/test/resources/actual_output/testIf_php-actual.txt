@@ -1,0 +1,30 @@
+
+#if ($bar)
+2
+#else
+3
+#endif
+
+#if ($bar)
+2
+#else
+1
+#endif
+
+#if ($bar)
+2
+#else
+3
+#endif
+
+#if ($foo)
+
+#if ($bar)
+Hey
+#else
+Hi
+#endif
+
+#else
+Hello
+#endif

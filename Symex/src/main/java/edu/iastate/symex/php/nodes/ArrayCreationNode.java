@@ -13,6 +13,8 @@ import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 /**
  * 
  * @author HUNG
+ * 
+ * @see edu.iastate.symex.php.nodes.ClassInstanceCreationNode
  *
  */
 public class ArrayCreationNode extends ExpressionNode {
@@ -40,18 +42,18 @@ public class ArrayCreationNode extends ExpressionNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		ArrayNode arrayNode = DataNodeFactory.createArrayNode();
+		ArrayNode array = DataNodeFactory.createArrayNode();
 		for (int i = 0; i < keys.size(); i++) {
-			ExpressionNode key = keys.get(i);
-			ExpressionNode value = values.get(i);
+			ExpressionNode keyNode = keys.get(i);
+			ExpressionNode valueNode = values.get(i);
 			
-			String resolvedKey = (key != null ? key.execute(env).getExactStringValueOrNull() : Integer.toString(i));
-			// TODO Handle resolvedKey == null
-			DataNode resolvedValue = value.execute(env);
+			String key = (keyNode != null ? keyNode.execute(env).getExactStringValueOrNull() : Integer.toString(i));
+			DataNode value = valueNode.execute(env);
 			
-			arrayNode.setElement(resolvedKey, resolvedValue);
+			if (key != null)
+				env.getOrPutThenWriteArrayElement(array, key, value);
 		}
-		return arrayNode;
+		return array;
 	}
 
 }

@@ -8,9 +8,9 @@ import org.eclipse.php.internal.core.ast.nodes.Include;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
-import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -39,7 +39,8 @@ public class IncludeNode extends ExpressionNode {
 		/*
 		 * Resolve the included file
 		 */
-		File includedFile = resolveIncludedFile(env);
+		DataNode value = expression.execute(env);
+		File includedFile = env.resolveFile(value);
 		
 		if (includedFile == null) {
 			ArrayList<File> fileStack = env.getFileStack();
@@ -58,7 +59,10 @@ public class IncludeNode extends ExpressionNode {
 				&& env.getInvokedFiles().contains(includedFile)) {
 			return DataNodeFactory.createSymbolicNode(this);
 		}
-		// Avoid recursive file calling
+		
+		/*
+		 * Avoid recursive file calling
+		 */
 		if (env.containsFileInStack(includedFile))
 			return DataNodeFactory.createSymbolicNode(this);
 
@@ -67,7 +71,7 @@ public class IncludeNode extends ExpressionNode {
 		 */
 
 		// Before executing the file, do some backup with the current return value
-		PhpVariable backupPhpReturn = env.getReturnValue();
+		Object backupPhpReturn = env.backupReturnValue();
 		env.removeReturnValue();
 
 		// Print the trace of included files
@@ -91,43 +95,14 @@ public class IncludeNode extends ExpressionNode {
 		// MyLogger.log(MyLevel.PROGRESS, "Done with " + fileTrace + ".");
 
 		// Save the new return value and restore the backup return value
-		PhpVariable newPhpReturn = env.getReturnValue();
-		env.removeReturnValue();
-		if (backupPhpReturn != null) {
-			env.addReturnValue(backupPhpReturn.getDataNode());
-		}
+		DataNode newPhpReturn = env.getReturnValue();
+		env.restoreReturnValue(backupPhpReturn);
 
-		// Get the return value after executing the source file.
-		if (newPhpReturn != null)
-			return newPhpReturn.getDataNode();
+		// Return the return value after executing the file
+		if (newPhpReturn != SpecialNode.UnsetNode.UNSET)
+			return newPhpReturn;
 		else
 			return DataNodeFactory.createSymbolicNode(this);
-	}
-
-	/**
-	 * Resolves the included file.
-	 * Returns null if the file cannot be resolved.
-	 */
-	private File resolveIncludedFile(Env env) {
-		String includedFilePath = expression.execute(env).getExactStringValueOrNull();
-		if (includedFilePath == null)
-			return null;
-		
-		includedFilePath = includedFilePath.replace('\\', File.separatorChar).replace('/', File.separatorChar);
-		File includedFile = new File(includedFilePath);
-		
-		// Some systems specify absolute paths in include statements.
-		// In such cases, the file is found right away.
-		if (includedFile.isFile())
-			return includedFile;
-
-		// Others use relative paths, therefore do a search.
-		for (File invokedFile : env.getFileStack()) {
-			includedFile = new File(invokedFile.getParent() + File.separatorChar + includedFilePath);
-			if (includedFile.isFile())
-				return includedFile;
-		}
-		return null;
 	}
 
 }

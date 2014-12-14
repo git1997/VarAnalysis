@@ -11,7 +11,7 @@ public class SymexConfig {
 	 * Execution options
 	 */
 	public static int DATA_MODEL_MAX_DEPTH = 50;									// The maximum depth of Data Model
-	public static boolean COLLECT_OUTPUTS_FROM_EXIT_STATEMENTS = false;				// Set to true to let the FinalOutput include the outputs at exit statements.
+	public static boolean COLLECT_OUTPUTS_FROM_EXIT_STATEMENTS = true;				// Set to true to let the FinalOutput include the outputs at exit statements.
 	public static boolean COMBINE_CONSECUTIVE_LITERAL_NODES = false; 				// Set to true to combine consecutive literal nodes in a ConcatNode
 	
 	/*

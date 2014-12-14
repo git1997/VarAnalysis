@@ -1,0 +1,13 @@
+I do have a few wishes in mind.
+
+1) A nice install script would be benefical to new users.  I'm imagining something that walks them through setting up the database and defining usernames and passwords for this program.
+
+2) The program could benefit from a better templating system to allow for easier customization.
+
+3) A graphical overhaul could be needed some day. I'm more of a back-end programmer than a gui person.
+
+4) An import page.  Email me for my ideas on how to implement it.
+
+Those are my ideas for now. Hopefully there will be more ideas in the future :)
+
+Ray Hauge

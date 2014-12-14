@@ -37,7 +37,7 @@ public class GlobalStatementNode extends StatementNode {
 		for (VariableNode variable : variables) {
 			String variableName = variable.getResolvedVariableNameOrNull(env);
 			if (variableName != null)
-				env.addGlobalVariable(variableName);
+				env.setGlobalVariable(variableName);
 		}
 		return null;
 	}

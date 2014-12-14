@@ -54,6 +54,8 @@ public class BlockNode extends StatementNode {
 			if ( !(statementNode instanceof FunctionDeclarationNode) && !(statementNode instanceof ClassDeclarationNode) ) {
 				DataNode retValue = statementNode.execute(env);
 
+				if (retValue == SpecialNode.ControlNode.EXIT)
+					return retValue;
 				if (retValue == SpecialNode.ControlNode.RETURN)
 					return retValue;
 				else if (retValue == SpecialNode.ControlNode.BREAK)

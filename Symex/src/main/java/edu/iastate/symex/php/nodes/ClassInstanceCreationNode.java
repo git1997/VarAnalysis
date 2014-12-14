@@ -13,6 +13,8 @@ import edu.iastate.symex.util.logging.MyLogger;
 /**
  * 
  * @author HUNG
+ * 
+ * @see edu.iastate.symex.php.nodes.ArrayCreationNode
  *
  */
 public class ClassInstanceCreationNode extends VariableBaseNode {
@@ -47,12 +49,16 @@ public class ClassInstanceCreationNode extends VariableBaseNode {
 			// Initialize the object's fields
 			for (SingleFieldDeclarationNode field : phpClass.getFields()) {
 				VariableNode nameNode = field.getName();
-				ExpressionNode valueNode = field.getValue(); // TODO Can valueNode be null?
+				ExpressionNode valueNode = field.getValue(); // Can be null
 				
 				String name = nameNode.getResolvedVariableNameOrNull(env);
-				DataNode value = valueNode.execute(env);
-				if (name != null)
-					object.putFieldValue(name, value);
+				DataNode value = (valueNode != null ? valueNode.execute(env) : null);
+				
+				if (name != null) {
+					PhpVariable phpVariable = env.getOrPutObjectField(object, name);
+					if (value != null)
+						env.writeVariable(phpVariable, value);
+				}
 			}
 			
 			return object;

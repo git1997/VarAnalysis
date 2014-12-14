@@ -1,0 +1,6 @@
+Hi.Great
+#if ($C)
+A
+#else
+B
+#endif

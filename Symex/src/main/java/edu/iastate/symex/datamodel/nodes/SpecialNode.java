@@ -80,7 +80,8 @@ public abstract class SpecialNode extends DataNode {
 	 */
 	public static class UnsetNode extends SpecialNode {
 		
-		public static UnsetNode UNSET	= new UnsetNode();
+		public static UnsetNode UNSET	= new UnsetNode();	// Values of uninitialized variables
+		public static UnsetNode NULL	= new UnsetNode();	// Initialized variables may still have value NULL	
 		
 		/**
 		 * Private constructor.

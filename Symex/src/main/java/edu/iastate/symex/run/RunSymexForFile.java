@@ -21,6 +21,7 @@ public class RunSymexForFile {
 	 * PHP file to test
 	 */	
 	public static String PHP_FILE = //"/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/test.php";
+									//"/Work/To-do/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
 									"/Work/Servers/HTTPServer/Lab/wordpress-3.7/index.php";
 
 	/**
@@ -32,6 +33,7 @@ public class RunSymexForFile {
 	 * The entry point of the program.
 	 */
 	public static void main(String[] args) {
+		MyLogger.setLevel(MyLevel.ALL);
 		MyLogger.addOutputType(OutputType.File);
 		
 		DataModel dataModel = new RunSymexForFile(new File(PHP_FILE)).execute();

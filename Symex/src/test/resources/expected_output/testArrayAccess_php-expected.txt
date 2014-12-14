@@ -1,0 +1,6 @@
+I like Volvo, Lexus and Toyota.Peter is 35 years old. Ben is 37 years old.
+#if ($c)
+a
+#else
+b
+#endif

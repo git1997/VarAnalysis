@@ -1,14 +1,14 @@
-FileNode									
+FileNode					
 PhpNode
 	ClassNameNode
 	ExpressionNode	
 		ArrayCreationNode
-		AssignmentNode						x
+		AssignmentNode
 		CastExpressionNode
 		ConditionalExpressionNode
-		IdentifierNode						
+		IdentifierNode			
 		IgnoreErrorNode
-		IncludeNode							x
+		IncludeNode
 		InfixExpressionNode					
 		ParenthesisExpressionNode
 		PostfixExpressionNode
@@ -18,19 +18,19 @@ PhpNode
 		UnaryOperationNode
 		UnresolvedExpressionNode
 		VariableBaseNode
-			ArrayAccessNode					x
+			ArrayAccessNode
 			ClassInstanceCreationNode			
 			DispatchNode
 				FieldAccessNode
-				MethodInvocationNode		x
+				MethodInvocationNode
 				UnresolvedDispatchNode
-			FunctionInvocationNode			x
+			FunctionInvocationNode
 			UnresolvedVariableBaseNode
 			VariableNode
 	FormalParameterNode
 	ProgramNode
 	SingleFieldDeclarationNode
-	StatementNode	
+	StatementNode
 		BlockNode
 		BreakStatementNode
 		ClassDeclarationNode
@@ -46,6 +46,6 @@ PhpNode
 		ReturnStatementNode				
 		SwitchCaseNode
 		SwitchStatementNode
-		TryStatementNode	
+		TryStatementNode
 		UnresolvedStatementNode
 		WhileStatementNode

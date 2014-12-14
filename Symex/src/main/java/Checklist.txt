@@ -5,7 +5,7 @@ OK			core
 OK			datamodel
 OK			datamodel.nodes
 OK			errormodel
-PENDING		php.nodes
+OK			php.nodes
 OK			position
 OK			run
 OK			util

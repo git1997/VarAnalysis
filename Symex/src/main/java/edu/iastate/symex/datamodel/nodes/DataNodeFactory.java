@@ -85,7 +85,7 @@ public class DataNodeFactory {
 				compactChildNodes.set(compactChildNodes.size() - 1, combinedLiteralNode);
 			}
 			else if (SymexConfig.COMBINE_CONSECUTIVE_LITERAL_NODES) {
-				// Combine consecutive literal nodes even when the nodes node DO NOT have adjacent positions
+				// Combine consecutive literal nodes even when the nodes DO NOT have adjacent positions
 				PositionRange range = new CompositeRange(node1.getLocation(), node2.getLocation());
 				String stringValue = node1.getStringValue() + node2.getStringValue();
 
@@ -137,10 +137,11 @@ public class DataNodeFactory {
 	 */
 	public static DataNode createCompactSelectNode(Constraint constraint, DataNode nodeInTrueBranch, DataNode nodeInFalseBranch) {
 		// Use UNSET values instead of null
-		if (nodeInTrueBranch == null)
-			nodeInTrueBranch = SpecialNode.UnsetNode.UNSET;
-		if (nodeInFalseBranch == null)
-			nodeInFalseBranch = SpecialNode.UnsetNode.UNSET;
+		// This code is not needed anymore since the nodes are guaranteed to be not-null.
+//		if (nodeInTrueBranch == null)
+//			nodeInTrueBranch = SpecialNode.UnsetNode.UNSET;
+//		if (nodeInFalseBranch == null)
+//			nodeInFalseBranch = SpecialNode.UnsetNode.UNSET;
 		
 		// Attempt to compact the SelectNode only if the branches are Concat/LiteralNodes
 		if (!((nodeInTrueBranch instanceof ConcatNode || nodeInTrueBranch instanceof LiteralNode) && (nodeInFalseBranch instanceof ConcatNode || nodeInFalseBranch instanceof LiteralNode)))
@@ -209,6 +210,10 @@ public class DataNodeFactory {
 		}
 
 		if (diffNodesInTrueBranch != null || diffNodesInFalseBranch != null) {
+			if (diffNodesInTrueBranch == null)
+				diffNodesInTrueBranch = SpecialNode.UnsetNode.UNSET;
+			if (diffNodesInFalseBranch == null)
+				diffNodesInFalseBranch = SpecialNode.UnsetNode.UNSET;
 			DataNode middleNode = createCompactSelectNode(constraint, diffNodesInTrueBranch, diffNodesInFalseBranch);
 			childNodesOfConcat.add(middleNode);
 		}

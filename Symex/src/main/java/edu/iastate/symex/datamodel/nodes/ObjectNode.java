@@ -2,6 +2,7 @@ package edu.iastate.symex.datamodel.nodes;
 
 import java.util.HashMap;
 
+import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.DataModelVisitor;
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.util.logging.MyLevel;
@@ -10,13 +11,16 @@ import edu.iastate.symex.util.logging.MyLogger;
 /**
  * 
  * @author HUNG
+ * 
+ * Note that ObjectNode is mutable and depth cannot be tracked.
+ * @see edu.iastate.symex.datamodel.nodes.ArrayNode
  *
  */
 public class ObjectNode extends DataNode {
 	
 	private ClassDeclarationNode classDeclarationNode;
 	
-	private HashMap<String, DataNode> fieldValues = new HashMap<String, DataNode>();
+	private HashMap<String, PhpVariable> map = new HashMap<String, PhpVariable>();
 	
 	/**
 	 * Protected constructor, called from DataNodeFactory only.
@@ -30,22 +34,36 @@ public class ObjectNode extends DataNode {
 		return classDeclarationNode;
 	}
 	
-	public void putFieldValue(String name, DataNode value) {
-		fieldValues.put(name, value);
+	/**
+	 * This method modifies the object. It should be called from Env only.
+	 */
+	public void putField(String fieldName, PhpVariable phpVariable) {
+		map.put(fieldName, phpVariable);
 	}
 	
-	public DataNode getFieldValue(String name) {
-		if (fieldValues.containsKey(name))
-			return fieldValues.get(name);
+	public PhpVariable getField(String fieldName) {
+		return map.get(fieldName);
+	}
+	
+	public DataNode getFieldValue(String fieldName) {
+		PhpVariable phpVariable = getField(fieldName);
+		if (phpVariable != null)
+			return phpVariable.getValue();
 		else {
-			MyLogger.log(MyLevel.USER_EXCEPTION, "In ObjectNode.java: Object " + classDeclarationNode.getName() + " does not have field " + name);
-			return DataNodeFactory.createSymbolicNode();
+			MyLogger.log(MyLevel.USER_EXCEPTION, "In ObjectNode: Reading an undefined field (" + fieldName + ").");
+			return SpecialNode.UnsetNode.UNSET;
 		}
+	}
+	
+	public boolean containsField(String fieldName) {
+		return map.containsKey(fieldName);
 	}
 	
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
 		dataModelVisitor.visitObjectNode(this);
+		for (PhpVariable variable : map.values())
+			variable.getValue().accept(dataModelVisitor);
 	}
 
 }

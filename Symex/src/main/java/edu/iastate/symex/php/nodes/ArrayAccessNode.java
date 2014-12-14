@@ -4,15 +4,18 @@ import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 
 import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
-import edu.iastate.symex.core.PhpArrayElement;
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
+import edu.iastate.symex.util.logging.MyLevel;
+import edu.iastate.symex.util.logging.MyLogger;
 
 /**
  * 
  * @author HUNG
+ * 
+ * @see edu.iastate.symex.php.nodes.FieldAccessNode
  *
  */
 public class ArrayAccessNode extends VariableBaseNode {
@@ -44,32 +47,44 @@ public class ArrayAccessNode extends VariableBaseNode {
 		WebAnalysis.onArrayAccessExecute((ArrayAccess) this.getAstNode(), env);
 		// END OF WEB ANALYSIS CODE
 		
-		if (name instanceof VariableNode && index != null) {
-			String arrayName = ((VariableNode) name).getResolvedVariableNameOrNull(env);
-			String key = index.getResolvedNameOrNull(env);
-			PhpVariable phpVariable = env.readVariable(arrayName);
-			
-			if (phpVariable != null && phpVariable.getDataNode() instanceof ArrayNode) {
-				ArrayNode arrayNode = (ArrayNode) phpVariable.getDataNode();
-				DataNode value = arrayNode.getElement(key);
-				if (value != null)
-					return value;
-			}
+		DataNode dataNode = name.execute(env);
+		
+		if (dataNode instanceof ArrayNode) {
+			ArrayNode array = (ArrayNode) dataNode;
+			String key = index.execute(env).getExactStringValueOrNull();
+			if (key != null)
+				return array.getElementValue(key);
+			else
+				return DataNodeFactory.createSymbolicNode(this);
 		}
-		return DataNodeFactory.createSymbolicNode(this);
+		else
+			return DataNodeFactory.createSymbolicNode(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see servergraph.nodes.VariableBaseNode#createVariablePossiblyWithNull(servergraph.env)
-	 */
 	@Override
 	public PhpVariable createVariablePossiblyWithNull(Env env) {
-		if (name instanceof VariableNode && index != null) {
-			String arrayName = ((VariableNode) name).getResolvedVariableNameOrNull(env);
+		// An array access can have null index (e.g., $x[] = '1')
+		if (index == null) {
+			MyLogger.log(MyLevel.TODO, "In ArrayAccessNode.java: ArrayAccess with null index is not yet implemented.");
+			return null;
+		}
+		
+		DataNode dataNode = name.execute(env);
+		
+		// An array access can create a new array (e.g., $x[1] = 'a' creates a new array for $x)
+		if (!(dataNode instanceof ArrayNode)) {
+			PhpVariable phpArray = name.createVariablePossiblyWithNull(env);
+			if (phpArray != null) {
+				dataNode = DataNodeFactory.createArrayNode();
+				env.writeVariable(phpArray, dataNode);
+			}
+		}
+		
+		if (dataNode instanceof ArrayNode) {
+			ArrayNode array = (ArrayNode) dataNode;
 			String key = index.execute(env).getExactStringValueOrNull();
-			if (arrayName != null && key != null)
-				return new PhpArrayElement(arrayName, key);
+			if (key != null)
+				return env.getOrPutArrayElement(array, key);
 			else
 				return null;
 		}
