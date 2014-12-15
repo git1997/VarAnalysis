@@ -187,7 +187,7 @@ public class DataNodeFactory {
 		// Create a selection node for the alternative parts in the middle
 		DataNode diffNodesInTrueBranch;
 		if (commonNodesBefore + commonNodesAfter == nodesInTrueBranch.size())
-			diffNodesInTrueBranch = null;
+			diffNodesInTrueBranch = SpecialNode.UnsetNode.UNSET;
 		else if (commonNodesBefore + commonNodesAfter + 1 == nodesInTrueBranch.size())
 			diffNodesInTrueBranch = nodesInTrueBranch.get(commonNodesBefore);
 		else {
@@ -199,7 +199,7 @@ public class DataNodeFactory {
 
 		DataNode diffNodesInFalseBranch;
 		if (commonNodesBefore + commonNodesAfter == nodesInFalseBranch.size())
-			diffNodesInFalseBranch = null;
+			diffNodesInFalseBranch = SpecialNode.UnsetNode.UNSET;
 		else if (commonNodesBefore + commonNodesAfter + 1 == nodesInFalseBranch.size())
 			diffNodesInFalseBranch = nodesInFalseBranch.get(commonNodesBefore);
 		else {
@@ -209,11 +209,7 @@ public class DataNodeFactory {
 			diffNodesInFalseBranch = createCompactConcatNode(childNodesTemp2);
 		}
 
-		if (diffNodesInTrueBranch != null || diffNodesInFalseBranch != null) {
-			if (diffNodesInTrueBranch == null)
-				diffNodesInTrueBranch = SpecialNode.UnsetNode.UNSET;
-			if (diffNodesInFalseBranch == null)
-				diffNodesInFalseBranch = SpecialNode.UnsetNode.UNSET;
+		if (diffNodesInTrueBranch != SpecialNode.UnsetNode.UNSET || diffNodesInFalseBranch != SpecialNode.UnsetNode.UNSET) {
 			DataNode middleNode = createCompactSelectNode(constraint, diffNodesInTrueBranch, diffNodesInFalseBranch);
 			childNodesOfConcat.add(middleNode);
 		}
