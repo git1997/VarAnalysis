@@ -53,26 +53,29 @@ public abstract class SpecialNode extends DataNode {
 				return UNKNOWN;
 		}
 		
-		@Override
-		public BooleanNode convertToBooleanValue() {
-			return this;
-		}
-		
-		@Override
-		public BooleanNode isEqualTo(DataNode dataNode) {
-			if (isUnknownValue())
+		/**
+		 * Implements operator '=='
+		 * @see edu.iastate.symex.datamodel.nodes.DataNode.isEqualTo(DataNode)
+		 */
+		public BooleanNode isEqualTo(BooleanNode booleanNode) {
+			if (isUnknownValue() || booleanNode.isUnknownValue())
 				return UNKNOWN;
 			
-			return super.isEqualTo(dataNode);
+			if (isTrueValue() && booleanNode.isTrueValue()
+					|| isFalseValue() && booleanNode.isFalseValue())
+				return TRUE;
+			else
+				return FALSE;
 		}
 		
-		@Override
-		public BooleanNode isIdenticalTo(DataNode dataNode) {
-			if (isUnknownValue())
-				return UNKNOWN;
-			
-			return super.isIdenticalTo(dataNode);
+		/**
+		 * Implements operator '==='
+		 * @see edu.iastate.symex.datamodel.nodes.DataNode.isIdenticalTo(DataNode)
+		 */
+		public BooleanNode isIdenticalTo(BooleanNode booleanNode) {
+			return isEqualTo(booleanNode);
 		}
+
 	}
 	
 	/**

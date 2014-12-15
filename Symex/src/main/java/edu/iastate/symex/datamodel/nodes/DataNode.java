@@ -84,6 +84,9 @@ public abstract class DataNode {
 	 * Converts to Boolean value
 	 */
 	public BooleanNode convertToBooleanValue() {
+		if (this instanceof BooleanNode)
+			return (BooleanNode) this;
+		
 		String stringValue = this.getExactStringValueOrNull();
 		if (stringValue == null)
 			return BooleanNode.UNKNOWN;
@@ -97,8 +100,16 @@ public abstract class DataNode {
 	
 	/**
 	 * Implements operator '=='
+	 * E.g., TRUE == 1 returns TRUE
+	 * @see edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode.isEqualTo(BooleanNode)
 	 */
 	public BooleanNode isEqualTo(DataNode dataNode) {
+		if (this instanceof BooleanNode || dataNode instanceof BooleanNode) {
+			BooleanNode v1 = this.convertToBooleanValue();
+			BooleanNode v2 = dataNode.convertToBooleanValue();
+			return v1.isEqualTo(v2);				
+		}
+		
 		if (this == dataNode)
 			return BooleanNode.TRUE;
 		
@@ -115,8 +126,16 @@ public abstract class DataNode {
 	
 	/**
 	 * Implements operator '==='
+	 * E.g., TRUE === 1 returns FALSE
+	 * @see edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode.isIdenticalTo(BooleanNode)
 	 */
 	public BooleanNode isIdenticalTo(DataNode dataNode) {
+		if (this instanceof BooleanNode && dataNode instanceof BooleanNode) {
+			BooleanNode v1 = (BooleanNode) this;
+			BooleanNode v2 = (BooleanNode) dataNode;
+			return v1.isIdenticalTo(v2);				
+		}
+		
 		if (this == dataNode)
 			return BooleanNode.TRUE;
 		else

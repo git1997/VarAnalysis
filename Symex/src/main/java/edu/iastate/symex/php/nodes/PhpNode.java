@@ -59,9 +59,12 @@ public abstract class PhpNode {
 		
 	/**
 	 * Executes the given PHP node and updates env along the way.
+	 * The returned value could be a CONTROL value such as OK or EXIT (@see edu.iastate.symex.datamodel.nodes.SpecialNode.ControlNode).
+	 * In general, an expression returns a non-CONTROL value and a statement returns a CONTROL value.
+	 * However, in some cases, an expression can return a CONTROL value (e.g., FunctionInvocation 'exit'), 
+	 * 		or a statement can return a non-CONTROL value (e.g., ExpressionStatement) 
 	 * @param env contains PHP elements such as variables and functions during the execution.
 	 * @return A DataNode describing the returned value. 
-	 * (The returned value could also be a CONTROL value such as OK or EXIT. @see edu.iastate.symex.datamodel.nodes.SpecialNode.ControlNode)
 	 */
 	public abstract DataNode execute(Env env);
 	
