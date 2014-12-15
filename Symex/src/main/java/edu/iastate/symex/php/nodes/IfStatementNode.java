@@ -54,8 +54,7 @@ public class IfStatementNode extends StatementNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		IfStatementNode.execute(env, condition, conditionString, trueStatement, falseStatement);
-		return null;
+		return IfStatementNode.execute(env, condition, conditionString, trueStatement, falseStatement);
 	}
 	
 	/**
@@ -76,32 +75,32 @@ public class IfStatementNode extends StatementNode {
 			if (trueStatement != null)
 				return trueStatement.execute(env);
 			else 
-				return null;
+				return SpecialNode.ControlNode.OK;
 		}
 		else if (conditionValue.isFalseValue()) {
 			if (falseStatement != null)
 				return falseStatement.execute(env);
 			else
-				return null;
+				return SpecialNode.ControlNode.OK;
 		}
 			
-		BranchEnv trueBranchEnv = null;
-		BranchEnv falseBranchEnv = null;
-		DataNode trueBranchRetValue = null;
-		DataNode falseBranchRetValue = null;		
-		
-		// Execute the branches
+		/*
+		 * Execute the branches
+		 */
 		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+		
 		HashMap<PhpVariable, DataNode> dirtyValuesInTrueBranch = new HashMap<PhpVariable, DataNode>();
 		HashMap<PhpVariable, DataNode> dirtyValuesInFalseBranch = new HashMap<PhpVariable, DataNode>();
+		DataNode trueBranchRetValue = SpecialNode.ControlNode.OK;
+		DataNode falseBranchRetValue = SpecialNode.ControlNode.OK;
 		
 		if (trueStatement != null) {
-			trueBranchEnv = new BranchEnv(env, constraint);
+			BranchEnv trueBranchEnv = new BranchEnv(env, constraint);
 			trueBranchRetValue = trueStatement.execute(trueBranchEnv);
 			dirtyValuesInTrueBranch = env.backtrackAfterBranchExecution(trueBranchEnv);
 		}
 		if (falseStatement != null) {
-			falseBranchEnv = new BranchEnv(env, ConstraintFactory.createNotConstraint(constraint));
+			BranchEnv falseBranchEnv = new BranchEnv(env, ConstraintFactory.createNotConstraint(constraint));
 			falseBranchRetValue = falseStatement.execute(falseBranchEnv);
 			dirtyValuesInFalseBranch = env.backtrackAfterBranchExecution(falseBranchEnv);
 		}
@@ -109,11 +108,6 @@ public class IfStatementNode extends StatementNode {
 		// Update the env
 		env.updateAfterBranchExecution(constraint, dirtyValuesInTrueBranch, dirtyValuesInFalseBranch, trueBranchRetValue, falseBranchRetValue);
 		
-		// Return value, use NULL instead of null since SelectNode should not contain null values.
-		if (trueBranchRetValue == null)
-			trueBranchRetValue = SpecialNode.UnsetNode.NULL;
-		if (falseBranchRetValue == null)
-			falseBranchRetValue = SpecialNode.UnsetNode.NULL;
 		return DataNodeFactory.createCompactSelectNode(constraint, trueBranchRetValue, falseBranchRetValue);		
 	}
 

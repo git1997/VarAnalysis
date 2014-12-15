@@ -8,6 +8,7 @@ import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -90,7 +91,7 @@ public class FunctionDeclarationNode extends StatementNode {
 		// END OF BABELREF CODE
 			
 		env.putFunction(name, this);
-		return null;
+		return SpecialNode.ControlNode.OK;
 	}
 
 }

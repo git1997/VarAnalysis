@@ -63,7 +63,7 @@ public class BlockNode extends StatementNode {
 			}
 		}
 		
-		return null;
+		return SpecialNode.ControlNode.OK;
 	}
 	
 }

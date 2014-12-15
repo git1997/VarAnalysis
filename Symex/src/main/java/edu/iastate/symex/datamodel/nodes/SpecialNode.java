@@ -81,7 +81,6 @@ public abstract class SpecialNode extends DataNode {
 	public static class UnsetNode extends SpecialNode {
 		
 		public static UnsetNode UNSET	= new UnsetNode();	// Values of uninitialized variables
-		public static UnsetNode NULL	= new UnsetNode();	// Initialized variables may still have value NULL	
 		
 		/**
 		 * Private constructor.
@@ -96,6 +95,7 @@ public abstract class SpecialNode extends DataNode {
 	 */
 	public static class ControlNode extends SpecialNode {
 		
+		public static ControlNode OK		= new ControlNode(); // Represents the normal case
 		public static ControlNode EXIT		= new ControlNode();
 		public static ControlNode RETURN 	= new ControlNode();
 		public static ControlNode BREAK 	= new ControlNode();

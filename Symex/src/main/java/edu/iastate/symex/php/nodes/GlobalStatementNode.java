@@ -7,6 +7,7 @@ import org.eclipse.php.internal.core.ast.nodes.Variable;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -39,7 +40,7 @@ public class GlobalStatementNode extends StatementNode {
 			if (variableName != null)
 				env.setGlobalVariable(variableName);
 		}
-		return null;
+		return SpecialNode.ControlNode.OK;
 	}
 
 }

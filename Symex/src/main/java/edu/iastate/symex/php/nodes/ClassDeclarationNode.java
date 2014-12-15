@@ -11,6 +11,7 @@ import org.eclipse.php.internal.core.ast.nodes.Statement;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
@@ -86,7 +87,7 @@ public class ClassDeclarationNode extends StatementNode {
 	@Override
 	public DataNode execute(Env env) {
 		env.putClass(this.getName(), this);
-		return null;
+		return SpecialNode.ControlNode.OK;
 	}
 
 }

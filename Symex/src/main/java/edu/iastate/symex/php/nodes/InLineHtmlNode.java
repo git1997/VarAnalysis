@@ -5,6 +5,7 @@ import org.eclipse.php.internal.core.ast.nodes.InLineHtml;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -23,7 +24,7 @@ public class InLineHtmlNode extends StatementNode {
 	@Override
 	public DataNode execute(Env env) {
 		env.appendOutput(DataNodeFactory.createLiteralNode(this));
-		return null;
+		return SpecialNode.ControlNode.OK;
 	}
 	
 }

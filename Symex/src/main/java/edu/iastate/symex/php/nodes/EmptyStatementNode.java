@@ -4,6 +4,7 @@ import org.eclipse.php.internal.core.ast.nodes.EmptyStatement;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -24,7 +25,7 @@ public class EmptyStatementNode extends StatementNode {
 
 	@Override
 	public DataNode execute(Env env) {
-		return null;
+		return SpecialNode.ControlNode.OK;
 	}
 
 }

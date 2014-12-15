@@ -7,6 +7,7 @@ import org.eclipse.php.internal.core.ast.nodes.TryStatement;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -45,7 +46,7 @@ public class TryStatementNode extends StatementNode {
 		//for (BlockNode catchBlockNode : catchBlockNodes) {
 		//	catchBlockNode.execute(env);
 		//}
-		return null;
+		return SpecialNode.ControlNode.OK;
 	}
 
 }

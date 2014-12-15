@@ -8,6 +8,7 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -54,7 +55,7 @@ public class WhileStatementNode extends StatementNode {
 		
 		env.updateAfterLoopExecution(loopEnv);
 		
-		return null; // TODO Implement cases of return value
+		return SpecialNode.ControlNode.OK; // TODO Implement cases of return value
 	}
 
 }

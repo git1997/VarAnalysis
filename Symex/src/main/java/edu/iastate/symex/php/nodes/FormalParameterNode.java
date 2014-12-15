@@ -11,6 +11,7 @@ import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -79,7 +80,7 @@ public class FormalParameterNode extends PhpNode {
 	@Override
 	public DataNode execute(Env env) {
 		MyLogger.log(MyLevel.USER_EXCEPTION, "In FormalParameterNode.java: FormalParameterNode + " + this.getSourceCode() + " should not get executed.");
-		return null;
+		return SpecialNode.ControlNode.OK;
 	}
 
 }

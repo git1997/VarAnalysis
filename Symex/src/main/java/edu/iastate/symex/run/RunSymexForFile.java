@@ -21,8 +21,8 @@ public class RunSymexForFile {
 	 * PHP file to test
 	 */	
 	public static String PHP_FILE = //"/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/test.php";
-									//"/Work/To-do/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
-									"/Work/Servers/HTTPServer/Lab/wordpress-3.7/index.php";
+									"/Work/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
+									//"/Work/Servers/HTTPServer/Lab/wordpress-3.7/index.php";
 
 	/**
 	 * PHP file to be executed
