@@ -38,8 +38,7 @@ public class DoStatementNode extends StatementNode {
 		body.execute(env);
 		condition.execute(env);
 		
-		LiteralNode conditionString = DataNodeFactory.createLiteralNode(condition);
-		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(condition.getSourceCode(), condition.getLocation());
 
 		return WhileStatementNode.execute(env, constraint, body);
 	}

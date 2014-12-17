@@ -20,7 +20,8 @@ import edu.iastate.symex.util.logging.MyLogger;
 /**
  * 
  * @author HUNG
- *
+ * 
+ * Revise the code in this file. Its consitencies with other parts of the code base is no longer maintained.
  */
 public class XmlReadWrite {
 	

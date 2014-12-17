@@ -65,8 +65,7 @@ public class ForEachStatementNode extends StatementNode {
 			return retValue; // TODO Revise this retValue
 		}
 		else {
-			LiteralNode conditionString = DataNodeFactory.createLiteralNode(expressionNode);
-			Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+			Constraint constraint = ConstraintFactory.createAtomicConstraint(expressionNode.getSourceCode(), expressionNode.getLocation());
 			
 			return WhileStatementNode.execute(env, constraint, statementNode);
 		}

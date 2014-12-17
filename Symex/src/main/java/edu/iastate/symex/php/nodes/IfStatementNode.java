@@ -83,8 +83,7 @@ public class IfStatementNode extends StatementNode {
 		/*
 		 * Else, execute both branches.
 		 */
-		LiteralNode conditionString = DataNodeFactory.createLiteralNode(condition);
-		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(condition.getSourceCode(), condition.getLocation());
 		
 		return execute(env, constraint, trueStatement, falseStatement);
 	}

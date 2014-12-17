@@ -41,8 +41,7 @@ public class WhileStatementNode extends StatementNode {
 	public DataNode execute(Env env) {
 		condition.execute(env);
 		
-		LiteralNode conditionString = DataNodeFactory.createLiteralNode(condition);
-		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(condition.getSourceCode(), condition.getLocation());
 		
 		return execute(env, constraint, body);
 	}

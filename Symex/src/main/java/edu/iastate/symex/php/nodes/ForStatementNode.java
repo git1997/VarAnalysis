@@ -69,8 +69,8 @@ public class ForStatementNode extends StatementNode {
 		for (ExpressionNode condition : conditions)
 			condition.execute(env);
 		
-		LiteralNode conditionString = (conditions.isEmpty() ? DataNodeFactory.createLiteralNode(this) : DataNodeFactory.createLiteralNode(conditions.get(0)));
-		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+		PhpNode conditionNode = (conditions.isEmpty() ? this : conditions.get(0));
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionNode.getSourceCode(), conditionNode.getLocation());
 
 		return WhileStatementNode.execute(env, constraint, statement);
 	}
