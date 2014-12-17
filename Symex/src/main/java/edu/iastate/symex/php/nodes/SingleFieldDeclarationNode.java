@@ -38,12 +38,7 @@ public class SingleFieldDeclarationNode extends PhpNode {
 	 * @see edu.iastate.symex.php.nodes.FormalParameterNode.getParameterNameBeforeRunTimeOrNull() 
 	 */
 	public String getFieldNameBeforeRunTimeOrNull() {
-		if (name.getName() instanceof IdentifierNode)
-			return ((IdentifierNode) name.getName()).getName();
-		else {
-			MyLogger.log(MyLevel.USER_EXCEPTION, "In SingleFieldDeclarationNode.java: Can't get field name from expression " + this.getSourceCode() + " before run time.");
-			return null;
-		}
+		return name.getVariableNameBeforeRunTimeOrNull();
 	}
 	
 	/**

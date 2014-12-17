@@ -45,6 +45,13 @@ public class ObjectNode extends DataNode {
 		return map.get(fieldName);
 	}
 	
+	@Override
+	public void accept(DataModelVisitor dataModelVisitor) {
+		dataModelVisitor.visitObjectNode(this);
+		for (PhpVariable variable : map.values())
+			variable.getValue().accept(dataModelVisitor);
+	}
+	
 	public DataNode getFieldValue(String fieldName) {
 		PhpVariable phpVariable = getField(fieldName);
 		if (phpVariable != null)
@@ -53,13 +60,6 @@ public class ObjectNode extends DataNode {
 			MyLogger.log(MyLevel.USER_EXCEPTION, "In ObjectNode: Reading an undefined field (" + fieldName + ").");
 			return SpecialNode.UnsetNode.UNSET;
 		}
-	}
-	
-	@Override
-	public void accept(DataModelVisitor dataModelVisitor) {
-		dataModelVisitor.visitObjectNode(this);
-		for (PhpVariable variable : map.values())
-			variable.getValue().accept(dataModelVisitor);
 	}
 
 }

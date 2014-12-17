@@ -69,12 +69,6 @@ public class ArrayAccessNode extends VariableNode {
 
 	@Override
 	public PhpVariable createVariablePossiblyWithNull(Env env) {
-		// An array access can have null index (e.g., $x[] = '1')
-		if (index == null) {
-			MyLogger.log(MyLevel.TODO, "In ArrayAccessNode.java: ArrayAccess with null index is not yet implemented.");
-			return null;
-		}
-		
 		DataNode dataNode = name.execute(env);
 		
 		// An array access can create a new array (e.g., $x[1] = 'a' creates a new array for $x)
@@ -88,11 +82,13 @@ public class ArrayAccessNode extends VariableNode {
 		
 		if (dataNode instanceof ArrayNode) {
 			ArrayNode array = (ArrayNode) dataNode;
-			String key = index.execute(env).getExactStringValueOrNull();
-			if (key != null)
-				return env.getOrPutArrayElement(array, key);
-			else
-				return null;
+			String key = (index != null ? index.execute(env).getExactStringValueOrNull() : null);
+			
+			// Handle the case when a value is appended to the array (e.g., $x[] = '1')
+			if (key == null)
+				key = array.generateNextKey();
+
+			return env.getOrPutArrayElement(array, key);
 		}
 		else
 			return null;

@@ -119,6 +119,11 @@ public class TestSymex {
 	}
 	
 	@Test
+	public void testForEach() {
+		runFile("testForEach.php");
+	}
+	
+	@Test
 	public void testSchoolMate() {
 		runFile("SchoolMate-1.5.4/index.php");
 	}

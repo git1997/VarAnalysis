@@ -41,6 +41,13 @@ public class ArrayNode extends DataNode {
 		return map.get(key);
 	}
 	
+	@Override
+	public void accept(DataModelVisitor dataModelVisitor) {
+		dataModelVisitor.visitArrayNode(this);
+		for (PhpVariable variable : map.values())
+			variable.getValue().accept(dataModelVisitor);
+	}
+	
 	public DataNode getElementValue(String key) {
 		PhpVariable phpVariable = getElement(key);
 		if (phpVariable != null)
@@ -51,6 +58,10 @@ public class ArrayNode extends DataNode {
 		}
 	}
 	
+	public ArrayList<String> getKeys() {
+		return new ArrayList<String>(map.keySet());
+	}
+	
 	public ArrayList<DataNode> getElementValues() {
 		ArrayList<DataNode> elementValues = new ArrayList<DataNode>();
 		for (String key : map.keySet())
@@ -58,11 +69,14 @@ public class ArrayNode extends DataNode {
 		return elementValues;
 	}
 	
-	@Override
-	public void accept(DataModelVisitor dataModelVisitor) {
-		dataModelVisitor.visitArrayNode(this);
-		for (PhpVariable variable : map.values())
-			variable.getValue().accept(dataModelVisitor);
+	/**
+	 * Generate the next key for the case when a value is appended to the array (e.g., $x[] = '1')
+	 */
+	public String generateNextKey() {
+		int i = map.size();
+		while (map.containsKey(String.valueOf(i)))
+			i++;
+		return String.valueOf(i);
 	}
 
 }

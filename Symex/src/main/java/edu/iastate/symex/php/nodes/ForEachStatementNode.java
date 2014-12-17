@@ -5,9 +5,11 @@ import org.eclipse.php.internal.core.ast.nodes.ForEachStatement;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.Env;
+import edu.iastate.symex.datamodel.nodes.ArrayNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -16,8 +18,10 @@ import edu.iastate.symex.datamodel.nodes.LiteralNode;
  */
 public class ForEachStatementNode extends StatementNode {
 
-	private ExpressionNode expression;
-	private StatementNode statement;	
+	private ExpressionNode expressionNode;
+	private ExpressionNode keyNode;
+	private ExpressionNode valueNode;
+	private StatementNode statementNode;	
 	
 	/*
 	Represents a for each statement 
@@ -35,18 +39,37 @@ public class ForEachStatementNode extends StatementNode {
 	*/
 	public ForEachStatementNode(ForEachStatement forEachStatement) {
 		super(forEachStatement);
-		expression = ExpressionNode.createInstance(forEachStatement.getExpression());
-		statement = StatementNode.createInstance(forEachStatement.getStatement());		
+		expressionNode = ExpressionNode.createInstance(forEachStatement.getExpression());
+		keyNode = (forEachStatement.getKey() != null ? ExpressionNode.createInstance(forEachStatement.getKey()) : null);
+		valueNode = ExpressionNode.createInstance(forEachStatement.getValue());
+		statementNode = StatementNode.createInstance(forEachStatement.getStatement());		
 	}
 	
 	@Override
 	public DataNode execute(Env env) {
-		expression.execute(env);
-
-		LiteralNode conditionString = DataNodeFactory.createLiteralNode(expression);
-		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
-
-		return WhileStatementNode.execute(env, constraint, statement);
+		DataNode expressionResult = expressionNode.execute(env);
+		
+		ArrayNode array = (expressionResult instanceof ArrayNode ? (ArrayNode) expressionResult : null);
+		String keyVarName = (keyNode instanceof VariableNode ? ((VariableNode) keyNode).getVariableNameBeforeRunTimeOrNull() : null);
+		String valueVarName = (valueNode instanceof VariableNode ? ((VariableNode) valueNode).getVariableNameBeforeRunTimeOrNull() : null);
+		
+		if (array != null && valueVarName != null) {
+			DataNode retValue = SpecialNode.ControlNode.OK;
+			for (String key : array.getKeys()) {
+				DataNode value = array.getElementValue(key);
+				if (keyVarName != null)
+					env.getOrPutThenWriteVariable(keyVarName, DataNodeFactory.createLiteralNode(key));
+				env.getOrPutThenWriteVariable(valueVarName, value);
+				retValue = statementNode.execute(env);
+			}
+			return retValue; // TODO Revise this retValue
+		}
+		else {
+			LiteralNode conditionString = DataNodeFactory.createLiteralNode(expressionNode);
+			Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+			
+			return WhileStatementNode.execute(env, constraint, statementNode);
+		}
 	}
 
 }
