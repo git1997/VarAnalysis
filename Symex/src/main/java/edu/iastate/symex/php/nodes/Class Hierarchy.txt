@@ -18,15 +18,17 @@ PhpNode
 		UnaryOperationNode
 		UnresolvedExpressionNode
 		VariableBaseNode
-			ArrayAccessNode
 			ClassInstanceCreationNode			
 			DispatchNode
 				FieldAccessNode
 				MethodInvocationNode
 				UnresolvedDispatchNode
 			FunctionInvocationNode
+			ListVariableNode
 			UnresolvedVariableBaseNode
 			VariableNode
+				ArrayAccessNode			
+				ReflectionVariableNode
 	FormalParameterNode
 	ProgramNode
 	SingleFieldDeclarationNode
@@ -34,6 +36,7 @@ PhpNode
 		BlockNode
 		BreakStatementNode
 		ClassDeclarationNode
+		DoStatementNode
 		EchoStatementNode
 		EmptyStatementNode
 		ExpressionStatementNode

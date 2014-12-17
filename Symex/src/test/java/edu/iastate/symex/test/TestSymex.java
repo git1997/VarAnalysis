@@ -22,7 +22,7 @@ public class TestSymex {
 	
 	public static void main(String[] args) {
 		testMode = true;
-		new TestSymex().testSchoolMate();
+		new TestSymex().testFieldAccess();
 	}
 
 	private void runFile(String fileName) {
@@ -109,8 +109,18 @@ public class TestSymex {
 	}
 	
 	@Test
+	public void testReflectionVariable() {
+		runFile("testReflectionVariable.php");
+	}
+	
+	@Test
+	public void testListVariable() {
+		runFile("testListVariable.php");
+	}
+	
+	@Test
 	public void testSchoolMate() {
 		runFile("SchoolMate-1.5.4/index.php");
 	}
-
+	
 }

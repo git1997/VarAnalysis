@@ -55,10 +55,6 @@ public class ObjectNode extends DataNode {
 		}
 	}
 	
-	public boolean containsField(String fieldName) {
-		return map.containsKey(fieldName);
-	}
-	
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
 		dataModelVisitor.visitObjectNode(this);

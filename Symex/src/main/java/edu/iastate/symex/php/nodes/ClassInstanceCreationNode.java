@@ -38,7 +38,7 @@ public class ClassInstanceCreationNode extends VariableBaseNode {
 	@Override
 	public DataNode execute(Env env) {
 		// Get the class name
-		String resolvedClassName = className.getResolvedNameOrNull(env);	
+		String resolvedClassName = className.getResolvedClassNameOrNull(env);	
 		
 		// Get the PHP class
 		ClassDeclarationNode phpClass = (resolvedClassName != null ? env.getClass(resolvedClassName) : null);
@@ -48,11 +48,8 @@ public class ClassInstanceCreationNode extends VariableBaseNode {
 			
 			// Initialize the object's fields
 			for (SingleFieldDeclarationNode field : phpClass.getFields()) {
-				VariableNode nameNode = field.getName();
-				ExpressionNode valueNode = field.getValue(); // Can be null
-				
-				String name = nameNode.getResolvedVariableNameOrNull(env);
-				DataNode value = (valueNode != null ? valueNode.execute(env) : null);
+				String name = field.getFieldNameBeforeRunTimeOrNull();
+				DataNode value = (field.getValue() != null ? field.getValue().execute(env) : null);
 				
 				if (name != null) {
 					PhpVariable phpVariable = env.getOrPutObjectField(object, name);

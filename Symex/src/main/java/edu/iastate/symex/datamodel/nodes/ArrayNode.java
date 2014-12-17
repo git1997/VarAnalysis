@@ -1,6 +1,7 @@
 package edu.iastate.symex.datamodel.nodes;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.DataModelVisitor;
@@ -17,7 +18,11 @@ import edu.iastate.symex.util.logging.MyLogger;
  */
 public class ArrayNode extends DataNode {
 	
-	private HashMap<String, PhpVariable> map = new HashMap<String, PhpVariable>();
+	/*
+	 * Used LinkedHashMap to preserve the order of inserted elements 
+	 * (which is necessary for a list assignment, e.g., list($a, $b) = array(1, 2))
+	 */
+	private LinkedHashMap<String, PhpVariable> map = new LinkedHashMap<String, PhpVariable>();
 	
 	/**
 	 * Protected constructor, called from DataNodeFactory only.
@@ -41,13 +46,16 @@ public class ArrayNode extends DataNode {
 		if (phpVariable != null)
 			return phpVariable.getValue();
 		else {
-			MyLogger.log(MyLevel.USER_EXCEPTION, "In ArrayNode: Reading an undefined key (" + key + ").");
+			MyLogger.log(MyLevel.USER_EXCEPTION, "In ArrayNode: Reading an undefined element of key [" + key + "].");
 			return SpecialNode.UnsetNode.UNSET;
 		}
 	}
 	
-	public boolean containsKey(String key) {
-		return map.containsKey(key);
+	public ArrayList<DataNode> getElementValues() {
+		ArrayList<DataNode> elementValues = new ArrayList<DataNode>();
+		for (String key : map.keySet())
+			elementValues.add(getElementValue(key));
+		return elementValues;
 	}
 	
 	@Override

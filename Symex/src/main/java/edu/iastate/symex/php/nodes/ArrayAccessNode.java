@@ -18,7 +18,7 @@ import edu.iastate.symex.util.logging.MyLogger;
  * @see edu.iastate.symex.php.nodes.FieldAccessNode
  *
  */
-public class ArrayAccessNode extends VariableBaseNode {
+public class ArrayAccessNode extends VariableNode {
 
 	private VariableBaseNode name;
 	private ExpressionNode index = null;
@@ -36,6 +36,12 @@ public class ArrayAccessNode extends VariableBaseNode {
 		name = VariableBaseNode.createInstance(arrayAccess.getName());
 		if (arrayAccess.getIndex() != null)
 			index = ExpressionNode.createInstance(arrayAccess.getIndex());
+	}
+	
+	@Override
+	public String getResolvedVariableNameOrNull(Env env) {
+		MyLogger.log(MyLevel.USER_EXCEPTION, "In ArrayAccessNode.java: Method getResolvedVariableNameOrNull not yet implemented.");
+		return super.getResolvedVariableNameOrNull(env);
 	}
 	
 	@Override

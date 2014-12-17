@@ -52,7 +52,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 * Resolves the name of the function.
 	 */
 	public String getResolvedFunctionNameOrNull(Env env) {
-		return name.getResolvedNameOrNull(env);
+		return name.execute(env).getExactStringValueOrNull();
 	}
 	
 	@Override
@@ -155,7 +155,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		// Set up parameters
 		ArrayList<FormalParameterNode> parameters = function.getFormalParameters();
 		for (FormalParameterNode parameter : parameters) {
-			String parameterName = parameter.getResolvedParameterNameOrNull(functionEnv);
+			String parameterName = parameter.getParameterNameBeforeRunTimeOrNull();
 			int parameterIndex = parameters.indexOf(parameter);
 			
 			if (parameterName == null)

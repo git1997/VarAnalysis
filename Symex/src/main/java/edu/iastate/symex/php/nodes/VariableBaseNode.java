@@ -4,6 +4,8 @@ import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.internal.core.ast.nodes.ClassInstanceCreation;
 import org.eclipse.php.internal.core.ast.nodes.Dispatch;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
+import org.eclipse.php.internal.core.ast.nodes.ListVariable;
+import org.eclipse.php.internal.core.ast.nodes.ReflectionVariable;
 import org.eclipse.php.internal.core.ast.nodes.Variable;
 import org.eclipse.php.internal.core.ast.nodes.VariableBase;
 
@@ -37,10 +39,12 @@ public abstract class VariableBaseNode extends ExpressionNode {
 			return DispatchNode.createInstance((Dispatch) variableBase);
 		
 		switch (variableBase.getType()) {
-			case VariableBase.ARRAY_ACCESS:				return new ArrayAccessNode((ArrayAccess) variableBase);
 			case VariableBase.CLASS_INSTANCE_CREATION:	return new ClassInstanceCreationNode((ClassInstanceCreation) variableBase);			
 			case VariableBase.FUNCTION_INVOCATION:		return new FunctionInvocationNode((FunctionInvocation) variableBase);
+			case VariableBase.LIST_VARIABLE:			return new ListVariableNode((ListVariable) variableBase);
 			case VariableBase.VARIABLE:					return new VariableNode((Variable) variableBase);
+				case VariableBase.ARRAY_ACCESS:			return new ArrayAccessNode((ArrayAccess) variableBase);
+				case VariableBase.REFLECTION_VARIABLE:	return new ReflectionVariableNode((ReflectionVariable) variableBase);
 			default:									MyLogger.log(MyLevel.TODO, "VariableBase (" + variableBase.getClass().getSimpleName() + ") unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(variableBase)); return new UnresolvedVariableBaseNode(variableBase);
 		}
 	}

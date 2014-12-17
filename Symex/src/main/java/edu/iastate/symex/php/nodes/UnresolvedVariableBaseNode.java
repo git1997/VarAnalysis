@@ -31,7 +31,7 @@ public class UnresolvedVariableBaseNode extends VariableBaseNode {
 	
 	@Override
 	public PhpVariable createVariablePossiblyWithNull(Env env) {
-		MyLogger.log(MyLevel.TODO, "In UnresolvedVariableBaseNode.java: Don't know how to create a variable from a UnresolvedVariableBaseNode.");
+		MyLogger.log(MyLevel.TODO, "In UnresolvedVariableBaseNode.java: Don't know how to create a variable from a UnresolvedVariableBaseNode " + this.getSourceCode());
 		return null;
 	}
 

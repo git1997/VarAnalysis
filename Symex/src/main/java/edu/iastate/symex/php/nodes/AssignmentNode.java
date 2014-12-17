@@ -1,12 +1,16 @@
 package edu.iastate.symex.php.nodes;
 
+import java.util.ArrayList;
+
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
 
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
+import edu.iastate.symex.core.PhpListVariable;
 import edu.iastate.symex.core.PhpVariable;
+import edu.iastate.symex.datamodel.nodes.ArrayNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
@@ -41,15 +45,40 @@ public class AssignmentNode extends ExpressionNode {
 		DataNode rightHandSideValue = rightHandSide.execute(env);
 		PhpVariable phpVariable = leftHandSide.createVariablePossiblyWithNull(env);
 		
-		if (phpVariable == null)
-			return rightHandSideValue;
-		
 		/*
-		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 * Handle list assignment, e.g., list($a, $b) = array(1, 2)
 		 */
-		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onAssignmentExecute((Assignment) this.getAstNode(), phpVariable, env);
-		// END OF WEB ANALYSIS CODE
+		if (phpVariable instanceof PhpListVariable) {
+			if (rightHandSideValue instanceof ArrayNode) {
+				ArrayList<PhpVariable> phpVariables = ((PhpListVariable) phpVariable).getVariables();
+				ArrayList<DataNode> values = ((ArrayNode) rightHandSideValue).getElementValues();
+				
+				if (phpVariables.size() == values.size()) {
+					for (int i = 0; i < phpVariables.size(); i++)
+						assign(phpVariables.get(i), values.get(i), env);
+				}
+			}
+		}
+		else {
+			/*
+			 * Handle a regular assignment
+			 */
+			assign(phpVariable, rightHandSideValue, env);
+			
+			/*
+			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+			 */
+			// BEGIN OF WEB ANALYSIS CODE
+			WebAnalysis.onAssignmentExecute((Assignment) this.getAstNode(), phpVariable, env);
+			// END OF WEB ANALYSIS CODE
+		}
+		
+		return rightHandSideValue;
+	}
+	
+	private void assign(PhpVariable phpVariable, DataNode rightHandSideValue, Env env) {
+		if (phpVariable == null)
+			return;
 		
 		DataNode oldValue = phpVariable.getValue();
 		DataNode newValue;
@@ -87,8 +116,6 @@ public class AssignmentNode extends ExpressionNode {
 		
 		// Update env
 		env.writeVariable(phpVariable, newValue);
-		
-		return rightHandSideValue;
 	}
 	
 }

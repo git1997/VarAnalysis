@@ -51,11 +51,9 @@ public class ClassDeclarationNode extends StatementNode {
 			if (statement instanceof FieldsDeclaration) {
 				for (SingleFieldDeclaration field : ((FieldsDeclaration) statement).fields()) {
 					SingleFieldDeclarationNode fieldDeclarationNode = new SingleFieldDeclarationNode(field);
-					String name = fieldDeclarationNode.getName().getResolvedVariableNameOrNull(null);
+					String name = fieldDeclarationNode.getFieldNameBeforeRunTimeOrNull();
 					if (name != null)
 						fieldDeclarations.put(name, fieldDeclarationNode);
-					else
-						MyLogger.log(MyLevel.TODO, "In ClassDeclarationNode.java: Can't resolve name of field " + fieldDeclarationNode.getSourceCode());
 				}
 			}
 			else if (statement instanceof MethodDeclaration) {

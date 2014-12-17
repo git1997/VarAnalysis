@@ -19,7 +19,7 @@ public class WhileStatementNode extends StatementNode {
 
 	private LiteralNode conditionString;
 	private ExpressionNode condition;	
-	private StatementNode statement;
+	private StatementNode body;
 	
 	/*
 	Represents while statement. 
@@ -36,13 +36,13 @@ public class WhileStatementNode extends StatementNode {
 		super(whileStatement);
 		condition = ExpressionNode.createInstance(whileStatement.getCondition());
 		conditionString = DataNodeFactory.createLiteralNode(condition);
-		statement = StatementNode.createInstance(whileStatement.getBody());
+		body = StatementNode.createInstance(whileStatement.getBody());
 	}
 
 	@Override
 	public DataNode execute(Env env) {
 		condition.execute(env);
-		return execute(env, conditionString, statement);
+		return execute(env, conditionString, body);
 	}
 	
 	/**

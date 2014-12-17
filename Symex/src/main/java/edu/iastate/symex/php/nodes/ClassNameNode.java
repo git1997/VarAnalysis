@@ -32,8 +32,8 @@ public class ClassNameNode extends PhpNode {
 	/**
 	 * Resolves the name of the class.
 	 */
-	public String getResolvedNameOrNull(Env env) {
-		return name.getResolvedNameOrNull(env);
+	public String getResolvedClassNameOrNull(Env env) {
+		return name.execute(env).getExactStringValueOrNull();
 	}
 
 	@Override

@@ -9,8 +9,6 @@ import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.datamodel.nodes.SymbolicNode;
-import edu.iastate.symex.util.logging.MyLevel;
-import edu.iastate.symex.util.logging.MyLogger;
 
 /**
  * 
@@ -33,17 +31,15 @@ public class VariableNode extends VariableBaseNode {
 		isDollared = variable.isDollared();
 	}
 	
+	public ExpressionNode getName() {
+		return name;
+	}
+	
 	/**
 	 * Resolves the name of the variable.
-	 * Note that this is different from the method Expression.getResolvedNameOrNull:
-	 * 		$x = 'foo';
-	 * 		echo $a[$x];
-	 * 		Variable($x).getResolvedVariableNameOrNull returns 'x'
-	 * whereas Expression($x).getResolvedNameOrNull returns 'foo'
-	 * @see edu.iastate.symex.php.nodes.ExpressionNode.getResolvedNameOrNull(Env)
 	 */
 	public String getResolvedVariableNameOrNull(Env env) {
-		return name.getResolvedNameOrNull(env);
+		return name.execute(env).getExactStringValueOrNull();
 	}
 	
 	@Override
@@ -55,15 +51,17 @@ public class VariableNode extends VariableBaseNode {
 		WebAnalysis.onVariableExecute((Variable) this.getAstNode(), env);
 		// END OF WEB ANALYSIS CODE
 		
-		if (!isDollared) {
-			if (name instanceof IdentifierNode)
-				return DataNodeFactory.createLiteralNode(name);
-			else {
-				MyLogger.log(MyLevel.USER_EXCEPTION, "In VariableNode.java: name should be an Identifier when isDollared = false. ");
-				return DataNodeFactory.createSymbolicNode(this);
-			}
-		}
-		
+		if (!isDollared)
+			return singleEvaluation(env);
+		else
+			return doubleEvaluation(env);
+	}
+	
+	protected DataNode singleEvaluation(Env env) {
+		return name.execute(env);
+	}
+	
+	protected DataNode doubleEvaluation(Env env) {
 		String variableName = getResolvedVariableNameOrNull(env);
 		DataNode variableValue = env.readVariable(variableName);
 		if (variableValue == SpecialNode.UnsetNode.UNSET)

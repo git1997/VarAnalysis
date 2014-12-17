@@ -58,15 +58,17 @@ public class FormalParameterNode extends PhpNode {
 		}
 	}
 	
-	public ExpressionNode getParameterName() {
-		return parameterName;
-	}
-	
 	/**
-	 * Resolves the name of the parameter.
+	 * Returns the name of the FormalParameter before run time.
+	 * @see edu.iastate.symex.php.nodes.SingleFieldDeclarationNode.getFieldNameBeforeRunTimeOrNull()
 	 */
-	public String getResolvedParameterNameOrNull(Env env) {
-		return parameterName.getResolvedNameOrNull(env);
+	public String getParameterNameBeforeRunTimeOrNull() {
+		if (parameterName instanceof IdentifierNode)
+			return ((IdentifierNode) parameterName).getName();
+		else {
+			MyLogger.log(MyLevel.USER_EXCEPTION, "In FormalParameterNode.java: Can't get parameter name from expression  " + this.getSourceCode() + " before run time.");
+			return null;
+		}
 	}
 	
 	public boolean isReference() {

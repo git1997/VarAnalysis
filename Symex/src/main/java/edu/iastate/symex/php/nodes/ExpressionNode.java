@@ -17,12 +17,9 @@ import org.eclipse.php.internal.core.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.ast.nodes.UnaryOperation;
 import org.eclipse.php.internal.core.ast.nodes.VariableBase;
 
-import edu.iastate.symex.core.Env;
-
 import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
-
 
 /**
  * 
@@ -63,25 +60,6 @@ public abstract class ExpressionNode extends PhpNode {
 			case Expression.UNARY_OPERATION:			return new UnaryOperationNode((UnaryOperation) expression);
 			default:									MyLogger.log(MyLevel.TODO, "Expression (" + expression.getClass().getSimpleName() + ") unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(expression)); return new UnresolvedExpressionNode(expression);
 		}
-	}
-	
-	/**
-	 * Resolves the name of a variable/function/class from this expression. 
-	 * Note that this information may not be available until run time.
-	 * Returns null if the name cannot be resolved.
-	 * 
-	 * This method is different than VariableNode.getResolvedVariableNameOrNull.
-	 * @see edu.iastate.symex.php.nodes.VariableNode.getResolvedVariableNameOrNull(Env)
-	 */
-	public String getResolvedNameOrNull(Env env) {
-		if (this instanceof IdentifierNode)
-			return ((IdentifierNode) this).getName();
-		
-		else if (env != null)
-			return this.execute(env).getExactStringValueOrNull();
-		
-		else
-			return null;
 	}
 	
 }
