@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import org.eclipse.php.internal.core.ast.nodes.Statement;
 import org.eclipse.php.internal.core.ast.nodes.SwitchStatement;
 
+import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
 import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.PositionRange;
@@ -21,7 +24,7 @@ import edu.iastate.symex.position.PositionRange;
 public class SwitchStatementNode extends StatementNode {
 
 	protected ExpressionNode expression;
-	protected LiteralNode conditionString;
+	protected LiteralNode expressionString;
 	protected ArrayList<SwitchCaseNode> switchCases;
 	
 	/*
@@ -83,14 +86,14 @@ public class SwitchStatementNode extends StatementNode {
 		}
 		
 		this.expression = ExpressionNode.createInstance(switchStatement.getExpression());
-		this.conditionString = DataNodeFactory.createLiteralNode(expression);		
+		this.expressionString = DataNodeFactory.createLiteralNode(expression);		
 		this.switchCases = switchCaseNodes;
 	}
 
 	@Override
 	public DataNode execute(Env env) {
 		DataNode expressionResult = expression.execute(env);
-		FakeSwitchStatementNode fakeSwitchExpressionNode = new FakeSwitchStatementNode((SwitchStatement) this.getAstNode(), expressionResult, conditionString, switchCases);
+		FakeSwitchStatementNode fakeSwitchExpressionNode = new FakeSwitchStatementNode((SwitchStatement) this.getAstNode(), expressionResult, expressionString, switchCases);
 		return fakeSwitchExpressionNode.execute(env);
 	}
 	
@@ -102,7 +105,7 @@ public class SwitchStatementNode extends StatementNode {
 		private SwitchStatement originalSwitchStatement;
 		
 		private DataNode expressionResult;
-		private LiteralNode conditionString;
+		private LiteralNode expressionString;
 		private ArrayList<SwitchCaseNode> switchCases;
 		
 		private FakeSwitchStatementNode(SwitchStatement originalSwitchStatement, DataNode expressionResult, LiteralNode conditionString, ArrayList<SwitchCaseNode> switchCases) {
@@ -110,7 +113,7 @@ public class SwitchStatementNode extends StatementNode {
 			this.originalSwitchStatement = originalSwitchStatement;
 			
 			this.expressionResult = expressionResult;
-			this.conditionString = conditionString;
+			this.expressionString = conditionString;
 			this.switchCases = switchCases;
 		}
 		
@@ -122,7 +125,7 @@ public class SwitchStatementNode extends StatementNode {
 			SwitchCaseNode thenBranch = switchCases.get(0);
 			ArrayList<SwitchCaseNode> remainingSwitchCases = new ArrayList<SwitchCaseNode>(switchCases);
 			remainingSwitchCases.remove(0);
-			FakeSwitchStatementNode elseBranch = remainingSwitchCases.isEmpty() ? null : new FakeSwitchStatementNode(originalSwitchStatement, expressionResult, conditionString, remainingSwitchCases);
+			FakeSwitchStatementNode elseBranch = remainingSwitchCases.isEmpty() ? null : new FakeSwitchStatementNode(originalSwitchStatement, expressionResult, expressionString, remainingSwitchCases);
 			
 			// Execute the branches
 			if (thenBranch.isDefault()) {
@@ -131,12 +134,28 @@ public class SwitchStatementNode extends StatementNode {
 			else {
 				DataNode caseResult = thenBranch.getValue().execute(env);
 				BooleanNode conditionValue = expressionResult.isEqualTo(caseResult);
+				
+				/*
+				 * If condition evaluates to either TRUE or FALSE, then execute the corresponding branch only.
+				 */
+				if (conditionValue.isTrueValue())
+					return thenBranch.execute(env);
+				else if (conditionValue.isFalseValue()) {
+					if (elseBranch != null)
+						return elseBranch.execute(env);
+					else
+						return SpecialNode.ControlNode.OK;
+				}
 
-				PositionRange location = new CompositeRange(conditionString.getLocation(), thenBranch.getConditionString().getLocation());
-				String stringValue = conditionString.getStringValue() + " == " + thenBranch.getConditionString().getStringValue(); 
+				/*
+				 * Else, execute both branches.
+				 */
+				PositionRange location = new CompositeRange(expressionString.getLocation(), thenBranch.getConditionString().getLocation());
+				String stringValue = expressionString.getStringValue() + " == " + thenBranch.getConditionString().getStringValue(); 
 				LiteralNode conditionString = DataNodeFactory.createLiteralNode(location, stringValue);
+				Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
 
-				return IfStatementNode.execute(env, conditionValue, conditionString, thenBranch, elseBranch);
+				return IfStatementNode.execute(env, constraint, thenBranch, elseBranch);
 			}
 		}
 		

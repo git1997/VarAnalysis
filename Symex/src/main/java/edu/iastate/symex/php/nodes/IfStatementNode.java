@@ -22,7 +22,6 @@ import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
  */
 public class IfStatementNode extends StatementNode {
 
-	private LiteralNode conditionString;
 	private ExpressionNode condition;
 	private StatementNode trueStatement;
 	private StatementNode falseStatement;
@@ -47,30 +46,27 @@ public class IfStatementNode extends StatementNode {
 	public IfStatementNode(IfStatement ifStatement) {
 		super(ifStatement);
 		condition = ExpressionNode.createInstance(ifStatement.getCondition());
-		conditionString = DataNodeFactory.createLiteralNode(condition);
 		trueStatement = StatementNode.createInstance(ifStatement.getTrueStatement());
 		falseStatement = (ifStatement.getFalseStatement() != null ? StatementNode.createInstance(ifStatement.getFalseStatement()) : null);
 	}
 	
 	@Override
 	public DataNode execute(Env env) {
-		return IfStatementNode.execute(env, condition, conditionString, trueStatement, falseStatement);
+		return IfStatementNode.execute(env, condition, trueStatement, falseStatement);
 	}
 	
 	/**
 	 * Executes different branches and updates the env accordingly.
+	 * Depending on the evaluated result of the condition, we may execute only one branch or both branches.
 	 * @see {@link edu.iastate.symex.php.nodes.ConditionalExpressionNode#execute(Env)}
 	 */
-	public static DataNode execute(Env env, ExpressionNode condition, LiteralNode conditionString, PhpNode trueStatement, PhpNode falseStatement) {
-		DataNode conditionValue = condition.execute(env);
-		return execute(env, conditionValue.convertToBooleanValue(), conditionString, trueStatement, falseStatement);
-	}
-	
-	/**
-	 * Executes different branches and updates the env accordingly.
-	 * @see {@link edu.iastate.symex.php.nodes.ConditionalExpressionNode#execute(Env)}
-	 */
-	public static DataNode execute(Env env, BooleanNode conditionValue, LiteralNode conditionString, PhpNode trueStatement, PhpNode falseStatement) {
+	public static DataNode execute(Env env, ExpressionNode condition, PhpNode trueStatement, PhpNode falseStatement) {
+		DataNode evaluatedCondition = condition.execute(env);
+		BooleanNode conditionValue = evaluatedCondition.convertToBooleanValue();
+		
+		/*
+		 * If condition evaluates to either TRUE or FALSE, then execute the corresponding branch only.
+		 */
 		if (conditionValue.isTrueValue()) {
 			if (trueStatement != null)
 				return trueStatement.execute(env);
@@ -83,12 +79,24 @@ public class IfStatementNode extends StatementNode {
 			else
 				return SpecialNode.ControlNode.OK;
 		}
-			
+		
+		/*
+		 * Else, execute both branches.
+		 */
+		LiteralNode conditionString = DataNodeFactory.createLiteralNode(condition);
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+		
+		return execute(env, constraint, trueStatement, falseStatement);
+	}
+	
+	/**
+	 * Executes different branches and updates the env accordingly.
+	 * @see {@link edu.iastate.symex.php.nodes.SwitchStatementNode.FakeSwitchStatementNode#execute(Env)}
+	 */
+	public static DataNode execute(Env env, Constraint constraint, PhpNode trueStatement, PhpNode falseStatement) {
 		/*
 		 * Execute the branches
 		 */
-		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
-		
 		HashMap<PhpVariable, DataNode> dirtyValuesInTrueBranch = new HashMap<PhpVariable, DataNode>();
 		HashMap<PhpVariable, DataNode> dirtyValuesInFalseBranch = new HashMap<PhpVariable, DataNode>();
 		DataNode trueBranchRetValue = SpecialNode.ControlNode.OK;
