@@ -1,6 +1,9 @@
 package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.DoStatement;
+
+import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
@@ -13,7 +16,6 @@ import edu.iastate.symex.datamodel.nodes.LiteralNode;
  */
 public class DoStatementNode extends StatementNode {
 
-	private LiteralNode conditionString;
 	private ExpressionNode condition;	
 	private StatementNode body;
 	
@@ -28,7 +30,6 @@ public class DoStatementNode extends StatementNode {
 	public DoStatementNode(DoStatement doStatement) {
 		super(doStatement);
 		condition = ExpressionNode.createInstance(doStatement.getCondition());
-		conditionString = DataNodeFactory.createLiteralNode(condition);
 		body = StatementNode.createInstance(doStatement.getBody());
 	}
 
@@ -36,7 +37,11 @@ public class DoStatementNode extends StatementNode {
 	public DataNode execute(Env env) {
 		body.execute(env);
 		condition.execute(env);
-		return WhileStatementNode.execute(env, conditionString, body);
+		
+		LiteralNode conditionString = DataNodeFactory.createLiteralNode(condition);
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+
+		return WhileStatementNode.execute(env, constraint, body);
 	}
 	
 }

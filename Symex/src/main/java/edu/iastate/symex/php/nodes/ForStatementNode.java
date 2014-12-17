@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.eclipse.php.internal.core.ast.nodes.Expression;
 import org.eclipse.php.internal.core.ast.nodes.ForStatement;
 
+import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
@@ -17,7 +19,6 @@ import edu.iastate.symex.datamodel.nodes.LiteralNode;
  */
 public class ForStatementNode extends StatementNode {
 
-	private LiteralNode conditionString;
 	private ArrayList<ExpressionNode> initializers = new ArrayList<ExpressionNode>();
 	private ArrayList<ExpressionNode> conditions = new ArrayList<ExpressionNode>();	
 	private StatementNode statement;	
@@ -41,7 +42,6 @@ public class ForStatementNode extends StatementNode {
 		for (Expression expression : forStatement.conditions()) {
 			conditions.add(ExpressionNode.createInstance(expression));
 		}
-		conditionString = (conditions.isEmpty() ? DataNodeFactory.createLiteralNode(this) : DataNodeFactory.createLiteralNode(conditions.get(0)));
 		statement = StatementNode.createInstance(forStatement.getBody());		
 	}
 	
@@ -68,7 +68,11 @@ public class ForStatementNode extends StatementNode {
 			//expressionNode.execute(env);
 		for (ExpressionNode condition : conditions)
 			condition.execute(env);
-		return WhileStatementNode.execute(env, conditionString, statement);
+		
+		LiteralNode conditionString = (conditions.isEmpty() ? DataNodeFactory.createLiteralNode(this) : DataNodeFactory.createLiteralNode(conditions.get(0)));
+		Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+
+		return WhileStatementNode.execute(env, constraint, statement);
 	}
 
 }
