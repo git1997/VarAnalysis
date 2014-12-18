@@ -606,14 +606,6 @@ public abstract class Env {
 			DataNode valueInFalseBranch = dirtyVarsInFalseBranch.containsKey(variable) ? dirtyVarsInFalseBranch.get(variable) : variable.getValue();
 			DataNode compactSelectNode = DataNodeFactory.createCompactSelectNode(constraint, valueInTrueBranch, valueInFalseBranch);
 			writeVariable(variable, compactSelectNode);	// This method also updates dirtyVariables for the current Env
-			
-			// TODO
-//			/*
-//			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
-//			 */
-//			// BEGIN OF WEB ANALYSIS CODE
-//			WebAnalysis.onEnvUpdateWithBranches(phpVariable, variableInTrueBranch, variableInFalseBranch);
-//			// END OF WEB ANALYSIS CODE
 		}
 	}
 	

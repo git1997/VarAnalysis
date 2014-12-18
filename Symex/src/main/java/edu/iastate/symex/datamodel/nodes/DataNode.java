@@ -55,6 +55,8 @@ public abstract class DataNode {
 	/**
 	 * Returns a string value composed of only literal nodes in the current DataNode.
 	 * (Select, Repeat, Symbolic, etc. are treated as empty strings.)
+	 * NOTE: This is an approximation of the actual value and should be used with care.
+	 * If we want to get the exact value, use DataNode.getExactStringValueOrNull() instead.
 	 */
 	public String getStringValueFromLiteralNodes() {
 		if (this instanceof LiteralNode) {

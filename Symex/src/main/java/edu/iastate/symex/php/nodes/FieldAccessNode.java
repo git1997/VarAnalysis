@@ -34,13 +34,11 @@ public class FieldAccessNode extends DispatchNode {
 	@Override
 	public PhpVariable createVariablePossiblyWithNull(Env env) {
 		DataNode dataNode = dispatcher.execute(env);
-		if (dataNode instanceof ObjectNode) {
+		String fieldName = field.execute(env).getExactStringValueOrNull();
+		
+		if (dataNode instanceof ObjectNode & fieldName != null) {
 			ObjectNode object = (ObjectNode) dataNode;
-			String fieldName = field.execute(env).getExactStringValueOrNull();
-			if (fieldName != null)
-				return env.getOrPutObjectField(object, fieldName);
-			else
-				return null;
+			return env.getOrPutObjectField(object, fieldName);
 		}
 		else
 			return null;
@@ -49,13 +47,11 @@ public class FieldAccessNode extends DispatchNode {
 	@Override
 	public DataNode execute(Env env) {
 		DataNode dataNode = dispatcher.execute(env);
-		if (dataNode instanceof ObjectNode) {
+		String fieldName = field.execute(env).getExactStringValueOrNull();
+		
+		if (dataNode instanceof ObjectNode && fieldName != null) {
 			ObjectNode object = (ObjectNode) dataNode;
-			String fieldName = field.execute(env).getExactStringValueOrNull();
-			if (fieldName != null)
-				return object.getFieldValue(fieldName);
-			else
-				return DataNodeFactory.createSymbolicNode(this);
+			return object.getFieldValue(fieldName);
 		}
 		else
 			return DataNodeFactory.createSymbolicNode(this);

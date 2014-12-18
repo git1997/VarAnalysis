@@ -46,22 +46,21 @@ public class ArrayAccessNode extends VariableNode {
 	
 	@Override
 	public DataNode execute(Env env) {
+		DataNode dataNode = name.execute(env);
+		DataNode indexNode = index.execute(env);
+		String key = indexNode.getExactStringValueOrNull();
+		
 		/*
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onArrayAccessExecute((ArrayAccess) this.getAstNode(), env);
+		if (key != null)
+			WebAnalysis.onArrayAccessExecute((ArrayAccess) this.getAstNode(), this, dataNode, indexNode, env);
 		// END OF WEB ANALYSIS CODE
 		
-		DataNode dataNode = name.execute(env);
-		
-		if (dataNode instanceof ArrayNode) {
+		if (dataNode instanceof ArrayNode && key != null) {
 			ArrayNode array = (ArrayNode) dataNode;
-			String key = index.execute(env).getExactStringValueOrNull();
-			if (key != null)
-				return array.getElementValue(key);
-			else
-				return DataNodeFactory.createSymbolicNode(this);
+			return array.getElementValue(key);
 		}
 		else
 			return DataNodeFactory.createSymbolicNode(this);

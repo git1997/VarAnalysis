@@ -1,9 +1,11 @@
 package edu.iastate.symex.php.nodes;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.eclipse.php.internal.core.ast.nodes.IfStatement;
 
+import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.BranchEnv;
@@ -99,12 +101,27 @@ public class IfStatementNode extends StatementNode {
 		HashMap<PhpVariable, DataNode> dirtyValuesInFalseBranch = new HashMap<PhpVariable, DataNode>();
 		DataNode trueBranchRetValue = SpecialNode.ControlNode.OK;
 		DataNode falseBranchRetValue = SpecialNode.ControlNode.OK;
+
+		/*
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB ANALYSIS CODE
+		WebAnalysis.onTrueBranchExecutionStarted(env);
+		// END OF WEB ANALYSIS CODE
 		
 		if (trueStatement != null) {
 			BranchEnv trueBranchEnv = new BranchEnv(env, constraint);
 			trueBranchRetValue = trueStatement.execute(trueBranchEnv);
 			dirtyValuesInTrueBranch = env.backtrackAfterBranchExecution(trueBranchEnv);
 		}
+
+		/*
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB ANALYSIS CODE
+		WebAnalysis.onFalseBranchExecutionStarted(env);
+		// END OF WEB ANALYSIS CODE
+		
 		if (falseStatement != null) {
 			BranchEnv falseBranchEnv = new BranchEnv(env, ConstraintFactory.createNotConstraint(constraint));
 			falseBranchRetValue = falseStatement.execute(falseBranchEnv);
@@ -113,6 +130,13 @@ public class IfStatementNode extends StatementNode {
 		
 		// Update the env
 		env.updateAfterBranchExecution(constraint, dirtyValuesInTrueBranch, dirtyValuesInFalseBranch, trueBranchRetValue, falseBranchRetValue);
+		
+		/*
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB ANALYSIS CODE
+		WebAnalysis.onBothBranchesExecutionFinished(new HashSet<PhpVariable>(dirtyValuesInTrueBranch.keySet()), new HashSet<PhpVariable>(dirtyValuesInFalseBranch.keySet()), env);
+		// END OF WEB ANALYSIS CODE
 		
 		return DataNodeFactory.createCompactSelectNode(constraint, trueBranchRetValue, falseBranchRetValue);		
 	}
