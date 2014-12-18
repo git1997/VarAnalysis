@@ -68,6 +68,7 @@ public class HtmlSaxNodesToHtmlDocument {
 	
 	/**
 	 * Parse a SelectNode
+	 * TODO Revise this code
 	 */
 	private void parse(CondListSelect<HtmlSaxNode> selectNode, HtmlDomParser parser) {
 		Stack<HtmlElement> lastHtmlStack = parser.getHtmlStack();

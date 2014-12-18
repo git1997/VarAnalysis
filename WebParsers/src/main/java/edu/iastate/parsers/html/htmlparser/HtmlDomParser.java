@@ -10,6 +10,8 @@ import edu.iastate.parsers.html.sax.nodes.HCloseTag;
 import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.parsers.html.sax.nodes.HText;
+import edu.iastate.symex.util.logging.MyLevel;
+import edu.iastate.symex.util.logging.MyLogger;
 
 /**
  * 
@@ -76,6 +78,7 @@ public class HtmlDomParser {
 				}
 				else {
 					// TODO Handle mismatching tags here
+					MyLogger.log(MyLevel.TODO, "In HtmlDomParser.java: Need to handle mismatching tags.");
 				}
 			}
 		}
