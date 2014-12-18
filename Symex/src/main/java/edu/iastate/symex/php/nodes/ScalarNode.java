@@ -129,7 +129,7 @@ public class ScalarNode extends ExpressionNode {
 				endIndex = string.length();
 				String stringValue = string.substring(beginIndex, endIndex);
 				Range range = new Range(position.getFile(), position.getOffset() + beginIndex, endIndex - beginIndex);
-				LiteralNode literalNode = DataNodeFactory.createLiteralNode(range, stringValue);
+				LiteralNode literalNode = DataNodeFactory.createLiteralNode(stringValue, range);
 				fragments.add(literalNode);
 				break;
 			}
@@ -139,7 +139,7 @@ public class ScalarNode extends ExpressionNode {
 				if (beginIndex < endIndex) {
 					String stringValue = string.substring(beginIndex, endIndex);
 					Range range = new Range(position.getFile(), position.getOffset() + beginIndex, endIndex - beginIndex);
-					LiteralNode literalNode = DataNodeFactory.createLiteralNode(range, stringValue);
+					LiteralNode literalNode = DataNodeFactory.createLiteralNode(stringValue, range);
 					fragments.add(literalNode);
 				}
 				
@@ -155,7 +155,7 @@ public class ScalarNode extends ExpressionNode {
 				endIndex = endIndex + 2;
 				String stringValue = unescapeString(string.substring(beginIndex, endIndex), stringType);
 				Range range = new Range(position.getFile(), position.getOffset() + endIndex - stringValue.length(), stringValue.length());
-				LiteralNode literalNode = DataNodeFactory.createLiteralNode(range, stringValue);
+				LiteralNode literalNode = DataNodeFactory.createLiteralNode(stringValue, range);
 				fragments.add(literalNode);
 				
 				beginIndex = endIndex;

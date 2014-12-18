@@ -229,7 +229,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 				int offset = sqlCode.indexOf(sqlTableCol);
 				PositionRange location = new RelativeRange(sqlLocation, offset, sqlTableCol.length());
 				 
-				LiteralNode sqlTableColumn = DataNodeFactory.createLiteralNode(location, sqlTableCol);
+				LiteralNode sqlTableColumn = DataNodeFactory.createLiteralNode(sqlTableCol, location);
 				sqlTableColumns.add(sqlTableColumn);
 			}
 		}

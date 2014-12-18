@@ -89,7 +89,7 @@ public class DataModelToHtmlTokens {
 		for (int i = 0; i < length; i++)
 			symbolicValue = symbolicValue + "1";
 		
-		LiteralNode literalNode = DataNodeFactory.createLiteralNode(symbolicNode.getLocation(), symbolicValue);
+		LiteralNode literalNode = DataNodeFactory.createLiteralNode(symbolicValue, symbolicNode.getLocation());
 		return lex(literalNode, lexer);
 	}
 	

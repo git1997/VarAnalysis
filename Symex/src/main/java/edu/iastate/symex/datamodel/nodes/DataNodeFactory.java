@@ -81,7 +81,7 @@ public class DataNodeFactory {
 						node1.getLocation().getLength() + node2.getLocation().getLength());
 				String stringValue = node1.getStringValue() + node2.getStringValue();
 
-				LiteralNode combinedLiteralNode = createLiteralNode(range, stringValue);
+				LiteralNode combinedLiteralNode = createLiteralNode(stringValue, range);
 				compactChildNodes.set(compactChildNodes.size() - 1, combinedLiteralNode);
 			}
 			else if (SymexConfig.COMBINE_CONSECUTIVE_LITERAL_NODES) {
@@ -89,7 +89,7 @@ public class DataNodeFactory {
 				PositionRange range = new CompositeRange(node1.getLocation(), node2.getLocation());
 				String stringValue = node1.getStringValue() + node2.getStringValue();
 
-				LiteralNode combinedLiteralNode = createLiteralNode(range, stringValue);
+				LiteralNode combinedLiteralNode = createLiteralNode(stringValue, range);
 				compactChildNodes.set(compactChildNodes.size() - 1, combinedLiteralNode);
 			}
 			else {
@@ -105,17 +105,17 @@ public class DataNodeFactory {
 	 * Create Literal Nodes
 	 */
 	
-	public static LiteralNode createLiteralNode(PositionRange positionRange, String stringValue) {
-		return new LiteralNode(positionRange, stringValue);
+	public static LiteralNode createLiteralNode(String stringValue, PositionRange location) {
+		return new LiteralNode(stringValue, location);
 	}
 
 	public static LiteralNode createLiteralNode(PhpNode phpNode) {
-		return createLiteralNode(phpNode.getLocation(), phpNode.getSourceCode());
+		return createLiteralNode(phpNode.getSourceCode(), phpNode.getLocation());
 	}
 
 	public static LiteralNode createLiteralNode(String stringValue) {
 		// The value is dynamically generated and cannot be traced back to the source code.
-		return createLiteralNode(PositionRange.UNDEFINED, stringValue); 
+		return createLiteralNode(stringValue, PositionRange.UNDEFINED); 
 	}
 	
 	/**

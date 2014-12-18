@@ -152,7 +152,7 @@ public class SwitchStatementNode extends StatementNode {
 				 */
 				PositionRange location = new CompositeRange(expressionString.getLocation(), thenBranch.getConditionString().getLocation());
 				String stringValue = expressionString.getStringValue() + " == " + thenBranch.getConditionString().getStringValue(); 
-				LiteralNode conditionString = DataNodeFactory.createLiteralNode(location, stringValue);
+				LiteralNode conditionString = DataNodeFactory.createLiteralNode(stringValue, location);
 				Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
 
 				return IfStatementNode.execute(env, constraint, thenBranch, elseBranch);
