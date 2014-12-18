@@ -7,7 +7,7 @@ import edu.iastate.symex.position.PositionRange;
  * @author HUNG
  *
  */
-public class JsObjectFieldRef extends JsVariableRef {
+public abstract class JsObjectFieldRef extends JsVariableRef {
 
 	protected RegularReference object;
 	
@@ -24,35 +24,17 @@ public class JsObjectFieldRef extends JsVariableRef {
 	}
 	
 	public String getFullyQualifiedName() {
-		if (object instanceof JsObjectFieldRef)
-			return ((JsObjectFieldRef) object).getFullyQualifiedName() + "." + name;
-		else
-			return name;
-	}
-	
-	@Override
-	public boolean sameEntityAs(RegularReference regularReference) {
-		return super.sameEntityAs(regularReference)
-				&& (getObject().sameEntityAs(((JsObjectFieldRef) regularReference).getObject()));
-	}
-	
-	@Override
-	public boolean sameEntityAs(DeclaringReference declaringReference) {
-		return super.sameEntityAs(declaringReference)
-				&& (getObject().sameEntityAs(((JsObjectFieldDecl) declaringReference).getObject()));
-	}
-
-	@Override
-	public boolean hasMatchedType(DeclaringReference declaringReference) {
-		return declaringReference instanceof JsObjectFieldDecl;
+		String objectName = (object instanceof JsObjectFieldRef ? ((JsObjectFieldRef) object).getFullyQualifiedName() : object.getName());
+		return objectName + "." + name;
 	}
 	
 	@Override
 	public String toDebugString() {
+		String fullyQualifiedName = getFullyQualifiedName();
 		if (constraint.isTautology())
-			return object.getName() + "." + name;
+			return fullyQualifiedName;
 		else
-			return object.getName() + "." + name + " [" + constraint.toDebugString() + "]";
+			return fullyQualifiedName + " [" + constraint.toDebugString() + "]";
 	}
 
 }

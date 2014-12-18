@@ -13,9 +13,4 @@ public class JsVariableRef extends RegularReference {
 		super(name, location);
 	}
 
-	@Override
-	public boolean hasMatchedType(DeclaringReference declaringReference) {
-		return declaringReference instanceof JsVariableDecl;
-	}
-
 }

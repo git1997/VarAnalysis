@@ -15,11 +15,6 @@ public class PhpRefToHtml extends RegularReference {
 	public PhpRefToHtml(String name, PositionRange location) {
 		super(name, location);
 	}
-
-	@Override
-	public boolean hasMatchedType(DeclaringReference declaringReference) {
-		return declaringReference instanceof HtmlInputDecl || declaringReference instanceof HtmlQueryDecl;
-	}
 	
 		/*
 		 * TODO Compare pages

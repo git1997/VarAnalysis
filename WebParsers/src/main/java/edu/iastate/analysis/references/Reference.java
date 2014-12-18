@@ -1,10 +1,7 @@
 package edu.iastate.analysis.references;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Comparator;
-
-import deprecated.entities.Entity;
 
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.Position;
@@ -17,16 +14,28 @@ import edu.iastate.symex.position.PositionRange;
  */
 public abstract class Reference {
 	
-	protected String name;								// The name of this reference
-	protected PositionRange location;					// The location of this reference
+	protected String name;								// The name of this reference (e.g., 'input1')
+	protected String lexeme;							// The lexeme of this reference (e.g., $_GET['input1'])
+	
+	protected PositionRange location;					// The location of the name of this reference
+	protected PositionRange lexemeLocation;				// The location of the lexeme of this reference
 	
 	protected Constraint constraint = Constraint.TRUE;	// The path constraint of this reference
 	protected File entryFile = null;					// Then entry file that was run and this reference appeared
 	
-	protected Entity entity = null;						// The entity that this reference belongs to
-	protected ArrayList<Reference> dataFlowFromReferences = new ArrayList<Reference>();	// e.g., $x = $y, $y = $z  =>  $z has dataflow from $y, $y from $z
-	protected ArrayList<Reference> dataFlowToReferences = new ArrayList<Reference>();		
-	
+	/**
+	 * Constructor
+	 * @param name
+	 * @param lexeme
+	 * @param location
+	 * @param lexemeLocation
+	 */
+	public Reference(String name, String lexeme, PositionRange location, PositionRange lexemeLocation) {
+		this.name = name;
+		this.lexeme = lexeme;
+		this.location = location;
+		this.lexemeLocation = lexemeLocation;
+	}
 	
 	/**
 	 * Constructor
@@ -34,8 +43,7 @@ public abstract class Reference {
 	 * @param location
 	 */
 	public Reference(String name, PositionRange location) {
-		this.name = name;
-		this.location = location;
+		this(name, name, location, location);
 	}
 	
 	/*
@@ -50,20 +58,6 @@ public abstract class Reference {
 		this.entryFile = entryFile;
 	}
 	
-	public void setEntity(Entity entity) {
-		this.entity = entity;
-	}
-	
-	public void addDataflowToReference(Reference reference) {
-		this.dataFlowToReferences.add(reference);
-		reference.dataFlowFromReferences.add(this);
-	}
-	
-	public void clearDataflow() {
-		this.dataFlowFromReferences.clear();
-		this.dataFlowToReferences.clear();
-	}
-		
 	/*
 	 * Get properties
 	 */
@@ -76,8 +70,16 @@ public abstract class Reference {
 		return name;
 	}
 	
+	public String getLexeme() {
+		return lexeme;
+	}
+	
 	public PositionRange getLocation() {
 		return location;
+	}
+	
+	public PositionRange getLexemeLocation() {
+		return lexemeLocation;
 	}
 	
 	public Constraint getConstraint() {
@@ -88,20 +90,8 @@ public abstract class Reference {
 		return entryFile;
 	}
 	
-	public Entity getEntity() {
-		return entity;
-	}
-	
-	public ArrayList<Reference> getDataFlowFromReferences() {
-		return new ArrayList<Reference>(dataFlowFromReferences);
-	}
-	
-	public ArrayList<Reference> getDataFlowToReferences() {
-		return new ArrayList<Reference>(dataFlowToReferences);
-	}
-	
 	/*
-	 * Methods
+	 * Utility methods
 	 */
 	
 	public boolean hasSameType(Reference reference) {

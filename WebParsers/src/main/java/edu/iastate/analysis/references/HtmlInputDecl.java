@@ -39,10 +39,4 @@ public class HtmlInputDecl extends DeclaringReference {
 		return submitToPage;
 	}
 	
-	@Override
-	public boolean sameEntityAs(DeclaringReference declaringReference) {
-		return super.sameEntityAs(declaringReference)
-				&& (getFormName() == null || ((HtmlInputDecl) declaringReference).getFormName() == null || getFormName().equals(((HtmlInputDecl) declaringReference).getFormName()));
-	}
-	
 }

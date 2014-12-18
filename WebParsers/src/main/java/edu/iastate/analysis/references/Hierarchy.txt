@@ -1,24 +1,25 @@
-Reference
-	DeclaringReference
-		HtmlFormDecl
-		HtmlIdDecl
-		HtmlInputDecl
-		HtmlQueryDecl
-		JsFunctionDecl
-		JsObjectFieldDecl
-		JsVariableDecl
-		PhpFunctionDecl
-		PhpVariableDecl
-		SqlTableColumnDecl
-	RegularReference
-		JsFunctionCall
-		JsObjectFieldRef
-			JsRefToHtmlForm
-			JsRefToHtmlInput
-		JsRefToHtmlId
-		JsVariableRef
-		PhpFunctionCall
-		PhpRefToHtml
-		PhpRefToSqlTableColumn
-		PhpVariableRef
-ReferenceManager
+Reference								OK
+	DeclaringReference					OK
+		HtmlFormDecl					OK				
+		HtmlIdDecl						OK
+		HtmlInputDecl					OK			form, page
+		HtmlQueryDecl					OK
+		JsFunctionDecl					OK
+		JsObjectFieldDecl				OK
+			JsDeclOfHtmlInputValue		OK
+		JsVariableDecl					OK
+		PhpFunctionDecl					OK
+		PhpVariableDecl					OK
+		SqlTableColumnDecl				OK			
+	RegularReference					OK
+		JsFunctionCall					OK
+		JsObjectFieldRef				OK
+			JsRefToHtmlForm				OK
+			JsRefToHtmlInput			OK
+			JsRefToHtmlInputValue		OK
+		JsRefToHtmlId					OK
+		JsVariableRef					OK
+		PhpFunctionCall					OK
+		PhpRefToHtml					OK
+		PhpRefToSqlTableColumn			OK		
+		PhpVariableRef					OK

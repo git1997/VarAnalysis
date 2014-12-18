@@ -7,7 +7,7 @@ import edu.iastate.symex.position.PositionRange;
  * @author HUNG
  *
  */
-public class JsObjectFieldDecl extends JsVariableDecl {
+public abstract class JsObjectFieldDecl extends JsVariableDecl {
 	
 	protected RegularReference object;
 
@@ -24,24 +24,17 @@ public class JsObjectFieldDecl extends JsVariableDecl {
 	}
 	
 	public String getFullyQualifiedName() {
-		if (object instanceof JsObjectFieldRef)
-			return ((JsObjectFieldRef) object).getFullyQualifiedName() + "." + name;
-		else
-			return name;
-	}
-
-	@Override
-	public boolean sameEntityAs(DeclaringReference declaringReference) {
-		return super.sameEntityAs(declaringReference)
-				&& (getObject().sameEntityAs(((JsObjectFieldDecl) declaringReference).getObject()));
+		String objectName = (object instanceof JsObjectFieldRef ? ((JsObjectFieldRef) object).getFullyQualifiedName() : object.getName());
+		return objectName + "." + name;
 	}
 	
 	@Override
 	public String toDebugString() {
+		String fullyQualifiedName = getFullyQualifiedName();
 		if (constraint.isTautology())
-			return object.getName() + "." + name;
+			return fullyQualifiedName;
 		else
-			return object.getName() + "." + name + " [" + constraint.toDebugString() + "]";
+			return fullyQualifiedName + " [" + constraint.toDebugString() + "]";
 	}
 	
 }
