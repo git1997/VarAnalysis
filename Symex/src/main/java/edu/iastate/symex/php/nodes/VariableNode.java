@@ -55,13 +55,6 @@ public class VariableNode extends VariableBaseNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		/*
-		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
-		 */
-		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onVariableExecute((Variable) this.getAstNode(), env);
-		// END OF WEB ANALYSIS CODE
-		
 		if (!isDollared)
 			return singleEvaluation(env);
 		else
@@ -74,6 +67,16 @@ public class VariableNode extends VariableBaseNode {
 	
 	protected DataNode doubleEvaluation(Env env) {
 		String variableName = getResolvedVariableNameOrNull(env);
+
+		/*
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB ANALYSIS CODE
+		PhpVariable phpVariable = env.getVariable(variableName);
+		if (phpVariable != null)
+			WebAnalysis.onVariableExecute((Variable) this.getAstNode(), phpVariable, env);
+		// END OF WEB ANALYSIS CODE
+		
 		DataNode variableValue = env.readVariable(variableName);
 		if (variableValue == SpecialNode.UnsetNode.UNSET)
 			return DataNodeFactory.createSymbolicNode(this);

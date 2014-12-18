@@ -55,11 +55,12 @@ public class AssignmentNode extends ExpressionNode {
 				
 				if (phpVariables.size() == values.size()) {
 					for (int i = 0; i < phpVariables.size(); i++)
-						assign(phpVariables.get(i), values.get(i), env);
+						if (phpVariables.get(i) != null)
+							assign(phpVariables.get(i), values.get(i), env);
 				}
 			}
 		}
-		else {
+		else if (phpVariable != null) {
 			/*
 			 * Handle a regular assignment
 			 */
@@ -77,9 +78,6 @@ public class AssignmentNode extends ExpressionNode {
 	}
 	
 	private void assign(PhpVariable phpVariable, DataNode rightHandSideValue, Env env) {
-		if (phpVariable == null)
-			return;
-		
 		DataNode oldValue = phpVariable.getValue();
 		DataNode newValue;
 		

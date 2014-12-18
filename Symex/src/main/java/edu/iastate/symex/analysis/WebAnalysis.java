@@ -28,12 +28,12 @@ public class WebAnalysis {
 		/**
 		 * Used to identify declarations of PHP variables 
 		 */
-		public void onAssignmentExecute(Assignment assignment, PhpVariable phpVariableDecl, Env env);
+		public void onAssignmentExecute(Assignment assignment, PhpVariable phpVariable, Env env);
 		
 		/**
-		 * Used to identify PHP variables 
+		 * Used to identify references of PHP variables 
 		 */
-		public void onVariableExecute(Variable variable, Env env);
+		public void onVariableExecute(Variable variable, PhpVariable phpVariable, Env env);
 		
 		/**
 		 * Used to identify $_REQUEST['input'] or $sql_row['name'] variables 
@@ -79,9 +79,9 @@ public class WebAnalysis {
 			entityDetectionListener.onAssignmentExecute(assignment, phpVariableDecl, env);
 	}
 	
-	public static void onVariableExecute(Variable variable, Env env) {
+	public static void onVariableExecute(Variable variable, PhpVariable phpVariable, Env env) {
 		if (entityDetectionListener != null)
-			entityDetectionListener.onVariableExecute(variable, env);
+			entityDetectionListener.onVariableExecute(variable, phpVariable, env);
 	}
 	
 	public static void onArrayAccessExecute(ArrayAccess arrayAccess, Env env) {
