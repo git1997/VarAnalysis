@@ -41,7 +41,7 @@ package edu.iastate.analysis.references.detection;
  * 
  * @author HUNG
  *
- * Revise the code in this file. Its consitencies with other parts of the code base is no longer maintained.
+ * Revise the code in this file. Its consistencies with other parts of the code base is no longer maintained.
  */
 public class XmlReadWrite {
 	
