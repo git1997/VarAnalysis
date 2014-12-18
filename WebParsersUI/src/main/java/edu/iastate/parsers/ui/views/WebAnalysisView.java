@@ -25,13 +25,13 @@ import org.eclipse.wst.jsdt.core.dom.ASTNode;
 import org.eclipse.wst.jsdt.core.dom.ASTParser;
 
 import edu.iastate.analysis.references.detection.FindReferencesInFile;
-import edu.iastate.analysis.references.detection.ShowStatisticsOnReferences;
+import edu.iastate.analysis.references.detection.ReferenceManager;
 import edu.iastate.analysis.references.Reference;
-import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.position.Position;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
 import edu.iastate.symex.util.FileIO;
+import edu.iastate.webslice.core.ShowStatisticsOnReferences;
 
 /**
  * 
@@ -51,7 +51,11 @@ public class WebAnalysisView extends ViewPart {
 	
 	private TabFolder tabFolder;
 	
-	private TreeViewer forwardSliceTreeViewer, backwardSliceTreeViewer, phpAstTreeViewer, jsAstTreeViewer;
+	private AnalysisResultTreeViewer forwardSliceTreeViewer, backwardSliceTreeViewer;
+
+	private PhpAstTreeViewer phpAstTreeViewer;
+	
+	private JsAstTreeViewer jsAstTreeViewer;
 
 	private StyledText statsStyledText;
 	

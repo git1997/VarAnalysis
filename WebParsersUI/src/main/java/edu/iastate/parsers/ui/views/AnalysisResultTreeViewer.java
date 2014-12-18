@@ -8,8 +8,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 import edu.iastate.analysis.references.Reference;
-import edu.iastate.analysis.references.ReferenceManager;
-import edu.iastate.parsers.conditional.CondListSelect;
+import edu.iastate.analysis.references.detection.ReferenceManager;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
 
@@ -21,10 +20,16 @@ import edu.iastate.symex.ui.views.GenericTreeViewer;
 public class AnalysisResultTreeViewer extends GenericTreeViewer {
 	
 	private boolean forwardSliceEnabled;
+	private ReferenceManager referenceManager = null;
 	
 	public AnalysisResultTreeViewer(Composite parent, int style, boolean forwardSlice) {
 		super(parent, style);
 		this.forwardSliceEnabled = forwardSlice;
+	}
+	
+	public void setInput(ReferenceManager referenceManager) {
+		this.referenceManager = referenceManager; // Must be set first
+		super.setInput(referenceManager);
 	}
 	
 	@Override
@@ -37,10 +42,11 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 		ArrayList<Object> children = new ArrayList<Object>();
 		
 		if (element instanceof Reference) {
-			if (forwardSliceEnabled)
-				children.addAll(((Reference) element).getDataFlowToReferences());
+			if (forwardSliceEnabled) {
+				children.addAll(referenceManager.getDataFlowManager().getDataFlowFrom((Reference) element));
+			}
 			else
-				children.addAll(((Reference) element).getDataFlowFromReferences());
+				children.addAll(referenceManager.getDataFlowManager().getDataFlowTo((Reference) element));
 		}
 		
 		else {
@@ -59,16 +65,7 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 	@Override
 	public Image getTreeNodeIcon(Object element) {
 		// http://shinych.blogspot.com/2007/05/eclipse-shared-images.html
-		String imageID;
-		
-		if (element instanceof Reference)
-			imageID = ISharedImages.IMG_OBJ_FILE;
-		
-		else if (element instanceof CondListSelect<?>)
-			imageID = ISharedImages.IMG_TOOL_CUT;
-		
-		else
-			imageID = ISharedImages.IMG_OBJ_FILE;
+		String imageID = ISharedImages.IMG_OBJ_FILE;
 		
 		return PlatformUI.getWorkbench().getSharedImages().getImage(imageID);
 	}

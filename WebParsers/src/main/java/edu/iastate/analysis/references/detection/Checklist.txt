@@ -1,0 +1,6 @@
+HtmlVisitor				OK
+JavascriptVisitor		OK	
+SqlVisitor				
+PhpVisitor				OK		
+XmlReadWrite			OK
+ReferenceDetector
