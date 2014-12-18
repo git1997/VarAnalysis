@@ -5,7 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import edu.iastate.analysis.references.Reference;
-import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.analysis.references.SqlTableColumnDecl;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.RelativeRange;

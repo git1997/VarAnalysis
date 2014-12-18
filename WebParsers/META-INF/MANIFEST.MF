@@ -13,7 +13,8 @@ Export-Package: deprecated,
  edu.iastate.parsers.html.generatedlexer,
  edu.iastate.parsers.html.htmlparser,
  edu.iastate.parsers.html.run,
- edu.iastate.parsers.html.sax.nodes
+ edu.iastate.parsers.html.sax.nodes,
+ edu.iastate.webslice.core
 Require-Bundle: org.eclipse.equinox.common;bundle-version="3.6.200",
  org.eclipse.core.resources;bundle-version="3.8.101",
  org.eclipse.php.core;bundle-version="3.2.0",

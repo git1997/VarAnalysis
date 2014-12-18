@@ -6,12 +6,10 @@ import org.eclipse.wst.jsdt.core.dom.AST;
 import org.eclipse.wst.jsdt.core.dom.ASTNode;
 import org.eclipse.wst.jsdt.core.dom.ASTParser;
 
-import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
-
 
 /**
  * 
@@ -56,7 +54,7 @@ public class ReferenceDetector {
         parser.setSource(javascriptCode.toCharArray());
         ASTNode rootNode = parser.createAST(null);
         
-        JavascriptVisitor visitor = new JavascriptVisitor(javascriptLocation, javascriptConstraint, entryFile, referenceManager);
+        JavascriptVisitor visitor = new JavascriptVisitor(javascriptLocation, entryFile, javascriptConstraint, referenceManager);
         rootNode.accept(visitor);
 	}
 

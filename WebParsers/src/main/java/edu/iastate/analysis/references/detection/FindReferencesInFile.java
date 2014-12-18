@@ -2,7 +2,6 @@ package edu.iastate.analysis.references.detection;
 
 import java.io.File;
 
-import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.parsers.html.core.ParseDataModel;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.symex.core.PhpExecuter;
@@ -10,7 +9,7 @@ import edu.iastate.symex.datamodel.DataModel;
 import edu.iastate.symex.util.Timer;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
-
+import edu.iastate.webslice.core.ShowStatisticsOnReferences;
 
 /**
  * 
@@ -20,10 +19,12 @@ import edu.iastate.symex.util.logging.MyLogger;
 public class FindReferencesInFile {
 	
 	public static String PHP_FILE = //"/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/index.php";
-									"/Work/To-do/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
+									//"/Work/To-do/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
 									//"/Work/To-do/Data/Web Projects/Server Code/addressbookv6.2.12/index.php";
 									//"/Work/To-do/Data/Web Projects/Server Code/TimeClock-1.04/index.php";
 									//"/Work/To-do/Data/Web Projects/Server Code/UPB-2.2.7/admin_forums.php";
+	
+									"/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/testWebSlice.php";
 	
 	public static String XML_FILE = "/Users/HUNG/Desktop/Dataflows.xml";
 	
@@ -61,8 +62,8 @@ public class FindReferencesInFile {
 		// Comment out the statement below to stop detecting embedded entities.
 		findReferencesInHtmlDocument(htmlDocument, referenceManager);
 		
-		// Step 4: Resolve dataflows among the references
-		resolveDataflows(htmlDocument, referenceManager);
+		// Step 4: Resolve data flow among the references
+		resolveDataFlow(htmlDocument, referenceManager);
 		
 		// Step 5: Print results
 		printResults(referenceManager);
@@ -106,12 +107,13 @@ public class FindReferencesInFile {
 	}
 	
 	/**
-	 * Resolves dataflows
+	 * Resolves data flow
 	 */
-	private void resolveDataflows(HtmlDocument htmlDocument, ReferenceManager referenceManager) {
-		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Resolving dataflows...");
+	private void resolveDataFlow(HtmlDocument htmlDocument, ReferenceManager referenceManager) {
+		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Resolving data flow...");
 		
-		referenceManager.resolveDataflows(htmlDocument);
+		referenceManager.getDataFlowManager().resolveDataFlowforHtmlDocument(htmlDocument);
+		referenceManager.getDataFlowManager().resolveDataFlowforEntirePage();
 	}
 	
 	/**

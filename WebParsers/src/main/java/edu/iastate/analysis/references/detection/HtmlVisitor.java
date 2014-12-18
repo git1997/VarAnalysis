@@ -7,7 +7,6 @@ import edu.iastate.analysis.references.HtmlIdDecl;
 import edu.iastate.analysis.references.HtmlInputDecl;
 import edu.iastate.analysis.references.HtmlQueryDecl;
 import edu.iastate.analysis.references.Reference;
-import edu.iastate.analysis.references.ReferenceManager;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttributeValue;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
@@ -35,15 +34,16 @@ import edu.iastate.symex.util.logging.MyLogger;
 public class HtmlVisitor extends HtmlNodeVisitor {
 	
 	private File entryFile;
+	private Constraint constraint; // Could be updated during traversal
+			
 	private ReferenceManager referenceManager;
-	
-	private Constraint constraint = Constraint.TRUE;
 	
 	/**
 	 * Constructor
 	 */
 	public HtmlVisitor(File entryFile, ReferenceManager referenceManager) {
 		this.entryFile = entryFile;
+		this.constraint = Constraint.TRUE;
 		this.referenceManager = referenceManager;
 	}
 	
@@ -52,8 +52,8 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 	 * This method should be called instead of calling referenceManager.addReference directly.
 	 */
 	private void addReference(Reference reference) {
-		reference.setConstraint(constraint);
 		reference.setEntryFile(entryFile);
+		reference.setConstraint(constraint);
 		referenceManager.addReference(reference);
 	}
 	
