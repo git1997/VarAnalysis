@@ -1,7 +1,6 @@
 package edu.iastate.symex.php.nodes;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import org.eclipse.php.internal.core.ast.nodes.Include;
 
@@ -43,9 +42,8 @@ public class IncludeNode extends ExpressionNode {
 		File includedFile = env.resolveFile(value);
 		
 		if (includedFile == null) {
-			ArrayList<File> fileStack = env.getFileStack();
-			File currentFile = fileStack.get(fileStack.size() - 1);
-			File originalFile = fileStack.get(0);
+			File currentFile = env.peekFileFromStack();
+			File originalFile = env.getFileStack().get(0);
 			MyLogger.log(MyLevel.USER_EXCEPTION, "In IncludeNode.java: Unable to resolve the included file " + expression.getSourceCode() + ". "
 						+ "Current file: " + currentFile + ". "
 						+ "Original file: " + originalFile + ".");
