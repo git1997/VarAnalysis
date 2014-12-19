@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
@@ -538,10 +539,17 @@ public abstract class Env {
 	 */
 	
 	/**
-	 * Returns a copy of dirtyVariables
+	 * Returns a copy of the dirtyVariables map
 	 */
 	protected HashMap<PhpVariable, DataNode> copyDirtyVariables() {
 		return new HashMap<PhpVariable, DataNode>(dirtyVariables);
+	}
+	
+	/**
+	 * Returns the set of dirtyVariables
+	 */
+	protected HashSet<PhpVariable> getDirtyVariables() {
+		return new HashSet<PhpVariable>(dirtyVariables.keySet());
 	}
 	
 	/**
@@ -710,17 +718,26 @@ public abstract class Env {
 	 * @param functionEnv
 	 */
 	public void updateAfterFunctionExecution(FunctionEnv functionEnv) {
-		HashMap<PhpVariable, DataNode> dirtyVarsInFunction = functionEnv.copyDirtyVariables();
-		HashSet<PhpVariable> varsInFunction = functionEnv.getVariablesCreatedFromCurrentScope();
+		HashMap<PhpVariable, DataNode> dirtyVarsMapInFunction = functionEnv.copyDirtyVariables();
+		HashSet<PhpVariable> dirtyVarsInFunction = functionEnv.getDirtyVariables();
+		HashSet<PhpVariable> localVarsInFunction = functionEnv.getVariablesCreatedFromCurrentScope();
 		
-		for (PhpVariable var : dirtyVarsInFunction.keySet()) {
-			if (!varsInFunction.contains(var)) {
-				// Here, var is dirty and not local to the functionEnv
-				// Update the set of dirtyVariables for the current scope
-				if (!this.dirtyVariables.containsKey(var))
-					this.dirtyVariables.put(var, dirtyVarsInFunction.get(var));
-			}
+		// Consider only variables that are dirty and not local to the functionEnv
+		HashSet<PhpVariable> nonLocalDirtyVarsInFunction = dirtyVarsInFunction;
+		nonLocalDirtyVarsInFunction.removeAll(localVarsInFunction);
+		
+		for (PhpVariable variable : nonLocalDirtyVarsInFunction) {
+			// Update the set of dirtyVariables for the current scope
+			if (!this.dirtyVariables.containsKey(variable))
+				this.dirtyVariables.put(variable, dirtyVarsMapInFunction.get(variable));
 		}
+		
+		/*
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB ANALYSIS CODE
+		WebAnalysis.onFunctionInvocationFinished(nonLocalDirtyVarsInFunction, this);
+		// END OF WEB ANALYSIS CODE
 	}
 	
 	/*

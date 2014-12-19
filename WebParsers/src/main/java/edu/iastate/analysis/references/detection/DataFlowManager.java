@@ -141,10 +141,10 @@ public class DataFlowManager {
 	 * Resolves data flows within the client code
 	 */
 	private void resolveDataFlowsWithinClientCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
-		// No data flow within HTML
+		// [DONE] No data flow within HTML
 		resolveDataFlowsWithinJavaScriptCode(referenceList, referenceNameMap);
 		resolveDataFlowsFromHtmlToJavaScript(referenceList, referenceNameMap);
-		resolveDataFlowsFromJavaScriptToHtml(referenceList, referenceNameMap);
+		// [DONE] No data flow from JavaScript to HTML (since HTML code can be viewed as JS code declaring variables, regular JS code cannot flow data back to those declarations)
 	}
 	
 	/**
@@ -201,17 +201,8 @@ public class DataFlowManager {
 				}
 			}
 		}
-
-		// TODO Handle aliasing between HtmlDeclOfHtmlInputValue and JsDeclOfHtmlInputValue. 
 	}
 	
-	/**
-	 * Resolves data flows from JavaScript to HTML
-	 */
-	private void resolveDataFlowsFromJavaScriptToHtml(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
-		// TODO Handle aliasing between HtmlDeclOfHtmlInputValue and JsDeclOfHtmlInputValue.
-	}
-		
 	/**
 	 * Resolves data flows from the server code and the client code
 	 */

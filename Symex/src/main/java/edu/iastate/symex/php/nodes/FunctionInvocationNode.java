@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.eclipse.php.internal.core.ast.nodes.Expression;
+import org.eclipse.php.internal.core.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 import org.eclipse.php.internal.core.ast.nodes.InfixExpression;
 
@@ -73,13 +74,6 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 */
 	public DataNode execute(Env env, ObjectNode object) {
 		/*
-		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
-		 */
-		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onFunctionInvocationExecute((FunctionInvocation) this.getAstNode(), env);
-		// END OF WEB ANALYSIS CODE
-		
-		/*
 		 * Get the function name
 		 */
 		String functionName = getResolvedFunctionNameOrNull(env);
@@ -98,7 +92,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		 */
 		if (env.containsFunctionInStack(functionName))
 			return DataNodeFactory.createSymbolicNode(this);
-		
+
 		/*
 		 * Get the argument values
 		 */
@@ -148,6 +142,13 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		/*
 		 * Prepare to execute the function
 		 */
+		
+		/*
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB ANALYSIS CODE
+		WebAnalysis.onFunctionInvocationExecute((FunctionInvocation) this.getAstNode(), env);
+		// END OF WEB ANALYSIS CODE
 					
 		// Set up a new scope
 		FunctionEnv functionEnv = new FunctionEnv(env, functionName);
@@ -181,16 +182,33 @@ public class FunctionInvocationNode extends VariableBaseNode {
 					
 					if (phpVariable != null) {
 						functionEnv.putVariable(parameterName, phpVariable);
+						functionEnv.addReferenceVariable(phpVariable);
+						
+						/*
+						 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+						 */
+						// BEGIN OF WEB ANALYSIS CODE
+						WebAnalysis.onFunctionInvocationParameterPassing((FormalParameter) parameter.getAstNode(), phpVariable, (Expression) arguments.get(parameterIndex).getAstNode(), env);
+						// END OF WEB ANALYSIS CODE
+						
 						continue;
 					}
-					// Else, handle reference parameteres as if they are regular ones.
+					// Else, handle reference parameters as if they are regular ones.
 				}
-				// Else, handle reference parameteres as if they are regular ones.
+				// Else, handle reference parameters as if they are regular ones.
 			} 
 			
 			// Handle regular parameters
 			DataNode argumentValue = argumentValues.get(parameterIndex);
 			functionEnv.getOrPutThenWriteVariable(parameterName, argumentValue);
+			
+			/*
+			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+			 */
+			// BEGIN OF WEB ANALYSIS CODE
+			PhpVariable phpVariable = functionEnv.getVariable(parameterName);
+			WebAnalysis.onFunctionInvocationParameterPassing((FormalParameter) parameter.getAstNode(), phpVariable, (Expression) arguments.get(parameterIndex).getAstNode(), env);
+			// END OF WEB ANALYSIS CODE
 		}
 		
 		/*

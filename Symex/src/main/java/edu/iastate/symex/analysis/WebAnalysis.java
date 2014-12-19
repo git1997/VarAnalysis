@@ -4,6 +4,8 @@ import java.util.HashSet;
 
 import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
+import org.eclipse.php.internal.core.ast.nodes.Expression;
+import org.eclipse.php.internal.core.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 import org.eclipse.php.internal.core.ast.nodes.ReturnStatement;
@@ -49,7 +51,11 @@ public class WebAnalysis {
 		
 		public void onFunctionInvocationExecute(FunctionInvocation functionInvocation, Env env);
 		
+		public void onFunctionInvocationParameterPassing(FormalParameter parameter, PhpVariable phpVariable, Expression argument, Env env);
+		
 		public void onReturnStatementExecute(ReturnStatement returnStatement, Env env);
+		
+		public void onFunctionInvocationFinished(HashSet<PhpVariable> nonLocalDirtyVariablesInFunction, Env env);
 		
 		/*
 		 * Handle SQL queries (e.g., mysql_query("SELECT name FROM products"))
@@ -102,9 +108,19 @@ public class WebAnalysis {
 			entityDetectionListener.onFunctionInvocationExecute(functionInvocation, env);
 	}
 	
+	public static void onFunctionInvocationParameterPassing(FormalParameter parameter, PhpVariable phpVariable, Expression argument, Env env) {
+		if (entityDetectionListener != null)
+			entityDetectionListener.onFunctionInvocationParameterPassing(parameter, phpVariable, argument, env);
+	}
+	
 	public static void onReturnStatementExecute(ReturnStatement returnStatement, Env env) {
 		if (entityDetectionListener != null)
 			entityDetectionListener.onReturnStatementExecute(returnStatement, env);
+	}
+	
+	public static void onFunctionInvocationFinished(HashSet<PhpVariable> nonLocalDirtyVariablesInFunction, Env env) {
+		if (entityDetectionListener != null)
+			entityDetectionListener.onFunctionInvocationFinished(nonLocalDirtyVariablesInFunction, env);
 	}
 	
 	public static DataNode onMysqlQuery(FunctionInvocation functionInvocation, DataNode argumentValue, Env env) {
