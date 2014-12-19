@@ -256,31 +256,32 @@ public class PhpVisitor implements IEntityDetectionListener {
 	
 	@Override
 	public void onFunctionDeclarationExecute(FunctionDeclaration functionDeclaration, Env env) {
-		Identifier functionNameNode = functionDeclaration.getFunctionName();
-		String functionName = functionNameNode.getName();
-
-		// Add a PhpFunctionDecl reference
-		PhpFunctionDecl phpFunctionDecl = new PhpFunctionDecl(functionName, getLocation(functionNameNode));
-		addReference(phpFunctionDecl, env);
-		
-		helperEnv.putFunction(functionName, phpFunctionDecl);
+		String functionName = functionDeclaration.getFunctionName().getName();
+		helperEnv.putFunction(functionName, functionDeclaration);
 	}
 
 	@Override
 	public void onFunctionInvocationExecute(FunctionInvocation functionInvocation, Env env) {
-		Expression functionNameNode = functionInvocation.getFunctionName().getName();
-		String functionName = (functionNameNode instanceof Identifier ? ((Identifier) functionNameNode).getName() : "");
+		Expression functionInvocationNameNode = functionInvocation.getFunctionName().getName();
+		String functionName = (functionInvocationNameNode instanceof Identifier ? ((Identifier) functionInvocationNameNode).getName() : null);
 		
-		if (!functionName.isEmpty()) {
-			// Add a PhpFunctionCall reference
-			PhpFunctionCall phpFunctionCall = new PhpFunctionCall(functionName, getLocation(functionNameNode));
+		if (functionName != null) {
+			// Add a PhpFunctionCall
+			PhpFunctionCall phpFunctionCall = new PhpFunctionCall(functionName, getLocation(functionInvocationNameNode));
 			addReference(phpFunctionCall, env);
 			
-			/*
-			 * Record data flows
-			 */
-			PhpFunctionDecl phpFunctionDecl = helperEnv.getFunction(functionName);
-			if (phpFunctionDecl != null) {
+			FunctionDeclaration functionDeclaration = helperEnv.getFunction(functionName);
+			if (functionDeclaration != null) {
+				Identifier functionDeclarationNameNode = functionDeclaration.getFunctionName();
+
+				// Add a PhpFunctionDecl every time a function is called (to address the calling-context problem in program slicing)
+				PhpFunctionDecl phpFunctionDecl = new PhpFunctionDecl(functionName, getLocation(functionDeclarationNameNode));
+				addReference(phpFunctionDecl, env);
+				
+				/*
+				 * Record data flows
+				 */
+				helperEnv.setCurrentFunction(phpFunctionDecl);
 				dataFlowManager.addDataFlow(phpFunctionDecl, phpFunctionCall);
 			}
 		}
@@ -291,8 +292,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 		/*
 		 * Record data flows
 		 */
-		String functionName = env.peekFunctionFromStack();
-		PhpFunctionDecl phpFunctionDecl = (functionName != null ? helperEnv.getFunction(functionName) : null);
+		PhpFunctionDecl phpFunctionDecl = helperEnv.getCurrentFunction();
 		if (phpFunctionDecl != null) {
 			dataFlowManager.addDataFlow(new HashSet<RegularReference>(helperEnv.getVariableRefs(returnStatement)), phpFunctionDecl);
 		}
@@ -370,7 +370,9 @@ public class PhpVisitor implements IEntityDetectionListener {
 		
 		private HelperEnv outerScopeEnv;
 		
-		private HashMap<String, PhpFunctionDecl> functionMap;
+		private PhpFunctionDecl currentFunction;
+		
+		private HashMap<String, FunctionDeclaration> functionMap;
 		
 		private HashMap<PhpVariable, HashSet<PhpVariableDecl>> declMap; // Specific to each HelperEnv
 		
@@ -385,7 +387,8 @@ public class PhpVisitor implements IEntityDetectionListener {
 		 */
 		public HelperEnv() {
 			this.outerScopeEnv = null;
-			this.functionMap = new HashMap<String, PhpFunctionDecl>();
+			this.currentFunction = null;
+			this.functionMap = new HashMap<String, FunctionDeclaration>();
 			this.declMap = new HashMap<PhpVariable, HashSet<PhpVariableDecl>>();
 			this.refMap = new HashMap<Variable, PhpVariableRef>();
 			this.sqlMap = new HashMap<SymbolicNode, SqlTableColumnDecl>();
@@ -397,6 +400,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 		 */
 		public HelperEnv(HelperEnv outerScopeEnv) {
 			this.outerScopeEnv = outerScopeEnv;
+			this.currentFunction = outerScopeEnv.currentFunction;
 			this.functionMap = outerScopeEnv.functionMap;
 			this.declMap = new HashMap<PhpVariable, HashSet<PhpVariableDecl>>();
 			this.refMap = outerScopeEnv.refMap;
@@ -415,11 +419,19 @@ public class PhpVisitor implements IEntityDetectionListener {
 		 * MANAGE FUNCTIONS
 		 */
 		
-		public void putFunction(String functionName, PhpFunctionDecl phpFunctionDecl) {
-			functionMap.put(functionName, phpFunctionDecl);
+		public void setCurrentFunction(PhpFunctionDecl currentFunction) {
+			this.currentFunction = currentFunction;
 		}
 		
-		public PhpFunctionDecl getFunction(String functionName) {
+		public PhpFunctionDecl getCurrentFunction() {
+			return currentFunction;
+		}
+		
+		public void putFunction(String functionName, FunctionDeclaration functionDeclaration) {
+			functionMap.put(functionName, functionDeclaration);
+		}
+		
+		public FunctionDeclaration getFunction(String functionName) {
 			return functionMap.get(functionName);
 		}
 		

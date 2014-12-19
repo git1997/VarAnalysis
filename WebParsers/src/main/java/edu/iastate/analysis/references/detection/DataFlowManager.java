@@ -13,8 +13,6 @@ import edu.iastate.analysis.references.HtmlIdDecl;
 import edu.iastate.analysis.references.HtmlInputDecl;
 import edu.iastate.analysis.references.HtmlQueryDecl;
 import edu.iastate.analysis.references.JsDeclOfHtmlInputValue;
-import edu.iastate.analysis.references.JsFunctionCall;
-import edu.iastate.analysis.references.JsFunctionDecl;
 import edu.iastate.analysis.references.JsRefToHtmlForm;
 import edu.iastate.analysis.references.JsRefToHtmlId;
 import edu.iastate.analysis.references.JsRefToHtmlInput;
@@ -155,22 +153,6 @@ public class DataFlowManager {
 	private void resolveDataFlowsWithinJavaScriptCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
 		// NOTE: The data flows within each JavaScript code fragment have been resolved but those across the fragments are not yet resolved.
 		// Therefore, we connect them here. This method should not reconnect data flows within each JavaScript code fragment.
-		
-		for (Reference ref1 : referenceList) {
-			String name = ref1.getName();
-			
-			/*
-			 * Connect JsFunctionDecl and JsFunctionCall
-			 * JavaScript functions are not yet connected, both within each code fragment and across code fragments.
-			 * @see edu.iastate.analysis.references.detection.JavascriptVisitor.visit(FunctionInvocation)
-			 */
-			if (ref1 instanceof JsFunctionDecl) {
-				for (Reference ref2 : referenceNameMap.get(name)) {
-					if (ref2 instanceof JsFunctionCall)
-						addDataFlow((DeclaringReference) ref1, (RegularReference) ref2);
-				}
-			}
-		}
 	}
 	
 	/**

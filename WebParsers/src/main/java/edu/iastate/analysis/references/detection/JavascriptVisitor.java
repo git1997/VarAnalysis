@@ -282,28 +282,9 @@ public class JavascriptVisitor extends ASTVisitor {
 	 */
 	public boolean visit(FunctionDeclaration functionDeclaration) {
 		SimpleName functionNameNode = functionDeclaration.getName();
-		String functionName = (functionNameNode != null ? functionNameNode.getIdentifier() : "");
-		
-		Env prevEnv = env;
-		env = new Env();
-		
-		if (!functionName.isEmpty()) {
-			// Add a JsFunctionDecl reference
-			JsFunctionDecl jsFunctionDecl = new JsFunctionDecl(functionName, getLocation(functionNameNode));
-			addReference(jsFunctionDecl);
-			
-			env.setCurrentFunction(jsFunctionDecl);
-		}
-		
-		for (Object object : functionDeclaration.parameters()) {
-			SingleVariableDeclaration singleVariableDeclaration = (SingleVariableDeclaration) object;
-			singleVariableDeclaration.accept(this);
-		}
-		
-		if (functionDeclaration.getBody() != null)
-			functionDeclaration.getBody().accept(this);
-		
-		env = prevEnv;
+		String functionName = (functionNameNode != null ? functionNameNode.getIdentifier() : null);
+		if (functionName != null)
+			env.putFunction(functionName, functionDeclaration);
 		
 		return false;
 	}
@@ -312,10 +293,19 @@ public class JavascriptVisitor extends ASTVisitor {
 	 * Visits a function invocation.
 	 */
 	public boolean visit(FunctionInvocation functionInvocation) {
-		SimpleName functionNameNode = functionInvocation.getName();
-		String functionName = (functionNameNode != null ? functionNameNode.getIdentifier() : "");
+		SimpleName functionInvocationNameNode = functionInvocation.getName();
+		String functionName = (functionInvocationNameNode != null ? functionInvocationNameNode.getIdentifier() : null);
 		
-		if (functionName.isEmpty()) {
+		for (Object object : functionInvocation.arguments()) {
+			Expression expression = (Expression) object;
+			expression.accept(this);
+		}
+		
+		if (functionInvocation.getExpression() != null) {
+			functionInvocation.getExpression().accept(this);
+		}
+		
+		if (functionName == null) {
 			// Do nothing
 		}
 		else if (functionName.equals("getElementById")) {
@@ -331,28 +321,40 @@ public class JavascriptVisitor extends ASTVisitor {
 			}
 		}
 		else if (!isJavascriptKeyword(functionName)) {
-			// Add a JsFunctionCall reference
-			JsFunctionCall jsFunctionCall = new JsFunctionCall(functionName, getLocation(functionNameNode));
+			// Add a JsFunctionCall
+			JsFunctionCall jsFunctionCall = new JsFunctionCall(functionName, getLocation(functionInvocationNameNode));
 			addReference(jsFunctionCall);
+			
+			FunctionDeclaration functionDeclaration = env.getFunction(functionName);
+			if (functionDeclaration != null) {
+				SimpleName functionDeclarationNameNode = functionDeclaration.getName();
+
+				// Add a JsFunctionDecl every time a function is called (to address the calling-context problem in program slicing)
+				JsFunctionDecl jsFunctionDecl = new JsFunctionDecl(functionName, getLocation(functionDeclarationNameNode));
+				addReference(jsFunctionDecl);
+				
+				/*
+				 * Record data flows
+				 */
+				env.setCurrentFunction(jsFunctionDecl);
+				dataFlowManager.addDataFlow(jsFunctionDecl, jsFunctionCall);
+				
+				// Execute the function
+				executeFunction(functionDeclaration);
+			}
 		}
-		
-		for (Object object : functionInvocation.arguments()) {
-			Expression expression = (Expression) object;
-			expression.accept(this);
-		}
-		
-		if (functionInvocation.getExpression() != null) {
-			functionInvocation.getExpression().accept(this);
-		}
-		
-		/*
-		 * Record data flows
-		 */
-		// Currently, connecting JavaScript functions is done by DataFlowManager
-		// since a function declaration and a function invocation may appear in different code fragments.
-		// @see edu.iastate.analysis.references.detection.DataFlowManager.resolveDataFlowsWithinJavaScriptCode(ArrayList<Reference>, HashMap<String, ArrayList<Reference>>)
 		
 		return false;
+	}
+	
+	private void executeFunction(FunctionDeclaration functionDeclaration) {
+		for (Object object : functionDeclaration.parameters()) {
+			SingleVariableDeclaration singleVariableDeclaration = (SingleVariableDeclaration) object;
+			singleVariableDeclaration.accept(this);
+		}
+		
+		if (functionDeclaration.getBody() != null)
+			functionDeclaration.getBody().accept(this);
 	}
 	
 	/**
@@ -523,6 +525,8 @@ public class JavascriptVisitor extends ASTVisitor {
 		
 		private JsFunctionDecl currentFunction;
 		
+		private HashMap<String, FunctionDeclaration> functionMap;
+		
 		private HashMap<String, JsVariable> variableTable;	// Specific to each Env
 		
 		private HashMap<JsVariable, HashSet<JsVariableDecl>> declMap; // Specific to each Env
@@ -535,6 +539,7 @@ public class JavascriptVisitor extends ASTVisitor {
 		public Env() {
 			this.outerScopeEnv = null;
 			this.currentFunction = null;
+			this.functionMap = new HashMap<String, FunctionDeclaration>();
 			this.variableTable = new HashMap<String, JsVariable>();
 			this.declMap = new HashMap<JsVariable, HashSet<JsVariableDecl>>();
 			this.refMap = new HashMap<ASTNode, JsVariableRef>();
@@ -547,6 +552,7 @@ public class JavascriptVisitor extends ASTVisitor {
 		public Env(Env outerScopeEnv) {
 			this.outerScopeEnv = outerScopeEnv;
 			this.currentFunction = outerScopeEnv.currentFunction;
+			this.functionMap = outerScopeEnv.functionMap;
 			this.variableTable = new HashMap<String, JsVariable>();
 			this.declMap = new HashMap<JsVariable, HashSet<JsVariableDecl>>();
 			this.refMap = outerScopeEnv.refMap;
@@ -562,6 +568,14 @@ public class JavascriptVisitor extends ASTVisitor {
 		
 		public JsFunctionDecl getCurrentFunction() {
 			return currentFunction;
+		}
+		
+		public void putFunction(String functionName, FunctionDeclaration functionDeclaration) {
+			functionMap.put(functionName, functionDeclaration);
+		}
+		
+		public FunctionDeclaration getFunction(String functionName) {
+			return functionMap.get(functionName);
 		}
 		
 		/*
