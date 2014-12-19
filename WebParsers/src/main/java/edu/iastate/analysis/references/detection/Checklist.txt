@@ -1,6 +1,0 @@
-HtmlVisitor				OK
-JavascriptVisitor		OK
-PhpVisitor				OK		
-XmlReadWrite			OK
-ReferenceDetector		OK
-FindReferencesInFile	OK

@@ -1,6 +1,6 @@
 OK				edu.iastate.analysis.config
 OK				edu.iastate.analysis.references
-PENDING			edu.iastate.analysis.references.detection
+OK				edu.iastate.analysis.references.detection
 OK				edu.iastate.parsers.conditional
 OK				edu.iastate.parsers.html.core
 OK				edu.iastate.parsers.html.dom.nodes

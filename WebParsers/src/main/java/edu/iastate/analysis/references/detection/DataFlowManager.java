@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import edu.iastate.analysis.references.DeclaringReference;
 import edu.iastate.analysis.references.HtmlDeclOfHtmlInputValue;
@@ -33,10 +34,10 @@ public class DataFlowManager {
 	
 	// List of references that have data flow from a given reference.
 	// e.g., $y = $z, $x = $y  =>  The data flow is $z -> $y -> $x
-	private HashMap<Reference, ArrayList<Reference>> dataFlowFrom = new HashMap<Reference, ArrayList<Reference>>();
+	private HashMap<Reference, LinkedList<Reference>> dataFlowFrom = new HashMap<Reference, LinkedList<Reference>>();
 	
 	// List of references that have data flow to a given reference.
-	private HashMap<Reference, ArrayList<Reference>> dataFlowTo = new HashMap<Reference, ArrayList<Reference>>();
+	private HashMap<Reference, LinkedList<Reference>> dataFlowTo = new HashMap<Reference, LinkedList<Reference>>();
 	
 	/**
 	 * Constructor
@@ -82,11 +83,11 @@ public class DataFlowManager {
 	
 	private void addDataFlow_(Reference ref1, Reference ref2) {
 		if (!dataFlowFrom.containsKey(ref1))
-			dataFlowFrom.put(ref1, new ArrayList<Reference>());
+			dataFlowFrom.put(ref1, new LinkedList<Reference>());
 		dataFlowFrom.get(ref1).add(ref2);
 		
 		if (!dataFlowTo.containsKey(ref2))
-			dataFlowTo.put(ref2, new ArrayList<Reference>());
+			dataFlowTo.put(ref2, new LinkedList<Reference>());
 		dataFlowTo.get(ref2).add(ref1);
 	}
 	
@@ -266,22 +267,12 @@ public class DataFlowManager {
 			 * Connect JsDeclOfHtmlInputValue and PhpRefToHtml
 			 */
 			else if (ref1 instanceof JsDeclOfHtmlInputValue) {
-				JsDeclOfHtmlInputValue inputValue = (JsDeclOfHtmlInputValue) ref1;
-				JsRefToHtmlInput input = inputValue.getJsRefToHtmlInput();
-				JsRefToHtmlForm form = input.getJsRefToHtmlForm();
-				String inputName = input.getName();
-
-				HashSet<String> submitToPages = new HashSet<String>();
-				for (Reference ref3 : getDataFlowTo(form)) {
-					HtmlFormDecl formDecl = (HtmlFormDecl) ref3;
-					submitToPages.add(getApproxSubmitToPage(formDecl));
-				}
+				HashSet<String> submitToPages = getApproxSubmitToPages((JsDeclOfHtmlInputValue) ref1);
+				String inputName = ((JsDeclOfHtmlInputValue) ref1).getJsRefToHtmlInput().getName();
 				
-				for (String submitToPage : submitToPages) {
-					for (Reference ref2 : referenceNameMap.get(inputName)) {
-						if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
-							addDataFlow((DeclaringReference) ref1, (RegularReference) ref2);
-					}
+				for (Reference ref2 : referenceNameMap.get(inputName)) {
+					if (ref2 instanceof PhpRefToHtml && matchSubmitToPagesToEntryFile(submitToPages, ref2.getEntryFile()))
+						addDataFlow((DeclaringReference) ref1, (RegularReference) ref2);
 				}
 			}
 		}
@@ -330,12 +321,38 @@ public class DataFlowManager {
 		return submitToPage;
 	}
 	
+	private HashSet<String> getApproxSubmitToPages(JsDeclOfHtmlInputValue inputValue) {
+		JsRefToHtmlForm form = inputValue.getJsRefToHtmlInput().getJsRefToHtmlForm();
+		HashSet<String> submitToPages = new HashSet<String>();
+		
+		for (Reference ref : getDataFlowTo(form)) {
+			HtmlFormDecl formDecl = (HtmlFormDecl) ref;
+			submitToPages.add(getApproxSubmitToPage(formDecl));
+		}
+		
+		if (submitToPages.isEmpty())
+			submitToPages.add(inputValue.getEntryFile().getName());
+		
+		return submitToPages;
+	}
+	
 	/**
 	 * Returns true if the submitToPage matches the entryFile
 	 */
 	private static boolean matchSubmitToPageToEntryFile(String submitToPage, File entryFile) {
 		// TODO Revise this code
 		return entryFile.getAbsolutePath().endsWith(submitToPage);
+	}
+	
+	/**
+	 * Returns true if one of the submitToPages matches the entryFile
+	 */
+	private static boolean matchSubmitToPagesToEntryFile(HashSet<String> submitToPages, File entryFile) {
+		for (String submitToPage : submitToPages) {
+			if (matchSubmitToPageToEntryFile(submitToPage, entryFile))
+				return true;
+		}
+		return false;
 	}
 	
 }

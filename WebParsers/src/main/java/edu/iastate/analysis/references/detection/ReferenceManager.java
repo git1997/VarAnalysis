@@ -3,7 +3,8 @@ package edu.iastate.analysis.references.detection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
+
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByName;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByPosition;
@@ -16,10 +17,7 @@ import edu.iastate.analysis.references.Reference.ReferenceComparatorByType;
  */
 public class ReferenceManager {
 	
-	/**
-	 * Maps a location to a set of references
-	 */
-	private HashMap<String, HashSet<Reference>> map;
+	private LinkedList<Reference> references;
 	
 	/**
 	 * [Optional] Manages data flows
@@ -30,7 +28,7 @@ public class ReferenceManager {
 	 * Constructor
 	 */
 	public ReferenceManager() {
-		map = new HashMap<String, HashSet<Reference>>();
+		references = new LinkedList<Reference>();
 		dataFlowManager = new DataFlowManager(this);
 	}
 	
@@ -46,22 +44,14 @@ public class ReferenceManager {
 	 * Adds a reference
 	 */
 	public void addReference(Reference reference) {
-		String location = reference.getStartPosition().toString();
-		
-		if (!map.containsKey(reference))
-			map.put(location, new HashSet<Reference>());
-		
-		map.get(location).add(reference); 
+		references.add(reference); 
 	}
 	
 	/**
 	 * Gets references
 	 */
 	public ArrayList<Reference> getReferenceList() {
-		ArrayList<Reference> references = new ArrayList<Reference>();
-		for (HashSet<Reference> refs : map.values())
-			references.addAll(refs);
-		return references;
+		return new ArrayList<Reference>(references);
 	}
 	
 	/**
