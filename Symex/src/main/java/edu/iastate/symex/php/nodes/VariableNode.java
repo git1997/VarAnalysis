@@ -73,8 +73,7 @@ public class VariableNode extends VariableBaseNode {
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
 		PhpVariable phpVariable = env.getVariable(variableName);
-		if (phpVariable != null)
-			WebAnalysis.onVariableExecute((Variable) this.getAstNode(), phpVariable, env);
+		WebAnalysis.onVariableExecute((Variable) this.getAstNode(), phpVariable, env); // phpVariable could be null
 		// END OF WEB ANALYSIS CODE
 		
 		DataNode variableValue = env.readVariable(variableName);

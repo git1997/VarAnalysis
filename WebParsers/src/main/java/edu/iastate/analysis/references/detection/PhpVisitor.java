@@ -129,8 +129,10 @@ public class PhpVisitor implements IEntityDetectionListener {
 		 * Record data flows
 		 */
 		helperEnv.putVariableRef(variableNode, phpVariableRef);
-		HashSet<PhpVariableDecl> phpVariableDecls = helperEnv.getVariableDecls(phpVariable);
-		dataFlowManager.addDataFlow(new HashSet<DeclaringReference>(phpVariableDecls), phpVariableRef);
+		if (phpVariable != null) {
+			HashSet<PhpVariableDecl> phpVariableDecls = helperEnv.getVariableDecls(phpVariable);
+			dataFlowManager.addDataFlow(new HashSet<DeclaringReference>(phpVariableDecls), phpVariableRef);
+		}
 	}
 	
 	/*
