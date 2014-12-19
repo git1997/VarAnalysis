@@ -57,11 +57,11 @@ public class ReferenceManager {
 	/**
 	 * Returns references as a map of reference names to speed up searching 
 	 */
-	public HashMap<String, ArrayList<Reference>> getReferenceListByName() {
-		HashMap<String, ArrayList<Reference>> map = new HashMap<String, ArrayList<Reference>>(); 
+	public HashMap<String, LinkedList<Reference>> getReferenceListByName() {
+		HashMap<String, LinkedList<Reference>> map = new HashMap<String, LinkedList<Reference>>(); 
 		for (Reference reference : getReferenceList()) {
 			if (!map.containsKey(reference.getName()))
-				map.put(reference.getName(), new ArrayList<Reference>());
+				map.put(reference.getName(), new LinkedList<Reference>());
 			map.get(reference.getName()).add(reference);
 		}
 		return map;

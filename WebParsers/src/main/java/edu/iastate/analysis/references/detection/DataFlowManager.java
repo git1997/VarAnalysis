@@ -124,7 +124,7 @@ public class DataFlowManager {
 	 */
 	public void resolveDataFlows() {
 		ArrayList<Reference> referenceList = referenceManager.getReferenceList();
-		HashMap<String, ArrayList<Reference>> referenceNameMap = referenceManager.getReferenceListByName(); // Use a map of reference names to speed up searching
+		HashMap<String, LinkedList<Reference>> referenceNameMap = referenceManager.getReferenceListByName(); // Use a map of reference names to speed up searching
 		
 		resolveDataFlowsWithinServerCode(referenceList, referenceNameMap);
 		resolveDataFlowsWithinClientCode(referenceList, referenceNameMap);
@@ -135,14 +135,14 @@ public class DataFlowManager {
 	/**
 	 * Resolves data flows within the server code
 	 */
-	private void resolveDataFlowsWithinServerCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsWithinServerCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
 		// Data flows within and across PHP and SQL has been automatically resolved during symbolic execution.
 	}
 	
 	/**
 	 * Resolves data flows within the client code
 	 */
-	private void resolveDataFlowsWithinClientCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsWithinClientCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
 		// No data flow within HTML
 		resolveDataFlowsWithinJavaScriptCode(referenceList, referenceNameMap);
 		resolveDataFlowsFromHtmlToJavaScript(referenceList, referenceNameMap);
@@ -152,7 +152,7 @@ public class DataFlowManager {
 	/**
 	 * Resolves data flows within JavaScript code
 	 */
-	private void resolveDataFlowsWithinJavaScriptCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsWithinJavaScriptCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
 		// NOTE: The data flows within each JavaScript code fragment have been resolved but those across the fragments are not yet resolved.
 		// Therefore, we connect them here. This method should not reconnect data flows within each JavaScript code fragment.
 		
@@ -176,7 +176,7 @@ public class DataFlowManager {
 	/**
 	 * Resolves data flows from HTML to JavaScript
 	 */
-	private void resolveDataFlowsFromHtmlToJavaScript(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsFromHtmlToJavaScript(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
 		for (Reference ref1 : referenceList) {
 			String name = ref1.getName();
 			
@@ -226,21 +226,57 @@ public class DataFlowManager {
 	/**
 	 * Resolves data flows from JavaScript to HTML
 	 */
-	private void resolveDataFlowsFromJavaScriptToHtml(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsFromJavaScriptToHtml(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
 		// TODO Handle aliasing between HtmlDeclOfHtmlInputValue and JsDeclOfHtmlInputValue.
 	}
 		
 	/**
 	 * Resolves data flows from the server code and the client code
 	 */
-	private void resolveDataFlowsFromServerCodeToClientCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
-		// TODO Handle generation-and-information-flow here.
+	private void resolveDataFlowsFromServerCodeToClientCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
+//		// TODO Handle generation-and-information-flow here.
+//		(new HtmlNodeVisitor() {
+//			public void visitElement(HtmlElement htmlElement) {
+//				super.visitElement(htmlElement);
+//				
+//				HtmlAttributeValue name = htmlElement.getAttributeValue("name");
+//				if (name != null) {
+//					Reference reference = findReferenceAtPosition(name.getLocation().getStartPosition());
+//					
+//					// TODO At this point, reference should be either null or a DeclaringReference,
+//					// However, when running on a real system, we encountered a case where reference is a RegularReference,
+//					// but we haven't debugged it yet.
+//					if (reference instanceof DeclaringReference) {
+//						HtmlAttribute valueAttribute = null;
+//						HtmlAttribute attributeAfterValue = null;
+//						
+//						ArrayList<HtmlAttribute> attributes = htmlElement.getAttributes();
+//						for (int i = 0; i < attributes.size(); i++)
+//							if (attributes.get(i).getName().equals("value")) {
+//								valueAttribute = attributes.get(i);
+//								if (i < attributes.size() - 1)
+//									attributeAfterValue = attributes.get(i + 1);
+//								break;
+//							}
+//						
+//						if (valueAttribute != null) {
+//							Position pos1 = valueAttribute.getLocation().getEndPosition();
+//							Position pos2 = attributeAfterValue != null ? attributeAfterValue.getLocation().getStartPosition() : null;
+//							int length = pos2 != null && pos2.getFile().equals(pos1.getFile()) && pos2.getOffset() > pos1.getOffset() ? pos2.getOffset() - pos1.getOffset() : 10;
+//							
+//							PositionRange range = new Range(pos1.getFile(), pos1.getOffset(), length);
+//							dataFlowManager.putMapDeclToRefLocations((DeclaringReference) reference, range);
+//						}
+//					}
+//				}
+//			}
+//		}).visitDocument(htmlDocument);
 	}
 	
 	/**
 	 * Resolves data flows from the client code to the server code
 	 */
-	private void resolveDataFlowsFromClientCodeToServerCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsFromClientCodeToServerCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
 		// TODO Should we create a pseudo node to serve as the transit point of values from client code to server code?
 		// That would reduce the number of edges crossing the two sides.
 		

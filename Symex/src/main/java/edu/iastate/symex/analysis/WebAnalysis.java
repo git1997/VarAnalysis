@@ -12,6 +12,7 @@ import org.eclipse.php.internal.core.ast.nodes.Variable;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.php.nodes.ArrayAccessNode;
 
 /**
@@ -110,14 +111,14 @@ public class WebAnalysis {
 		if (entityDetectionListener != null)
 			return entityDetectionListener.onMysqlQuery(functionInvocation, argumentValue, env);
 		else
-			return null;
+			return DataNodeFactory.createSymbolicNode();
 	}
 	
 	public static DataNode onMysqlFetchArray(FunctionInvocation functionInvocation, DataNode argumentValue, Env env) {
 		if (entityDetectionListener != null)
 			return entityDetectionListener.onMysqlFetchArray(functionInvocation, argumentValue, env);
 		else
-			return null;
+			return DataNodeFactory.createSymbolicNode();
 	}
 	
 	public static void onTrueBranchExecutionStarted(Env env) {
