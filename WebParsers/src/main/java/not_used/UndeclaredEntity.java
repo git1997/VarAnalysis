@@ -1,4 +1,4 @@
-package deprecated.entities;
+package not_used;
 
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.Position;

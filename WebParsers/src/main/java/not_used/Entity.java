@@ -1,4 +1,4 @@
- package deprecated.entities;
+ package not_used;
 
 import java.util.ArrayList;
 import java.util.Comparator;

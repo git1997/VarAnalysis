@@ -9,4 +9,3 @@ OK				edu.iastate.parsers.html.htmlparser
 OK				edu.iastate.parsers.html.run
 OK				edu.iastate.parsers.html.sax.nodes
 PENDING			edu.iastate.webslice.core
-PENDING			edu.iastate.webslice.evaluation

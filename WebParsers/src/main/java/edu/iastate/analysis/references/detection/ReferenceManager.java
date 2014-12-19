@@ -17,7 +17,7 @@ import edu.iastate.analysis.references.Reference.ReferenceComparatorByType;
  */
 public class ReferenceManager {
 	
-	private LinkedList<Reference> references;
+	private LinkedList<Reference> references;	// List of references (should not contain duplicates)
 	
 	/**
 	 * [Optional] Manages data flows

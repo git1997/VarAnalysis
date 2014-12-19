@@ -32,11 +32,11 @@ public class DataFlowManager {
 	
 	private ReferenceManager referenceManager;
 	
-	// List of references that have data flow from a given reference.
+	// List of references that have data flow from a given reference (should not contain duplicates)
 	// e.g., $y = $z, $x = $y  =>  The data flow is $z -> $y -> $x
 	private HashMap<Reference, LinkedList<Reference>> dataFlowFrom = new HashMap<Reference, LinkedList<Reference>>();
 	
-	// List of references that have data flow to a given reference.
+	// List of references that have data flow to a given reference (should not contain duplicates)
 	private HashMap<Reference, LinkedList<Reference>> dataFlowTo = new HashMap<Reference, LinkedList<Reference>>();
 	
 	/**
