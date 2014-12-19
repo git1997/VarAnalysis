@@ -11,6 +11,7 @@ import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.nodes.ArrayAccess;
 import org.eclipse.php.internal.core.ast.nodes.Assignment;
 import org.eclipse.php.internal.core.ast.nodes.Expression;
+import org.eclipse.php.internal.core.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 import org.eclipse.php.internal.core.ast.nodes.Identifier;
@@ -285,6 +286,22 @@ public class PhpVisitor implements IEntityDetectionListener {
 				dataFlowManager.addDataFlow(phpFunctionDecl, phpFunctionCall);
 			}
 		}
+		
+		helperEnv = new HelperEnv(helperEnv);
+	}
+	
+	@Override
+	public void onFunctionInvocationParameterPassing(FormalParameter parameter, PhpVariable phpVariable, Expression argument, Env env) {
+		// Add a PhpVariableDecl
+		PhpVariableDecl phpVariableDecl = new PhpVariableDecl(parameter.getParameterNameIdentifier().getName(), getLocation(parameter));
+		addReference(phpVariableDecl, env);
+		
+		/*
+		 * Record data flows
+		 */
+		helperEnv.putVariableDecls(phpVariable, phpVariableDecl);
+		HashSet<PhpVariableRef> phpVariableRefs = helperEnv.getVariableRefs(argument);
+		dataFlowManager.addDataFlow(new HashSet<RegularReference>(phpVariableRefs), phpVariableDecl);
 	}
 	
 	@Override
@@ -296,6 +313,17 @@ public class PhpVisitor implements IEntityDetectionListener {
 		if (phpFunctionDecl != null) {
 			dataFlowManager.addDataFlow(new HashSet<RegularReference>(helperEnv.getVariableRefs(returnStatement)), phpFunctionDecl);
 		}
+	}
+	
+	@Override
+	public void onFunctionInvocationFinished(HashSet<PhpVariable> nonLocalDirtyVariablesInFunction, Env env) {
+		HelperEnv funcEnv = helperEnv;
+		helperEnv = helperEnv.getOuterScopeEnv();
+		
+		/*
+		 * Record data flows
+		 */
+		helperEnv.updateAfterFunctionExecution(nonLocalDirtyVariablesInFunction, funcEnv);
 	}
 
 	/*
@@ -522,6 +550,18 @@ public class PhpVisitor implements IEntityDetectionListener {
 				phpVariableDecls.addAll(falseBranchEnv.getVariableDecls(dirtyVariable));
 				
 				this.putVariableDecls(dirtyVariable, phpVariableDecls);
+			}
+		}
+		
+		/**
+		 * Updates env after executing a function
+		 */
+		public void updateAfterFunctionExecution(HashSet<PhpVariable> nonLocalDirtyVariablesInFunction, HelperEnv funcEnv) {
+			for (PhpVariable dirtyVariable : nonLocalDirtyVariablesInFunction) {
+				/*
+				 * Record data flows
+				 */
+				this.putVariableDecls(dirtyVariable, funcEnv.getVariableDecls(dirtyVariable));
 			}
 		}
 		

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-
 import org.eclipse.wst.jsdt.core.dom.ASTNode;
 import org.eclipse.wst.jsdt.core.dom.ASTVisitor;
 import org.eclipse.wst.jsdt.core.dom.Assignment;
@@ -348,6 +347,9 @@ public class JavascriptVisitor extends ASTVisitor {
 	}
 	
 	private void executeFunction(FunctionDeclaration functionDeclaration) {
+		env = new Env(env);
+		
+		// TODO Handle parameter passing as in PHP
 		for (Object object : functionDeclaration.parameters()) {
 			SingleVariableDeclaration singleVariableDeclaration = (SingleVariableDeclaration) object;
 			singleVariableDeclaration.accept(this);
@@ -355,6 +357,14 @@ public class JavascriptVisitor extends ASTVisitor {
 		
 		if (functionDeclaration.getBody() != null)
 			functionDeclaration.getBody().accept(this);
+		
+		Env funcEnv = env;
+		env = env.getOuterScopeEnv();
+		
+		/*
+		 * Record data flows
+		 */
+		env.updateAfterFunctionExecution(funcEnv);
 	}
 	
 	/**
@@ -559,6 +569,14 @@ public class JavascriptVisitor extends ASTVisitor {
 		}
 		
 		/*
+		 * MANAGE SCOPES
+		 */
+		
+		public Env getOuterScopeEnv() {
+			return outerScopeEnv;
+		}
+		
+		/*
 		 * MANAGE FUNCTIONS
 		 */
 		
@@ -732,6 +750,23 @@ public class JavascriptVisitor extends ASTVisitor {
 					jsVariableDecls.addAll(env2.getVariableDecls(jsVariable2));
 				
 				this.putVariableDecls(jsVariable, jsVariableDecls);
+			}
+		}
+		
+		/**
+		 * Updates env after executing a function
+		 */
+		public void updateAfterFunctionExecution(Env funcEnv) {
+			// TODO This set should contain nonLocalDirtyVariables as in PHP.
+			// However we use an approximtation for now.
+			HashSet<JsVariable> nonLocalDirtyVariablesInFunction;
+			nonLocalDirtyVariablesInFunction = new HashSet<JsVariable>(funcEnv.variableTable.values());
+			
+			for (JsVariable dirtyVariable : nonLocalDirtyVariablesInFunction) {
+				/*
+				 * Record data flows
+				 */
+				this.putVariableDecls(dirtyVariable, funcEnv.getVariableDecls(dirtyVariable));
 			}
 		}
 		
