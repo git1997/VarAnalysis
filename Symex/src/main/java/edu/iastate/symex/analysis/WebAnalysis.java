@@ -14,7 +14,6 @@ import org.eclipse.php.internal.core.ast.nodes.Variable;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.php.nodes.ArrayAccessNode;
 
 /**
@@ -24,7 +23,7 @@ import edu.iastate.symex.php.nodes.ArrayAccessNode;
  */
 public class WebAnalysis {
 	
-	public static IEntityDetectionListener entityDetectionListener = null;
+	public static IEntityDetectionListener entityDetectionListener = null; // Usage of this interface must check for null before calling
 	
 	/*
 	 * Interfaces
@@ -84,72 +83,55 @@ public class WebAnalysis {
 	 */
 	
 	public static void onAssignmentExecute(Assignment assignment, PhpVariable phpVariableDecl, Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onAssignmentExecute(assignment, phpVariableDecl, env);
+		entityDetectionListener.onAssignmentExecute(assignment, phpVariableDecl, env);
 	}
 	
 	public static void onVariableExecute(Variable variable, PhpVariable phpVariable, Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onVariableExecute(variable, phpVariable, env);
+		entityDetectionListener.onVariableExecute(variable, phpVariable, env);
 	}
 	
 	public static void onArrayAccessExecute(ArrayAccess arrayAccess, ArrayAccessNode arrayAccessNode, DataNode arrayNode, DataNode keyNode, Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onArrayAccessExecute(arrayAccess, arrayAccessNode, arrayNode, keyNode, env);
+		entityDetectionListener.onArrayAccessExecute(arrayAccess, arrayAccessNode, arrayNode, keyNode, env);
 	}
 	
 	public static void onFunctionDeclarationExecute(FunctionDeclaration functionDeclaration, Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onFunctionDeclarationExecute(functionDeclaration, env);
+		entityDetectionListener.onFunctionDeclarationExecute(functionDeclaration, env);
 	}
 	
 	public static void onFunctionInvocationExecute(FunctionInvocation functionInvocation, Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onFunctionInvocationExecute(functionInvocation, env);
+		entityDetectionListener.onFunctionInvocationExecute(functionInvocation, env);
 	}
 	
 	public static void onFunctionInvocationParameterPassing(FormalParameter parameter, PhpVariable phpVariable, Expression argument, Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onFunctionInvocationParameterPassing(parameter, phpVariable, argument, env);
+		entityDetectionListener.onFunctionInvocationParameterPassing(parameter, phpVariable, argument, env);
 	}
 	
 	public static void onReturnStatementExecute(ReturnStatement returnStatement, Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onReturnStatementExecute(returnStatement, env);
+		entityDetectionListener.onReturnStatementExecute(returnStatement, env);
 	}
 	
 	public static void onFunctionInvocationFinished(HashSet<PhpVariable> nonLocalDirtyVariablesInFunction, Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onFunctionInvocationFinished(nonLocalDirtyVariablesInFunction, env);
+		entityDetectionListener.onFunctionInvocationFinished(nonLocalDirtyVariablesInFunction, env);
 	}
 	
 	public static DataNode onMysqlQuery(FunctionInvocation functionInvocation, DataNode argumentValue, Env env) {
-		if (entityDetectionListener != null)
-			return entityDetectionListener.onMysqlQuery(functionInvocation, argumentValue, env);
-		else
-			return DataNodeFactory.createSymbolicNode();
+		return entityDetectionListener.onMysqlQuery(functionInvocation, argumentValue, env);
 	}
 	
 	public static DataNode onMysqlFetchArray(FunctionInvocation functionInvocation, DataNode argumentValue, Env env) {
-		if (entityDetectionListener != null)
-			return entityDetectionListener.onMysqlFetchArray(functionInvocation, argumentValue, env);
-		else
-			return DataNodeFactory.createSymbolicNode();
+		return entityDetectionListener.onMysqlFetchArray(functionInvocation, argumentValue, env);
 	}
 	
 	public static void onTrueBranchExecutionStarted(Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onTrueBranchExecutionStarted(env);
+		entityDetectionListener.onTrueBranchExecutionStarted(env);
 	}
 	
 	public static void onFalseBranchExecutionStarted(Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onFalseBranchExecutionStarted(env);
+		entityDetectionListener.onFalseBranchExecutionStarted(env);
 	}
 	
 	public static void onBothBranchesExecutionFinished(HashSet<PhpVariable> dirtyVariablesInTrueBranch, HashSet<PhpVariable> dirtyVariablesInFalseBranch, Env env) {
-		if (entityDetectionListener != null)
-			entityDetectionListener.onBothBranchesExecutionFinished(dirtyVariablesInTrueBranch, dirtyVariablesInFalseBranch, env);
+		entityDetectionListener.onBothBranchesExecutionFinished(dirtyVariablesInTrueBranch, dirtyVariablesInFalseBranch, env);
 	}
 
 }

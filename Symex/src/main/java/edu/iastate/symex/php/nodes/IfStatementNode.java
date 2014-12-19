@@ -106,7 +106,8 @@ public class IfStatementNode extends StatementNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onTrueBranchExecutionStarted(env);
+		if (WebAnalysis.entityDetectionListener != null)
+			WebAnalysis.onTrueBranchExecutionStarted(env);
 		// END OF WEB ANALYSIS CODE
 		
 		if (trueStatement != null) {
@@ -119,7 +120,8 @@ public class IfStatementNode extends StatementNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onFalseBranchExecutionStarted(env);
+		if (WebAnalysis.entityDetectionListener != null)
+			WebAnalysis.onFalseBranchExecutionStarted(env);
 		// END OF WEB ANALYSIS CODE
 		
 		if (falseStatement != null) {
@@ -135,7 +137,8 @@ public class IfStatementNode extends StatementNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onBothBranchesExecutionFinished(new HashSet<PhpVariable>(dirtyValuesInTrueBranch.keySet()), new HashSet<PhpVariable>(dirtyValuesInFalseBranch.keySet()), env);
+		if (WebAnalysis.entityDetectionListener != null)
+			WebAnalysis.onBothBranchesExecutionFinished(new HashSet<PhpVariable>(dirtyValuesInTrueBranch.keySet()), new HashSet<PhpVariable>(dirtyValuesInFalseBranch.keySet()), env);
 		// END OF WEB ANALYSIS CODE
 		
 		return DataNodeFactory.createCompactSelectNode(constraint, trueBranchRetValue, falseBranchRetValue);		

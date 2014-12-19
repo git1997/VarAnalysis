@@ -147,7 +147,8 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onFunctionInvocationExecute((FunctionInvocation) this.getAstNode(), env);
+		if (WebAnalysis.entityDetectionListener != null)
+			WebAnalysis.onFunctionInvocationExecute((FunctionInvocation) this.getAstNode(), env);
 		// END OF WEB ANALYSIS CODE
 					
 		// Set up a new scope
@@ -188,7 +189,8 @@ public class FunctionInvocationNode extends VariableBaseNode {
 						 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 						 */
 						// BEGIN OF WEB ANALYSIS CODE
-						WebAnalysis.onFunctionInvocationParameterPassing((FormalParameter) parameter.getAstNode(), phpVariable, (Expression) arguments.get(parameterIndex).getAstNode(), env);
+						if (WebAnalysis.entityDetectionListener != null)
+							WebAnalysis.onFunctionInvocationParameterPassing((FormalParameter) parameter.getAstNode(), phpVariable, (Expression) arguments.get(parameterIndex).getAstNode(), env);
 						// END OF WEB ANALYSIS CODE
 						
 						continue;

@@ -37,7 +37,8 @@ public class ReturnStatementNode extends StatementNode {
 			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 			 */
 			// BEGIN OF WEB ANALYSIS CODE
-			WebAnalysis.onReturnStatementExecute((ReturnStatement) this.getAstNode(), env);
+			if (WebAnalysis.entityDetectionListener != null)
+				WebAnalysis.onReturnStatementExecute((ReturnStatement) this.getAstNode(), env);
 			// END OF WEB ANALYSIS CODE
 		}		
 		return SpecialNode.ControlNode.RETURN;

@@ -736,7 +736,8 @@ public abstract class Env {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		WebAnalysis.onFunctionInvocationFinished(nonLocalDirtyVarsInFunction, this);
+		if (WebAnalysis.entityDetectionListener != null)
+			WebAnalysis.onFunctionInvocationFinished(nonLocalDirtyVarsInFunction, this);
 		// END OF WEB ANALYSIS CODE
 	}
 	
