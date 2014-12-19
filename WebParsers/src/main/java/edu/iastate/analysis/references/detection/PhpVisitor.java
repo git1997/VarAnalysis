@@ -435,13 +435,12 @@ public class PhpVisitor implements IEntityDetectionListener {
 		}
 		
 		public HashSet<PhpVariableDecl> getVariableDecls(PhpVariable phpVariable) {
-			HelperEnv env = this;
-			while (env != null) {
-				if (declMap.containsKey(phpVariable))
-					return new HashSet<PhpVariableDecl>(declMap.get(phpVariable));
-				env = env.outerScopeEnv;
-			}
-			return new HashSet<PhpVariableDecl>();
+			if (declMap.containsKey(phpVariable))
+				return new HashSet<PhpVariableDecl>(declMap.get(phpVariable));
+			else if (outerScopeEnv != null)
+				return outerScopeEnv.getVariableDecls(phpVariable);
+			else
+				return new HashSet<PhpVariableDecl>();
 		}
 		
 		/*

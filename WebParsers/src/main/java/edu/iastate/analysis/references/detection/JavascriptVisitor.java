@@ -600,14 +600,13 @@ public class JavascriptVisitor extends ASTVisitor {
 		 * Gets a variable from the env.
 		 */
 		public JsVariable getVariable(String name) {
-			Env env = this;
-			while (env != null) {
-				JsVariable jsVariable = getVariableFromCurrentScope(name);
-				if (jsVariable != null)
-					return jsVariable;
-				env = env.outerScopeEnv;
-			}
-			return null;
+			JsVariable jsVariable = getVariableFromCurrentScope(name);
+			if (jsVariable != null)
+				return jsVariable;
+			else if (outerScopeEnv != null)
+				return outerScopeEnv.getVariable(name);
+			else
+				return null;
 		}
 		
 		/**
@@ -636,13 +635,12 @@ public class JavascriptVisitor extends ASTVisitor {
 		}
 		
 		public HashSet<JsVariableDecl> getVariableDecls(JsVariable jsVariable) {
-			Env env = this;
-			while (env != null) {
-				if (declMap.containsKey(jsVariable))
-					return new HashSet<JsVariableDecl>(declMap.get(jsVariable));
-				env = env.outerScopeEnv;
-			}
-			return new HashSet<JsVariableDecl>();
+			if (declMap.containsKey(jsVariable))
+				return new HashSet<JsVariableDecl>(declMap.get(jsVariable));
+			else if (outerScopeEnv != null)
+				return outerScopeEnv.getVariableDecls(jsVariable);
+			else
+				return new HashSet<JsVariableDecl>();
 		}
 		
 		/*
