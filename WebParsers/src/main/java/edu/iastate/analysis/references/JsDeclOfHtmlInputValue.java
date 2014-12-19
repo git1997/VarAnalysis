@@ -16,4 +16,8 @@ public class JsDeclOfHtmlInputValue extends JsObjectFieldDecl {
 		super(name, location, jsRefToHtmlInput);
 	}
 	
+	public JsRefToHtmlInput getJsRefToHtmlInput() {
+		return (JsRefToHtmlInput) object;
+	}
+	
 }

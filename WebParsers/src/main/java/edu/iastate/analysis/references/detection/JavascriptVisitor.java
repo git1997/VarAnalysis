@@ -345,6 +345,13 @@ public class JavascriptVisitor extends ASTVisitor {
 			functionInvocation.getExpression().accept(this);
 		}
 		
+		/*
+		 * Record data flows
+		 */
+		// Currently, connecting JavaScript functions is done by DataFlowManager
+		// since a function declaration and a function invocation may appear in different code fragments.
+		// @see edu.iastate.analysis.references.detection.DataFlowManager.resolveDataFlowsWithinJavaScriptCode(ArrayList<Reference>, HashMap<String, ArrayList<Reference>>)
+		
 		return false;
 	}
 	

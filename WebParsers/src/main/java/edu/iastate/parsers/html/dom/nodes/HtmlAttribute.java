@@ -104,6 +104,14 @@ public class HtmlAttribute extends HtmlNode {
 	}
 	
 	/**
+	 * Returns true if the attribute is a "value".
+	 * E.g. <input name="my_input" value="0">
+	 */
+	public boolean isValueAttribute() {
+		return getName().equals("value");
+	}
+	
+	/**
 	 * Returns true if the attribute contains Javascript code.
 	 * E.g. <body onload="sayHello()">
 	 */

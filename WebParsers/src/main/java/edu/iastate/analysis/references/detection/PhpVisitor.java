@@ -273,6 +273,14 @@ public class PhpVisitor implements IEntityDetectionListener {
 			// Add a PhpFunctionCall reference
 			PhpFunctionCall phpFunctionCall = new PhpFunctionCall(functionName, getLocation(functionNameNode));
 			addReference(phpFunctionCall, env);
+			
+			/*
+			 * Record data flows
+			 */
+			PhpFunctionDecl phpFunctionDecl = helperEnv.getFunction(functionName);
+			if (phpFunctionDecl != null) {
+				dataFlowManager.addDataFlow(phpFunctionDecl, phpFunctionCall);
+			}
 		}
 	}
 	

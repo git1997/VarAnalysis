@@ -8,9 +8,22 @@ import edu.iastate.symex.position.PositionRange;
  *
  */
 public class HtmlFormDecl extends DeclaringReference {
+	
+	private String submitToPage; // Can be null
 
-	public HtmlFormDecl(String name, PositionRange location) {
+	/**
+	 * Constructor
+	 */
+	public HtmlFormDecl(String name, PositionRange location, String submitToPage) {
 		super(name, location);
+		this.submitToPage = submitToPage;
+	}
+	
+	/**
+	 * Returns the submit-to page, can be null
+	 */
+	public String getSubmitToPage() {
+		return submitToPage;
 	}
 
 }

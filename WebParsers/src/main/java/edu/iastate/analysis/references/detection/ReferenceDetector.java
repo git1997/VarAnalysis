@@ -31,14 +31,6 @@ public class ReferenceDetector {
 	}
 	
 	/**
-	 * Finds references in SQL code
-	 */
-	public static void findReferencesInSqlCode(String sqlCode, PositionRange sqlLocation, String sqlScope, File entryFile, ReferenceManager referenceManager) {				
-        SqlVisitor visitor = new SqlVisitor(sqlCode, sqlLocation, sqlScope, entryFile, referenceManager);
-        visitor.visit();
-	}
-	
-	/**
 	 * Finds references in an HtmlDocument
 	 */
 	public static void findReferencesInHtmlDocument(HtmlDocument htmlDocument, File entryFile, ReferenceManager referenceManager) {    

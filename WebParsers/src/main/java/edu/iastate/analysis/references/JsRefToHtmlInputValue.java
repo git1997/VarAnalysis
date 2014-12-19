@@ -16,4 +16,8 @@ public class JsRefToHtmlInputValue extends JsObjectFieldRef {
 		super(name, location, jsRefToHtmlInput);
 	}
 	
+	public JsRefToHtmlInput getJsRefToHtmlInput() {
+		return (JsRefToHtmlInput) object;
+	}
+	
 }

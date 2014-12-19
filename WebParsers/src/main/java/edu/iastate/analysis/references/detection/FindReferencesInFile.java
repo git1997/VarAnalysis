@@ -23,10 +23,7 @@ public class FindReferencesInFile {
 									//"/Work/To-do/Data/Web Projects/Server Code/addressbookv6.2.12/index.php";
 									//"/Work/To-do/Data/Web Projects/Server Code/TimeClock-1.04/index.php";
 									//"/Work/To-do/Data/Web Projects/Server Code/UPB-2.2.7/admin_forums.php";
-	
 									"/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/testWebSlice.php";
-	
-	public static String XML_FILE = "/Users/HUNG/Desktop/Dataflows.xml";
 	
 	private File phpFile;
 	
@@ -51,33 +48,31 @@ public class FindReferencesInFile {
 		Timer timer = new Timer();
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Started.");
 		
-		// Step 1: Create the data model & find PHP references
+		// Step 1: Create the data model & find PHP/SQL references in the PHP code
 		ReferenceManager referenceManager = new ReferenceManager();
-		DataModel dataModel = createDataModelAndFindPhpReferences(referenceManager);
+		DataModel dataModel = createDataModelAndFindPhpSqlReferences(referenceManager);
 		
-		// Step 2: Parse the data model
+		// Step 2: Parse the DataModel
 		HtmlDocument htmlDocument = parseDataModel(dataModel);
 		
-		// Step 3: Find references in the HTML document
-		// Comment out the statement below to stop detecting embedded entities.
+		// Step 3: Find HTML/JavaScript references in the HTML document
 		findReferencesInHtmlDocument(htmlDocument, referenceManager);
 		
-		// Step 4: Resolve data flow among the references
-		resolveDataFlow(htmlDocument, referenceManager);
+		// Step 4: Resolve data flows among the references
+		resolveDataFlows(referenceManager);
 		
 		// Step 5: Print results
 		printResults(referenceManager);
 		
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Done in " + timer.getElapsedSecondsInText() + ".");
-		
 		return referenceManager;
 	}
 	
 	/**
-	 * Creates the data model and find PHP references along the way
+	 * Creates the data model & find PHP/SQL references in the PHP code
 	 */
-	private DataModel createDataModelAndFindPhpReferences(ReferenceManager referenceManager) {
-		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Creating data model and finding PHP references...");
+	private DataModel createDataModelAndFindPhpSqlReferences(ReferenceManager referenceManager) {
+		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Creating data model and finding PHP/SQL references...");
 		
 		ReferenceDetector.findReferencesInPhpCode(phpFile, referenceManager);
 		
@@ -89,7 +84,7 @@ public class FindReferencesInFile {
 	}
 	
 	/**
-	 * Parses the dataModel
+	 * Parses the DataModel
 	 */
 	private HtmlDocument parseDataModel(DataModel dataModel) {
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Parsing data model...");
@@ -98,32 +93,31 @@ public class FindReferencesInFile {
 	}
 	
 	/**
-	 * Finds references in the HtmlDocument.
+	 * Finds HTML/JavaScript references in the HTML document
 	 */
 	private void findReferencesInHtmlDocument(HtmlDocument htmlDocument, ReferenceManager referenceManager) {
-		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Finding references from HtmlDocument...");
+		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Finding HTML/JavaScript references...");
 
 		ReferenceDetector.findReferencesInHtmlDocument(htmlDocument, phpFile, referenceManager);
 	}
 	
 	/**
-	 * Resolves data flow
+	 * Resolves data flows among the references
 	 */
-	private void resolveDataFlow(HtmlDocument htmlDocument, ReferenceManager referenceManager) {
-		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Resolving data flow...");
+	private void resolveDataFlows(ReferenceManager referenceManager) {
+		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Resolving data flows...");
 		
-		referenceManager.getDataFlowManager().resolveDataFlowforHtmlDocument(htmlDocument);
-		referenceManager.getDataFlowManager().resolveDataFlowforEntirePage();
+		referenceManager.getDataFlowManager().resolveDataFlows();
 	}
 	
 	/**
-	 * Prints the results
+	 * Prints results
 	 */
 	private void printResults(ReferenceManager referenceManager) {
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Printing results...");
 		
 		System.out.println(new ShowStatisticsOnReferences().showStatistics(referenceManager));
-		//new XmlReadWrite().printReferencesToXmlFile(referenceManager.getSortedReferenceList(), new File(XML_FILE));
+		//new XmlReadWrite().printReferencesToXmlFile(referenceManager.getSortedReferenceList(), new File("/Users/HUNG/Desktop/Dataflows.xml");
 	}
 	
 }

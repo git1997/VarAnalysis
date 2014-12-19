@@ -23,6 +23,7 @@ public class ShowStatisticsOnReferences {
 		"PhpFunctionCall",
 		"HtmlFormDecl",
 		"HtmlInputDecl",
+		"HtmlDeclOfHtmlInputValue",
 		"HtmlQueryDecl",
 		"HtmlIdDecl",
 		"JsRefToHtmlForm",

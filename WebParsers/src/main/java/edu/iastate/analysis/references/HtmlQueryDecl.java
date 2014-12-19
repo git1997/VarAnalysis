@@ -9,8 +9,21 @@ import edu.iastate.symex.position.PositionRange;
  */
 public class HtmlQueryDecl extends DeclaringReference {
 	
-	public HtmlQueryDecl(String name, PositionRange location) {
+	private String submitToPage;
+	
+	/**
+	 * Constructor
+	 */
+	public HtmlQueryDecl(String name, PositionRange location, String submitToPage) {
 		super(name, location);
+		this.submitToPage = submitToPage;
+	}
+	
+	/**
+	 * Returns the submit-to page
+	 */
+	public String getSubmitToPage() {
+		return submitToPage;
 	}
 
 }

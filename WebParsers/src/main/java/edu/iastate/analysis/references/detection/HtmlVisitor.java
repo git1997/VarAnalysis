@@ -1,7 +1,10 @@
 package edu.iastate.analysis.references.detection;
 
 import java.io.File;
+import java.util.HashMap;
 
+import edu.iastate.analysis.references.DeclaringReference;
+import edu.iastate.analysis.references.HtmlDeclOfHtmlInputValue;
 import edu.iastate.analysis.references.HtmlFormDecl;
 import edu.iastate.analysis.references.HtmlIdDecl;
 import edu.iastate.analysis.references.HtmlInputDecl;
@@ -37,6 +40,8 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 	private Constraint constraint; // Could be updated during traversal
 			
 	private ReferenceManager referenceManager;
+	
+	private HashMap<HtmlElement, DeclaringReference> declMap = new HashMap<HtmlElement, DeclaringReference>();
 	
 	/**
 	 * Constructor
@@ -141,6 +146,9 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 		else if (attribute.isIdAttribute())
 			createEntitiesFromIdAttribute(attribute);
 		
+		else if (attribute.isValueAttribute())
+			createEntitiesFromValueAttribute(attribute);
+		
 		else if (attribute.containsJavascript())
 			findEntitiesInEventHandler(attribute.getAttributeValue());
 		
@@ -158,8 +166,11 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 		if (attribute.getParentElement() instanceof HtmlForm) {
 			String formName = attribute.getValue();
 			PositionRange formLocation = attribute.getAttributeValue().getLocation();
+			String submitToPage = ((HtmlForm) attribute.getParentElement()).getFormSubmitToPage();
 			
-			reference = new HtmlFormDecl(formName, formLocation);
+			reference = new HtmlFormDecl(formName, formLocation, submitToPage);
+			
+			declMap.put((HtmlForm) attribute.getParentElement(), (HtmlFormDecl) reference);
 		}			
 		
 		//----- Create HtmlInput entity, e.g. <input name="my_input">
@@ -175,9 +186,11 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 			}
 			
 			if (formTag != null)
-				reference = new HtmlInputDecl(inputName, inputLocation, formTag.getFormName(), formTag.getFormSubmitToPage());
+				reference = new HtmlInputDecl(inputName, inputLocation, (HtmlFormDecl) declMap.get(formTag));
 			else
-				reference = new HtmlInputDecl(inputName, inputLocation, null, null);
+				reference = new HtmlInputDecl(inputName, inputLocation, null);
+			
+			declMap.put((HtmlInput) attribute.getParentElement(), (HtmlInputDecl) reference);
 		}	
 		
 		//----- Create regular HtmlTag entity, e.g. <a name="my_link">
@@ -202,6 +215,19 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 	}
 	
 	/**
+	 * Creates entities from an HtmlAttribute "value", e.g. <input name="my_input" value="0">
+	 */
+	private void createEntitiesFromValueAttribute(HtmlAttribute attribute) {
+		// Create an HtmlDeclOfHtmlInputValue
+		if (attribute.getParentElement() instanceof HtmlInput) {
+			HtmlInput inputTag = (HtmlInput) attribute.getParentElement();
+		
+			Reference reference = new HtmlDeclOfHtmlInputValue(attribute.getName(), attribute.getLocation(), (HtmlInputDecl) declMap.get(inputTag));
+			addReference(reference);
+		}	
+	}
+	
+	/**
 	 * Finds entities in an HTML event handler, e.g. <body onload="sayHello();">
 	 */
 	private void findEntitiesInEventHandler(HtmlAttributeValue attributeValue) {
@@ -218,7 +244,7 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 		if (!queryString.contains("?"))
 			return;
 		
-		//String queryStringUrl = queryString.substring(0, queryString.indexOf("?"));
+		String queryStringUrl = queryString.substring(0, queryString.indexOf("?"));
 		String queryStringPairs = queryString.substring(queryString.indexOf("?") + 1);
 		
 		String[] nameValuePairParts = queryStringPairs.split("&amp;");
@@ -229,12 +255,14 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 				String nameValueParts[] = nameValuePair.split("=");
 				String name = (nameValueParts.length > 0 ? nameValueParts[0] : "");
 				//String value = (nameValueParts.length == 2 ? nameValueParts[1] : "");
-				int offset = queryString.indexOf(nameValuePair);
 				if (name.isEmpty())
 					continue;
 				
+				int offset = queryString.indexOf(nameValuePair);
+				PositionRange location = new RelativeRange(attributeValue.getLocation(), offset, name.length());
+				
 				// Add the reference
-				Reference reference = new HtmlQueryDecl(name, new RelativeRange(attributeValue.getLocation(), offset, name.length()));
+				Reference reference = new HtmlQueryDecl(name, location, queryStringUrl);
 				addReference(reference);
 			}
 		}

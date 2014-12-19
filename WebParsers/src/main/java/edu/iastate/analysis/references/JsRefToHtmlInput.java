@@ -16,4 +16,12 @@ public class JsRefToHtmlInput extends JsObjectFieldRef {
 		super(name, location, jsRefToHtmlForm);
 	}
 	
+	public JsRefToHtmlForm getJsRefToHtmlForm() {
+		return (JsRefToHtmlForm) object;
+	}
+	
+	public String getFormName() {
+		return getJsRefToHtmlForm().getName();
+	}
+	
 }

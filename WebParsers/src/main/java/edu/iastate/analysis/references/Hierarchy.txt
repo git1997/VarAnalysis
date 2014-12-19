@@ -1,13 +1,14 @@
 Reference								OK
 	DeclaringReference					OK
+		HtmlDeclOfHtmlInputValue		OK
 		HtmlFormDecl					OK				
 		HtmlIdDecl						OK
-		HtmlInputDecl					OK			form, page
+		HtmlInputDecl					OK
 		HtmlQueryDecl					OK
 		JsFunctionDecl					OK
 		JsObjectFieldDecl				OK
 			JsDeclOfHtmlInputValue		OK
-		JsVariableDecl					OK
+		JsVariableDecl					OK		
 		PhpFunctionDecl					OK
 		PhpVariableDecl					OK
 		SqlTableColumnDecl				OK			
