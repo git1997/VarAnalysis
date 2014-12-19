@@ -22,6 +22,7 @@ import edu.iastate.analysis.references.JsRefToHtmlInputValue;
 import edu.iastate.analysis.references.PhpRefToHtml;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.RegularReference;
+import edu.iastate.symex.constraints.ConstraintFactory;
 
 /**
  * 
@@ -52,36 +53,41 @@ public class DataFlowManager {
 	 */
 	
 	/**
-	 * Adds data flow from a DeclaringReference to a RegularReference
+	 * Adds data flow from a DeclaringReference to a RegularReference (with constraint checking)
 	 */
 	public void addDataFlow(DeclaringReference ref1, RegularReference ref2) {
-		addDataFlow_(ref1, ref2);
+		if (constraintCompatible(ref1, ref2))
+			addDataFlowWithoutConstraintChecking(ref1, ref2);
 	}
 	
 	/**
-	 * Adds data flow from a set of DeclaringReferences to a RegularReference
+	 * Adds data flow from a set of DeclaringReferences to a RegularReference (with constraint checking)
 	 */
 	public void addDataFlow(HashSet<DeclaringReference> refs1, RegularReference ref2) {
 		for (DeclaringReference ref1 : refs1)
-			addDataFlow_(ref1, ref2);
+			addDataFlow(ref1, ref2);
 	}
 	
 	/**
-	 * Adds data flow from a RegularReference to a DeclaringReference
+	 * Adds data flow from a RegularReference to a DeclaringReference (with constraint checking)
 	 */
 	public void addDataFlow(RegularReference ref1, DeclaringReference ref2) {
-		addDataFlow_(ref1, ref2);
+		if (constraintCompatible(ref1, ref2)) // Normally, ref1 and ref2 should have the same constraint (this check may not be necessary)
+			addDataFlowWithoutConstraintChecking(ref1, ref2);
 	}
 	
 	/**
-	 * Adds data flow from a set of RegularReferences to a DeclaringReference
+	 * Adds data flow from a set of RegularReferences to a DeclaringReference (with constraint checking)
 	 */
 	public void addDataFlow(HashSet<RegularReference> refs1, DeclaringReference ref2) {
 		for (RegularReference ref1 : refs1)
-			addDataFlow_(ref1, ref2);
+			addDataFlow(ref1, ref2);
 	}
 	
-	private void addDataFlow_(Reference ref1, Reference ref2) {
+	/**
+	 * Adds data flow from a reference to another reference (without constraint checking)
+	 */
+	private void addDataFlowWithoutConstraintChecking(Reference ref1, Reference ref2) {
 		if (!dataFlowFrom.containsKey(ref1))
 			dataFlowFrom.put(ref1, new LinkedList<Reference>());
 		dataFlowFrom.get(ref1).add(ref2);
@@ -206,7 +212,7 @@ public class DataFlowManager {
 			 */
 			else if (ref1 instanceof HtmlDeclOfHtmlInputValue) {
 				for (Reference ref2 : referenceNameMap.get(name)) {
-					if (ref2 instanceof JsRefToHtmlInputValue 
+					if (ref2 instanceof JsRefToHtmlInputValue
 							&& compareInputName((HtmlDeclOfHtmlInputValue) ref1, (JsRefToHtmlInputValue) ref2)
 							&& compareFormName((HtmlDeclOfHtmlInputValue) ref1, (JsRefToHtmlInputValue) ref2))
 						addDataFlow((DeclaringReference) ref1, (RegularReference) ref2);
@@ -248,7 +254,7 @@ public class DataFlowManager {
 				String submitToPage = getApproxSubmitToPage((HtmlQueryDecl) ref1);
 				for (Reference ref2 : referenceNameMap.get(name)) {
 					if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
-						addDataFlow((DeclaringReference) ref1, (RegularReference) ref2);
+						addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
 				}
 			}
 			/*
@@ -260,7 +266,7 @@ public class DataFlowManager {
 				
 				for (Reference ref2 : referenceNameMap.get(inputName)) {
 					if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
-						addDataFlow((DeclaringReference) ref1, (RegularReference) ref2);
+						addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
 				}
 			}
 			/*
@@ -272,7 +278,7 @@ public class DataFlowManager {
 				
 				for (Reference ref2 : referenceNameMap.get(inputName)) {
 					if (ref2 instanceof PhpRefToHtml && matchSubmitToPagesToEntryFile(submitToPages, ref2.getEntryFile()))
-						addDataFlow((DeclaringReference) ref1, (RegularReference) ref2);
+						addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
 				}
 			}
 		}
@@ -281,6 +287,13 @@ public class DataFlowManager {
 	/*
 	 * Utility methods
 	 */
+	
+	/**
+	 * Returns true if there is at least one case where both ref1 and ref2 can exist.
+	 */
+	private boolean constraintCompatible(Reference ref1, Reference ref2) {
+		return ConstraintFactory.createAndConstraint(ref1.getConstraint(), ref2.getConstraint()).isSatisfiable();
+	}
 
 	private boolean compareFormName(HtmlInputDecl ref1, JsRefToHtmlInput ref2) {
 		String formName1 = ref1.getFormName();
@@ -339,7 +352,7 @@ public class DataFlowManager {
 	/**
 	 * Returns true if the submitToPage matches the entryFile
 	 */
-	private static boolean matchSubmitToPageToEntryFile(String submitToPage, File entryFile) {
+	private boolean matchSubmitToPageToEntryFile(String submitToPage, File entryFile) {
 		// TODO Revise this code
 		return entryFile.getAbsolutePath().endsWith(submitToPage);
 	}
@@ -347,7 +360,7 @@ public class DataFlowManager {
 	/**
 	 * Returns true if one of the submitToPages matches the entryFile
 	 */
-	private static boolean matchSubmitToPagesToEntryFile(HashSet<String> submitToPages, File entryFile) {
+	private boolean matchSubmitToPagesToEntryFile(HashSet<String> submitToPages, File entryFile) {
 		for (String submitToPage : submitToPages) {
 			if (matchSubmitToPageToEntryFile(submitToPage, entryFile))
 				return true;
