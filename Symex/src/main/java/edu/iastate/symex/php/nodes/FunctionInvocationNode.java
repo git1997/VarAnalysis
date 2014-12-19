@@ -208,8 +208,10 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 			 */
 			// BEGIN OF WEB ANALYSIS CODE
-			PhpVariable phpVariable = functionEnv.getVariable(parameterName);
-			WebAnalysis.onFunctionInvocationParameterPassing((FormalParameter) parameter.getAstNode(), phpVariable, (Expression) arguments.get(parameterIndex).getAstNode(), env);
+			if (WebAnalysis.entityDetectionListener != null) {
+				PhpVariable phpVariable = functionEnv.getVariable(parameterName);
+				WebAnalysis.onFunctionInvocationParameterPassing((FormalParameter) parameter.getAstNode(), phpVariable, (Expression) arguments.get(parameterIndex).getAstNode(), env);
+			}
 			// END OF WEB ANALYSIS CODE
 		}
 		
