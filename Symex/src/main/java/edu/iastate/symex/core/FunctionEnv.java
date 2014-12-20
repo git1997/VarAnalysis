@@ -29,12 +29,13 @@ public class FunctionEnv extends PhpEnv {
 		return functionName;
 	}
 	
+	/**
+	 * Records a parameter passed by reference.
+	 * Called by FunctionInvocationNode.execute(Env, ObjectNode) only.
+	 * @param phpVariable
+	 */
 	public void addReferenceVariable(PhpVariable phpVariable) {
 		referenceVariables.add(phpVariable);
-	}
-	
-	public HashSet<PhpVariable> getReferenceVariables() {
-		return new HashSet<PhpVariable>(referenceVariables);
 	}
 	
 	/**
