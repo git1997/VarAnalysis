@@ -1,9 +1,9 @@
 c (PhpVariableRef) @ testConstraint.php:Line3:Offset12
 x (PhpVariableDecl) @ testConstraint.php:Line4:Offset17
-	-> x (PhpVariableRef) @ testConstraint.php:Line8:Offset45
-	-> x (PhpVariableRef) @ testConstraint.php:Line11:Offset64
 x (PhpVariableDecl) @ testConstraint.php:Line6:Offset31
-	-> x (PhpVariableRef) @ testConstraint.php:Line8:Offset45
 x (PhpVariableRef) @ testConstraint.php:Line8:Offset45
+	<- x (PhpVariableDecl) @ testConstraint.php:Line4:Offset17
+	<- x (PhpVariableDecl) @ testConstraint.php:Line6:Offset31
 c (PhpVariableRef) @ testConstraint.php:Line10:Offset54
 x (PhpVariableRef) @ testConstraint.php:Line11:Offset64
+	<- x (PhpVariableDecl) @ testConstraint.php:Line4:Offset17

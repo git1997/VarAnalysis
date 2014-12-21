@@ -1,7 +1,19 @@
-z (PhpVariableRef) @ testAssignment.php:Line3:Offset14
-	-> y (PhpVariableDecl) @ testAssignment.php:Line3:Offset9
-y (PhpVariableDecl) @ testAssignment.php:Line3:Offset9
-	-> y (PhpVariableRef) @ testAssignment.php:Line4:Offset24
-y (PhpVariableRef) @ testAssignment.php:Line4:Offset24
-	-> x (PhpVariableDecl) @ testAssignment.php:Line4:Offset19
-x (PhpVariableDecl) @ testAssignment.php:Line4:Offset19
+hi (PhpFunctionDecl) @ testAssignment.php:Line2:Offset17
+y (PhpVariableDecl) @ testAssignment.php:Line5:Offset29
+	<- z (PhpVariableRef) @ testAssignment.php:Line5:Offset34
+z (PhpVariableRef) @ testAssignment.php:Line5:Offset34
+x (PhpVariableDecl) @ testAssignment.php:Line6:Offset39
+	<- y (PhpVariableRef) @ testAssignment.php:Line6:Offset44
+y (PhpVariableRef) @ testAssignment.php:Line6:Offset44
+	<- y (PhpVariableDecl) @ testAssignment.php:Line5:Offset29
+t (PhpVariableDecl) @ testAssignment.php:Line8:Offset51
+	<- hi (PhpFunctionCall) @ testAssignment.php:Line8:Offset56
+	<- y (PhpVariableRef) @ testAssignment.php:Line8:Offset69
+	<- z (PhpVariableRef) @ testAssignment.php:Line8:Offset75
+hi (PhpFunctionCall) @ testAssignment.php:Line8:Offset56
+	<- hi (PhpFunctionDecl) @ testAssignment.php:Line2:Offset17
+x (PhpVariableRef) @ testAssignment.php:Line8:Offset59
+	<- x (PhpVariableDecl) @ testAssignment.php:Line6:Offset39
+y (PhpVariableRef) @ testAssignment.php:Line8:Offset69
+	<- y (PhpVariableDecl) @ testAssignment.php:Line5:Offset29
+z (PhpVariableRef) @ testAssignment.php:Line8:Offset75

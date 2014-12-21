@@ -74,10 +74,17 @@ public class PhpVisitor implements IEntityDetectionListener {
 	 * Adds a reference.
 	 * This method should be called instead of calling referenceManager.addReference directly.
 	 */
-	private void addReference(Reference reference, Env env) {
+	private void addReference(Reference reference, ASTNode astNode, Env env) {
 		reference.setEntryFile(entryFile);
 		reference.setConstraint(env.getConjunctedConstraintUpToPhpEnvScope());
 		referenceManager.addReference(reference);
+		
+		/*
+		 * Record data flows
+		 */
+		if (reference instanceof RegularReference) {
+			helperEnv.putReference(astNode, (RegularReference) reference);
+		}
 	}
 	
 	/*
@@ -111,25 +118,24 @@ public class PhpVisitor implements IEntityDetectionListener {
 	private void foundVariableDecl(Variable variable, String variableName, PhpVariable phpVariable, Expression rightHandSide, Env env) {
 		// Add a PhpVariableDecl
 		PhpVariableDecl phpVariableDecl = new PhpVariableDecl(variableName, getLocation(variable));
-		addReference(phpVariableDecl, env);
+		addReference(phpVariableDecl, variable, env);
 		
 		/*
 		 * Record data flows
 		 */
 		helperEnv.putVariableDecls(phpVariable, phpVariableDecl);
-		HashSet<PhpVariableRef> phpVariableRefs = helperEnv.getVariableRefs(rightHandSide);
-		dataFlowManager.addDataFlow(new HashSet<RegularReference>(phpVariableRefs), phpVariableDecl);
+		HashSet<RegularReference> references = helperEnv.getReferencesUnderExceptArguments(rightHandSide);
+		dataFlowManager.addDataFlow(references, phpVariableDecl);
 	}
 	
-	private void foundVariableRef(Variable variableNode, String variableName, PhpVariable phpVariable, Env env) {
+	private void foundVariableRef(Variable variable, String variableName, PhpVariable phpVariable, Env env) {
 		// Add a PhpVariableRef
-		PhpVariableRef phpVariableRef = new PhpVariableRef(variableName, getLocation(variableNode));
-		addReference(phpVariableRef, env);
+		PhpVariableRef phpVariableRef = new PhpVariableRef(variableName, getLocation(variable));
+		addReference(phpVariableRef, variable, env);
 		
 		/*
 		 * Record data flows
 		 */
-		helperEnv.putVariableRef(variableNode, phpVariableRef);
 		if (phpVariable != null) {
 			HashSet<PhpVariableDecl> phpVariableDecls = helperEnv.getVariableDecls(phpVariable);
 			dataFlowManager.addDataFlow(new HashSet<DeclaringReference>(phpVariableDecls), phpVariableRef);
@@ -151,13 +157,13 @@ public class PhpVisitor implements IEntityDetectionListener {
 			
 			// Add a PhpRefToHtml
 			PhpRefToHtml phpRefToHtml = new PhpRefToHtml(key.getStringValue(), key.getLocation());
-			addReference(phpRefToHtml, env);
+			addReference(phpRefToHtml, arrayAccess, env);
 		}
 			
 		/*
 		 * Detect SQL column access, e.g. $row['name']
 		 */
-		if (arrayNode instanceof ArrayNode && keyNode instanceof LiteralNode) {
+		else if (arrayNode instanceof ArrayNode && keyNode instanceof LiteralNode) {
 			ArrayNode array = (ArrayNode) arrayNode;
 			LiteralNode key = (LiteralNode) keyNode;
 			DataNode elementValue = array.getElementValue(key.getStringValue());
@@ -168,7 +174,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 				if (sqlTableColumnDecl != null) {
 					// Add a PhpRefToSqlTableColumn
 					PhpRefToSqlTableColumn phpRefToSqlTableColumn = new PhpRefToSqlTableColumn(key.getStringValue(), key.getLocation());
-					addReference(phpRefToSqlTableColumn, env);
+					addReference(phpRefToSqlTableColumn, arrayAccess, env);
 					
 					/*
 					 * Record data flows
@@ -180,11 +186,93 @@ public class PhpVisitor implements IEntityDetectionListener {
 	}
 	
 	/*
+	 * Handle functions & return statements
+	 */
+	
+	@Override
+	public void onFunctionDeclarationExecute(FunctionDeclaration functionDeclaration, Env env) {
+		String functionName = functionDeclaration.getFunctionName().getName();
+		helperEnv.putFunction(functionName, functionDeclaration);
+	}
+
+	@Override
+	public void onFunctionInvocationExecute(FunctionInvocation functionInvocation, Env env) {
+		Expression functionInvocationNameNode = functionInvocation.getFunctionName().getName();
+		String functionName = (functionInvocationNameNode instanceof Identifier ? ((Identifier) functionInvocationNameNode).getName() : null);
+		
+		if (functionName != null) {
+			// Add a PhpFunctionCall
+			PhpFunctionCall phpFunctionCall = new PhpFunctionCall(functionName, getLocation(functionInvocationNameNode));
+			addReference(phpFunctionCall, functionInvocation, env);
+			
+			FunctionDeclaration functionDeclaration = helperEnv.getFunction(functionName);
+			if (functionDeclaration != null) {
+				Identifier functionDeclarationNameNode = functionDeclaration.getFunctionName();
+
+				// Add a PhpFunctionDecl every time a function is called (to address the calling-context problem in program slicing)
+				PhpFunctionDecl phpFunctionDecl = new PhpFunctionDecl(functionName, getLocation(functionDeclarationNameNode));
+				addReference(phpFunctionDecl, functionDeclaration, env);
+				
+				/*
+				 * Record data flows
+				 */
+				helperEnv.setCurrentFunction(phpFunctionDecl);
+				dataFlowManager.addDataFlow(phpFunctionDecl, phpFunctionCall);
+			}
+		}
+		
+		helperEnv = new HelperEnv(helperEnv);
+	}
+	
+	@Override
+	public void onFunctionInvocationParameterPassing(FormalParameter parameter, PhpVariable phpVariable, Expression argument, Env env) {
+		// Add a PhpVariableDecl
+		PhpVariableDecl phpVariableDecl = new PhpVariableDecl(parameter.getParameterNameIdentifier().getName(), getLocation(parameter));
+		addReference(phpVariableDecl, parameter, env);
+		
+		/*
+		 * Record data flows
+		 */
+		helperEnv.putVariableDecls(phpVariable, phpVariableDecl);
+		HashSet<RegularReference> references = helperEnv.getReferencesUnderExceptArguments(argument);
+		dataFlowManager.addDataFlow(references, phpVariableDecl);
+	}
+	
+	@Override
+	public void onReturnStatementExecute(ReturnStatement returnStatement, Env env) {
+		/*
+		 * Record data flows
+		 */
+		PhpFunctionDecl phpFunctionDecl = helperEnv.getCurrentFunction();
+		if (phpFunctionDecl != null) {
+			dataFlowManager.addDataFlow(helperEnv.getReferencesUnderExceptArguments(returnStatement), phpFunctionDecl);
+		}
+	}
+	
+	@Override
+	public void onFunctionInvocationFinished(HashSet<PhpVariable> nonLocalDirtyVariablesInFunction, Env env) {
+		HelperEnv funcEnv = helperEnv;
+		helperEnv = helperEnv.getOuterScopeEnv();
+		
+		/*
+		 * Record data flows
+		 */
+		helperEnv.updateAfterFunctionExecution(nonLocalDirtyVariablesInFunction, funcEnv);
+	}
+	
+	/*
 	 * Handle SQL
 	 */
 	
 	@Override
 	public DataNode onMysqlQuery(FunctionInvocation functionInvocation, DataNode argumentValue, Env env) {
+		Expression functionInvocationNameNode = functionInvocation.getFunctionName().getName();
+		String functionName = ((Identifier) functionInvocationNameNode).getName(); // functionName should be not-null here.
+
+		// Add a PhpFunctionCall for mysql_query
+		PhpFunctionCall phpFunctionCall = new PhpFunctionCall(functionName, getLocation(functionInvocationNameNode));
+		addReference(phpFunctionCall, functionInvocation, env);
+					
 		if (!(argumentValue instanceof LiteralNode))
 			return DataNodeFactory.createSymbolicNode();
 		
@@ -206,7 +294,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 			
 			// Add SqlTableColumnDecls (e.g. 'name' in mysql_query("SELECT name FROM products"))
 			SqlTableColumnDecl sqlTableColumnDecl = new SqlTableColumnDecl(sqlTableColumn.getStringValue(), sqlTableColumn.getLocation());
-			addReference(sqlTableColumnDecl, env);
+			addReference(sqlTableColumnDecl, functionInvocation, env); // This might cause functionInvocation to be mapped to one of the declarations only, but it's Okay for now since inside addReference, it disregards DeclaringReference
 			
 			/*
 			 * Record data flows
@@ -242,6 +330,13 @@ public class PhpVisitor implements IEntityDetectionListener {
 
 	@Override
 	public DataNode onMysqlFetchArray(FunctionInvocation functionInvocation, DataNode argumentValue, Env env) {
+		Expression functionInvocationNameNode = functionInvocation.getFunctionName().getName();
+		String functionName = ((Identifier) functionInvocationNameNode).getName(); // functionName should be not-null here.
+
+		// Add a PhpFunctionCall for mysql_fetch_array
+		PhpFunctionCall phpFunctionCall = new PhpFunctionCall(functionName, getLocation(functionInvocationNameNode));
+		addReference(phpFunctionCall, functionInvocation, env);
+		
 		/*
 		 * Propagate the SQL data, as in 
 		 * 		mysql_query("SELECT name FROM products");
@@ -249,81 +344,6 @@ public class PhpVisitor implements IEntityDetectionListener {
 		 * 		echo $product['name']
 		 */
 		return argumentValue;
-	}
-	
-	/*
-	 * Handle functions & return statements
-	 */
-	
-	@Override
-	public void onFunctionDeclarationExecute(FunctionDeclaration functionDeclaration, Env env) {
-		String functionName = functionDeclaration.getFunctionName().getName();
-		helperEnv.putFunction(functionName, functionDeclaration);
-	}
-
-	@Override
-	public void onFunctionInvocationExecute(FunctionInvocation functionInvocation, Env env) {
-		Expression functionInvocationNameNode = functionInvocation.getFunctionName().getName();
-		String functionName = (functionInvocationNameNode instanceof Identifier ? ((Identifier) functionInvocationNameNode).getName() : null);
-		
-		if (functionName != null) {
-			// Add a PhpFunctionCall
-			PhpFunctionCall phpFunctionCall = new PhpFunctionCall(functionName, getLocation(functionInvocationNameNode));
-			addReference(phpFunctionCall, env);
-			
-			FunctionDeclaration functionDeclaration = helperEnv.getFunction(functionName);
-			if (functionDeclaration != null) {
-				Identifier functionDeclarationNameNode = functionDeclaration.getFunctionName();
-
-				// Add a PhpFunctionDecl every time a function is called (to address the calling-context problem in program slicing)
-				PhpFunctionDecl phpFunctionDecl = new PhpFunctionDecl(functionName, getLocation(functionDeclarationNameNode));
-				addReference(phpFunctionDecl, env);
-				
-				/*
-				 * Record data flows
-				 */
-				helperEnv.setCurrentFunction(phpFunctionDecl);
-				dataFlowManager.addDataFlow(phpFunctionDecl, phpFunctionCall);
-			}
-		}
-		
-		helperEnv = new HelperEnv(helperEnv);
-	}
-	
-	@Override
-	public void onFunctionInvocationParameterPassing(FormalParameter parameter, PhpVariable phpVariable, Expression argument, Env env) {
-		// Add a PhpVariableDecl
-		PhpVariableDecl phpVariableDecl = new PhpVariableDecl(parameter.getParameterNameIdentifier().getName(), getLocation(parameter));
-		addReference(phpVariableDecl, env);
-		
-		/*
-		 * Record data flows
-		 */
-		helperEnv.putVariableDecls(phpVariable, phpVariableDecl);
-		HashSet<PhpVariableRef> phpVariableRefs = helperEnv.getVariableRefs(argument);
-		dataFlowManager.addDataFlow(new HashSet<RegularReference>(phpVariableRefs), phpVariableDecl);
-	}
-	
-	@Override
-	public void onReturnStatementExecute(ReturnStatement returnStatement, Env env) {
-		/*
-		 * Record data flows
-		 */
-		PhpFunctionDecl phpFunctionDecl = helperEnv.getCurrentFunction();
-		if (phpFunctionDecl != null) {
-			dataFlowManager.addDataFlow(new HashSet<RegularReference>(helperEnv.getVariableRefs(returnStatement)), phpFunctionDecl);
-		}
-	}
-	
-	@Override
-	public void onFunctionInvocationFinished(HashSet<PhpVariable> nonLocalDirtyVariablesInFunction, Env env) {
-		HelperEnv funcEnv = helperEnv;
-		helperEnv = helperEnv.getOuterScopeEnv();
-		
-		/*
-		 * Record data flows
-		 */
-		helperEnv.updateAfterFunctionExecution(nonLocalDirtyVariablesInFunction, funcEnv);
 	}
 
 	/*
@@ -404,7 +424,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 		
 		private HashMap<PhpVariable, HashSet<PhpVariableDecl>> declMap; // Specific to each HelperEnv
 		
-		private HashMap<Variable, PhpVariableRef> refMap;
+		private HashMap<ASTNode, RegularReference> refMap;
 		
 		private HashMap<SymbolicNode, SqlTableColumnDecl> sqlMap;
 		
@@ -418,7 +438,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 			this.currentFunction = null;
 			this.functionMap = new HashMap<String, FunctionDeclaration>();
 			this.declMap = new HashMap<PhpVariable, HashSet<PhpVariableDecl>>();
-			this.refMap = new HashMap<Variable, PhpVariableRef>();
+			this.refMap = new HashMap<ASTNode, RegularReference>();
 			this.sqlMap = new HashMap<SymbolicNode, SqlTableColumnDecl>();
 		}
 		
@@ -489,36 +509,61 @@ public class PhpVisitor implements IEntityDetectionListener {
 		 * MANAGE REFS
 		 */
 		
-		public void putVariableRef(Variable variable, PhpVariableRef phpVariableRef) {
-			refMap.put(variable, phpVariableRef);
+		public void putReference(ASTNode astNode, RegularReference reference) {
+			refMap.put(astNode, reference);
 		}
 		
 		/**
-		 * Returns the PhpVariableRef created at this AST node.
+		 * Returns the RegularReference created at this AST node.
 		 */
-		public PhpVariableRef getVariableRef(Variable variable) {
-			return refMap.get(variable);
+		public RegularReference getReferenceExactlyAt(ASTNode astNode) {
+			return refMap.get(astNode);
 		}
 		
 		/**
-		 * Returns PhpVariableRefs created not just at but also under this AST node.
+		 * Returns RegularReferences created not just at but also under this AST node, except arguments in function calls.
 		 */
-		public HashSet<PhpVariableRef> getVariableRefs(ASTNode astNode) {
-			final HashSet<PhpVariableRef> phpVariableRefs = new HashSet<PhpVariableRef>();
+		public HashSet<RegularReference> getReferencesUnderExceptArguments(ASTNode astNode) {
+			final HashSet<RegularReference> references = new HashSet<RegularReference>();
 			
 			astNode.accept(new AbstractVisitor() {
 				
 				@Override
 				public boolean visit(Variable variable) {
-					PhpVariableRef phpVariableRef = getVariableRef(variable);
-					if (phpVariableRef != null)
-						phpVariableRefs.add(phpVariableRef);
+					RegularReference reference = getReferenceExactlyAt(variable);
+					if (reference != null)
+						references.add(reference);
 					
 					return true;
 				}
+				
+				@Override
+				public boolean visit(ArrayAccess arrayAccess) {
+					RegularReference reference = getReferenceExactlyAt(arrayAccess);
+					if (reference != null)
+						references.add(reference);
+					
+					return true;
+				}
+				
+				@Override
+				public boolean visit(FunctionInvocation functionInvocation) {
+					RegularReference reference = getReferenceExactlyAt(functionInvocation);
+					if (reference != null)
+						references.add(reference);
+						
+					// [ADHOC CODE] If the function declaration is not found, we assume that the function's return value
+					// depends on all input arguments. Therefore, we also return those arguments to record the data flow
+					// to the left-hand side of an assignment (e.g., $x = hi($y) then we assume there's a flow from $y to $x).
+					if (reference == null || functionMap.get(reference.getName()) == null)
+						return true;
+					// [END OF ADHOC CODE]
+					
+					return false;
+				}
 			});
 			
-			return phpVariableRefs;
+			return references;
 		}
 		
 		/*

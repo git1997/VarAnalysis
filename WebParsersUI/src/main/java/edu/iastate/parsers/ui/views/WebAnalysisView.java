@@ -276,7 +276,7 @@ public class WebAnalysisView extends ViewPart {
 		forwardSliceTreeViewer.expandToLevel(1);
 		backwardSliceTreeViewer.setInput(referenceManager);
 		backwardSliceTreeViewer.expandToLevel(1);
-		tabFolder.setSelection(0);
+		tabFolder.setSelection(1);
 		statsStyledText.setText(new ShowStatisticsOnReferences().showStatistics(referenceManager));
 	}
 	

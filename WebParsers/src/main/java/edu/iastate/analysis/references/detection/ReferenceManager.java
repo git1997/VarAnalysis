@@ -73,6 +73,12 @@ public class ReferenceManager {
 		Collections.sort(references, new Reference.ReferenceComparator(new ReferenceComparatorByName(), new ReferenceComparatorByPosition(), null));
 		return references;
 	}
+	
+	public ArrayList<Reference> getSortedReferenceListByPositionThenName() {
+		ArrayList<Reference> references = getReferenceList();
+		Collections.sort(references, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), null));
+		return references;
+	}
 
 	public ArrayList<Reference> getSortedReferenceListByTypeThenNameThenPosition() {
 		ArrayList<Reference> references = getReferenceList();
@@ -85,10 +91,14 @@ public class ReferenceManager {
 	 */
 	public String writeReferenceListToText() {
 		StringBuilder str = new StringBuilder();
-		for (Reference ref1 : getReferenceList()) {
+		for (Reference ref1 : getSortedReferenceListByPositionThenName()) {
 			str.append(writeReferenceToText(ref1) + System.lineSeparator());
-			for (Reference ref2 : dataFlowManager.getDataFlowFrom(ref1)) {
-				str.append("\t-> " + writeReferenceToText(ref2) + System.lineSeparator());
+			
+			ArrayList<Reference> refs2 = dataFlowManager.getDataFlowTo(ref1);
+			Collections.sort(refs2, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), null));
+			
+			for (Reference ref2 : refs2) {
+				str.append("\t<- " + writeReferenceToText(ref2) + System.lineSeparator());
 			}
 		}
 		return str.toString();

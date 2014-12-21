@@ -82,10 +82,17 @@ public class JavascriptVisitor extends ASTVisitor {
 	 * Adds a reference.
 	 * This method should be called instead of calling referenceManager.addReference directly.
 	 */
-	private void addReference(Reference reference) {
+	private void addReference(Reference reference, ASTNode astNode) {
 		reference.setEntryFile(entryFile);
 		reference.setConstraint(constraint);
 		referenceManager.addReference(reference);
+		
+		/*
+		 * Record data flows
+		 */
+		if (reference instanceof RegularReference) {
+			env.putReference(astNode, (RegularReference) reference);
+		}
 	}
 	
 	/*
@@ -114,11 +121,11 @@ public class JavascriptVisitor extends ASTVisitor {
 			SimpleName name = fieldAccess.getName();
 			
 			expression.accept(this);
-			JsVariableRef jsVariableRef = env.getVariableRef(expression);
+			RegularReference reference = env.getReferenceExactlyAt(expression);
 			
 			// Found a JsObjectFieldDecl
-			if (jsVariableRef != null && !isJavascriptKeyword(name.getIdentifier()))
-				foundJsObjectFieldDecl(fieldAccess, (RegularReference) jsVariableRef, rightHandSide);
+			if (reference != null && !isJavascriptKeyword(name.getIdentifier()))
+				foundJsObjectFieldDecl(fieldAccess, reference, rightHandSide);
 		}
 		else
 			leftHandSide.accept(this);
@@ -162,7 +169,7 @@ public class JavascriptVisitor extends ASTVisitor {
 	private void foundVariableDecl(SimpleName variable, Expression rightHandSide) {
 		// Add a JsVariableDecl
 		JsVariableDecl jsVariableDecl = new JsVariableDecl(variable.getIdentifier(), getLocation(variable));
-		addReference(jsVariableDecl);
+		addReference(jsVariableDecl, variable);
 		
 		/*
 		 * Record data flows
@@ -170,21 +177,20 @@ public class JavascriptVisitor extends ASTVisitor {
 		JsVariable jsVariable = env.getOrPutVariable(jsVariableDecl.getName());
 		env.putVariableDecls(jsVariable, jsVariableDecl);
 		if (rightHandSide != null) {
-			HashSet<JsVariableRef> jsVariableRefs = env.getVariableRefs(rightHandSide);
-			dataFlowManager.addDataFlow(new HashSet<RegularReference>(jsVariableRefs), jsVariableDecl);
+			HashSet<RegularReference> references = env.getReferencesUnderExceptArguments(rightHandSide);
+			dataFlowManager.addDataFlow(references, jsVariableDecl);
 		}
 	}
 	
-	private void foundVariableRef(SimpleName variableNode) {
+	private void foundVariableRef(SimpleName variable) {
 		// Add a JsVariableRef
-		JsVariableRef jsVariableRef = new JsVariableRef(variableNode.getIdentifier(), getLocation(variableNode));
-		addReference(jsVariableRef);
+		JsVariableRef jsVariableRef = new JsVariableRef(variable.getIdentifier(), getLocation(variable));
+		addReference(jsVariableRef, variable);
 		
 		/*
 		 * Record data flows
 		 */
 		JsVariable jsVariable = env.getVariable(jsVariableRef.getName());
-		env.putVariableRef(variableNode, jsVariableRef);
 		if (jsVariable != null) {
 			HashSet<JsVariableDecl> jsVariableDecls = env.getVariableDecls(jsVariable);
 			dataFlowManager.addDataFlow(new HashSet<DeclaringReference>(jsVariableDecls), jsVariableRef);
@@ -203,11 +209,11 @@ public class JavascriptVisitor extends ASTVisitor {
 		SimpleName name = fieldAccess.getName();
 		
 		expression.accept(this);
-		JsVariableRef jsVariableRef = env.getVariableRef(expression);
+		RegularReference reference = env.getReferenceExactlyAt(expression);
 		
 		// Found a JsObjectFieldRef
-		if (jsVariableRef != null && !isJavascriptKeyword(name.getIdentifier()))
-			foundJsObjectFieldRef(fieldAccess, (RegularReference) jsVariableRef);
+		if (reference != null && !isJavascriptKeyword(name.getIdentifier()))
+			foundJsObjectFieldRef(fieldAccess, reference);
 		
 		return false;
 	}
@@ -225,7 +231,7 @@ public class JavascriptVisitor extends ASTVisitor {
 			// Currently only handle objects with field name 'value'
 			return;
 		}
-		addReference(jsObjectFieldDecl);
+		addReference(jsObjectFieldDecl, fieldAccess);
 		
 		/*
 		 * Record data flows
@@ -233,8 +239,8 @@ public class JavascriptVisitor extends ASTVisitor {
 		JsVariable jsVariable = env.getOrPutVariable(jsObjectFieldDecl.getFullyQualifiedName());
 		env.putVariableDecls(jsVariable, jsObjectFieldDecl);
 		if (rightHandSide != null) {
-			HashSet<JsVariableRef> jsVariableRefs = env.getVariableRefs(rightHandSide);
-			dataFlowManager.addDataFlow(new HashSet<RegularReference>(jsVariableRefs), jsObjectFieldDecl);
+			HashSet<RegularReference> references = env.getReferencesUnderExceptArguments(rightHandSide);
+			dataFlowManager.addDataFlow(references, jsObjectFieldDecl);
 		}
 	}
 	
@@ -259,13 +265,12 @@ public class JavascriptVisitor extends ASTVisitor {
 			// Currently only handle objects with field name 'value'
 			return;
 		}
-		addReference(jsObjectFieldRef);
+		addReference(jsObjectFieldRef, fieldAccess);
 		
 		/*
 		 * Record data flows
 		 */
 		JsVariable jsVariable = env.getVariable(jsObjectFieldRef.getFullyQualifiedName());
-		env.putVariableRef(fieldAccess, jsObjectFieldRef);
 		if (jsVariable != null) {
 			HashSet<JsVariableDecl> jsVariableDecls = env.getVariableDecls(jsVariable);
 			dataFlowManager.addDataFlow(new HashSet<DeclaringReference>(jsVariableDecls), jsObjectFieldRef);
@@ -316,13 +321,13 @@ public class JavascriptVisitor extends ASTVisitor {
 				
 				// Add a JsRefToHtmlId reference
 				JsRefToHtmlId jsRefToHtmlId = new JsRefToHtmlId(id, refLocation);
-				addReference(jsRefToHtmlId);
+				addReference(jsRefToHtmlId, functionInvocation);
 			}
 		}
 		else if (!isJavascriptKeyword(functionName)) {
 			// Add a JsFunctionCall
 			JsFunctionCall jsFunctionCall = new JsFunctionCall(functionName, getLocation(functionInvocationNameNode));
-			addReference(jsFunctionCall);
+			addReference(jsFunctionCall, functionInvocation);
 			
 			FunctionDeclaration functionDeclaration = env.getFunction(functionName);
 			if (functionDeclaration != null) {
@@ -330,7 +335,7 @@ public class JavascriptVisitor extends ASTVisitor {
 
 				// Add a JsFunctionDecl every time a function is called (to address the calling-context problem in program slicing)
 				JsFunctionDecl jsFunctionDecl = new JsFunctionDecl(functionName, getLocation(functionDeclarationNameNode));
-				addReference(jsFunctionDecl);
+				addReference(jsFunctionDecl, functionDeclaration);
 				
 				/*
 				 * Record data flows
@@ -379,7 +384,7 @@ public class JavascriptVisitor extends ASTVisitor {
 		 */
 		JsFunctionDecl jsFunctionDecl = env.getCurrentFunction();
 		if (jsFunctionDecl != null) {
-			dataFlowManager.addDataFlow(new HashSet<RegularReference>(env.getVariableRefs(returnStatement)), jsFunctionDecl);
+			dataFlowManager.addDataFlow(env.getReferencesUnderExceptArguments(returnStatement), jsFunctionDecl);
 		}
 		
 		return false;
@@ -541,7 +546,7 @@ public class JavascriptVisitor extends ASTVisitor {
 		
 		private HashMap<JsVariable, HashSet<JsVariableDecl>> declMap; // Specific to each Env
 		
-		private HashMap<ASTNode, JsVariableRef> refMap;
+		private HashMap<ASTNode, RegularReference> refMap;
 
 		/**
 		 * Constructor
@@ -552,7 +557,7 @@ public class JavascriptVisitor extends ASTVisitor {
 			this.functionMap = new HashMap<String, FunctionDeclaration>();
 			this.variableTable = new HashMap<String, JsVariable>();
 			this.declMap = new HashMap<JsVariable, HashSet<JsVariableDecl>>();
-			this.refMap = new HashMap<ASTNode, JsVariableRef>();
+			this.refMap = new HashMap<ASTNode, RegularReference>();
 		}
 		
 		/**
@@ -679,45 +684,61 @@ public class JavascriptVisitor extends ASTVisitor {
 		 * MANAGE REFS
 		 */
 		
-		public void putVariableRef(ASTNode astNode, JsVariableRef jsVariableRef) {
-			refMap.put(astNode, jsVariableRef);
+		public void putReference(ASTNode astNode, RegularReference reference) {
+			refMap.put(astNode, reference);
 		}
 		
 		/**
-		 * Returns the JsVariableRef created at this AST node.
+		 * Returns the RegularReference created at this AST node.
 		 */
-		public JsVariableRef getVariableRef(ASTNode astNode) {
+		public RegularReference getReferenceExactlyAt(ASTNode astNode) {
 			return refMap.get(astNode);
 		}
 		
 		/**
-		 * Returns JsVariableRefs created not just at but also under this AST node.
+		 * Returns RegularReferences created not just at but also under this AST node, except arguments in function calls.
 		 */
-		public HashSet<JsVariableRef> getVariableRefs(ASTNode astNode) {
-			final HashSet<JsVariableRef> jsVariableRefs = new HashSet<JsVariableRef>();
+		public HashSet<RegularReference> getReferencesUnderExceptArguments(ASTNode astNode) {
+			final HashSet<RegularReference> references = new HashSet<RegularReference>();
 			
 			astNode.accept(new ASTVisitor() {
 				
 				@Override
 				public boolean visit(SimpleName simpleName) {
-					JsVariableRef jsVariableRef = getVariableRef(simpleName);
-					if (jsVariableRef != null)
-						jsVariableRefs.add(jsVariableRef);
+					RegularReference reference = getReferenceExactlyAt(simpleName);
+					if (reference != null)
+						references.add(reference);
 					
 					return true;
 				}
 				
 				@Override
 				public boolean visit(FieldAccess fieldAccess) {
-					JsVariableRef jsVariableRef = getVariableRef(fieldAccess);
-					if (jsVariableRef != null)
-						jsVariableRefs.add(jsVariableRef);
+					RegularReference reference = getReferenceExactlyAt(fieldAccess);
+					if (reference != null)
+						references.add(reference);
 					
 					return true;
 				}
+				
+				@Override
+				public boolean visit(FunctionInvocation functionInvocation) {
+					RegularReference reference = getReferenceExactlyAt(functionInvocation);
+					if (reference != null)
+						references.add(reference);
+						
+					// [ADHOC CODE] If the function declaration is not found, we assume that the function's return value
+					// depends on all input arguments. Therefore, we also return those arguments to record the data flow
+					// to the left-hand side of an assignment (e.g., x = hi(y) then we assume there's a flow from y to x).
+					if (reference == null || functionMap.get(reference.getName()) == null)
+						return true;
+					// [END OF ADHOC CODE]
+					
+					return false;
+				}
 			});
 			
-			return jsVariableRefs;
+			return references;
 		}
 		
 		/*

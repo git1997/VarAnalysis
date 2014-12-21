@@ -1,61 +1,61 @@
+hi (PhpFunctionDecl) @ testFunction.php:Line3:Offset17
+	<- a (PhpVariableRef) @ testFunction.php:Line11:Offset108
+hi (PhpFunctionDecl) @ testFunction.php:Line3:Offset17
+	<- a (PhpVariableRef) @ testFunction.php:Line11:Offset108
+a (PhpVariableDecl) @ testFunction.php:Line3:Offset20
+	<- x (PhpVariableRef) @ testFunction.php:Line18:Offset148
+a (PhpVariableDecl) @ testFunction.php:Line3:Offset20
+	<- x (PhpVariableRef) @ testFunction.php:Line23:Offset196
+b (PhpVariableDecl) @ testFunction.php:Line3:Offset24
+	<- y (PhpVariableRef) @ testFunction.php:Line18:Offset152
+b (PhpVariableDecl) @ testFunction.php:Line3:Offset24
+	<- y (PhpVariableRef) @ testFunction.php:Line23:Offset200
+t (PhpVariableRef) @ testFunction.php:Line5:Offset49
+	<- t (PhpVariableDecl) @ testFunction.php:Line14:Offset115
+t (PhpVariableRef) @ testFunction.php:Line5:Offset49
+	<- t (PhpVariableDecl) @ testFunction.php:Line8:Offset74
+a (PhpVariableRef) @ testFunction.php:Line6:Offset59
+	<- a (PhpVariableDecl) @ testFunction.php:Line3:Offset20
+a (PhpVariableRef) @ testFunction.php:Line6:Offset59
+	<- a (PhpVariableDecl) @ testFunction.php:Line3:Offset20
+b (PhpVariableRef) @ testFunction.php:Line7:Offset69
+	<- b (PhpVariableDecl) @ testFunction.php:Line3:Offset24
+b (PhpVariableRef) @ testFunction.php:Line7:Offset69
+	<- b (PhpVariableDecl) @ testFunction.php:Line3:Offset24
+t (PhpVariableDecl) @ testFunction.php:Line8:Offset74
+t (PhpVariableDecl) @ testFunction.php:Line8:Offset74
+a (PhpVariableDecl) @ testFunction.php:Line9:Offset83
+a (PhpVariableDecl) @ testFunction.php:Line9:Offset83
+b (PhpVariableDecl) @ testFunction.php:Line10:Offset92
+b (PhpVariableDecl) @ testFunction.php:Line10:Offset92
+a (PhpVariableRef) @ testFunction.php:Line11:Offset108
+	<- a (PhpVariableDecl) @ testFunction.php:Line9:Offset83
+a (PhpVariableRef) @ testFunction.php:Line11:Offset108
+	<- a (PhpVariableDecl) @ testFunction.php:Line9:Offset83
 t (PhpVariableDecl) @ testFunction.php:Line14:Offset115
-	-> t (PhpVariableRef) @ testFunction.php:Line5:Offset49
 x (PhpVariableDecl) @ testFunction.php:Line16:Offset124
-	-> x (PhpVariableRef) @ testFunction.php:Line18:Offset148
-	-> x (PhpVariableRef) @ testFunction.php:Line19:Offset162
 y (PhpVariableDecl) @ testFunction.php:Line17:Offset132
-	-> y (PhpVariableRef) @ testFunction.php:Line18:Offset152
-x (PhpVariableRef) @ testFunction.php:Line18:Offset148
-	-> a (PhpVariableDecl) @ testFunction.php:Line3:Offset20
-y (PhpVariableRef) @ testFunction.php:Line18:Offset152
-	-> b (PhpVariableDecl) @ testFunction.php:Line3:Offset24
 hi (PhpFunctionCall) @ testFunction.php:Line18:Offset145
-hi (PhpFunctionDecl) @ testFunction.php:Line3:Offset17
-	-> hi (PhpFunctionCall) @ testFunction.php:Line18:Offset145
-a (PhpVariableDecl) @ testFunction.php:Line3:Offset20
-	-> a (PhpVariableRef) @ testFunction.php:Line6:Offset59
-b (PhpVariableDecl) @ testFunction.php:Line3:Offset24
-	-> b (PhpVariableRef) @ testFunction.php:Line7:Offset69
-t (PhpVariableRef) @ testFunction.php:Line5:Offset49
-a (PhpVariableRef) @ testFunction.php:Line6:Offset59
-b (PhpVariableRef) @ testFunction.php:Line7:Offset69
-t (PhpVariableDecl) @ testFunction.php:Line8:Offset74
-	-> t (PhpVariableRef) @ testFunction.php:Line5:Offset49
-a (PhpVariableDecl) @ testFunction.php:Line9:Offset83
-	-> a (PhpVariableRef) @ testFunction.php:Line11:Offset108
-b (PhpVariableDecl) @ testFunction.php:Line10:Offset92
-	-> y (PhpVariableRef) @ testFunction.php:Line19:Offset167
-a (PhpVariableRef) @ testFunction.php:Line11:Offset108
-	-> hi (PhpFunctionDecl) @ testFunction.php:Line3:Offset17
+	<- hi (PhpFunctionDecl) @ testFunction.php:Line3:Offset17
+x (PhpVariableRef) @ testFunction.php:Line18:Offset148
+	<- x (PhpVariableDecl) @ testFunction.php:Line16:Offset124
+y (PhpVariableRef) @ testFunction.php:Line18:Offset152
+	<- y (PhpVariableDecl) @ testFunction.php:Line17:Offset132
 x (PhpVariableRef) @ testFunction.php:Line19:Offset162
+	<- x (PhpVariableDecl) @ testFunction.php:Line16:Offset124
 y (PhpVariableRef) @ testFunction.php:Line19:Offset167
+	<- b (PhpVariableDecl) @ testFunction.php:Line10:Offset92
 x (PhpVariableDecl) @ testFunction.php:Line21:Offset172
-	-> x (PhpVariableRef) @ testFunction.php:Line23:Offset196
-	-> x (PhpVariableRef) @ testFunction.php:Line24:Offset210
 y (PhpVariableDecl) @ testFunction.php:Line22:Offset180
-	-> y (PhpVariableRef) @ testFunction.php:Line23:Offset200
-x (PhpVariableRef) @ testFunction.php:Line23:Offset196
-	-> a (PhpVariableDecl) @ testFunction.php:Line3:Offset20
-y (PhpVariableRef) @ testFunction.php:Line23:Offset200
-	-> b (PhpVariableDecl) @ testFunction.php:Line3:Offset24
 hi (PhpFunctionCall) @ testFunction.php:Line23:Offset193
-hi (PhpFunctionDecl) @ testFunction.php:Line3:Offset17
-	-> hi (PhpFunctionCall) @ testFunction.php:Line23:Offset193
-a (PhpVariableDecl) @ testFunction.php:Line3:Offset20
-	-> a (PhpVariableRef) @ testFunction.php:Line6:Offset59
-b (PhpVariableDecl) @ testFunction.php:Line3:Offset24
-	-> b (PhpVariableRef) @ testFunction.php:Line7:Offset69
-t (PhpVariableRef) @ testFunction.php:Line5:Offset49
-a (PhpVariableRef) @ testFunction.php:Line6:Offset59
-b (PhpVariableRef) @ testFunction.php:Line7:Offset69
-t (PhpVariableDecl) @ testFunction.php:Line8:Offset74
-	-> t (PhpVariableRef) @ testFunction.php:Line26:Offset225
-a (PhpVariableDecl) @ testFunction.php:Line9:Offset83
-	-> a (PhpVariableRef) @ testFunction.php:Line11:Offset108
-b (PhpVariableDecl) @ testFunction.php:Line10:Offset92
-	-> y (PhpVariableRef) @ testFunction.php:Line24:Offset215
-a (PhpVariableRef) @ testFunction.php:Line11:Offset108
-	-> hi (PhpFunctionDecl) @ testFunction.php:Line3:Offset17
+	<- hi (PhpFunctionDecl) @ testFunction.php:Line3:Offset17
+x (PhpVariableRef) @ testFunction.php:Line23:Offset196
+	<- x (PhpVariableDecl) @ testFunction.php:Line21:Offset172
+y (PhpVariableRef) @ testFunction.php:Line23:Offset200
+	<- y (PhpVariableDecl) @ testFunction.php:Line22:Offset180
 x (PhpVariableRef) @ testFunction.php:Line24:Offset210
+	<- x (PhpVariableDecl) @ testFunction.php:Line21:Offset172
 y (PhpVariableRef) @ testFunction.php:Line24:Offset215
+	<- b (PhpVariableDecl) @ testFunction.php:Line10:Offset92
 t (PhpVariableRef) @ testFunction.php:Line26:Offset225
+	<- t (PhpVariableDecl) @ testFunction.php:Line8:Offset74

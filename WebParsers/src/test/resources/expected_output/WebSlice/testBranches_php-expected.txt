@@ -1,6 +1,6 @@
 c (PhpVariableRef) @ testBranches.php:Line3:Offset12
 x (PhpVariableDecl) @ testBranches.php:Line4:Offset17
-	-> x (PhpVariableRef) @ testBranches.php:Line8:Offset45
 x (PhpVariableDecl) @ testBranches.php:Line6:Offset31
-	-> x (PhpVariableRef) @ testBranches.php:Line8:Offset45
 x (PhpVariableRef) @ testBranches.php:Line8:Offset45
+	<- x (PhpVariableDecl) @ testBranches.php:Line4:Offset17
+	<- x (PhpVariableDecl) @ testBranches.php:Line6:Offset31

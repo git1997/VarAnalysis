@@ -13,7 +13,7 @@ import edu.iastate.symex.util.FileIO;
  */
 public abstract class GenericTest {
 	
-	private boolean createOracle; // Set to true to create oracle
+	private boolean createOracle = false; // Set to true to create oracle
 	
 	public void enableOracleCreation() {
 		this.createOracle = true;

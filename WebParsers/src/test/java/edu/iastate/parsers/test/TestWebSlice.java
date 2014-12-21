@@ -22,7 +22,7 @@ public class TestWebSlice extends GenericTest {
 		TestWebSlice testWebSlice = new TestWebSlice();
 		//testWebSlice.enableOracleCreation();
 		
-		testWebSlice.testReferenceTypes();
+		testWebSlice.testAssignment();
 	}
 
 	@Override
