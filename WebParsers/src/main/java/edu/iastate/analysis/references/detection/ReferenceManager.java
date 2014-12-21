@@ -2,8 +2,9 @@ package edu.iastate.analysis.references.detection;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByName;
@@ -18,7 +19,7 @@ import edu.iastate.symex.position.Position;
  */
 public class ReferenceManager {
 	
-	private LinkedList<Reference> references;	// List of references (should not contain duplicates)
+	private HashSet<Reference> references;
 	
 	/**
 	 * [Optional] Manages data flows
@@ -29,7 +30,7 @@ public class ReferenceManager {
 	 * Constructor
 	 */
 	public ReferenceManager() {
-		references = new LinkedList<Reference>();
+		references = new HashSet<Reference>();
 		dataFlowManager = new DataFlowManager(this);
 	}
 	
@@ -49,6 +50,13 @@ public class ReferenceManager {
 	}
 	
 	/**
+	 * Removes a reference. Should be called from DataFlowManager only.
+	 */
+	protected void removeReference(Reference reference) {
+		references.remove(reference);
+	}
+	
+	/**
 	 * Gets references
 	 */
 	public ArrayList<Reference> getReferenceList() {
@@ -58,28 +66,19 @@ public class ReferenceManager {
 	/**
 	 * Returns references as a map of reference names to speed up searching 
 	 */
-	public HashMap<String, LinkedList<Reference>> getReferenceListByName() {
-		HashMap<String, LinkedList<Reference>> map = new HashMap<String, LinkedList<Reference>>(); 
+	public HashMap<String, ArrayList<Reference>> getReferenceListByName() {
+		HashMap<String, ArrayList<Reference>> map = new HashMap<String, ArrayList<Reference>>(); 
 		for (Reference reference : getReferenceList()) {
 			if (!map.containsKey(reference.getName()))
-				map.put(reference.getName(), new LinkedList<Reference>());
+				map.put(reference.getName(), new ArrayList<Reference>());
 			map.get(reference.getName()).add(reference);
 		}
 		return map;
 	}
 	
-	public ArrayList<Reference> getSortedReferenceListByNameThenPosition() {
-		ArrayList<Reference> references = getReferenceList();
-		Collections.sort(references, new Reference.ReferenceComparator(new ReferenceComparatorByName(), new ReferenceComparatorByPosition(), null));
-		return references;
-	}
-	
-	public ArrayList<Reference> getSortedReferenceListByPositionThenName() {
-		ArrayList<Reference> references = getReferenceList();
-		Collections.sort(references, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), null));
-		return references;
-	}
-
+	/**
+	 * Returns a sorted list of references
+	 */
 	public ArrayList<Reference> getSortedReferenceListByTypeThenNameThenPosition() {
 		ArrayList<Reference> references = getReferenceList();
 		Collections.sort(references, new Reference.ReferenceComparator(new ReferenceComparatorByType(), new ReferenceComparatorByName(), new ReferenceComparatorByPosition()));
@@ -91,21 +90,59 @@ public class ReferenceManager {
 	 */
 	public String writeReferenceListToText() {
 		StringBuilder str = new StringBuilder();
-		for (Reference ref1 : getSortedReferenceListByPositionThenName()) {
+		
+		ArrayList<Reference> refs1 = getReferenceList();
+		Collections.sort(refs1, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), new ReferenceComparatorByLinks(dataFlowManager)));
+		for (Reference ref1 : refs1) {
 			str.append(writeReferenceToText(ref1) + System.lineSeparator());
 			
 			ArrayList<Reference> refs2 = dataFlowManager.getDataFlowTo(ref1);
 			Collections.sort(refs2, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), null));
-			
 			for (Reference ref2 : refs2) {
 				str.append("\t<- " + writeReferenceToText(ref2) + System.lineSeparator());
 			}
 		}
+		
 		return str.toString();
 	}
 	
-	private String writeReferenceToText(Reference ref) {
+	private static String writeReferenceToText(Reference ref) {
 		Position startPosition = ref.getLocation().getStartPosition();
 		return ref.getName() + " (" + ref.getType() + ") @ " + startPosition.getFile().getName() + ":Line" + startPosition.getLine() + ":Offset" + startPosition.getOffset(); 
 	}
+	
+	/**
+	 * Supports sorting of references
+	 */
+	public static class ReferenceComparatorByLinks implements Comparator<Reference> {
+
+		private DataFlowManager dataFlowManager;
+		
+		public ReferenceComparatorByLinks(DataFlowManager dataFlowManager) {
+			this.dataFlowManager = dataFlowManager;
+		}
+		
+		@Override
+		public int compare(Reference ref1, Reference ref2) {
+			ArrayList<Reference> refs1 = dataFlowManager.getDataFlowTo(ref1);
+			ArrayList<Reference> refs2 = dataFlowManager.getDataFlowTo(ref2);
+			Collections.sort(refs1, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), null));
+			Collections.sort(refs2, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), null));
+			
+			int result = new Integer(refs1.size()).compareTo(new Integer(refs2.size()));
+			if (result != 0)
+				return result;
+			
+			for (int i = 0; i < refs1.size(); i++) {
+				String r1 = writeReferenceToText(refs1.get(i));
+				String r2 = writeReferenceToText(refs2.get(i));
+				result = r1.compareTo(r2);
+				if (result != 0)
+					return result;
+			}
+			
+			return 0;
+		}
+	}
+	
 }

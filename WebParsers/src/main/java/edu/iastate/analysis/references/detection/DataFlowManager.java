@@ -2,9 +2,9 @@ package edu.iastate.analysis.references.detection;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 
 import edu.iastate.analysis.references.DeclaringReference;
 import edu.iastate.analysis.references.HtmlDeclOfHtmlInputValue;
@@ -20,23 +20,26 @@ import edu.iastate.analysis.references.JsRefToHtmlInputValue;
 import edu.iastate.analysis.references.PhpRefToHtml;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.RegularReference;
+import edu.iastate.analysis.references.Reference.ReferenceComparatorByName;
+import edu.iastate.analysis.references.Reference.ReferenceComparatorByPosition;
+import edu.iastate.analysis.references.Reference.ReferenceComparatorByType;
 import edu.iastate.symex.constraints.ConstraintFactory;
 
 /**
  * 
  * @author HUNG
  *
+ * This class manages data flows between references. E.g., $y = $z, $x = $y  =>  The data flow is $z -> $y -> $y -> $x
  */
 public class DataFlowManager {
 	
 	private ReferenceManager referenceManager;
 	
-	// List of references that have data flow from a given reference (should not contain duplicates)
-	// e.g., $y = $z, $x = $y  =>  The data flow is $z -> $y -> $x
-	private HashMap<Reference, LinkedList<Reference>> dataFlowFrom = new HashMap<Reference, LinkedList<Reference>>();
+	// Set of references that have data flow from a given reference
+	private HashMap<Reference, HashSet<Reference>> dataFlowFrom = new HashMap<Reference, HashSet<Reference>>();
 	
-	// List of references that have data flow to a given reference (should not contain duplicates)
-	private HashMap<Reference, LinkedList<Reference>> dataFlowTo = new HashMap<Reference, LinkedList<Reference>>();
+	// Set of references that have data flow to a given reference
+	private HashMap<Reference, HashSet<Reference>> dataFlowTo = new HashMap<Reference, HashSet<Reference>>();
 	
 	/**
 	 * Constructor
@@ -87,12 +90,21 @@ public class DataFlowManager {
 	 */
 	private void addDataFlowWithoutConstraintChecking(Reference ref1, Reference ref2) {
 		if (!dataFlowFrom.containsKey(ref1))
-			dataFlowFrom.put(ref1, new LinkedList<Reference>());
+			dataFlowFrom.put(ref1, new HashSet<Reference>());
 		dataFlowFrom.get(ref1).add(ref2);
 		
 		if (!dataFlowTo.containsKey(ref2))
-			dataFlowTo.put(ref2, new LinkedList<Reference>());
+			dataFlowTo.put(ref2, new HashSet<Reference>());
 		dataFlowTo.get(ref2).add(ref1);
+	}
+	
+	/**
+	 * Removes related data-flow links from and to a reference.
+	 * @param reference
+	 */
+	private void removeLinksWithReference(Reference reference) {
+		dataFlowFrom.remove(reference);
+		dataFlowTo.remove(reference);
 	}
 	
 	/*
@@ -122,25 +134,27 @@ public class DataFlowManager {
 	 */
 	public void resolveDataFlows() {
 		ArrayList<Reference> referenceList = referenceManager.getReferenceList();
-		HashMap<String, LinkedList<Reference>> referenceNameMap = referenceManager.getReferenceListByName(); // Use a map of reference names to speed up searching
+		HashMap<String, ArrayList<Reference>> referenceNameMap = referenceManager.getReferenceListByName(); // Use a map of reference names to speed up searching
 		
 		resolveDataFlowsWithinServerCode(referenceList, referenceNameMap);
 		resolveDataFlowsWithinClientCode(referenceList, referenceNameMap);
 		resolveDataFlowsFromServerCodeToClientCode(referenceList, referenceNameMap);
 		resolveDataFlowsFromClientCodeToServerCode(referenceList, referenceNameMap);
+		
+		removeDuplicates(referenceList);
 	}
 	
 	/**
 	 * Resolves data flows within the server code
 	 */
-	private void resolveDataFlowsWithinServerCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsWithinServerCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
 		// Data flows within and across PHP and SQL has been automatically resolved during symbolic execution.
 	}
 	
 	/**
 	 * Resolves data flows within the client code
 	 */
-	private void resolveDataFlowsWithinClientCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsWithinClientCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
 		// [DONE] No data flow within HTML
 		resolveDataFlowsWithinJavaScriptCode(referenceList, referenceNameMap);
 		resolveDataFlowsFromHtmlToJavaScript(referenceList, referenceNameMap);
@@ -150,7 +164,7 @@ public class DataFlowManager {
 	/**
 	 * Resolves data flows within JavaScript code
 	 */
-	private void resolveDataFlowsWithinJavaScriptCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsWithinJavaScriptCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
 		// NOTE: The data flows within each JavaScript code fragment have been resolved but those across the fragments are not yet resolved.
 		// Therefore, we connect them here. This method should not reconnect data flows within each JavaScript code fragment.
 	}
@@ -158,7 +172,7 @@ public class DataFlowManager {
 	/**
 	 * Resolves data flows from HTML to JavaScript
 	 */
-	private void resolveDataFlowsFromHtmlToJavaScript(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsFromHtmlToJavaScript(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
 		for (Reference ref1 : referenceList) {
 			String name = ref1.getName();
 			
@@ -206,7 +220,7 @@ public class DataFlowManager {
 	/**
 	 * Resolves data flows from the server code and the client code
 	 */
-	private void resolveDataFlowsFromServerCodeToClientCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsFromServerCodeToClientCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
 //		// TODO Handle generation-and-information-flow here.
 //		(new HtmlNodeVisitor() {
 //			public void visitElement(HtmlElement htmlElement) {
@@ -249,7 +263,7 @@ public class DataFlowManager {
 	/**
 	 * Resolves data flows from the client code to the server code
 	 */
-	private void resolveDataFlowsFromClientCodeToServerCode(ArrayList<Reference> referenceList, HashMap<String, LinkedList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsFromClientCodeToServerCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
 		// TODO Should we create a pseudo node to serve as the transit point of values from client code to server code?
 		// That would reduce the number of edges crossing the two sides.
 		
@@ -290,6 +304,77 @@ public class DataFlowManager {
 						addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
 				}
 			}
+		}
+	}
+	
+	/**
+	 * Remove data flows that are duplicates of each other
+	 */
+	private void removeDuplicates(ArrayList<Reference> referenceList) {
+		/*
+		 * Put references into groups (connected components through data-flow links)
+		 */
+		HashMap<Reference, Integer> refToGroupId = new HashMap<Reference, Integer>();
+		HashMap<Integer, ArrayList<Reference>> groupIdToRefs = new HashMap<Integer, ArrayList<Reference>>();
+		
+		for (int i = 0; i < referenceList.size(); i++) {
+			Reference ref = referenceList.get(i);
+			refToGroupId.put(ref, i);
+			groupIdToRefs.put(i, new ArrayList<Reference>());
+			groupIdToRefs.get(i).add(ref);
+		}
+		
+		for (Reference ref1 : referenceList) {
+			int group1Id = refToGroupId.get(ref1);
+			for (Reference ref2 : getDataFlowFrom(ref1)) {
+				int group2Id = refToGroupId.get(ref2);
+				if (group1Id != group2Id) {
+					// Merge two groups
+					ArrayList<Reference> group1 = groupIdToRefs.get(group1Id);
+					for (Reference ref3 : groupIdToRefs.get(group2Id)) {
+						refToGroupId.put(ref3, group1Id);
+						group1.add(ref3);
+					}
+					groupIdToRefs.remove(group2Id);
+				}
+			}
+		}
+		
+		/*
+		 * If two groups have the same signature, then remove one of them.
+		 */
+		HashSet<String> groupSignatures = new HashSet<String>();
+		for (int groupId : groupIdToRefs.keySet()) {
+			ArrayList<Reference> group = groupIdToRefs.get(groupId);
+			String groupSignature = computeGroupSignature(group);
+			
+			if (groupSignatures.contains(groupSignature))
+				removeGroup(group);
+			else
+				groupSignatures.add(groupSignature);
+		}
+	}
+	
+	/**
+	 * Computes a signature that uniquely identifies a group of references.
+	 */
+	private String computeGroupSignature(ArrayList<Reference> groupRefs) {
+		Collections.sort(groupRefs, new Reference.ReferenceComparator(new ReferenceComparatorByType(), new ReferenceComparatorByName(), new ReferenceComparatorByPosition()));
+		
+		StringBuilder str = new StringBuilder();
+		for (Reference ref : groupRefs) {
+			str.append(ref.getType() + ref.getName() + ref.getLocation().getStartPosition().getSignature());
+		}
+		return str.toString();
+	}
+	
+	/**
+	 * Removes a group of references.
+	 */
+	private void removeGroup(ArrayList<Reference> refs) {
+		for (Reference ref : refs) {
+			referenceManager.removeReference(ref);
+			removeLinksWithReference(ref);
 		}
 	}
 	

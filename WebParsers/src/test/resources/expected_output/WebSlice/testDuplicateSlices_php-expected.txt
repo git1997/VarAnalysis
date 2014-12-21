@@ -1,0 +1,35 @@
+hi (PhpFunctionDecl) @ testDuplicateSlices.php:Line2:Offset15
+hi (PhpFunctionDecl) @ testDuplicateSlices.php:Line2:Offset15
+t (PhpVariableDecl) @ testDuplicateSlices.php:Line2:Offset18
+	<- a (PhpVariableRef) @ testDuplicateSlices.php:Line10:Offset72
+t (PhpVariableDecl) @ testDuplicateSlices.php:Line2:Offset18
+	<- a (PhpVariableRef) @ testDuplicateSlices.php:Line11:Offset80
+x (PhpVariableDecl) @ testDuplicateSlices.php:Line3:Offset25
+	<- y (PhpVariableRef) @ testDuplicateSlices.php:Line3:Offset30
+y (PhpVariableRef) @ testDuplicateSlices.php:Line3:Offset30
+hey (PhpFunctionDecl) @ testDuplicateSlices.php:Line6:Offset46
+hey (PhpFunctionDecl) @ testDuplicateSlices.php:Line6:Offset46
+y (PhpVariableDecl) @ testDuplicateSlices.php:Line6:Offset50
+	<- a (PhpVariableRef) @ testDuplicateSlices.php:Line13:Offset90
+y (PhpVariableDecl) @ testDuplicateSlices.php:Line6:Offset50
+	<- a (PhpVariableRef) @ testDuplicateSlices.php:Line14:Offset99
+x (PhpVariableDecl) @ testDuplicateSlices.php:Line7:Offset57
+	<- y (PhpVariableRef) @ testDuplicateSlices.php:Line7:Offset62
+x (PhpVariableDecl) @ testDuplicateSlices.php:Line7:Offset57
+	<- y (PhpVariableRef) @ testDuplicateSlices.php:Line7:Offset62
+y (PhpVariableRef) @ testDuplicateSlices.php:Line7:Offset62
+	<- y (PhpVariableDecl) @ testDuplicateSlices.php:Line6:Offset50
+y (PhpVariableRef) @ testDuplicateSlices.php:Line7:Offset62
+	<- y (PhpVariableDecl) @ testDuplicateSlices.php:Line6:Offset50
+hi (PhpFunctionCall) @ testDuplicateSlices.php:Line10:Offset69
+	<- hi (PhpFunctionDecl) @ testDuplicateSlices.php:Line2:Offset15
+a (PhpVariableRef) @ testDuplicateSlices.php:Line10:Offset72
+hi (PhpFunctionCall) @ testDuplicateSlices.php:Line11:Offset77
+	<- hi (PhpFunctionDecl) @ testDuplicateSlices.php:Line2:Offset15
+a (PhpVariableRef) @ testDuplicateSlices.php:Line11:Offset80
+hey (PhpFunctionCall) @ testDuplicateSlices.php:Line13:Offset86
+	<- hey (PhpFunctionDecl) @ testDuplicateSlices.php:Line6:Offset46
+a (PhpVariableRef) @ testDuplicateSlices.php:Line13:Offset90
+hey (PhpFunctionCall) @ testDuplicateSlices.php:Line14:Offset95
+	<- hey (PhpFunctionDecl) @ testDuplicateSlices.php:Line6:Offset46
+a (PhpVariableRef) @ testDuplicateSlices.php:Line14:Offset99

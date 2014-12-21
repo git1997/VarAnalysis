@@ -110,10 +110,9 @@ public abstract class Reference {
 		return getConstraint().implies(reference.getConstraint());
 	}
 	
-	/*
+	/**
 	 * Supports sorting of references
 	 */
-	
 	public static class ReferenceComparator implements Comparator<Reference> {
 		
 		private Comparator<Reference> firstComparator, secondComparator, thirdComparator;

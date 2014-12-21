@@ -65,8 +65,10 @@ public class Position {
 			return this.getFile().equals(position.getFile()) && this.getOffset() == position.getOffset();
 	}
 	
-	@Override
-	public String toString() {
+	/**
+	 * Returns a string that uniquely identifies the position.
+	 */
+	public String getSignature() {
 		return getFilePath() + "@" + getOffset();
 	}
 	

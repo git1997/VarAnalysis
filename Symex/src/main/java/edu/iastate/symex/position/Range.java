@@ -66,4 +66,11 @@ public class Range extends PositionRange {
 		return ranges;
 	}
 	
+	/**
+	 * Returns a string that uniquely identifies the range.
+	 */
+	public String getSignature() {
+		return getFilePath() + "@" + getOffset() + ":" + getLength();
+	}
+	
 }
