@@ -1,4 +1,4 @@
-package not_used;
+package dangling_reference_detection;
 //package deprecated;
 //
 //import java.util.ArrayList;

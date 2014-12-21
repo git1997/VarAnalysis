@@ -1,4 +1,4 @@
-package not_used;
+package dangling_reference_detection;
 
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.Position;

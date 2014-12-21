@@ -1,0 +1,24 @@
+apply plugin: 'java'
+
+archivesBaseName = "WebParsers"
+version = '1.0'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {	
+	compile files('lib/eclipse-plugins/org.eclipse.wst.jsdt.core_1.3.1.v201401291437.jar')
+	compile project(':Symex')
+
+	testCompile files('lib/eclipse-plugins/org.eclipse.core.contenttype_3.4.200.v20130326-1255.jar')
+	testCompile files('lib/eclipse-plugins/org.eclipse.core.jobs_3.5.300.v20130429-1813.jar')
+	testCompile files('lib/eclipse-plugins/org.eclipse.core.resources_3.8.101.v20130717-0806.jar')
+	testCompile files('lib/eclipse-plugins/org.eclipse.equinox.preferences_3.5.100.v20130422-1538.jar')
+	testCompile files('lib/eclipse-plugins/org.eclipse.equinox.registry_3.5.301.v20130717-1549.jar')
+	testCompile files('lib/eclipse-plugins/org.eclipse.osgi_3.9.1.v20140110-1610.jar')
+	
+	testCompile files('../Symex/lib/java-cup-11b-runtime.jar')
+	testCompile 'junit:junit:4.+'
+	testCompile project(':Symex').sourceSets.test.output	
+}
