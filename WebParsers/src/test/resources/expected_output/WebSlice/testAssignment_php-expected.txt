@@ -1,0 +1,7 @@
+z (PhpVariableRef) @ testAssignment.php:Line3:Offset14
+	-> y (PhpVariableDecl) @ testAssignment.php:Line3:Offset9
+y (PhpVariableDecl) @ testAssignment.php:Line3:Offset9
+	-> y (PhpVariableRef) @ testAssignment.php:Line4:Offset24
+y (PhpVariableRef) @ testAssignment.php:Line4:Offset24
+	-> x (PhpVariableDecl) @ testAssignment.php:Line4:Offset19
+x (PhpVariableDecl) @ testAssignment.php:Line4:Offset19

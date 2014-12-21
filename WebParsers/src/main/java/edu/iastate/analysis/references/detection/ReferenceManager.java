@@ -9,6 +9,7 @@ import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByName;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByPosition;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByType;
+import edu.iastate.symex.position.Position;
 
 /**
  * 
@@ -79,4 +80,22 @@ public class ReferenceManager {
 		return references;
 	}
 	
+	/**
+	 * Returns the text describing the reference list
+	 */
+	public String writeReferenceListToText() {
+		StringBuilder str = new StringBuilder();
+		for (Reference ref1 : getReferenceList()) {
+			str.append(writeReferenceToText(ref1) + System.lineSeparator());
+			for (Reference ref2 : dataFlowManager.getDataFlowFrom(ref1)) {
+				str.append("\t-> " + writeReferenceToText(ref2) + System.lineSeparator());
+			}
+		}
+		return str.toString();
+	}
+	
+	private String writeReferenceToText(Reference ref) {
+		Position startPosition = ref.getLocation().getStartPosition();
+		return ref.getName() + " (" + ref.getType() + ") @ " + startPosition.getFile().getName() + ":Line" + startPosition.getLine() + ":Offset" + startPosition.getOffset(); 
+	}
 }

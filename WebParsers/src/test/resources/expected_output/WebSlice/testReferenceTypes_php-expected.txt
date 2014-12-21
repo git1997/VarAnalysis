@@ -1,0 +1,80 @@
+input2 (PhpRefToHtml) @ testReferenceTypes.php:Line2:Offset20
+x (PhpVariableDecl) @ testReferenceTypes.php:Line2:Offset8
+a (PhpRefToHtml) @ testReferenceTypes.php:Line3:Offset43
+y (PhpVariableDecl) @ testReferenceTypes.php:Line3:Offset31
+hello (PhpFunctionCall) @ testReferenceTypes.php:Line7:Offset75
+hello (PhpFunctionDecl) @ testReferenceTypes.php:Line4:Offset58
+	-> hello (PhpFunctionCall) @ testReferenceTypes.php:Line7:Offset75
+field1 (SqlTableColumnDecl) @ testReferenceTypes.php:Line8:Offset115
+	-> 0 (PhpRefToSqlTableColumn) @ testReferenceTypes.php:Line10:Offset191
+	-> field1 (PhpRefToSqlTableColumn) @ testReferenceTypes.php:Line10:Offset202
+field2 (SqlTableColumnDecl) @ testReferenceTypes.php:Line8:Offset123
+	-> 1 (PhpRefToSqlTableColumn) @ testReferenceTypes.php:Line10:Offset218
+	-> field2 (PhpRefToSqlTableColumn) @ testReferenceTypes.php:Line10:Offset229
+result (PhpVariableDecl) @ testReferenceTypes.php:Line8:Offset85
+	-> result (PhpVariableRef) @ testReferenceTypes.php:Line9:Offset170
+result (PhpVariableRef) @ testReferenceTypes.php:Line9:Offset170
+	-> row (PhpVariableDecl) @ testReferenceTypes.php:Line9:Offset145
+row (PhpVariableDecl) @ testReferenceTypes.php:Line9:Offset145
+	-> row (PhpVariableRef) @ testReferenceTypes.php:Line10:Offset186
+	-> row (PhpVariableRef) @ testReferenceTypes.php:Line10:Offset196
+	-> row (PhpVariableRef) @ testReferenceTypes.php:Line10:Offset213
+	-> row (PhpVariableRef) @ testReferenceTypes.php:Line10:Offset223
+row (PhpVariableRef) @ testReferenceTypes.php:Line10:Offset186
+0 (PhpRefToSqlTableColumn) @ testReferenceTypes.php:Line10:Offset191
+row (PhpVariableRef) @ testReferenceTypes.php:Line10:Offset196
+field1 (PhpRefToSqlTableColumn) @ testReferenceTypes.php:Line10:Offset202
+row (PhpVariableRef) @ testReferenceTypes.php:Line10:Offset213
+1 (PhpRefToSqlTableColumn) @ testReferenceTypes.php:Line10:Offset218
+row (PhpVariableRef) @ testReferenceTypes.php:Line10:Offset223
+field2 (PhpRefToSqlTableColumn) @ testReferenceTypes.php:Line10:Offset229
+x (PhpVariableDecl) @ testReferenceTypes.php:Line11:Offset240
+	-> x (PhpVariableRef) @ testReferenceTypes.php:Line12:Offset255
+x (PhpVariableRef) @ testReferenceTypes.php:Line12:Offset255
+c (PhpVariableRef) @ testReferenceTypes.php:Line13:Offset271
+x (PhpVariableDecl) @ testReferenceTypes.php:Line14:Offset277
+	-> x (PhpVariableRef) @ testReferenceTypes.php:Line17:Offset307
+	-> x (PhpVariableRef) @ testReferenceTypes.php:Line40:Offset704
+x (PhpVariableDecl) @ testReferenceTypes.php:Line16:Offset293
+	-> x (PhpVariableRef) @ testReferenceTypes.php:Line17:Offset307
+	-> x (PhpVariableRef) @ testReferenceTypes.php:Line40:Offset704
+x (PhpVariableRef) @ testReferenceTypes.php:Line17:Offset307
+x (PhpVariableRef) @ testReferenceTypes.php:Line40:Offset704
+hi (JsFunctionCall) @ testReferenceTypes.php:Line33:Offset526
+hi (JsFunctionDecl) @ testReferenceTypes.php:Line22:Offset341
+	-> hi (JsFunctionCall) @ testReferenceTypes.php:Line33:Offset526
+y (JsVariableRef) @ testReferenceTypes.php:Line23:Offset356
+x (JsVariableRef) @ testReferenceTypes.php:Line23:Offset350
+document (JsVariableRef) @ testReferenceTypes.php:Line24:Offset363
+id1 (JsRefToHtmlId) @ testReferenceTypes.php:Line24:Offset388
+document (JsVariableRef) @ testReferenceTypes.php:Line25:Offset436
+	-> value (JsDeclOfHtmlInputValue) @ testReferenceTypes.php:Line25:Offset428
+form1 (JsRefToHtmlForm) @ testReferenceTypes.php:Line25:Offset445
+	-> value (JsDeclOfHtmlInputValue) @ testReferenceTypes.php:Line25:Offset428
+input2 (JsRefToHtmlInput) @ testReferenceTypes.php:Line25:Offset451
+	-> value (JsDeclOfHtmlInputValue) @ testReferenceTypes.php:Line25:Offset428
+value (JsRefToHtmlInputValue) @ testReferenceTypes.php:Line25:Offset458
+	-> value (JsDeclOfHtmlInputValue) @ testReferenceTypes.php:Line25:Offset428
+document (JsVariableRef) @ testReferenceTypes.php:Line25:Offset406
+form1 (JsRefToHtmlForm) @ testReferenceTypes.php:Line25:Offset415
+input2 (JsRefToHtmlInput) @ testReferenceTypes.php:Line25:Offset421
+value (JsDeclOfHtmlInputValue) @ testReferenceTypes.php:Line25:Offset428
+	-> input2 (PhpRefToHtml) @ testReferenceTypes.php:Line2:Offset20
+x (JsVariableDecl) @ testReferenceTypes.php:Line26:Offset467
+	-> x (JsVariableRef) @ testReferenceTypes.php:Line31:Offset518
+c (JsVariableRef) @ testReferenceTypes.php:Line27:Offset480
+x (JsVariableDecl) @ testReferenceTypes.php:Line28:Offset486
+x (JsVariableDecl) @ testReferenceTypes.php:Line30:Offset503
+x (JsVariableRef) @ testReferenceTypes.php:Line31:Offset518
+a (HtmlQueryDecl) @ testReferenceTypes.php:Line36:Offset569
+id1 (HtmlIdDecl) @ testReferenceTypes.php:Line37:Offset588
+	-> id1 (JsRefToHtmlId) @ testReferenceTypes.php:Line24:Offset388
+form1 (HtmlFormDecl) @ testReferenceTypes.php:Line38:Offset612
+	-> form1 (JsRefToHtmlForm) @ testReferenceTypes.php:Line25:Offset445
+	-> form1 (JsRefToHtmlForm) @ testReferenceTypes.php:Line25:Offset415
+input1 (HtmlInputDecl) @ testReferenceTypes.php:Line39:Offset644
+input2 (HtmlInputDecl) @ testReferenceTypes.php:Line40:Offset678
+value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line40:Offset686
+	-> input2 (PhpRefToHtml) @ testReferenceTypes.php:Line2:Offset20
+value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line40:Offset686
+	-> input2 (PhpRefToHtml) @ testReferenceTypes.php:Line2:Offset20

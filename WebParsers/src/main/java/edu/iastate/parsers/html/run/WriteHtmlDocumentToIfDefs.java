@@ -43,7 +43,7 @@ public class WriteHtmlDocumentToIfDefs {
 		}
 		
 		else if (htmlNode instanceof HtmlSelect) {
-			String constraint = ((HtmlSelect) htmlNode).getConstraint().toString();
+			String constraint = ((HtmlSelect) htmlNode).getConstraint().toDebugString();
 			
 			String trueBranch = convertNode(((HtmlSelect) htmlNode).getTrueBranchNode());
 			String falseBranch = convertNode(((HtmlSelect) htmlNode).getFalseBranchNode());

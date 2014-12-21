@@ -55,7 +55,7 @@ public class DataModelToHtmlTokens {
 			return lex((LiteralNode) dataNode, lexer);
 		
 		else if (dataNode instanceof UnsetNode)
-			return null;
+			return condListFactory.createEmptyCondList();
 		
 		else // Consider other nodes as SymbolicNode
 			return lex(DataNodeFactory.createSymbolicNode(), lexer);

@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: WebParsers
 Bundle-SymbolicName: WebParsers
 Bundle-Version: 1.0.0.qualifier
-Export-Package: deprecated,
- edu.iastate.analysis.references,
+Export-Package: edu.iastate.analysis.references,
  edu.iastate.analysis.references.detection,
  edu.iastate.parsers.conditional,
  edu.iastate.parsers.html.core,
@@ -13,8 +12,7 @@ Export-Package: deprecated,
  edu.iastate.parsers.html.htmlparser,
  edu.iastate.parsers.html.run,
  edu.iastate.parsers.html.sax.nodes,
- edu.iastate.webslice.core,
- not_used
+ edu.iastate.webslice.core
 Require-Bundle: org.eclipse.equinox.common;bundle-version="3.6.200",
  org.eclipse.core.resources;bundle-version="3.8.101",
  org.eclipse.php.core;bundle-version="3.2.0",

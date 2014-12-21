@@ -9,7 +9,6 @@ import edu.iastate.symex.datamodel.DataModel;
 import edu.iastate.symex.util.Timer;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
-import edu.iastate.webslice.core.ShowStatisticsOnReferences;
 
 /**
  * 
@@ -117,7 +116,7 @@ public class FindReferencesInFile {
 	private void printResults(ReferenceManager referenceManager) {
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Printing results...");
 		
-		System.out.println(new ShowStatisticsOnReferences().showStatistics(referenceManager));
+		System.out.println(referenceManager.writeReferenceListToText());
 		//new XmlReadWrite().printReferencesToXmlFile(referenceManager.getSortedReferenceList(), new File("/Users/HUNG/Desktop/Dataflows.xml");
 	}
 	

@@ -42,8 +42,11 @@ public class HtmlTokensToSaxNodes {
 		else if (tokenList instanceof CondListSelect<?>)
 			return parse((CondListSelect<HtmlToken>) tokenList, parser);
 		
-		else // if (tokenTree instanceof CondListItem<?>)
+		else if (tokenList instanceof CondListItem<?>)
 			return parse((CondListItem<HtmlToken>) tokenList, parser);
+		
+		else // if (tokenTree instanceof CondListEmpty<?>)
+			return condListFactory.createEmptyCondList();
 	}
 	
 	/**

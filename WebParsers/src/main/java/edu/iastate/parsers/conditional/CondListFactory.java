@@ -20,7 +20,7 @@ public class CondListFactory<T> {
 		appendNodes(compactNodes, nodes);
 		
 		if (compactNodes.size() == 0)
-			return null;
+			return createEmptyCondList();
 		else if (compactNodes.size() == 1)
 			return compactNodes.get(0);
 		else
@@ -66,6 +66,10 @@ public class CondListFactory<T> {
 		for (T item : list)
 			nodes.add(new CondListItem<T>(item));
 		return createCompactConcat(nodes);
+	}
+	
+	public CondList<T> createEmptyCondList() {
+		return new CondListEmpty<T>();
 	}
 	
 }

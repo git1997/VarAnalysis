@@ -54,8 +54,12 @@ public class HtmlSaxNodesToHtmlDocument {
 		else if (saxNodes instanceof CondListSelect<?>)
 			parse((CondListSelect<HtmlSaxNode>) saxNodes, parser);
 		
-		else // if (saxNodes instanceof CondListItem<?>)
+		else if (saxNodes instanceof CondListItem<?>)
 			parse((CondListItem<HtmlSaxNode>) saxNodes, parser);
+		
+		else { // if (saxNodes instanceof CondListEmpty<?>)
+			// Do nothing
+		}
 	}
 	
 	/**

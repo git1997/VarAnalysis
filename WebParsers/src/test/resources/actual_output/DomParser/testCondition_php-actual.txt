@@ -1,5 +1,5 @@
 <html><head><title></title></head><body>
-#if (edu.iastate.symex.constraints.BddConstraint@3bbfa8f1)
+#if (isset($_GET["hi"]))
 <p></p>
 #else
 
