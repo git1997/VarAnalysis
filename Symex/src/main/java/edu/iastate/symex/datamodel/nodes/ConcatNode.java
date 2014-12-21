@@ -14,7 +14,7 @@ public class ConcatNode extends DataNode {
 
 	/**
 	 * Protected constructor, called from DataNodeFactory only.
-	 * @param childNodes childNodes must be compact (no child nodes of type ConcatNode)
+	 * @param childNodes childNodes must be compact (no child nodes of type ConcatNode) and contain at least 2 elements
 	 */
 	protected ConcatNode(ArrayList<DataNode> childNodes) {
 		for (DataNode childNode : childNodes) {

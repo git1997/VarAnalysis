@@ -26,7 +26,7 @@ public class DataNodeFactory {
 	
 	/**
 	 * Creates a (compact) ConcatNode from childNodes
-	 * @param childNodes
+	 * @param childNodes childNodes must contain at least 1 element
 	 */
 	public static DataNode createCompactConcatNode(ArrayList<DataNode> childNodes) {
 		ArrayList<DataNode> compactChildNodes = new ArrayList<DataNode>();
