@@ -13,6 +13,7 @@ Export-Package: edu.iastate.symex.analysis,
  edu.iastate.symex.php.nodes,
  edu.iastate.symex.position,
  edu.iastate.symex.run,
+ edu.iastate.symex.test,
  edu.iastate.symex.util,
  edu.iastate.symex.util.logging,
  edu.iastate.symex.util.sourcetracing
