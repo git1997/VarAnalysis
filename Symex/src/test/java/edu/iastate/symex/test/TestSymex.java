@@ -22,7 +22,7 @@ public class TestSymex extends GenericTest {
 		TestSymex testSymex = new TestSymex();
 		//testSymex.enableOracleCreation();
 		
-		testSymex.testFieldAccess();
+		testSymex.testReference();
 	}
 
 	@Override
@@ -113,6 +113,11 @@ public class TestSymex extends GenericTest {
 	@Test
 	public void testForEach() {
 		testFile("testForEach.php");
+	}
+	
+	@Test
+	public void testReference() {
+		testFile("testReference.php");
 	}
 	
 	@Test

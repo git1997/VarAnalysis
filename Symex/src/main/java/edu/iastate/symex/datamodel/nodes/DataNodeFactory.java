@@ -9,6 +9,8 @@ import edu.iastate.symex.position.Range;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.core.PhpVariable;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.ReferenceNode;
 
 /**
  * 
@@ -243,6 +245,14 @@ public class DataNodeFactory {
 	
 	public static SymbolicNode createSymbolicNode() {
 		return createSymbolicNode(null, null);
+	}
+	
+	/*
+	 * Create ReferenceNodes
+	 */
+	
+	public static ReferenceNode createReferenceNode(PhpVariable phpVariable) {
+		return new ReferenceNode(phpVariable);
 	}
 
 }

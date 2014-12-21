@@ -1,5 +1,6 @@
 package edu.iastate.symex.datamodel.nodes;
 
+import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.DataModelVisitor;
 
 /**
@@ -76,6 +77,26 @@ public abstract class SpecialNode extends DataNode {
 			return isEqualTo(booleanNode);
 		}
 
+	}
+	
+	/**
+	 * Represents a reference to a PhpVariable (e.g., $x = &$y)
+	 */
+	public static class ReferenceNode extends SpecialNode {
+	
+		private PhpVariable phpVariable;
+		
+		/**
+		 * Protected constructor, called from DataNodeFactory only.
+		 */
+		protected ReferenceNode(PhpVariable phpVariable) {
+			this.phpVariable = phpVariable;
+		}
+		
+		public PhpVariable getPhpVariable() {
+			return phpVariable;
+		}
+		
 	}
 	
 	/**

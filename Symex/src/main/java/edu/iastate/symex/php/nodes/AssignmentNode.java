@@ -46,9 +46,21 @@ public class AssignmentNode extends ExpressionNode {
 		PhpVariable phpVariable = leftHandSide.createVariablePossiblyWithNull(env);
 		
 		/*
+		 * Handle reference variables, e.g., $x = &$y
+		 */
+		if (rightHandSideValue instanceof edu.iastate.symex.datamodel.nodes.SpecialNode.ReferenceNode) {
+			if (leftHandSide instanceof VariableNode) {
+				String variableName = ((VariableNode) leftHandSide).getResolvedVariableNameOrNull(env); // Causing re-evaluation of leftHandSide, but it's probably Okay
+				if (variableName != null) {
+					phpVariable = ((edu.iastate.symex.datamodel.nodes.SpecialNode.ReferenceNode) rightHandSideValue).getPhpVariable();
+					env.putVariable(variableName, phpVariable);
+				}
+			}
+		}
+		/*
 		 * Handle list assignment, e.g., list($a, $b) = array(1, 2)
 		 */
-		if (phpVariable instanceof PhpListVariable) {
+		else if (phpVariable instanceof PhpListVariable) {
 			if (rightHandSideValue instanceof ArrayNode) {
 				ArrayList<PhpVariable> phpVariables = ((PhpListVariable) phpVariable).getVariables();
 				ArrayList<DataNode> values = ((ArrayNode) rightHandSideValue).getElementValues();
@@ -60,10 +72,10 @@ public class AssignmentNode extends ExpressionNode {
 				}
 			}
 		}
+		/*
+		 * Handle a regular assignment
+		 */
 		else if (phpVariable != null) {
-			/*
-			 * Handle a regular assignment
-			 */
 			assign(phpVariable, rightHandSideValue, env);
 			
 			/*

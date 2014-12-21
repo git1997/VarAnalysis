@@ -13,6 +13,7 @@ import org.eclipse.php.internal.core.ast.nodes.ParenthesisExpression;
 import org.eclipse.php.internal.core.ast.nodes.PostfixExpression;
 import org.eclipse.php.internal.core.ast.nodes.PrefixExpression;
 import org.eclipse.php.internal.core.ast.nodes.Quote;
+import org.eclipse.php.internal.core.ast.nodes.Reference;
 import org.eclipse.php.internal.core.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.ast.nodes.UnaryOperation;
 import org.eclipse.php.internal.core.ast.nodes.VariableBase;
@@ -56,6 +57,7 @@ public abstract class ExpressionNode extends PhpNode {
 			case Expression.POSTFIX_EXPRESSION:			return new PostfixExpressionNode((PostfixExpression) expression);
 			case Expression.PREFIX_EXPRESSION:			return new PrefixExpressionNode((PrefixExpression) expression);
 			case Expression.QUOTE:						return new QuoteNode((Quote) expression);
+			case Expression.REFERENCE:					return new ReferenceNode((Reference) expression);
 			case Expression.SCALAR:						return new ScalarNode((Scalar) expression);
 			case Expression.UNARY_OPERATION:			return new UnaryOperationNode((UnaryOperation) expression);
 			default:									MyLogger.log(MyLevel.TODO, "Expression (" + expression.getClass().getSimpleName() + ") unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(expression)); return new UnresolvedExpressionNode(expression);
