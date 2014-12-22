@@ -8,30 +8,30 @@ package edu.iastate.parsers.html.generatedlexer;
 public class Token {
 	
 	public enum Type {
-		OpeningTag, ClosingTag, AttrName, AttrValStart, AttrValFrag, AttrValEnd, AttrValue, Text
+		OpenTag, AttrName, AttrValStart, AttrValFrag, AttrValEnd, AttrValue, OpenTagEnd, OpenTagSelfClosed, CloseTag, Text
 	}
 	
 	private Type type;
 	private String lexeme;
-	private int position;
+	private int offset;
 	
-	private String value;	// value is extracted from lexeme (e.g. OpeningTag with lexeme = '<form' => value = 'form')
+	private String value; // Sometimes value is different than lexeme (e.g., an OpeningTag with lexeme = '<form' has value = 'form')
 	
 	/**
 	 * Constructor
 	 */
-	public Token(Type type, String lexeme, int position, String value) {
+	public Token(Type type, String lexeme, int offset, String value) {
 		this.type = type;
 		this.lexeme = lexeme;
-		this.position = position;
+		this.offset = offset;
 		this.value = value;
 	}
 	
 	/**
 	 * Constructor
 	 */
-	public Token(Type type, String lexeme, int position) {
-		this(type, lexeme, position, lexeme);
+	public Token(Type type, String lexeme, int offset) {
+		this(type, lexeme, offset, lexeme);
 	}
 	
 	/*
@@ -46,8 +46,8 @@ public class Token {
 		return lexeme;
 	}
 	
-	public int getPosition() {
-		return position;
+	public int getOffset() {
+		return offset;
 	}
 	
 	public String getValue() {
@@ -58,7 +58,7 @@ public class Token {
 	 * Used for debugging
 	 */
 	public String toDebugString() {
-		return "Type: " + type + "\tLexeme: " + lexeme + "\tPosition: " + position;
+		return type + ": " + lexeme;
 	}
 	
 }

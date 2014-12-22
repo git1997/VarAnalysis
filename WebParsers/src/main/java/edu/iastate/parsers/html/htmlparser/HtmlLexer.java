@@ -44,7 +44,7 @@ public class HtmlLexer {
 		
 		// Set the lexical state
 		lexer.yybegin(lexicalState.getLexicalState()); 
-		lexer.setCurrentOpeningTag(lexicalState.getCurrentOpeningTag());
+		lexer.setCurrentOpenTag(lexicalState.getCurrentOpeningTag());
 		
 		while (true) {
 			try {
@@ -52,7 +52,7 @@ public class HtmlLexer {
 				if (token == null)
 					break;
 				
-				PositionRange location = new RelativeRange(htmlLocation, token.getPosition(), token.getLexeme().length());
+				PositionRange location = new RelativeRange(htmlLocation, token.getOffset(), token.getLexeme().length());
 				lexResult.add(new HtmlToken(token, location));			
 			} catch (IOException e) {
 				MyLogger.log(MyLevel.JAVA_EXCEPTION, e.getStackTrace().toString());
@@ -61,7 +61,7 @@ public class HtmlLexer {
 		
 		// Update the lexical state
 		lexicalState.setLexicalState(lexer.yystate());
-		lexicalState.setCurrentOpeningTag(lexer.getCurrentOpeningTag());
+		lexicalState.setCurrentOpeningTag(lexer.getCurrentOpenTag());
 	}
 	
 	public class LexicalState {

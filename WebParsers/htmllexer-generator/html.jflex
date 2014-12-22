@@ -1,4 +1,4 @@
-package htmllexer;
+package edu.iastate.parsers.html.generatedlexer;
      
 %%
 
@@ -17,7 +17,35 @@ package htmllexer;
 %eofclose
 
 %{
-	private String currentOpeningTag = "";
+	private String currentOpenTag = "";
+	
+	public void setCurrentOpenTag(String currentOpenTag) {
+		this.currentOpenTag = currentOpenTag;
+	}
+	
+	public String getCurrentOpenTag() {
+		return currentOpenTag;
+	}
+	
+	private String getState(int state) {
+		if (state == YYINITIAL)
+			return "YYINITIAL";
+		else if (state == ATTR_NAME)
+			return "ATTR_NAME";
+		else if (state == EQ)
+			return "EQ";
+		else if (state == QT_APOS)
+			return "QT_APOS";
+		else if (state == ATTR_VAL_QT)
+			return "ATTR_VAL_QT";
+		else if (state == ATTR_VAL_APOS)
+			return "ATTR_VAL_APOS";
+		else if (state == SCRIPT)
+			return "SCRIPT";
+		else // if (state == COMMENT)
+			return "COMMENT";
+	}
+	
 %}
 
 /*==================== Regular Expressions ====================*/
@@ -35,11 +63,11 @@ WhiteSpace 	=	[ \t\r\n\f]
 /*======================= Lexical Rules =======================*/
  
 <YYINITIAL> {
-	"<"{SimpleName}			{ String tagName = yytext().substring(1); currentOpeningTag = tagName;	
-							  yybegin(ATTR_NAME); 		return new Token(Token.Type.OpeningTag, yytext(), yychar, tagName); }
+	"<"{SimpleName}			{ String tagName = yytext().substring(1); currentOpenTag = tagName;
+							  yybegin(ATTR_NAME); 		return new Token(Token.Type.OpenTag, yytext(), yychar, tagName); }
 	
 	"</"{SimpleName}">"		{ String tagName = yytext().substring(2, yytext().length() - 1);
-														return new Token(Token.Type.ClosingTag, yytext(), yychar, tagName); }
+														return new Token(Token.Type.CloseTag, yytext(), yychar, tagName); }
 	
 	[^"<"]* | "<"			{ 							return new Token(Token.Type.Text, yytext(), yychar); }
 }
@@ -76,19 +104,20 @@ WhiteSpace 	=	[ \t\r\n\f]
 <ATTR_NAME, EQ, QT_APOS, ATTR_VAL_QT, ATTR_VAL_APOS> {
 	{WhiteSpace}+			{ }
 	
-	">"						{ if (currentOpeningTag.toLowerCase().equals("script")) 
+	">"						{ if (currentOpenTag.toLowerCase().equals("script")) 
 									yybegin(SCRIPT);
 							  else
-							    	yybegin(YYINITIAL); }
+							    	yybegin(YYINITIAL); 
+							    						return new Token(Token.Type.OpenTagEnd, yytext(), yychar); }
 							    
-	"/>"					{ yybegin(YYINITIAL);		return new Token(Token.Type.ClosingTag, yytext(), yychar, currentOpeningTag); }
+	"/>"					{ yybegin(YYINITIAL);		return new Token(Token.Type.OpenTagSelfClosed, yytext(), yychar); }
 	
-	[^]						{ System.out.println("HTML Parser Error: Unexpected character [" + yytext() + "] in state " + yystate() + "."); } 
+	[^]						{ System.out.println("HTML Parser Error: Unexpected character [" + yytext() + "] in state " + getState(yystate()) + "."); } 
 }
 
 <SCRIPT> {
 	"</script>"				{ String tagName = yytext().substring(2, yytext().length() - 1);
-							  yybegin(YYINITIAL);		return new Token(Token.Type.ClosingTag, yytext(), yychar, tagName); }
+							  yybegin(YYINITIAL);		return new Token(Token.Type.CloseTag, yytext(), yychar, tagName); }
 														
 	[^"<"]* | "<"			{ 							return new Token(Token.Type.Text, yytext(), yychar); }
 }

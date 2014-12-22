@@ -44,13 +44,13 @@ public class HtmlSaxParser {
 		PositionRange tokenLocation = token.getLocation();
 			
 		switch (token.getType()) {
-			case OpeningTag: {
+			case OpenTag: {
 				HOpenTag tag = new HOpenTag(tokenValue, tokenLocation);
 				parseResult.add(tag);
 				lastSaxNode = tag;
 				break;
 			}
-			case ClosingTag: {
+			case CloseTag: {
 				HCloseTag tag = new HCloseTag(tokenValue, tokenLocation);
 				parseResult.add(tag);
 				lastSaxNode = tag;

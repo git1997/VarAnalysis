@@ -1,0 +1,55 @@
+OpenTag: <html
+OpenTagEnd: >
+Text: 
+hello 
+
+OpenTag: <Script
+AttrName: type
+AttrValStart: "
+AttrValFrag: text/javascript
+AttrValEnd: "
+OpenTagEnd: >
+Text: 
+	function hi() {
+		
+Text: <
+Text: 
+	kepp on going;
+	document.write("
+Text: <
+Text: form name='form1'>");
+	}
+
+CloseTag: </SCRIPT>
+Text: 
+
+OpenTag: <body
+AttrName: i
+AttrValStart: '
+AttrValFrag: lov
+AttrValEnd: '
+AttrName: j
+AttrValStart: "
+AttrValFrag: DF
+AttrValEnd: "
+AttrName: width
+AttrValue: *,
+AttrName: cols
+AttrValue: 100%
+OpenTagEnd: >
+Text: 
+
+CloseTag: </body>
+Text: 
+
+OpenTag: <input
+OpenTagSelfClosed: />
+Text: 
+
+
+OpenTag: <Jen
+AttrName: i
+AttrValStart: '
+AttrValFrag: lov
+
+
