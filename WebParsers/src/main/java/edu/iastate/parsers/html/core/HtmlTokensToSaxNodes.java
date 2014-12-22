@@ -75,7 +75,7 @@ public class HtmlTokensToSaxNodes {
 		// TODO Add more error messages here
 		HOpenTag lastOpenTag = (HOpenTag) parser.getLastSaxNode();
 		HOpenTag lastOpenTagForTrueBranch = lastOpenTag.clone();
-		HOpenTag lastOpenTagForFalseBranch = lastOpenTag.clone();
+		HOpenTag lastOpenTagForFalseBranch = lastOpenTag.clone(); // TODO Clone may not be needed
 		
 		/*
 		 * Enter the true branch

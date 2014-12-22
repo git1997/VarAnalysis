@@ -38,6 +38,13 @@ public class HtmlAttribute extends HtmlNode {
 		value.addValueFragment(valueFragment, location);
 	}
 	
+	/**
+	 * Unescapes the string value of the attribute value, preserving its length
+	 */
+	public void unescapePreservingLength(char stringType) {
+		value.unescapePreservingLength(stringType);
+	}
+	
 	public void setEqToken(HtmlToken eqToken) {
 		this.eqToken = eqToken;
 	}
@@ -51,8 +58,7 @@ public class HtmlAttribute extends HtmlNode {
 	}
 	
 	/**
-	 * Sets parentElement - protected access: Should only be called from HtmlElement.HtmlElement(HOpenTag)
-	 * @param element
+	 * Protected method. Should be called from HtmlElement.HtmlElement(HOpenTag) only
 	 */
 	protected void setParentElement(HtmlElement parentElement) {
 		this.parentElement = parentElement;
@@ -100,17 +106,17 @@ public class HtmlAttribute extends HtmlNode {
 	
 	@Override
 	public HtmlAttribute clone() {
-		HtmlAttribute clonedAttribute = new HtmlAttribute(name, location);
-		clonedAttribute.value = value.clone();
+		HtmlAttribute clone = new HtmlAttribute(name, location);
+		clone.value = value.clone();
 		
-		clonedAttribute.eqToken = eqToken;
-		clonedAttribute.attrValStart = attrValStart;
-		clonedAttribute.attrValEnd = attrValEnd;
+		clone.eqToken = eqToken;
+		clone.attrValStart = attrValStart;
+		clone.attrValEnd = attrValEnd;
 		
-		clonedAttribute.parentElement = parentElement;
-		clonedAttribute.constraint = constraint;
+		clone.parentElement = parentElement;
+		clone.constraint = constraint;
 		
-		return clonedAttribute;
+		return clone;
 	}
 	
 	public String getStringValue() {

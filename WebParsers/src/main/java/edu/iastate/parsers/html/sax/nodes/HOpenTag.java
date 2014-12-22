@@ -67,14 +67,15 @@ public class HOpenTag extends HtmlSaxNode {
 	
 	@Override
 	public HOpenTag clone() {
-		HOpenTag clonedOpenTag = new HOpenTag(type, location);
+		HOpenTag clone = new HOpenTag(type, location);
 		for (HtmlAttribute attr : attributes)
-			clonedOpenTag.addAttribute(attr.clone());
-		clonedOpenTag.setEndBracket(endBracket);
-		return clonedOpenTag;
+			clone.addAttribute(attr.clone());
+		clone.setEndBracket(endBracket);
+		return clone;
 	}
 	
 	public HtmlAttribute getAttribute(String attributeName) {
+		// TODO There could be multiple attributes with the same name (under different constraints)
 		for (HtmlNode attribute : attributes) {
 			if (((HtmlAttribute) attribute).getName().equals(attributeName))
 				return (HtmlAttribute) attribute;

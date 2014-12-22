@@ -20,7 +20,10 @@ public class HtmlAttributeValue extends HtmlNode {
 		super(PositionRange.UNDEFINED);
 	}
 	
-	public void addValueFragment(String valueFragment, PositionRange valueFragmentlocation) {
+	/**
+	 * Protected method. Called from HtmlAttribute only.
+	 */
+	protected void addValueFragment(String valueFragment, PositionRange valueFragmentlocation) {
 		if (stringValue.isEmpty()) {
 			this.location = valueFragmentlocation;
 			this.stringValue = valueFragment;
@@ -29,6 +32,14 @@ public class HtmlAttributeValue extends HtmlNode {
 			this.location = new CompositeRange(this.location, valueFragmentlocation);
 			this.stringValue = this.stringValue + valueFragment;
 		}
+	}
+	
+	/**
+	 * Protected method. Called from HtmlAttribute only.
+	 * Unescapes the string value of the attribute value, preserving its length.
+	 */
+	protected void unescapePreservingLength(char stringType) {
+		stringValue = StringUtils.getUnescapedStringValuePreservingLength(stringValue, stringType);
 	}
 	
 	public String getStringValue() {
@@ -45,13 +56,6 @@ public class HtmlAttributeValue extends HtmlNode {
 		clone.stringValue = stringValue;
 		clone.location = location;
 		return clone;
-	}
-	
-	/**
-	 * Unescapes the string value of the attribute value, preserving its length
-	 */
-	public void unescapePreservingLength(char stringType) {
-		stringValue = StringUtils.getUnescapedStringValuePreservingLength(stringValue, stringType);
 	}
 	
 	@Override

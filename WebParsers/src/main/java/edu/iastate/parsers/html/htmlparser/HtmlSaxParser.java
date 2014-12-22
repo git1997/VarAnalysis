@@ -157,7 +157,7 @@ public class HtmlSaxParser {
 						case AttrValFrag:		attribute.addAttrValFrag(tokenValue, tokenLocation); return;
 						case AttrValEnd:{
 												attribute.setAttrValEnd(token);
-												attribute.getAttributeValue().unescapePreservingLength(tokenValue.charAt(0)); // Unescape the attribute value
+												attribute.unescapePreservingLength(tokenValue.charAt(0)); // Unescape the attribute value
 												return;
 						}
 						case AttrValue:			attribute.addAttrValFrag(tokenValue, tokenLocation); return;
