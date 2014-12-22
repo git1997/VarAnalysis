@@ -5,6 +5,7 @@ hello
 
 OpenTag: <Script
 AttrName: type
+Eq: =
 AttrValStart: "
 AttrValFrag: text/javascript
 AttrValEnd: "
@@ -25,16 +26,20 @@ Text:
 
 OpenTag: <body
 AttrName: i
+Eq: =
 AttrValStart: '
 AttrValFrag: lov
 AttrValEnd: '
 AttrName: j
+Eq: =
 AttrValStart: "
 AttrValFrag: DF
 AttrValEnd: "
 AttrName: width
+Eq: =
 AttrValue: *,
 AttrName: cols
+Eq: =
 AttrValue: 100%
 OpenTagEnd: >
 Text: 
@@ -43,12 +48,13 @@ CloseTag: </body>
 Text: 
 
 OpenTag: <input
-OpenTagSelfClosed: />
+OpenTagEnd: />
 Text: 
 
 
 OpenTag: <Jen
 AttrName: i
+Eq: =
 AttrValStart: '
 AttrValFrag: lov
 

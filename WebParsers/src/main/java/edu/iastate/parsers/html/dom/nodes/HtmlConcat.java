@@ -13,14 +13,15 @@ public class HtmlConcat extends HtmlNode {
 	private ArrayList<HtmlNode> childNodes;
 	
 	/**
-	 * Private constructor
+	 * Private constructor.
+	 * @param childNodes childNodes must be compact (no child nodes of type HtmlConcat) and contain at least 2 elements
 	 */
 	private HtmlConcat(ArrayList<HtmlNode> childNodes) {
 		super(PositionRange.UNDEFINED);
 		this.childNodes = childNodes;
 	}
 	
-	public static HtmlNode createCompactHtmlNode(ArrayList<HtmlNode> childNodes) {
+	public static HtmlNode createCompactHtmlNodeOrNull(ArrayList<HtmlNode> childNodes) {
 		ArrayList<HtmlNode> compactChildNodes = new ArrayList<HtmlNode>();
 		appendChildNodes(compactChildNodes, childNodes);
 		
@@ -30,13 +31,6 @@ public class HtmlConcat extends HtmlNode {
 			return compactChildNodes.get(0);
 		else
 			return new HtmlConcat(compactChildNodes);
-	}
-	
-	public static HtmlNode createCompactHtmlNode(HtmlNode childNode1, HtmlNode childNode2) {
-		ArrayList<HtmlNode> childNodes = new ArrayList<HtmlNode>(2);
-		childNodes.add(childNode1);
-		childNodes.add(childNode2);
-		return createCompactHtmlNode(childNodes);
 	}
 	
 	private static void appendChildNodes(ArrayList<HtmlNode> compactChildNodes, ArrayList<HtmlNode> childNodes) {

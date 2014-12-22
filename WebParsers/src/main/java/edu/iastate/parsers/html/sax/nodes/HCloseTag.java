@@ -16,7 +16,7 @@ public class HCloseTag extends HtmlSaxNode {
 	 */
 	public HCloseTag(String type, PositionRange location) {
 		super(location);
-		this.type = type.toLowerCase();
+		this.type = type;
 	}
 	
 	public String getType() {

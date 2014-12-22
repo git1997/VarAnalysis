@@ -9,7 +9,6 @@ import edu.iastate.parsers.conditional.CondListItem;
 import edu.iastate.parsers.conditional.CondListSelect;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
-import edu.iastate.parsers.html.generatedlexer.Token;
 import edu.iastate.parsers.html.htmlparser.HtmlSaxParser;
 import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
@@ -63,21 +62,7 @@ public class HtmlTokensToSaxNodes {
 	 * Parse a Select
 	 */
 	private CondList<HtmlSaxNode> parse(CondListSelect<HtmlToken> select, HtmlSaxParser parser) {
-		if (!(parser.getLastSaxNode() instanceof HOpenTag))
-			return parseSelectCase2(select, parser);
-		
-		ArrayList<HtmlToken> nextTokens = select.getLeftMostItems();
-		boolean nextTokensAreAttributes = false;
-		for (HtmlToken token : nextTokens) {
-			if (token.getType() == Token.Type.AttrName || token.getType() == Token.Type.AttrValue
-					|| token.getType() == Token.Type.AttrValStart || token.getType() == Token.Type.AttrValFrag 
-					|| token.getType() == Token.Type.AttrValEnd) {
-				nextTokensAreAttributes = true;
-				break;
-			}
-		}
-		
-		if (nextTokensAreAttributes)
+		if (parser.isInsideOpenTag())
 			return parseSelectCase1(select, parser);
 		else
 			return parseSelectCase2(select, parser);
@@ -87,6 +72,7 @@ public class HtmlTokensToSaxNodes {
 	 * Case 1: Parsing inside an HTML open tag
 	 */
 	private CondList<HtmlSaxNode> parseSelectCase1(CondListSelect<HtmlToken> select, HtmlSaxParser parser) {
+		// TODO Add more error messages here
 		HOpenTag lastOpenTag = (HOpenTag) parser.getLastSaxNode();
 		HOpenTag lastOpenTagForTrueBranch = lastOpenTag.clone();
 		HOpenTag lastOpenTagForFalseBranch = lastOpenTag.clone();
@@ -106,13 +92,13 @@ public class HtmlTokensToSaxNodes {
 		CondList<HtmlSaxNode> nodesInFalseBranch = null;
 		if (select.getFalseBranchNode() != null) {
 			parser.setLastSaxNode(lastOpenTagForFalseBranch);
-			nodesInTrueBranch = parse(select.getFalseBranchNode(), parser);
+			nodesInFalseBranch = parse(select.getFalseBranchNode(), parser);
 		}
 		
 		/*
 		 * Combine results
 		 */
-		parser.setLastSaxNode(null);
+		parser.setLastSaxNode(lastOpenTag);
 		CondList<HtmlSaxNode> mergedResult = condListFactory.createCompactSelect(select.getConstraint(), nodesInTrueBranch, nodesInFalseBranch);
 		
 		// Combine the attributes in the true branch and false branch and update the original lastOpenTag
@@ -125,10 +111,12 @@ public class HtmlTokensToSaxNodes {
 			HtmlAttribute attrInTrueBranch = attrsInTrueBranch.get(i);
 			HtmlAttribute attrInFalseBranch = attrsInFalseBranch.get(i);
 			if (attrInTrueBranch.getName().equals(attrInFalseBranch.getName())
-					&& attrInTrueBranch.getValue().equals(attrInFalseBranch.getValue())) {
+					&& attrInTrueBranch.getStringValue().equals(attrInFalseBranch.getStringValue())) {
 				commonAttrs++;
 				lastOpenTag.addAttribute(attrInTrueBranch);
 			}
+			else
+				break;
 		}
 		for (int i = commonAttrs; i < attrsInTrueBranch.size(); i++) {
 			HtmlAttribute attr = attrsInTrueBranch.get(i);

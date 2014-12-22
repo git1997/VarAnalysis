@@ -105,8 +105,8 @@ public class HtmlSaxNodesToHtmlDocument {
 		 */
 		
 		// Handle well-formed HTML
-		HtmlNode nodeInTrueBranch1 = HtmlConcat.createCompactHtmlNode(rootElementTrue.getChildNodes());
-		HtmlNode nodeInFalseBranch1 = HtmlConcat.createCompactHtmlNode(rootElementFalse.getChildNodes());
+		HtmlNode nodeInTrueBranch1 = HtmlConcat.createCompactHtmlNodeOrNull(rootElementTrue.getChildNodes());
+		HtmlNode nodeInFalseBranch1 = HtmlConcat.createCompactHtmlNodeOrNull(rootElementFalse.getChildNodes());
 		HtmlNode select1 = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), nodeInTrueBranch1, nodeInFalseBranch1);
 		if (select1 != null)
 			lastHtmlStack.peek().addChildNode(select1);

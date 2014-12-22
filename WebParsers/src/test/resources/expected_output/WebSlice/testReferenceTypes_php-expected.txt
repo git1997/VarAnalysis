@@ -78,6 +78,7 @@ a (HtmlQueryDecl) @ testReferenceTypes.php:Line36:Offset569
 id1 (HtmlIdDecl) @ testReferenceTypes.php:Line37:Offset588
 form1 (HtmlFormDecl) @ testReferenceTypes.php:Line38:Offset612
 input1 (HtmlInputDecl) @ testReferenceTypes.php:Line39:Offset644
+value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line39:Offset652
 input2 (HtmlInputDecl) @ testReferenceTypes.php:Line40:Offset678
 value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line40:Offset686
 value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line40:Offset686

@@ -6,7 +6,7 @@ import edu.iastate.parsers.conditional.CondList;
 import edu.iastate.parsers.conditional.CondListFactory;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.htmlparser.HtmlLexer;
-import edu.iastate.parsers.html.htmlparser.HtmlLexer.LexicalState;
+import edu.iastate.parsers.html.htmlparser.HtmlLexer.LexerState;
 import edu.iastate.symex.datamodel.DataModel;
 import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
@@ -100,13 +100,13 @@ public class DataModelToHtmlTokens {
 		/*
 		 * Enter the true branch
 		 */
-		LexicalState savedLexicalState = lexer.saveLexicalState();
+		LexerState savedLexicalState = lexer.saveLexerState();
 		CondList<HtmlToken> tokensInTrueBranch = lex(selectNode.getNodeInTrueBranch(), lexer);
 		
 		/*
 		 * Enter the false branch
 		 */
-		lexer.restoreLexicalState(savedLexicalState);
+		lexer.restoreLexerState(savedLexicalState);
 		CondList<HtmlToken> tokensInFalseBranch = lex(selectNode.getNodeInFalseBranch(), lexer);
 		
 		/*

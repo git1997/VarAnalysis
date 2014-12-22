@@ -18,12 +18,12 @@ public class HtmlScript extends HtmlElement {
 	
 	public HText getSourceCode() {
 		StringBuilder sourceCode = new StringBuilder();
-		PositionRange location = null;
+		PositionRange location = PositionRange.UNDEFINED;
 		
 		for (HtmlNode childNode : childNodes) {
 			if (childNode instanceof HtmlText) {
 				sourceCode.append(((HtmlText) childNode).getStringValue());
-				if (location == null)
+				if (location == PositionRange.UNDEFINED)
 					location = childNode.getLocation();
 				else
 					location = new CompositeRange(location, childNode.getLocation());

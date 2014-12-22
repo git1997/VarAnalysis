@@ -11,6 +11,10 @@ public abstract class HtmlSaxNode {
 	
 	protected PositionRange location;
 	
+	/**
+	 * Constructor
+	 * @param location
+	 */
 	public HtmlSaxNode(PositionRange location) {
 		this.location = location;
 	}

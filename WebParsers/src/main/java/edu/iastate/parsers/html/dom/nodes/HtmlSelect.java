@@ -34,10 +34,16 @@ public class HtmlSelect extends HtmlNode {
 		return constraint;
 	}
 	
+	/**
+	 * Returns the True branch node, can be null.
+	 */
 	public HtmlNode getTrueBranchNode() {
 		return trueBranchNode;
 	}
-	
+
+	/**
+	 * Returns the False branch node, can be null.
+	 */
 	public HtmlNode getFalseBranchNode() {
 		return falseBranchNode;
 	}

@@ -11,14 +11,13 @@ import edu.iastate.symex.util.StringUtils;
  */
 public class HtmlAttributeValue extends HtmlNode {
 
-	private String stringValue;
+	private String stringValue = "";
 	
 	/**
-	 * Constructor
+	 * Protected constructor. Called from HtmlAttribute only.
 	 */
-	public HtmlAttributeValue(String stringValue, PositionRange location) {
-		super(location);
-		this.stringValue = stringValue;
+	protected HtmlAttributeValue() {
+		super(PositionRange.UNDEFINED);
 	}
 	
 	public void addValueFragment(String valueFragment, PositionRange valueFragmentlocation) {
@@ -40,12 +39,16 @@ public class HtmlAttributeValue extends HtmlNode {
 	 * Other methods
 	 */
 	
+	@Override
 	public HtmlAttributeValue clone() {
-		return new HtmlAttributeValue(stringValue, location);
+		HtmlAttributeValue clone = new HtmlAttributeValue();
+		clone.stringValue = stringValue;
+		clone.location = location;
+		return clone;
 	}
 	
 	/**
-	 * Unescapes the string value of the attribute, preserving its length
+	 * Unescapes the string value of the attribute value, preserving its length
 	 */
 	public void unescapePreservingLength(char stringType) {
 		stringValue = StringUtils.getUnescapedStringValuePreservingLength(stringValue, stringType);

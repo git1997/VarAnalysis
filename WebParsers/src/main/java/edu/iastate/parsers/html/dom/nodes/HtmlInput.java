@@ -14,11 +14,10 @@ public class HtmlInput extends HtmlElement {
 	}
 	
 	public String getInputName() {
-		HtmlAttributeValue inputName = getAttributeValue("name");
-		return (inputName != null ? inputName.getStringValue() : null);
+		return getAttributeStringValue("name");
 	}
 	
-	public HtmlForm getParentForm() {
+	public HtmlForm getParentFormOrNull() {
 		HtmlElement parent = this.getParentElement();
 		while (parent != null) {
 			if (parent instanceof HtmlForm)

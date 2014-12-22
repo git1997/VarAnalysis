@@ -8,7 +8,7 @@ package edu.iastate.parsers.html.generatedlexer;
 public class Token {
 	
 	public enum Type {
-		OpenTag, AttrName, AttrValStart, AttrValFrag, AttrValEnd, AttrValue, OpenTagEnd, OpenTagSelfClosed, CloseTag, Text
+		OpenTag, AttrName, Eq, AttrValStart, AttrValFrag, AttrValEnd, AttrValue, OpenTagEnd, CloseTag, Text
 	}
 	
 	private Type type;

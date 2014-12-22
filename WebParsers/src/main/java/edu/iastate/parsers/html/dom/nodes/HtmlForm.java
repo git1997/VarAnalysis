@@ -14,13 +14,11 @@ public class HtmlForm extends HtmlElement {
 	}
 	
 	public String getFormName() {
-		HtmlAttributeValue formName = getAttributeValue("name");
-		return (formName != null ? formName.getStringValue() : null);
+		return getAttributeStringValue("name");
 	}
 	
 	public String getFormSubmitToPage() {
-		HtmlAttributeValue submitToPage = getAttributeValue("action");
-		return (submitToPage != null ? submitToPage.getStringValue() : null);
+		return getAttributeStringValue("action");
 	}
 
 }

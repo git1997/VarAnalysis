@@ -15,7 +15,7 @@ public class HtmlElement extends HtmlNode {
 	protected HtmlElement parentElement = null;	// The parent element
 
 	protected HOpenTag openTag;					// The openTag of this HtmlElement
-	protected HCloseTag closeTag = null;			// The closeTag of this HtmlElement, can be null
+	protected HCloseTag closeTag = null;		// The closeTag of this HtmlElement, can be null
 	
 	protected ArrayList<HtmlNode> childNodes = new ArrayList<HtmlNode>();	// Its child nodes
 	
@@ -106,6 +106,10 @@ public class HtmlElement extends HtmlNode {
 	
 	public HtmlAttributeValue getAttributeValue(String attributeName) {
 		return openTag.getAttributeValue(attributeName);
+	}
+	
+	public String getAttributeStringValue(String attributeName) {
+		return openTag.getAttributeStringValue(attributeName);
 	}
 	
 	@Override

@@ -137,7 +137,7 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 	 */
 	@Override
 	public void visitAttribute(HtmlAttribute attribute) {
-		if (attribute.getValue() == null || attribute.getValue().isEmpty() || attribute.getAttributeValue().getLocation().isUndefined())
+		if (attribute.getStringValue().isEmpty() || attribute.getAttributeValue().getLocation().isUndefined())
 			return;
 		
 		if (attribute.isNameAttribute())
@@ -164,7 +164,7 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 		
 		//----- Create HtmlForm entity, e.g. <form name="my_form">
 		if (attribute.getParentElement() instanceof HtmlForm) {
-			String formName = attribute.getValue();
+			String formName = attribute.getStringValue();
 			PositionRange formLocation = attribute.getAttributeValue().getLocation();
 			String submitToPage = ((HtmlForm) attribute.getParentElement()).getFormSubmitToPage();
 			
@@ -176,9 +176,9 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 		//----- Create HtmlInput entity, e.g. <input name="my_input">
 		else if (attribute.getParentElement() instanceof HtmlInput) {
 			HtmlInput inputTag = (HtmlInput) attribute.getParentElement();
-			HtmlForm formTag = inputTag.getParentForm();
+			HtmlForm formTag = inputTag.getParentFormOrNull();
 			
-			String inputName = attribute.getValue();
+			String inputName = attribute.getStringValue();
 			PositionRange inputLocation = attribute.getAttributeValue().getLocation();
 			
 			if (inputName.contains("[")) { // e.g. <input type='checkbox' name='addr[email]' />
@@ -207,7 +207,7 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 	 * Creates entities from an HtmlAttribute "id", e.g. <div id="mydiv">
 	 */
 	private void createEntitiesFromIdAttribute(HtmlAttribute attribute) {
-		String id = attribute.getValue();
+		String id = attribute.getStringValue();
 		PositionRange location = attribute.getAttributeValue().getLocation();
 		
 		Reference reference = new HtmlIdDecl(id, location);

@@ -17,7 +17,7 @@ package edu.iastate.parsers.html.generatedlexer;
 %eofclose
 
 %{
-	private String currentOpenTag = "";
+	private String currentOpenTag = null;
 	
 	public void setCurrentOpenTag(String currentOpenTag) {
 		this.currentOpenTag = currentOpenTag;
@@ -63,7 +63,8 @@ WhiteSpace 	=	[ \t\r\n\f]
 /*======================= Lexical Rules =======================*/
  
 <YYINITIAL> {
-	"<"{SimpleName}			{ String tagName = yytext().substring(1); currentOpenTag = tagName;
+	"<"{SimpleName}			{ String tagName = yytext().substring(1); 
+							  currentOpenTag = tagName;
 							  yybegin(ATTR_NAME); 		return new Token(Token.Type.OpenTag, yytext(), yychar, tagName); }
 	
 	"</"{SimpleName}">"		{ String tagName = yytext().substring(2, yytext().length() - 1);
@@ -77,7 +78,7 @@ WhiteSpace 	=	[ \t\r\n\f]
 }
 
 <EQ> {
-	"="						{ yybegin(QT_APOS); }
+	"="						{ yybegin(QT_APOS); 		return new Token(Token.Type.Eq, yytext(), yychar); }
 	{SimpleName}			{ 							return new Token(Token.Type.AttrName, yytext(), yychar); }
 }
 
@@ -104,13 +105,15 @@ WhiteSpace 	=	[ \t\r\n\f]
 <ATTR_NAME, EQ, QT_APOS, ATTR_VAL_QT, ATTR_VAL_APOS> {
 	{WhiteSpace}+			{ }
 	
-	">"						{ if (currentOpenTag.toLowerCase().equals("script")) 
+	">"						{ if (currentOpenTag != null && currentOpenTag.toLowerCase().equals("script")) 
 									yybegin(SCRIPT);
 							  else
-							    	yybegin(YYINITIAL); 
+							    	yybegin(YYINITIAL);
+							  currentOpenTag = null;
 							    						return new Token(Token.Type.OpenTagEnd, yytext(), yychar); }
 							    
-	"/>"					{ yybegin(YYINITIAL);		return new Token(Token.Type.OpenTagSelfClosed, yytext(), yychar); }
+	"/>"					{ currentOpenTag = null;
+							  yybegin(YYINITIAL);		return new Token(Token.Type.OpenTagEnd, yytext(), yychar); }
 	
 	[^]						{ System.out.println("HTML Parser Error: Unexpected character [" + yytext() + "] in state " + getState(yystate()) + "."); } 
 }

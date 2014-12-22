@@ -1,5 +1,6 @@
 package edu.iastate.parsers.html.dom.nodes;
 
+import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
 
@@ -11,7 +12,11 @@ import edu.iastate.symex.position.PositionRange;
 public class HtmlAttribute extends HtmlNode {
 	
 	private String name;
-	private HtmlAttributeValue value = null;
+	private HtmlAttributeValue value;
+	
+	private HtmlToken eqToken = null;		// The '=' token after the attribute name
+	private HtmlToken attrValStart = null;	// The ' or " token at the start of the attribute value
+	private HtmlToken attrValEnd = null; 	// The ' or " token at the end of the attribute value
 	
 	private HtmlElement parentElement = null;
 	private Constraint constraint = Constraint.TRUE;
@@ -22,17 +27,27 @@ public class HtmlAttribute extends HtmlNode {
 	public HtmlAttribute(String name, PositionRange location) {
 		super(location);
 		this.name = name;
+		this.value = new HtmlAttributeValue();
 	}
 	
 	/*
 	 * Set properties
 	 */
 	
-	public void addValueFragment(String valueFragment, PositionRange location) {
-		if (value == null)
-			value = new HtmlAttributeValue(valueFragment, location);
-		else
-			value.addValueFragment(valueFragment, location);
+	public void addAttrValFrag(String valueFragment, PositionRange location) {
+		value.addValueFragment(valueFragment, location);
+	}
+	
+	public void setEqToken(HtmlToken eqToken) {
+		this.eqToken = eqToken;
+	}
+	
+	public void setAttrValStart(HtmlToken attrValStart) {
+		this.attrValStart = attrValStart;
+	}
+	
+	public void setAttrValEnd(HtmlToken attrValEnd) {
+		this.attrValEnd = attrValEnd;
 	}
 	
 	/**
@@ -59,8 +74,16 @@ public class HtmlAttribute extends HtmlNode {
 		return value;
 	}
 	
-	public String getValue() {
-		return value != null ? value.getStringValue() : "";
+	public HtmlToken getEqToken() {
+		return eqToken;
+	}
+	
+	public HtmlToken getAttrValStart() {
+		return attrValStart;
+	}
+	
+	public HtmlToken getAttrValEnd() {
+		return attrValEnd;
 	}
 	
 	public HtmlElement getParentElement() {
@@ -75,16 +98,27 @@ public class HtmlAttribute extends HtmlNode {
 	 * Other methods
 	 */
 	
+	@Override
 	public HtmlAttribute clone() {
 		HtmlAttribute clonedAttribute = new HtmlAttribute(name, location);
-		clonedAttribute.value = (value != null ? value.clone() : null);
+		clonedAttribute.value = value.clone();
+		
+		clonedAttribute.eqToken = eqToken;
+		clonedAttribute.attrValStart = attrValStart;
+		clonedAttribute.attrValEnd = attrValEnd;
+		
 		clonedAttribute.parentElement = parentElement;
 		clonedAttribute.constraint = constraint;
+		
 		return clonedAttribute;
 	}
 	
+	public String getStringValue() {
+		return value.getStringValue();
+	}
+	
 	public String getTrimmedLowerCaseValue() {
-		return getValue().trim().toLowerCase();
+		return getStringValue().trim().toLowerCase();
 	}
 	
 	/**
