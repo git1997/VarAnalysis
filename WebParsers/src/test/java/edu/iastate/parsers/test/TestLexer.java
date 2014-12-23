@@ -27,7 +27,7 @@ public class TestLexer extends GenericTest {
 		TestLexer testLexer = new TestLexer();
 		//testLexer.enableOracleCreation();
 		
-		testLexer.testTokens();
+		testLexer.testSimple();
 	}
 
 	@Override
@@ -70,9 +70,14 @@ public class TestLexer extends GenericTest {
 	 * Test methods
 	 */
 	
+	@Test 
+	public void testSimple() {
+		testFile("Lexer/testSimple.php");
+	}
+	
 	@Test
-	public void testTokens() {
-		testFile("Lexer/testTokens.php");
+	public void testBadForm() {
+		testFile("Lexer/testBadForm.php");
 	}
 	
 }

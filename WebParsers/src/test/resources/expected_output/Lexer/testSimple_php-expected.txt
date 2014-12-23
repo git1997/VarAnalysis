@@ -1,0 +1,50 @@
+OpenTag: <html
+OpenTagEnd: >
+Text: 
+
+OpenTag: <head
+OpenTagEnd: >
+Text: 
+	
+OpenTag: <script
+OpenTagEnd: >
+Text: 
+		JS code
+	
+CloseTag: </script>
+Text: 
+
+CloseTag: </head>
+Text: 
+
+
+OpenTag: <body
+OpenTagEnd: >
+Text: 
+	
+OpenTag: <form
+AttrName: name
+Eq: =
+AttrValStart: "
+AttrValFrag: form1
+AttrValEnd: "
+OpenTagEnd: >
+Text: 
+		
+OpenTag: <input
+AttrName: name
+Eq: =
+AttrValStart: "
+AttrValFrag: input1
+AttrValEnd: "
+OpenTagEnd: />
+Text: 
+	
+CloseTag: </form>
+Text: 
+
+CloseTag: </body>
+Text: 
+
+
+CloseTag: </html>
