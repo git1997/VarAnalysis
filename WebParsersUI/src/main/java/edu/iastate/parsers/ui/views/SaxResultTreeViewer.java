@@ -57,7 +57,7 @@ public class SaxResultTreeViewer extends GenericTreeViewer {
 		
 		else if (element instanceof CondListItem<?>) {
 			CondListItem<?> leafNode = (CondListItem<?>) element;
-			HtmlSaxNode saxNode =  (HtmlSaxNode) leafNode.getNode();
+			HtmlSaxNode saxNode =  (HtmlSaxNode) leafNode.getItem();
 			if (saxNode instanceof HOpenTag) {
 				HOpenTag tag = (HOpenTag) saxNode;
 				children.addAll(tag.getAttributes());
@@ -106,7 +106,7 @@ public class SaxResultTreeViewer extends GenericTreeViewer {
 			return ((CondListSelect<?>) element).getConstraint().toDebugString();
 		
 		else if (element instanceof CondListItem<?>) {
-			HtmlSaxNode node = (HtmlSaxNode) ((CondListItem<?>) element).getNode();
+			HtmlSaxNode node = (HtmlSaxNode) ((CondListItem<?>) element).getItem();
 			return UIHelper.standardizeText(node.toDebugString());
 		}
 		
@@ -131,7 +131,7 @@ public class SaxResultTreeViewer extends GenericTreeViewer {
 	@Override
 	public PositionRange getTreeNodePositionRange(Object element) {
 		if (element instanceof CondListItem<?>) {
-			HtmlSaxNode node = (HtmlSaxNode) ((CondListItem<?>) element).getNode();
+			HtmlSaxNode node = (HtmlSaxNode) ((CondListItem<?>) element).getItem();
 			return node.getLocation();
 		}
 		else if (element instanceof CondListSelect<?>) {

@@ -94,10 +94,10 @@ public class LexResultTreeViewer extends GenericTreeViewer {
 			return ((CondListSelect<?>) element).getConstraint().toDebugString();
 		
 		else if (element instanceof CondListItem<?>) {
-			Object node = ((CondListItem<?>) element).getNode();
+			Object item = ((CondListItem<?>) element).getItem();
 			String text;
-			if (node instanceof HtmlToken)
-				text = ((HtmlToken) node).toDebugString();
+			if (item instanceof HtmlToken)
+				text = ((HtmlToken) item).toDebugString();
 			else
 				text = "";
 			
@@ -111,8 +111,8 @@ public class LexResultTreeViewer extends GenericTreeViewer {
 	@Override
 	public PositionRange getTreeNodePositionRange(Object element) {
 		if (element instanceof CondListItem<?>) {
-			HtmlToken node = (HtmlToken) ((CondListItem<?>) element).getNode();
-			return node.getLocation();
+			HtmlToken item = (HtmlToken) ((CondListItem<?>) element).getItem();
+			return item.getLocation();
 		}
 		else if (element instanceof CondListSelect<?>) {
 			Constraint constraint = ((CondListSelect<?>) element).getConstraint();

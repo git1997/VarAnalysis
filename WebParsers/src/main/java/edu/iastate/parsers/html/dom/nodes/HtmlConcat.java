@@ -14,7 +14,7 @@ public class HtmlConcat extends HtmlNode {
 	
 	/**
 	 * Private constructor.
-	 * @param childNodes childNodes must be compact (no child nodes of type CondListConcat) and contain at least 2 elements
+	 * @param childNodes childNodes must be compact (no child nodes of type HtmlConcat) and contain at least 2 elements
 	 */
 	private HtmlConcat(ArrayList<HtmlNode> childNodes) {
 		super(PositionRange.UNDEFINED);
