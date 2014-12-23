@@ -10,8 +10,8 @@ import edu.iastate.symex.constraints.Constraint;
 public class HtmlSelect extends HtmlNode {
 	
 	private Constraint constraint;
-	private HtmlNode trueBranchNode;	// Can be null
-	private HtmlNode falseBranchNode;	// Can be null
+	private HtmlNode trueBranchNode;
+	private HtmlNode falseBranchNode;
 	
 	/**
 	 * Private constructor
@@ -23,37 +23,31 @@ public class HtmlSelect extends HtmlNode {
 		this.falseBranchNode = falseBranchNode;
 	}
 	
-	public static HtmlNode createCompactHtmlNode(Constraint constraint, HtmlNode trueBranchNode, HtmlNode falseBranchNode) {
-		if (trueBranchNode == null && falseBranchNode == null)
-			return null;
-		else
-			return new HtmlSelect(constraint, trueBranchNode, falseBranchNode);
+	/**
+	 * Creates an HtmlSelect
+	 */
+	public static HtmlNode createCompactSelect(Constraint constraint, HtmlNode trueBranchNode, HtmlNode falseBranchNode) {
+		return new HtmlSelect(constraint, trueBranchNode, falseBranchNode);
 	}
 	
 	public Constraint getConstraint() {
 		return constraint;
 	}
 	
-	/**
-	 * Returns the True branch node, can be null.
-	 */
 	public HtmlNode getTrueBranchNode() {
 		return trueBranchNode;
 	}
 
-	/**
-	 * Returns the False branch node, can be null.
-	 */
 	public HtmlNode getFalseBranchNode() {
 		return falseBranchNode;
 	}
 	
 	@Override
 	public String toDebugString() {
-		String retString = System.lineSeparator() + "#if (" + constraint + ")" + System.lineSeparator()
-				+ (trueBranchNode != null ? trueBranchNode.toDebugString() : "null") + System.lineSeparator()
+		String retString = System.lineSeparator() + "#if (" + constraint.toDebugString() + ")" + System.lineSeparator()
+				+ trueBranchNode.toDebugString() + System.lineSeparator()
 				+ "#else" + System.lineSeparator()
-				+ (falseBranchNode != null ? falseBranchNode.toDebugString() : "null") + System.lineSeparator()
+				+ falseBranchNode.toDebugString() + System.lineSeparator()
 				+ "#endif" + System.lineSeparator();
 		return retString;
 	}

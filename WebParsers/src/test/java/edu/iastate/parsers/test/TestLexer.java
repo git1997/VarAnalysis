@@ -58,7 +58,7 @@ public class TestLexer extends GenericTest {
 		}
 		else if (tokens instanceof CondListItem<?>) {
 			CondListItem<HtmlToken> item = (CondListItem<HtmlToken>) tokens;
-			HtmlToken htmlToken = item.getNode();
+			HtmlToken htmlToken = item.getItem();
 			strBuilder.append(htmlToken.toDebugString() + System.lineSeparator());
 		}
 		else { // if (tokens instanceof CondListEmpty<?>)

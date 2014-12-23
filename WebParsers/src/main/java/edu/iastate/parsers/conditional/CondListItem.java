@@ -1,7 +1,5 @@
 package edu.iastate.parsers.conditional;
 
-import java.util.ArrayList;
-
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 
@@ -12,30 +10,26 @@ import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
  */
 public class CondListItem<T> extends CondList<T> {
 	
-	private T node;
+	private T item;
 	
-	public CondListItem(T node) {
-		this.node = node;
+	/**
+	 * Protected constructor, called from CondListFactory only.
+	 */
+	protected CondListItem(T item) {
+		this.item = item;
 	}
 	
-	public T getNode() {
-		return node;
-	}
-
-	@Override
-	public ArrayList<T> getLeftMostItems() {
-		ArrayList<T> list = new ArrayList<T>(1);
-		list.add(node);
-		return list;
+	public T getItem() {
+		return item;
 	}
 
 	@Override
 	public String toDebugString() {
-		if (node instanceof HtmlToken) {
-			return ((HtmlToken) node).toDebugString();
+		if (item instanceof HtmlToken) {
+			return ((HtmlToken) item).toDebugString();
 		}
-		else if (node instanceof HtmlSaxNode) {
-			return ((HtmlSaxNode) node).toDebugString();
+		else if (item instanceof HtmlSaxNode) {
+			return ((HtmlSaxNode) item).toDebugString();
 		}
 		else
 			return "?";

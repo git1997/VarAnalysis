@@ -61,7 +61,7 @@ public class TestSaxParser extends GenericTest {
 		}
 		else if (saxNodes instanceof CondListItem<?>) {
 			CondListItem<HtmlSaxNode> item = (CondListItem<HtmlSaxNode>) saxNodes;
-			HtmlSaxNode htmlSaxNode = item.getNode();
+			HtmlSaxNode htmlSaxNode = item.getItem();
 			strBuilder.append(htmlSaxNode.toDebugString() + System.lineSeparator());
 		}
 		else { // if (saxNodes instanceof CondListEmpty<?>)

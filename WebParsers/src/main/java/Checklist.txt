@@ -1,7 +1,7 @@
 OK				edu.iastate.analysis.config
 OK				edu.iastate.analysis.references
 OK				edu.iastate.analysis.references.detection
-				edu.iastate.parsers.conditional
+OK				edu.iastate.parsers.conditional
 				edu.iastate.parsers.html.core
 OK				edu.iastate.parsers.html.dom.nodes
 OK				edu.iastate.parsers.html.generatedlexer

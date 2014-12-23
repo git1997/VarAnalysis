@@ -9,4 +9,5 @@ HtmlNode
 	HtmlText
 	HtmlAttribute
 	HtmlAttributeValue
+	HtmlEmpty
 HtmlNodeVisitor

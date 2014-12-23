@@ -30,8 +30,11 @@ public class HtmlNodeVisitor {
 		else if (htmlNode instanceof HtmlAttribute)
 			visitAttribute((HtmlAttribute) htmlNode);
 		
-		else // if (htmlNode instanceof HtmlAttributeValue)
+		else if (htmlNode instanceof HtmlAttributeValue)
 			visitAttributeValue((HtmlAttributeValue) htmlNode);
+		
+		else // if (htmlNode instanceof HtmlEmpty)
+			visitHtmlEmpty((HtmlEmpty) htmlNode);
 	}
 	
 	public void visitConcat(HtmlConcat htmlConcat) {
@@ -40,10 +43,8 @@ public class HtmlNodeVisitor {
 	}
 	
 	public void visitSelect(HtmlSelect htmlSelect) {
-		if (htmlSelect.getTrueBranchNode() != null)
-			visit(htmlSelect.getTrueBranchNode());
-		if (htmlSelect.getFalseBranchNode() != null)
-			visit(htmlSelect.getFalseBranchNode());
+		visit(htmlSelect.getTrueBranchNode());
+		visit(htmlSelect.getFalseBranchNode());
 	}
 	
 	public void visitDocument(HtmlDocument htmlDocument) {
@@ -66,6 +67,9 @@ public class HtmlNodeVisitor {
 	}
 	
 	public void visitAttributeValue(HtmlAttributeValue htmlAttributeValue) {
+	}
+	
+	public void visitHtmlEmpty(HtmlEmpty htmlEmpty) {
 	}
 		
 }

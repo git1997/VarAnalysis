@@ -14,7 +14,7 @@ public class CondListConcat<T> extends CondList<T> {
 	
 	/**
 	 * Protected constructor, called from CondListFactory only.
-	 * @param childNodes childNodes must be compact (no child nodes of type CondListConcat)
+	 * @param childNodes childNodes must be compact (no child nodes of type CondListConcat) and contain at least 2 elements
 	 */
 	protected CondListConcat(ArrayList<CondList<T>> childNodes) {
 		this.childNodes = childNodes;
@@ -22,11 +22,6 @@ public class CondListConcat<T> extends CondList<T> {
 	
 	public ArrayList<CondList<T>> getChildNodes() {
 		return new ArrayList<CondList<T>>(childNodes);
-	}
-
-	@Override
-	public ArrayList<T> getLeftMostItems() {
-		return childNodes.get(0).getLeftMostItems();
 	}
 
 	@Override

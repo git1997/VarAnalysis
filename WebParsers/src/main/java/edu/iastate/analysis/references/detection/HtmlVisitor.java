@@ -68,14 +68,13 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 	@Override
 	public void visitSelect(HtmlSelect htmlSelect) {
 		Constraint savedConstraint = constraint;
-		if (htmlSelect.getTrueBranchNode() != null) {
-			constraint = ConstraintFactory.createAndConstraint(savedConstraint, htmlSelect.getConstraint());
-			visit(htmlSelect.getTrueBranchNode());
-		}
-		if (htmlSelect.getFalseBranchNode() != null) {
-			constraint = ConstraintFactory.createAndConstraint(savedConstraint, ConstraintFactory.createNotConstraint(htmlSelect.getConstraint()));
-			visit(htmlSelect.getFalseBranchNode());
-		}
+
+		constraint = ConstraintFactory.createAndConstraint(savedConstraint, htmlSelect.getConstraint());
+		visit(htmlSelect.getTrueBranchNode());
+
+		constraint = ConstraintFactory.createAndConstraint(savedConstraint, ConstraintFactory.createNotConstraint(htmlSelect.getConstraint()));
+		visit(htmlSelect.getFalseBranchNode());
+
 		constraint = savedConstraint;
 	}
 	
@@ -93,7 +92,7 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 	/**
 	 * Visits an HtmlScript
 	 */
-	public void visitScript(HtmlScript htmlScript) {
+	private void visitScript(HtmlScript htmlScript) {
 		/*
 		 * Handle <script type="text/javascript" src="javascript.js"/>
 		 */

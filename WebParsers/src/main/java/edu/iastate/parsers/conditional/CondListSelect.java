@@ -1,7 +1,5 @@
 package edu.iastate.parsers.conditional;
 
-import java.util.ArrayList;
-
 import edu.iastate.symex.constraints.Constraint;
 
 /**
@@ -13,8 +11,8 @@ import edu.iastate.symex.constraints.Constraint;
 public class CondListSelect<T> extends CondList<T> {
 
 	private Constraint constraint;
-	private CondList<T> trueBranchNode;		// Can be null
-	private CondList<T> falseBranchNode;	// Can be null
+	private CondList<T> trueBranchNode;
+	private CondList<T> falseBranchNode;
 	
 	/**
 	 * Protected constructor, called from CondListFactory only.
@@ -38,21 +36,11 @@ public class CondListSelect<T> extends CondList<T> {
 	}
 
 	@Override
-	public ArrayList<T> getLeftMostItems() {
-		ArrayList<T> list = new ArrayList<T>();
-		if (trueBranchNode != null)
-			list.addAll(trueBranchNode.getLeftMostItems());
-		if (falseBranchNode != null)
-			list.addAll(falseBranchNode.getLeftMostItems());
-		return list;
-	}
-	
-	@Override
 	public String toDebugString() {
-		String retString = System.lineSeparator() + "#if (" + constraint + ")" + System.lineSeparator()
-				+ (trueBranchNode != null ? trueBranchNode.toDebugString() : "null") + System.lineSeparator()
+		String retString = System.lineSeparator() + "#if (" + constraint.toDebugString() + ")" + System.lineSeparator()
+				+ trueBranchNode.toDebugString() + System.lineSeparator()
 				+ "#else" + System.lineSeparator()
-				+ (falseBranchNode != null ? falseBranchNode.toDebugString() : "null") + System.lineSeparator()
+				+ falseBranchNode.toDebugString() + System.lineSeparator()
 				+ "#endif" + System.lineSeparator();
 		return retString;
 	}

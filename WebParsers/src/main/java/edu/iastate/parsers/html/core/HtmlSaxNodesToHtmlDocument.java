@@ -105,15 +105,15 @@ public class HtmlSaxNodesToHtmlDocument {
 		 */
 		
 		// Handle well-formed HTML
-		HtmlNode nodeInTrueBranch1 = HtmlConcat.createCompactHtmlNodeOrNull(rootElementTrue.getChildNodes());
-		HtmlNode nodeInFalseBranch1 = HtmlConcat.createCompactHtmlNodeOrNull(rootElementFalse.getChildNodes());
-		HtmlNode select1 = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), nodeInTrueBranch1, nodeInFalseBranch1);
+		HtmlNode nodeInTrueBranch1 = HtmlConcat.createCompactConcat(rootElementTrue.getChildNodes());
+		HtmlNode nodeInFalseBranch1 = HtmlConcat.createCompactConcat(rootElementFalse.getChildNodes());
+		HtmlNode select1 = HtmlSelect.createCompactSelect(selectNode.getConstraint(), nodeInTrueBranch1, nodeInFalseBranch1);
 		if (select1 != null)
 			lastHtmlStack.peek().addChildNode(select1);
 		
 		// [Optional] Handle the case where one opening tag is closed in two different branches
 		if (rootElementTrueAfter != rootElementTrue && rootElementFalseAfter != rootElementFalse && lastHtmlStack.size() >= 2) {
-			HtmlNode select2 = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), rootElementTrue, rootElementFalse);
+			HtmlNode select2 = HtmlSelect.createCompactSelect(selectNode.getConstraint(), rootElementTrue, rootElementFalse);
 			lastHtmlStack.pop();
 			lastHtmlStack.peek().replaceLastChildNode(select2);
 		}
@@ -121,7 +121,7 @@ public class HtmlSaxNodesToHtmlDocument {
 		// Handle ill-formed HTML
 		HtmlNode nodeInTrueBranch3 = (rootElementTrueAfter != rootElementTrue ? rootElementTrueAfter : null);
 		HtmlNode nodeInFalseBranch3 = (rootElementFalseAfter != rootElementFalse ? rootElementFalseAfter : null);
-		HtmlNode select3 = HtmlSelect.createCompactHtmlNode(selectNode.getConstraint(), nodeInTrueBranch3, nodeInFalseBranch3);
+		HtmlNode select3 = HtmlSelect.createCompactSelect(selectNode.getConstraint(), nodeInTrueBranch3, nodeInFalseBranch3);
 		if (select3 != null)
 			lastHtmlStack.peek().addChildNode(select3);
 		
@@ -132,7 +132,7 @@ public class HtmlSaxNodesToHtmlDocument {
 	 * Parse an HtmlSaxNode
 	 */
 	private void parse(CondListItem<HtmlSaxNode> saxNode, HtmlDomParser parser) {
-		parser.parse(saxNode.getNode());
+		parser.parse(saxNode.getItem());
    	}
 
 }

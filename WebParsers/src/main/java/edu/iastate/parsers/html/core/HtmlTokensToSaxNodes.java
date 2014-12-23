@@ -162,7 +162,7 @@ public class HtmlTokensToSaxNodes {
 	 * Parse an HtmlToken
 	 */
 	private CondList<HtmlSaxNode> parse(CondListItem<HtmlToken> item, HtmlSaxParser parser) {
-		HtmlToken htmlToken = item.getNode();
+		HtmlToken htmlToken = item.getItem();
 		parser.parse(htmlToken);
 		
 		CondList<HtmlSaxNode> parseResult = condListFactory.createCondList(parser.getParseResult());
