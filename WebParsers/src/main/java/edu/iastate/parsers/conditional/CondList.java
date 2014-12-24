@@ -31,11 +31,11 @@ public abstract class CondList<T> {
 		}
 		else if (condList instanceof CondListSelect<?>) {
 			CondListSelect<T> select = (CondListSelect<T>) condList;
-			strBuilder.append(System.lineSeparator() + "#if (" + select.getConstraint().toDebugString() + ")" + System.lineSeparator());
+			strBuilder.append("#if (" + select.getConstraint().toDebugString() + ")" + System.lineSeparator());
 			writeCondListToIfDefs(select.getTrueBranchNode(), strBuilder);
-			strBuilder.append(System.lineSeparator() + "#else" + System.lineSeparator());
+			strBuilder.append("#else" + System.lineSeparator());
 			writeCondListToIfDefs(select.getFalseBranchNode(), strBuilder);
-			strBuilder.append(System.lineSeparator() + "#endif" + System.lineSeparator());
+			strBuilder.append("#endif" + System.lineSeparator());
 		}
 		else if (condList instanceof CondListItem<?>) {
 			CondListItem<T> item = (CondListItem<T>) condList;

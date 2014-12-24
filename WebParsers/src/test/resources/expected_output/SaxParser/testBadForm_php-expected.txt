@@ -2,13 +2,10 @@ Text: 1111111
 Text: 11111111111111
 Text: 1111111
 Text: 11111111111111
-
 #if ($c)
 Text: 2
-
 #else
 Text: 3
-
 #endif
 OpenTag: html
 OpenTag: script

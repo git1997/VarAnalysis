@@ -2,13 +2,10 @@ Text: 1111111
 Text: 11111111111111
 Text: 1111111
 Text: 11111111111111
-
 #if ($c)
 Text: 2
-
 #else
 Text: 3
-
 #endif
 OpenTag: <html
 OpenTagEnd: >
@@ -91,13 +88,10 @@ AttrValEnd: "
 AttrName: value
 Eq: =
 AttrValStart: "
-
 #if ($c)
 AttrValFrag: 2
-
 #else
 AttrValFrag: 3
-
 #endif
 AttrValEnd: "
 OpenTagEnd: />

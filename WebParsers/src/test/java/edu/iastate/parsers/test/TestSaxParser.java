@@ -26,7 +26,7 @@ public class TestSaxParser extends GenericTest {
 		TestSaxParser testSaxParser = new TestSaxParser();
 		//testSaxParser.enableOracleCreation();
 		
-		testSaxParser.testBadForm();
+		testSaxParser.testBranching();
 	}
 
 	@Override
@@ -49,6 +49,11 @@ public class TestSaxParser extends GenericTest {
 	@Test
 	public void testBadForm() {
 		testFile("SaxParser/testBadForm.php");
+	}
+	
+	@Test
+	public void testBranching() {
+		testFile("SaxParser/testBranching.php");
 	}
 	
 }
