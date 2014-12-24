@@ -2,10 +2,10 @@ OK				edu.iastate.analysis.config
 OK				edu.iastate.analysis.references
 OK				edu.iastate.analysis.references.detection
 OK				edu.iastate.parsers.conditional
-				edu.iastate.parsers.html.core
+OK				edu.iastate.parsers.html.core
 OK				edu.iastate.parsers.html.dom.nodes
 OK				edu.iastate.parsers.html.generatedlexer
 				edu.iastate.parsers.html.htmlparser
-				edu.iastate.parsers.html.run
+OK				edu.iastate.parsers.html.run
 OK				edu.iastate.parsers.html.sax.nodes
 PENDING			edu.iastate.webslice.core

@@ -1,4 +1,4 @@
-package edu.iastate.parsers.html.core;
+package edu.iastate.parsers.html.htmlparser;
 
 import java.util.Stack;
 
@@ -11,7 +11,6 @@ import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
 import edu.iastate.parsers.html.dom.nodes.HtmlNode;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
-import edu.iastate.parsers.html.htmlparser.HtmlDomParser;
 import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.symex.position.PositionRange;

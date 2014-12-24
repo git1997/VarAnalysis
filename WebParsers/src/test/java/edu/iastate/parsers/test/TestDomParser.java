@@ -4,9 +4,9 @@ import java.io.File;
 
 import org.junit.Test;
 
+import edu.iastate.parsers.html.core.WriteHtmlDocumentToIfDefs;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.run.RunHtmlParserForFile;
-import edu.iastate.parsers.html.run.WriteHtmlDocumentToIfDefs;
 import edu.iastate.symex.test.GenericTest;
 
 /**

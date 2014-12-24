@@ -15,7 +15,7 @@ import edu.iastate.parsers.html.dom.nodes.HtmlAttributeValue;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
 import edu.iastate.parsers.html.dom.nodes.HtmlForm;
 import edu.iastate.parsers.html.dom.nodes.HtmlInput;
-import edu.iastate.parsers.html.dom.nodes.HtmlNodeVisitor;
+import edu.iastate.parsers.html.dom.nodes.HtmlDocumentVisitor;
 import edu.iastate.parsers.html.dom.nodes.HtmlScript;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.sax.nodes.HText;
@@ -34,7 +34,7 @@ import edu.iastate.symex.util.logging.MyLogger;
  * @author HUNG
  *
  */
-public class HtmlVisitor extends HtmlNodeVisitor {
+public class HtmlVisitor extends HtmlDocumentVisitor {
 	
 	private File entryFile;
 	private Constraint constraint; // Could be updated during traversal
@@ -70,10 +70,10 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 		Constraint savedConstraint = constraint;
 
 		constraint = ConstraintFactory.createAndConstraint(savedConstraint, htmlSelect.getConstraint());
-		visit(htmlSelect.getTrueBranchNode());
+		visitNode(htmlSelect.getTrueBranchNode());
 
 		constraint = ConstraintFactory.createAndConstraint(savedConstraint, ConstraintFactory.createNotConstraint(htmlSelect.getConstraint()));
-		visit(htmlSelect.getFalseBranchNode());
+		visitNode(htmlSelect.getFalseBranchNode());
 
 		constraint = savedConstraint;
 	}
@@ -99,7 +99,7 @@ public class HtmlVisitor extends HtmlNodeVisitor {
 		if (htmlScript.getAttributeValue("src") != null) {
 			// TODO Review this code
 			String includedFile = htmlScript.getAttributeValue("src").getStringValue();
-			File currentFile = htmlScript.getLocation().getStartPosition().getFile();
+			File currentFile = htmlScript.getOpenTag().getLocation().getStartPosition().getFile();
 			String includedFilePath = FileIO.resolveIncludedFilePath(currentFile.getParent(), currentFile.getAbsolutePath(), includedFile);
 			
 			if (includedFilePath == null) {

@@ -2,7 +2,6 @@ package edu.iastate.parsers.html.htmlparser;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Stack;
 
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
 import edu.iastate.parsers.html.dom.nodes.HtmlText;
@@ -20,80 +19,60 @@ import edu.iastate.symex.util.logging.MyLogger;
  */
 public class HtmlDomParser {
 	
-	private Stack<HtmlElement> htmlStack = new Stack<HtmlElement>();
-
-	public Stack<HtmlElement> getHtmlStack() {
-		Stack<HtmlElement> clonedStack = new Stack<HtmlElement>();
-		clonedStack.addAll(htmlStack);
-		return clonedStack;
-	}
-	
-	public void setHtmlStack(Stack<HtmlElement> savedStack) {
-		this.htmlStack = savedStack;
-	}
-	
-	public void clearHtmlStack() {
-		htmlStack = new Stack<HtmlElement>();
-	}
-	
-	public void pushHtmlStack(HtmlElement element) {
-		htmlStack.push(element);
-	}
-	
-	public boolean isEmptyHtmlStack() {
-		return htmlStack.isEmpty();
-	}
-	
-	public HtmlElement peekHtmlStack() {
-		return htmlStack.peek();
-	}
-	
-	public HtmlElement getFirstElementInHtmlStack() {
-		return htmlStack.firstElement();
-	}
-	
-	public void parse(HtmlSaxNode saxNode) {
+	/**
+	 * Parses the htmlSaxNode
+	 */
+	public void parse(HtmlSaxNode saxNode, DomParserEnv env) {
 		/*
-		 * Handle ill-formed HTML, e.g. <br> may not have closing tag
+		 * Handle self-closed tags (e.g., <br> or <emtpy>)
 		 */
-		if (!htmlStack.isEmpty() && selfClosingTags.contains(htmlStack.peek().getType())) {
-			if (!(saxNode instanceof HCloseTag)
-					|| (saxNode instanceof HCloseTag && htmlStack.peek().getType() != ((HCloseTag) saxNode).getType()))
-				htmlStack.pop();
+		if (isSelfClosedTag(env.getCurrentHtmlElement().getType())) {
+			if (saxNode instanceof HCloseTag && env.closeTagIsValid((HCloseTag) saxNode)) {
+				env.addCloseTagToCurrentHtmlElement((HCloseTag) saxNode);
+				env.changeStateToParentElement();
+				return;
+			}
+			env.changeStateToParentElement();
 		}
 		
+		/*
+		 * HOpenTag
+		 */
 		if (saxNode instanceof HOpenTag) {
 			HtmlElement htmlElement = HtmlElement.createHtmlElement((HOpenTag) saxNode);
-			if (!htmlStack.isEmpty()) {
-				htmlStack.peek().addChildNode(htmlElement);
-			}
-			htmlStack.add(htmlElement);
+			env.addHtmlNodeToCurrentHtmlElement(htmlElement);
+			if (!htmlElement.getOpenTag().isSelfClosed())
+				env.changeStateToHtmlElement(htmlElement);
 		}
-		
+		/*
+		 * HCloseTag
+		 */
 		else if (saxNode instanceof HCloseTag) {
-			if (!htmlStack.isEmpty()) {
-				HtmlElement htmlElement = htmlStack.peek();
-				if (htmlElement.getType().equals(((HCloseTag) saxNode).getType())) {
-					htmlStack.pop();
-				}
-				else {
-					// TODO Handle mismatching tags here
-					MyLogger.log(MyLevel.TODO, "In HtmlDomParser.java: Need to handle mismatching tags.");
-				}
+			HCloseTag closeTag = (HCloseTag) saxNode;
+			if (env.closeTagIsValid(closeTag)) {
+				env.addCloseTagToCurrentHtmlElement(closeTag);
+				env.changeStateToParentElement();
+			}
+			else {
+				MyLogger.log(MyLevel.USER_EXCEPTION, "In HtmlDomParser.java: Encountered CloseTag " + closeTag.getType() + " when in OpenTag " + env.getCurrentHtmlElement());
 			}
 		}
-		
-		else { // if (saxNode instanceof HText)
-			if (!htmlStack.isEmpty()) {
-				HtmlElement htmlElement = htmlStack.peek();
-				htmlElement.addChildNode(new HtmlText((HText) saxNode));
-			}
+		/*
+		 * HText
+		 */
+		else {
+			HtmlText htmlText = new HtmlText((HText) saxNode);
+			env.addHtmlNodeToCurrentHtmlElement(htmlText);
 		}
 	}
 	
 	/**
 	 * List of self-closing tags 
 	 */
-	private static HashSet<String> selfClosingTags = new HashSet<String>(Arrays.asList(new String[]{"br", "empty", "input"}));
+	private static HashSet<String> selfClosedTags = new HashSet<String>(Arrays.asList(new String[]{"br", "empty", "input"}));
+	
+	private static boolean isSelfClosedTag(String tagType) {
+		return selfClosedTags.contains(tagType);
+	}
 	
 }
