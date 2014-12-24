@@ -1,3 +1,4 @@
-Hey [RepeatBegin]
+Hey 
+#repeat ($a <= 10)
 world
-[RepeatEnd]
+#endrepeat

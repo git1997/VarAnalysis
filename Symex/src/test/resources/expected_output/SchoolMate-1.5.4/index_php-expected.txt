@@ -668,7 +668,8 @@
 
  <table align='center' width='900' cellspacing='0' cellpadding='0' border='0'>
  <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
-[RepeatBegin]
+
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]' 
 #if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
 SELECTED
@@ -676,7 +677,8 @@ SELECTED
 
 #endif
 >[Symbolic:$semester[1]]</option>
-[RepeatEnd]
+#endrepeat
+
    <option value='-1' 
 #if ($_POST['semester']==-1)
 SELECTED
@@ -707,7 +709,8 @@ SELECTED
 	<th>Substitute</th>
    </tr>
 #if ($_POST['semester']!="")
-[RepeatBegin]
+
+#repeat ($class = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -731,7 +734,8 @@ odd
 [Special]
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 #else
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
@@ -768,7 +772,8 @@ odd
   <font color='red'>* Deleting a class will also delete the information for that class</font>
   <br><br>
 
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.classes.deleteclass.value=0;document.classes.page2.value=0;document.classes.onpage.value=[Symbolic:$i];document.classes.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -778,7 +783,8 @@ odd
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='deleteclass'>
   <input type='hidden' name='selectclass'>
@@ -1110,7 +1116,8 @@ odd
 	<th>Middle Initial</th>
 	<th>Last Name</th>
 	<th>Username</th>
-   </tr>[RepeatBegin]
+   </tr>
+#repeat ($student = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -1130,7 +1137,8 @@ odd
 [Special]
 #endif
 
-[RepeatEnd] </table>
+#endrepeat
+ </table>
   <br>
   <b>Reports:</b>
   <select name='report' onChange='document.students.page2.value=document.students.report.value;document.students.deletestudent.value=0;document.students.submit();'>
@@ -1140,7 +1148,8 @@ odd
    <option value='32'>Points Report</option>
    <option value='1337'>Report Cards</option>
   </select>
- &nbsp;&nbsp;&nbsp;&nbsp;<b>Term: </b> <select name='term' onChange='document.students.submit();'>[RepeatBegin]
+ &nbsp;&nbsp;&nbsp;&nbsp;<b>Term: </b> <select name='term' onChange='document.students.submit();'>
+#repeat ($term = mysql_fetch_row($query))
 <option value='[Symbolic:$term[0]]' 
 #if ($_POST['term']==$term[0]&&$_POST['term']!=NULL)
 SELECTED
@@ -1148,7 +1157,8 @@ SELECTED
 
 #endif
 >[Symbolic:$term[1]]</option>
-[RepeatEnd]
+#endrepeat
+
 	 </select>
   <br /><br />
   <input type='button' value='Add' onClick='document.students.page2.value=20;document.students.submit();'>
@@ -1156,7 +1166,8 @@ SELECTED
   <input type='button' value='Delete' onClick='document.students.deletestudent.value=1;validate();'>
   <br><br>
 
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.students.deletestudent.value=0;document.students.page2.value=2;document.students.onpage.value=[Symbolic:$i];document.students.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -1166,7 +1177,8 @@ SELECTED
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='deletestudent'>
   <input type='hidden' name='selectstudent'>
@@ -1311,7 +1323,8 @@ SELECTED
 	<th>First Name</th>
 	<th>Last Name</th>
 	<th>Username</th>
-   </tr>[RepeatBegin]
+   </tr>
+#repeat ($teacher = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -1330,14 +1343,16 @@ odd
 [Special]
 #endif
 
-[RepeatEnd] </table>
+#endrepeat
+ </table>
   <br>
   <input type='button' value='Add' onClick='document.teachers.page2.value=16;document.teachers.submit();'>
   <input type='button' value='Edit' onClick='document.teachers.page2.value=17;checkboxes();'>
   <input type='button' value='Delete' onClick='document.teachers.deleteteacher.value=1;validate();'>
   <br><br>
 
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.teachers.deleteteacher.value=0;document.teachers.page2.value=3;document.teachers.onpage.value=[Symbolic:$i];document.teachers.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -1347,7 +1362,8 @@ odd
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='deleteteacher'>
   <input type='hidden' name='selectteacher'>
@@ -1492,7 +1508,8 @@ odd
 	<th>Title</th>
 	<th>Message</th>
 	<th>Date</th>
-   </tr>[RepeatBegin]
+   </tr>
+#repeat ($announcement = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -1517,14 +1534,16 @@ odd
 [Special]
 #endif
 
-[RepeatEnd] </table>
+#endrepeat
+ </table>
   <br>
   <input type='button' value='Add' onClick='document.announcements.page2.value=18;document.announcements.submit();'>
   <input type='button' value='Edit' onClick='document.announcements.page2.value=19;checkboxes();'>
   <input type='button' value='Delete' onClick='document.announcements.deleteannouncement.value=1;validate();'>
   <br><br>
 
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.announcements.deleteannouncement.value=0;document.announcements.page2.value=4;document.announcements.onpage.value=[Symbolic:$i];document.announcements.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -1534,7 +1553,8 @@ odd
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='deleteannouncement'>
   <input type='hidden' name='selectannouncement'>
@@ -1682,7 +1702,8 @@ odd
 	<th>Midterm Date</th>
 	<th>End Date</th>
 	<th>Half</th>
-   </tr>[RepeatBegin]
+   </tr>
+#repeat ($smstr = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -1728,7 +1749,8 @@ Second
 [Special]
 #endif
 
-[RepeatEnd] </table>
+#endrepeat
+ </table>
   <br>
   <input type='button' value='Add' onClick='document.semesters.page2.value=7;document.semesters.submit();'>
   <input type='button' value='Edit' onClick='document.semesters.page2.value=13;checkboxes();'>
@@ -1737,7 +1759,8 @@ Second
   <font color='red'>* Deleting a semester will also delete the classes in that semester and the information for those classes</font>
 	<br><br>
 
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.semesters.deletesemester.value=0;document.semesters.page2.value=5;document.semesters.onpage.value=[Symbolic:$i];document.semesters.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -1747,7 +1770,8 @@ Second
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='deletesemester'>
   <input type='hidden' name='selectsemester'>
@@ -1891,7 +1915,8 @@ Second
    <th>Term Name</th>
    <th>Start Date</th>
    <th>End Date</th>
-   </tr>[RepeatBegin]
+   </tr>
+#repeat ($term = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -1922,7 +1947,8 @@ odd
 [Special]
 #endif
 
-[RepeatEnd] </table>
+#endrepeat
+ </table>
   <br>
   <input type='button' value='Add' onClick='document.terms.page2.value=8;document.terms.submit();'>
   <input type='button' value='Edit' onClick='document.terms.page2.value=12;checkboxes();'>
@@ -1932,7 +1958,8 @@ odd
   <font color='red'>* Deleting a term will also delete the semesters, classes in each semester, and the information for those classes</font>
 	<br><br>
 
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.terms.deleteterm.value=0;document.terms.page2.value=6;document.terms.onpage.value=[Symbolic:$i];document.terms.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -1942,7 +1969,8 @@ odd
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='deleteterm'>
   <input type='hidden' name='selectterm'>
@@ -2029,10 +2057,12 @@ odd
    </tr>
    <tr class='even'>
     <td><input type='text' name='title' maxlength='15' /></td>
-	<td><select name='term'>[RepeatBegin]
+	<td><select name='term'>
+#repeat ($terms = mysql_fetch_row($query))
 <option value='[Symbolic:$terms[0]]'>[Symbolic:$terms[1]]</option>
 
-[RepeatEnd]</select>
+#endrepeat
+</select>
 	</td>
 	<td><input type='text' name='startdate' maxlength='10' size='10' /></td>
 	<td><input type='text' name='middate' maxlength='10' size='10' /></td>
@@ -2229,7 +2259,8 @@ odd
    </tr>
    <tr class='even'>
 	<td><input type='text' name='title' maxlength='20' /></td>
-	<td><select name='teacher'>[RepeatBegin]
+	<td><select name='teacher'>
+#repeat ($teacher = mysql_fetch_row($query))
 
 #if ($type == "Teacher")
 <option value='[Symbolic:$teacher[0]]'>[Symbolic:$teacher[1]] [Symbolic:$teacher[2]]</option>
@@ -2238,17 +2269,21 @@ odd
 [Special]
 #endif
 
-[RepeatEnd]</select>
+#endrepeat
+</select>
 	</td>
-	<td><select name='semester'>[RepeatBegin]
+	<td><select name='semester'>
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]'>[Symbolic:$semester[1]]</option>
 
-[RepeatEnd]</select></td>
+#endrepeat
+</select></td>
 	<td><input type='text' name='sectionnum' maxlength='15' size='6' /></td>
 	<td><input type='text' name='roomnum' maxlength='4' size='6' /></td>
 	<td><input type='text' name='periodnum' maxlength='2' size='6' /></td>
 	<td>
-	 <select name='substitute'>[RepeatBegin]
+	 <select name='substitute'>
+#repeat ($teacher = mysql_fetch_row($query))
 
 #if ($type == "Substitute")
 <option value='[Symbolic:$teacher[0]]'>[Symbolic:$teacher[1]] [Symbolic:$teacher[2]]</option>
@@ -2257,7 +2292,8 @@ odd
 [Special]
 #endif
 
-[RepeatEnd]	 </select>
+#endrepeat
+	 </select>
 	</td>
    </tr>
    </table>
@@ -2363,7 +2399,8 @@ odd
    </tr>
    <tr class='even'>
 	<td><input type='text' name='title' maxlength='20' /></td>
-	<td><select name='teacher'>[RepeatBegin]
+	<td><select name='teacher'>
+#repeat ($teacher = mysql_fetch_row($query))
 
 #if ($type == "Teacher")
 <option value='[Symbolic:$teacher[0]]'>[Symbolic:$teacher[1]] [Symbolic:$teacher[2]]</option>
@@ -2372,21 +2409,27 @@ odd
 [Special]
 #endif
 
-[RepeatEnd]</select>
+#endrepeat
+</select>
 	</td>
-	<td><select name='semester'>[RepeatBegin]
+	<td><select name='semester'>
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]'>[Symbolic:$semester[1]]</option>
 
-[RepeatEnd]</select></td>
-	<td><select name='semester2'>[RepeatBegin]
+#endrepeat
+</select></td>
+	<td><select name='semester2'>
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]'>[Symbolic:$semester[1]]</option>
 
-[RepeatEnd]</select></td>
+#endrepeat
+</select></td>
 	<td><input type='text' name='sectionnum' maxlength='15' size='6' /></td>
 	<td><input type='text' name='roomnum' maxlength='4' size='6' /></td>
 	<td><input type='text' name='periodnum' maxlength='2' size='6' /></td>
 	<td>
-	 <select name='substitute'>[RepeatBegin]
+	 <select name='substitute'>
+#repeat ($teacher = mysql_fetch_row($query))
 
 #if ($type == "Substitute")
 <option value='[Symbolic:$teacher[0]]'>[Symbolic:$teacher[1]] [Symbolic:$teacher[2]]</option>
@@ -2395,7 +2438,8 @@ odd
 [Special]
 #endif
 
-[RepeatEnd]     </select>
+#endrepeat
+     </select>
 	</td>
    </tr>
    </table>
@@ -2560,7 +2604,8 @@ odd
 	<td>&nbsp;</td>
 	<th>Username</th>
 	<th>Type</th>
-   </tr>[RepeatBegin]
+   </tr>
+#repeat ($user = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -2578,7 +2623,8 @@ odd
 [Special]
 #endif
 
-[RepeatEnd] </table>
+#endrepeat
+ </table>
   <br>
   <input type='button' value='Add' onClick='document.users.page2.value=14;document.users.submit();'>
   <input type='button' value='Edit' onClick='document.users.page2.value=15;checkboxes();'>
@@ -2586,7 +2632,8 @@ odd
 
   <br><br>
 
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.users.deleteuser.value=0;document.users.page2.value=10;document.users.onpage.value=[Symbolic:$i];document.users.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -2596,7 +2643,8 @@ odd
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='deleteuser'>
   <input type='hidden' name='selectuser'>
@@ -2934,10 +2982,12 @@ CHECKED
    </tr>
    <tr class='even'>
 	<td><input type='text' name='title' maxlength='15' value='[Symbolic:$semester[0]]' /></td>
-	<td><select name='term'>[RepeatBegin]
+	<td><select name='term'>
+#repeat ($terms = mysql_fetch_row($query))
 <option value='[Symbolic:$terms[0]]'>[Symbolic:$terms[1]]</option>
 
-[RepeatEnd]</select>
+#endrepeat
+</select>
 	</td>
 	<td><input type='text' maxlength='10' name='startdate' size='8' value='
 #if ($ret_date == "00/00/0000")
@@ -3315,10 +3365,12 @@ SELECTED
 	<td><input type='text' name='fname' maxlength='15' size='15' /></td>
 	<td><input type='text' name='lname' maxlength='15' size='15' /></td>
 	<td>
-	 <select name='username'>[RepeatBegin]
+	 <select name='username'>
+#repeat ($users = mysql_fetch_row($query))
 <option value='[Symbolic:$users[0]]'>[Symbolic:$users[1]]</option>
 
-[RepeatEnd]	 </select>
+#endrepeat
+	 </select>
 	</td>
    </tr>
    </table>
@@ -3702,10 +3754,12 @@ SELECTED
 	<td><input type='text' name='mi' maxlength='2' size='2' /></td>
 	<td><input type='text' name='lname' maxlength='15' size='15' /></td>
 	<td>
-	 <select name='username'>[RepeatBegin]
+	 <select name='username'>
+#repeat ($users = mysql_fetch_row($query))
 <option value='[Symbolic:$users[0]]'>[Symbolic:$users[1]]</option>
 
-[RepeatEnd]	 </select>
+#endrepeat
+	 </select>
 	</td>
    </tr>
    </table>
@@ -3958,7 +4012,8 @@ SELECTED
 	<th>Last Name</th>
 	<th>Student Name</th>
 	<th>Username</th>
-   </tr>[RepeatBegin]
+   </tr>
+#repeat ($parent = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -3984,14 +4039,16 @@ odd
 [Special]
 #endif
 
-[RepeatEnd] </table>
+#endrepeat
+ </table>
   <br>
   <input type='button' value='Add' onClick='document.parents.page2.value=23;document.parents.submit();'>
   <input type='button' value='Edit' onClick='document.parents.page2.value=24;checkboxes();'>
   <input type='button' value='Delete' onClick='document.parents.deleteparent.value=1;validate();'>
   <br><br>
 
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.parents.deleteparent.value=0;document.parents.page2.value=3;document.parents.onpage.value=[Symbolic:$i];document.parents.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -4001,7 +4058,8 @@ odd
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='deleteparent'>
   <input type='hidden' name='selectparent'>
@@ -4089,16 +4147,20 @@ odd
 	<td><input type='text' name='fname' maxlength='15' size='15' /></td>
 	<td><input type='text' name='lname' maxlength='15' size='15' /></td>
 	<td>
-	 <select name='student'>[RepeatBegin]
+	 <select name='student'>
+#repeat ($students = mysql_fetch_row($query))
 <option value='[Symbolic:$students[0]]'>[Symbolic:$students[1]] [Symbolic:$students[2]]</option>
 
-[RepeatEnd]  </select>
+#endrepeat
+  </select>
 	</td>
 	<td>
-	 <select name='username'>[RepeatBegin]
+	 <select name='username'>
+#repeat ($users = mysql_fetch_row($query))
 <option value='[Symbolic:$users[0]]'>[Symbolic:$users[1]]</option>
 
-[RepeatEnd]	 </select>
+#endrepeat
+	 </select>
 	</td>
    </tr>
    </table>
@@ -4300,7 +4362,8 @@ odd
    <th>Thursday</th>
    <th>Friday</th>
   </tr>
-   [RepeatBegin]
+   
+#repeat ($i<=$numperiods)
 <tr class='
 #if ($i%2==0)
 even
@@ -4444,7 +4507,8 @@ odd
 
 #endif
 &nbsp;</td></tr>
-[RepeatEnd]  </table>
+#endrepeat
+  </table>
 <table width='600' border=0 align='center'>
 <tr>
 <td>
@@ -4595,7 +4659,8 @@ odd
  <td>
  <form name='registration' action='./index.php' method='POST'>
  <b>Student:</b>
- <select name='student' onChange='document.registration.addreg.value=0;document.registration.deletereg.value=0;document.registration.submit();'>[RepeatBegin]
+ <select name='student' onChange='document.registration.addreg.value=0;document.registration.deletereg.value=0;document.registration.submit();'>
+#repeat ($student = mysql_fetch_row($query))
 <option value='[Symbolic:$student[0]]' 
 #if ($_POST['student']==$student[0]&&$_POST['student']!=NULL)
 SELECTED
@@ -4603,9 +4668,11 @@ SELECTED
 
 #endif
 >[Symbolic:$student[1]] [Symbolic:$student[2]]</option>
-[RepeatEnd]  </select>
+#endrepeat
+  </select>
 &nbsp;&nbsp;<b>Semester: </b> <select name='semester' onChange='document.registration.addreg.value=0;document.registration.deletereg.value=0;document.registration.submit();'>
-[RepeatBegin]
+
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]' 
 #if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
 SELECTED
@@ -4613,7 +4680,8 @@ SELECTED
 
 #endif
 >[Symbolic:$semester[1]]</option>
-[RepeatEnd]
+#endrepeat
+
 	 </select>
    <br /><br />
    <input type='button' value='Show in Grid' onClick='document.registration.addreg.value=0;document.registration.deletereg.value=0;document.registration.page2.value=29;document.registration.submit();' />
@@ -4626,10 +4694,12 @@ SELECTED
    <td align='center' colspan='3'>
 	<select name='class'>
 #if ($_POST['semester']!=NULL)
-[RepeatBegin]
+
+#repeat ($classes = mysql_fetch_row($query))
 <option value='[Symbolic:$classes[0]]'>[Symbolic:$classes[1]]</option>
 
-[RepeatEnd]
+#endrepeat
+
 #else
 <option value='[Symbolic:$classes[0]]'>[Symbolic:$classes[1]]</option>
 
@@ -4640,7 +4710,8 @@ SELECTED
   </tr>
   <tr class='header'>
    <th colspan='2'>Class Name</th><th>Period Number</th>
-  </tr>[RepeatBegin]
+  </tr>
+#repeat ($reg = mysql_fetch_row($query))
 <tr class='
 #if ($row%2==0)
 even
@@ -4653,7 +4724,8 @@ odd
    <td>[Symbolic:$class[1]]</td>
    </tr>
    
-[RepeatEnd]  </table>
+#endrepeat
+  </table>
   <br />
   <input type='button' value='Delete' onClick='document.registration.deletereg.value=1;validate();'>
   <input type='hidden' name='addreg' />
@@ -4736,7 +4808,8 @@ odd
  <tr>
  <td>
  <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
-[RepeatBegin]
+
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]' 
 #if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
 SELECTED
@@ -4744,7 +4817,8 @@ SELECTED
 
 #endif
 >[Symbolic:$semester[1]]</option>
-[RepeatEnd]
+#endrepeat
+
    <option value='-1' 
 #if ($_POST['semester']==-1)
 SELECTED
@@ -4763,7 +4837,8 @@ SELECTED
    <th style='padding-left: 10px;'>Student</th>
    <th>Class</th>
    <th>Percentage</th>
-  </tr>[RepeatBegin]
+  </tr>
+#repeat ($deficient = mysql_fetch_row($query))
 <tr class='
 #if ($row%2==0)
 even
@@ -4776,7 +4851,8 @@ odd
    <td align='left'>[Symbolic:$percentage]&#37;</td>
   </tr>
   
-[RepeatEnd]  </table>
+#endrepeat
+  </table>
   <br />
   <input type='button' value=' Back ' onClick='document.classes.page2.value=2;document.classes.submit();'>
   <input type='hidden' name='page2' value='[Symbolic:$page2]'>
@@ -4852,7 +4928,8 @@ odd
  <tr>
  <td>
  <form name='classes' action='./index.php' method='POST'>
- <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>[RepeatBegin]
+ <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]' 
 #if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
 SELECTED
@@ -4860,7 +4937,8 @@ SELECTED
 
 #endif
 >[Symbolic:$semester[1]]</option>
-[RepeatEnd]
+#endrepeat
+
 	 </select>
   <b>Student:</b><select name='student' onChange='document.classes.submit();'>  </select>
   <br><br>
@@ -4870,7 +4948,8 @@ SELECTED
    <th>1st Quarter Grade</th>
    <th>2nd Quarter Grade</th>
    <th>Current Grade</th>
-  </tr>[RepeatBegin]
+  </tr>
+#repeat ($classes = mysql_fetch_row($query))
 <tr class='
 #if ($row%2==0)
 even
@@ -4973,7 +5052,8 @@ F
 #endif
 </td>
    
-[RepeatEnd]  </table>
+#endrepeat
+  </table>
   <br />
   <input type='button' value=' Back ' onClick='document.classes.page2.value=2;document.classes.submit();'>
   <input type='hidden' name='page2' value='[Symbolic:$page2]'>
@@ -5058,7 +5138,8 @@ F
    <th>Thursday</th>
    <th>Friday</th>
   </tr>
-   [RepeatBegin]
+   
+#repeat ($i<=$numperiods)
 <tr class='
 #if ($i%2==0)
 even
@@ -5066,7 +5147,8 @@ even
 odd
 #endif
 ' valign='top'>
-  <td>[Symbolic:$i]</td><td align='left'>[RepeatBegin]
+  <td>[Symbolic:$i]</td><td align='left'>
+#repeat ($j<count($days))
 
 #if ($days[$j] == 'M')
 <b>[Symbolic:$class[0]]</b><br />
@@ -5083,7 +5165,9 @@ odd
 [Special]
 #endif
 
-[RepeatEnd]&nbsp;</td><td align='left'>[RepeatBegin]
+#endrepeat
+&nbsp;</td><td align='left'>
+#repeat ($j<count($days))
 
 #if ($days[$j] == 'M')
 [Special]
@@ -5106,7 +5190,9 @@ odd
 
 #endif
 
-[RepeatEnd]&nbsp;</td><td align='left'>[RepeatBegin]
+#endrepeat
+&nbsp;</td><td align='left'>
+#repeat ($j<count($days))
 
 #if ($days[$j] == 'M')
 [Special]
@@ -5135,7 +5221,9 @@ odd
 
 #endif
 
-[RepeatEnd]&nbsp;</td><td align='left'>[RepeatBegin]
+#endrepeat
+&nbsp;</td><td align='left'>
+#repeat ($j<count($days))
 
 #if ($days[$j] == 'M')
 [Special]
@@ -5170,7 +5258,9 @@ odd
 
 #endif
 
-[RepeatEnd]&nbsp;</td><td align='left'>[RepeatBegin]
+#endrepeat
+&nbsp;</td><td align='left'>
+#repeat ($j<count($days))
 
 #if ($days[$j] == 'M')
 [Special]
@@ -5211,8 +5301,10 @@ odd
 
 #endif
 
-[RepeatEnd]&nbsp;</td></tr>
-[RepeatEnd]  </table>
+#endrepeat
+&nbsp;</td></tr>
+#endrepeat
+  </table>
 <table border='0' width='600' align='center'>
 <tr>
 <td>
@@ -5352,7 +5444,8 @@ odd
  <td>
  <form name='registration' action='./index.php' method='POST'>
  <b>Semester: </b> <select name='semester' onChange='document.registration.addattend.value=0;document.registration.deletereg.value=0;document.registration.submit();'>
- [RepeatBegin]
+ 
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]' 
 #if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
 SELECTED
@@ -5360,10 +5453,12 @@ SELECTED
 
 #endif
 >[Symbolic:$semester[1]]</option>
-[RepeatEnd]
+#endrepeat
+
 	 </select>
  <b>Student:</b>
- <select name='student' onChange='document.registration.addattend.value=0;document.registration.deletereg.value=0;document.registration.submit();'>[RepeatBegin]
+ <select name='student' onChange='document.registration.addattend.value=0;document.registration.deletereg.value=0;document.registration.submit();'>
+#repeat ($student = mysql_fetch_row($query))
 <option value='[Symbolic:$student[0]]' 
 #if ($_POST['student']==$student[0]&&$_POST['student']!=NULL)
 SELECTED
@@ -5371,14 +5466,16 @@ SELECTED
 
 #endif
 >[Symbolic:$student[1]] [Symbolic:$student[2]]</option>
-[RepeatEnd]  </select>
+#endrepeat
+  </select>
    <br /><br />
   <table width='400' class='dynamiclist' cellpadding='5' cellspacing='0'>
   <tr class='header' align='center'>
    <th>&nbsp;</th><th>Tardy</th><th>Absent</th>
   </tr>
 #if ($_POST['semester']!=NULL)
-[RepeatBegin]
+
+#repeat ($reg = mysql_fetch_row($query))
 <tr style='color: red; font-weight: bold;' align='center' class='
 #if ($row%2==0)
 even
@@ -5415,7 +5512,8 @@ odd
 </td>
    </tr>
    
-[RepeatEnd]<tr class='even'><td>&nbsp;</td><td>N/A</td><td>N/A</td></tr>
+#endrepeat
+<tr class='even'><td>&nbsp;</td><td>N/A</td><td>N/A</td></tr>
 #else
 <tr style='color: red; font-weight: bold;' align='center' class='
 #if ($row%2==0)
@@ -5635,7 +5733,8 @@ odd
  <tr>
  <td>
  <form name='classes' action='./index.php' method='POST'>
- <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>[RepeatBegin]
+ <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]' 
 #if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
 SELECTED
@@ -5643,12 +5742,14 @@ SELECTED
 
 #endif
 >[Symbolic:$semester[1]]</option>
-[RepeatEnd]
+#endrepeat
+
 	 </select>
  &nbsp;&nbsp;<b>Classes:</b>
  <select name='selectclass' onChange='document.classes.submit();'>
 #if ($_POST['semester']!=NULL)
-[RepeatBegin]
+
+#repeat ($classes = mysql_fetch_row($query))
 <option value='[Symbolic:$classes[0]]' 
 #if ($_POST['selectclass']==$classes[0])
 SELECTED
@@ -5657,7 +5758,8 @@ SELECTED
 #endif
 >[Symbolic:$classes[1]]</option>
 
-[RepeatEnd]
+#endrepeat
+
 #else
 <option value='[Symbolic:$classes[0]]' 
 #if ($_POST['selectclass']==$classes[0])
@@ -5679,7 +5781,8 @@ SELECTED
    <th>Grade</th>
   </tr>
 #if ($_POST['selectclass']!=NULL)
-[RepeatBegin]
+
+#repeat ($studentinfo = mysql_fetch_row($query))
 <tr class='
 #if ($row%2==0)
 even
@@ -5722,7 +5825,8 @@ F
 
 #endif
 </td>
-[RepeatEnd]
+#endrepeat
+
 #else
 <tr class='
 #if ($row%2==0)
@@ -6076,7 +6180,8 @@ AdminMain.php: Invalid Page
  <td>
  <form name='classes' action='./index.php' method='POST'>
  <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
-[RepeatBegin]
+
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]' 
 #if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
 SELECTED
@@ -6084,7 +6189,8 @@ SELECTED
 
 #endif
 >[Symbolic:$semester[1]]</option>
-[RepeatEnd]
+#endrepeat
+
 	 </select>
 	 <br><br>
   </td>
@@ -6097,7 +6203,8 @@ SELECTED
    </tr>
    
 #if ($_POST['semester']!=NULL)
-[RepeatBegin]
+
+#repeat ($class = mysql_fetch_row($query))
 <tr class='
 #if ($row%2==0)
 even
@@ -6107,7 +6214,8 @@ odd
 '>
    <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$class[1]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$class[1]]</a></td>
   </tr>
-[RepeatEnd]
+#endrepeat
+
 #else
 <tr class='
 #if ($row%2==0)
@@ -6352,7 +6460,8 @@ odd
 	<th>Possible Points</th>
 	<th>Date Assigned</th>
 	<th>Date Due</th>
-   </tr>[RepeatBegin]
+   </tr>
+#repeat ($assignment = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -6385,14 +6494,16 @@ odd
 [Special]
 #endif
 
-[RepeatEnd] </table>
+#endrepeat
+ </table>
   <br>
   <input type='button' value='Add' onClick='document.assignments.page2.value=4;document.assignments.submit();'>
   <input type='button' value='Edit' onClick='document.assignments.page2.value=5;checkboxes();'>
   <input type='button' value='Delete' onClick='document.assignments.deleteassignment.value=1;validate();'>
   <br><br>
 
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.assignments.deleteassignment.value=0;document.assignments.page2.value=2;document.assignments.onpage.value=[Symbolic:$i];document.assignments.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -6402,7 +6513,8 @@ odd
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='deleteassignment'>
   <input type='hidden' name='selectassignment'>
@@ -6538,7 +6650,8 @@ odd
  <td>
  <form name='grades' action='./index.php' method='POST'>
  <b>Assignment:</b>
- <select name='assignment' onChange='document.grades.addgrade.value=0;document.grades.deletegrade.value=0;document.grades.submit();'>[RepeatBegin]
+ <select name='assignment' onChange='document.grades.addgrade.value=0;document.grades.deletegrade.value=0;document.grades.submit();'>
+#repeat ($assignment = mysql_fetch_row($query))
 <option value='[Symbolic:$assignment[0]]' 
 #if ($_POST['assignment']==$assignment[0]&&$_POST['assignment']!=NULL)
 SELECTED
@@ -6546,7 +6659,8 @@ SELECTED
 
 #endif
 >[Symbolic:$assignment[1]]</option>
-[RepeatEnd]  </select>
+#endrepeat
+  </select>
   <br /><br />
   <table width='595' class='dynamiclist' cellpadding='5' cellspacing='0'>
   <tr class='header'>
@@ -6557,7 +6671,8 @@ SELECTED
    <th>Possible Points</th>
    <th>Grade</th>
    <th>Late</th>
-  </tr>[RepeatBegin]
+  </tr>
+#repeat ($student = mysql_fetch_row($query))
 <tr class='
 #if ($row%2==0)
 even
@@ -6635,7 +6750,8 @@ No
 	</td>
    </tr>
    
-[RepeatEnd]<tr class='even'><td colspan='9'><center>There are currently no students registered for this class.</center></td></tr>  </table>
+#endrepeat
+<tr class='even'><td colspan='9'><center>There are currently no students registered for this class.</center></td></tr>  </table>
   <br />
   <input type='button' value='Edit' onClick='document.grades.page2.value=7;checkboxes();'>
   <input type='button' value='Delete' onClick='document.grades.deletegrade.value=1;validate();'>
@@ -7071,7 +7187,8 @@ CHECKED
    <th>Possible Points</th>
    <th>Percent</th>
    <th>Grade</th>
-  </tr>[RepeatBegin]
+  </tr>
+#repeat ($i<count($ids))
 <tr class='
 #if ($row%2==0)
 even
@@ -7109,7 +7226,8 @@ F
 #endif
 </td>
    
-[RepeatEnd]  </table>
+#endrepeat
+  </table>
   <br />
   <input type='button' value=' Back ' onClick='document.classes.page2.value=2;document.classes.submit();'>
   <input type='hidden' name='selectclass' value='[Symbolic:$_POST[selectclass]]' />
@@ -7190,7 +7308,8 @@ F
 	<th>Title</th>
 	<th>Message</th>
 	<th>Date</th>
-   </tr>[RepeatBegin]
+   </tr>
+#repeat ($announcement = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -7214,10 +7333,12 @@ odd
 [Special]
 #endif
 
-[RepeatEnd] </table>
+#endrepeat
+ </table>
   <br><br>
 
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.announcements.deleteannouncement.value=0;document.announcements.page2.value=4;document.announcements.onpage.value=[Symbolic:$i];document.announcements.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -7227,7 +7348,8 @@ odd
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='page2' value='[Symbolic:$page2]'>
   <input type='hidden' name='onpage' value='[Symbolic:$_POST[onpage]]'>
@@ -7487,7 +7609,8 @@ teacherMain.php: Invalid Page
  <td>
  <form name='classes' action='./index.php' method='POST'>
  <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
-[RepeatBegin]
+
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]' 
 #if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
 SELECTED
@@ -7495,7 +7618,8 @@ SELECTED
 
 #endif
 >[Symbolic:$semester[1]]</option>
-[RepeatEnd]
+#endrepeat
+
 	 </select>
 	 <br><br>
   </td>
@@ -7518,7 +7642,8 @@ odd
    <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$info[0]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$info[0]]</a></td>
    </tr>
 #else
-[RepeatBegin]
+
+#repeat ($info = mysql_fetch_row($q))
 <tr class='
 #if ($row%2==0)
 even
@@ -7528,7 +7653,8 @@ odd
 '>
    <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$info[0]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$info[0]]</a></td>
    </tr>
-[RepeatEnd]
+#endrepeat
+
 #endif
 </table>
    <input type='hidden' name='page2' value='[Symbolic:$page2]' />
@@ -7701,7 +7827,8 @@ odd
 	<th>Possible Points</th>
 	<th>Date Assigned</th>
 	<th>Date Due</th>
-   </tr>[RepeatBegin]
+   </tr>
+#repeat ($assignment = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
@@ -7733,9 +7860,11 @@ odd
 [Special]
 #endif
 
-[RepeatEnd] </table>
+#endrepeat
+ </table>
   <br>
-  <center>Page: [RepeatBegin]
+  <center>Page: 
+#repeat ($i<=$numpages)
 
 #if ($i == $_POST["onpage"])
 <a href='JavaScript: document.assignments.deleteassignment.value=0;document.assignments.page2.value=2;document.assignments.onpage.value=[Symbolic:$i];document.assignments.submit();' class='selectedpagenum' onMouseover="window.status='Go to page [Symbolic:$i]';return true;" onMouseout="window.status='';return true;">[Symbolic:$i]</a>&nbsp;
@@ -7745,7 +7874,8 @@ odd
 
 #endif
 
-[RepeatEnd]
+#endrepeat
+
 </center>
   <input type='hidden' name='deleteassignment'>
   <input type='hidden' name='selectassignment'>
@@ -7835,7 +7965,8 @@ odd
    <th>Grade</th>
    <th>Comment</th>
    <th>Late</th>
-  </tr>[RepeatBegin]
+  </tr>
+#repeat ($assignment = mysql_fetch_row($query))
 <tr class='
 #if ($row%2==0)
 even
@@ -7913,7 +8044,8 @@ No
 	</td>
    </tr>
    
-[RepeatEnd]<tr class='even'><td colspan='9'><center>There are currently no students registered for this class.</center></td></tr>  </table>
+#endrepeat
+<tr class='even'><td colspan='9'><center>There are currently no students registered for this class.</center></td></tr>  </table>
   <br />
 
   <input type='hidden' name='addgrade' />
@@ -8188,7 +8320,8 @@ StudentMain.php: Invalid Page
   <table cellspacing='0' width='300' align='center' class='dynamiclist'>
   <tr class='header'>
    <th>Student Name</th>
-  </tr>[RepeatBegin]
+  </tr>
+#repeat ($info = mysql_fetch_row($query))
 <tr class='
 #if ($row%2==0)
 even
@@ -8198,7 +8331,8 @@ odd
 '>
   <td><a class='items' href="javascript:document.classes.student.value=[Symbolic:$temp[2]];document.classes.page2.value=5;document.classes.submit();">[Symbolic:$temp[0]] [Symbolic:$temp[1]]</a></td>
   </tr>
-[RepeatEnd]  </table>
+#endrepeat
+  </table>
   <br />
   <input type='hidden' name='student' value='' />
   <input type='hidden' name='page2' value='[Symbolic:$page2]' />
@@ -8290,7 +8424,8 @@ odd
  <td>
  <form name='classes' action='./index.php' method='POST'>
  <b>Semester: </b> <select name='semester' onChange='document.classes.submit();'>
-[RepeatBegin]
+
+#repeat ($semester = mysql_fetch_row($query))
 <option value='[Symbolic:$semester[0]]' 
 #if ($_POST['semester']==$semester[0]&&$_POST['semester']!=NULL)
 SELECTED
@@ -8298,7 +8433,8 @@ SELECTED
 
 #endif
 >[Symbolic:$semester[1]]</option>
-[RepeatEnd]
+#endrepeat
+
 	 </select>
 	 <br><br>
   </td>
@@ -8321,7 +8457,8 @@ odd
    <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$info[0]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$info[0]]</a></td>
    </tr>
 #else
-[RepeatBegin]
+
+#repeat ($info = mysql_fetch_row($q))
 <tr class='
 #if ($row%2==0)
 even
@@ -8331,7 +8468,8 @@ odd
 '>
    <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$info[0]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$info[0]]</a></td>
    </tr>
-[RepeatEnd]
+#endrepeat
+
 #endif
 </table>
    <input type='hidden' name='page2' value='[Symbolic:$page2]' />

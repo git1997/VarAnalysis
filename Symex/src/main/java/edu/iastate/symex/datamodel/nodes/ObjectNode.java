@@ -47,7 +47,10 @@ public class ObjectNode extends DataNode {
 	
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
-		dataModelVisitor.visitObjectNode(this);
+		boolean continueVisit = dataModelVisitor.visitObjectNode(this);
+		if (!continueVisit)
+			return;
+		
 		for (PhpVariable variable : map.values())
 			variable.getValue().accept(dataModelVisitor);
 	}

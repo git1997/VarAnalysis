@@ -51,7 +51,10 @@ public class SelectNode extends DataNode {
 
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
-		dataModelVisitor.visitSelectNode(this);
+		boolean continueVisit = dataModelVisitor.visitSelectNode(this);
+		if (!continueVisit)
+			return;
+		
 		nodeInTrueBranch.accept(dataModelVisitor);
 		nodeInFalseBranch.accept(dataModelVisitor);
 	}

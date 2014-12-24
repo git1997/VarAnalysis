@@ -41,7 +41,10 @@ public class ConcatNode extends DataNode {
 	
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
-		dataModelVisitor.visitConcatNode(this);
+		boolean continueVisit = dataModelVisitor.visitConcatNode(this);
+		if (!continueVisit)
+			return;
+		
 		for (DataNode v: childNodes)
 			v.accept(dataModelVisitor);
 	}

@@ -33,7 +33,10 @@ public class RepeatNode extends DataNode {
 	
 	@Override
 	public void accept(DataModelVisitor dataModelVisitor) {
-		dataModelVisitor.visitRepeatNode(this);
+		boolean continueVisit = dataModelVisitor.visitRepeatNode(this);
+		if (!continueVisit)
+			return;
+		
 		childNode.accept(dataModelVisitor);
 	}
 

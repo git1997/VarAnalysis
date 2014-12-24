@@ -21,10 +21,9 @@ public class ParseHelloWorld {
 
 		model.getRoot().accept(new DataModelVisitor() {
 			@Override
-			public void visitLiteralNode(LiteralNode literalNode) {
-				super.visitLiteralNode(literalNode);
-				System.out.println(literalNode.getStringValue() + " @ "
-						+ literalNode.getLocation());
+			public boolean visitLiteralNode(LiteralNode literalNode) {
+				System.out.println(literalNode.getStringValue() + " @ "	+ literalNode.getLocation());
+				return true;
 			}
 		});
 	}

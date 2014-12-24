@@ -17,28 +17,36 @@ import edu.iastate.symex.datamodel.nodes.SymbolicNode;
  */
 public class DataModelVisitor {
 
-	public void visitArrayNode(ArrayNode arrayNode) {
+	public boolean visitArrayNode(ArrayNode arrayNode) {
+		return true;
 	}
 
-	public void visitConcatNode(ConcatNode concatNode) {
+	public boolean visitConcatNode(ConcatNode concatNode) {
+		return true;
 	}
 
-	public void visitLiteralNode(LiteralNode literalNode) {
+	public boolean visitLiteralNode(LiteralNode literalNode) {
+		return true;
 	}
 
-	public void visitObjectNode(ObjectNode objectNode) {
+	public boolean visitObjectNode(ObjectNode objectNode) {
+		return true;
 	}
 
-	public void visitRepeatNode(RepeatNode repeatNode) {
+	public boolean visitRepeatNode(RepeatNode repeatNode) {
+		return true;
 	}
 
-	public void visitSelectNode(SelectNode selectNode) {
+	public boolean visitSelectNode(SelectNode selectNode) {
+		return true;
 	}
 	
-	public void visitSpecialNode(SpecialNode specialNode) {
+	public boolean visitSpecialNode(SpecialNode specialNode) {
+		return true;
 	}
 
-	public void visitSymbolicNode(SymbolicNode symbolicNode) {
+	public boolean visitSymbolicNode(SymbolicNode symbolicNode) {
+		return true;
 	}
 
 }
