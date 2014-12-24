@@ -14,7 +14,7 @@ import edu.iastate.symex.php.nodes.FileNode;
 public class PhpExecuter {
 	
 	/**
-	 * Executes PHP code and returns a data model describing its output.
+	 * Executes PHP code and returns a DataModel describing its output
 	 * @param file The file to be executed
 	 */
 	public DataModel execute(File file) {
