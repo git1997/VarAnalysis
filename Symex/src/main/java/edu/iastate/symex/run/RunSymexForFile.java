@@ -4,7 +4,6 @@ import java.io.File;
 
 import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
-import edu.iastate.symex.datamodel.WriteDataModelToIfDefs;
 import edu.iastate.symex.util.Timer;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
@@ -38,7 +37,7 @@ public class RunSymexForFile {
 		
 		DataModel dataModel = new RunSymexForFile(new File(PHP_FILE)).execute();
 		
-		MyLogger.log(MyLevel.INFO, WriteDataModelToIfDefs.convert(dataModel));
+		MyLogger.log(MyLevel.INFO, dataModel.toIfdefString());
 		
 		MyLogger.writeLogMessagesToFile(new File("/Users/HUNG/Desktop/output.txt"));
 	}

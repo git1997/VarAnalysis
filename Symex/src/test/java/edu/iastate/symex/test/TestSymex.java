@@ -5,7 +5,6 @@ import java.io.File;
 import org.junit.Test;
 
 import edu.iastate.symex.datamodel.DataModel;
-import edu.iastate.symex.datamodel.WriteDataModelToIfDefs;
 import edu.iastate.symex.run.RunSymexForFile;
 
 /**
@@ -28,7 +27,7 @@ public class TestSymex extends GenericTest {
 	@Override
 	public String getActualOutput(File inputFile) {
 		DataModel dataModel = new RunSymexForFile(inputFile).execute();
-		return WriteDataModelToIfDefs.convert(dataModel);
+		return dataModel.toIfdefString();
 	}
 	
 	/*
