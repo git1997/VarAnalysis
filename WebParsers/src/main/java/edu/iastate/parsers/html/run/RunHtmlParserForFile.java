@@ -31,8 +31,14 @@ public class RunHtmlParserForFile {
 	 * The entry point of the program.
 	 */
 	public static void main(String[] args) {
+		MyLogger.setLevel(MyLevel.ALL);
+		//MyLogger.addOutputType(OutputType.File);
+		
 		HtmlDocument htmlDocument = new RunHtmlParserForFile(new File(PHP_FILE)).execute();
-		System.out.println(htmlDocument.toDebugString());
+		
+		MyLogger.log(MyLevel.INFO, htmlDocument.toIfdefString());
+		
+		//MyLogger.writeLogMessagesToFile(new File("/Users/HUNG/Desktop/output.txt"));
 	}
 	
 	/**
