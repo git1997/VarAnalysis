@@ -26,13 +26,13 @@ public class HtmlDomParser {
 		/*
 		 * Handle self-closed tags (e.g., <br> or <emtpy>)
 		 */
-		if (isSelfClosedTag(env.getCurrentHtmlElement().getType())) {
+		if (isSelfClosedTag(env.getCurrentHtmlElementType())) {
 			if (saxNode instanceof HCloseTag && env.closeTagIsValid((HCloseTag) saxNode)) {
 				env.addCloseTagToCurrentHtmlElement((HCloseTag) saxNode);
-				env.changeStateToParentElement();
+				env.popHtmlStack();
 				return;
 			}
-			env.changeStateToParentElement();
+			env.popHtmlStack();
 		}
 		
 		/*
@@ -40,9 +40,9 @@ public class HtmlDomParser {
 		 */
 		if (saxNode instanceof HOpenTag) {
 			HtmlElement htmlElement = HtmlElement.createHtmlElement((HOpenTag) saxNode);
-			env.addHtmlNodeToCurrentHtmlElement(htmlElement);
-			if (!htmlElement.getOpenTag().isSelfClosed())
-				env.changeStateToHtmlElement(htmlElement);
+			env.pushHtmlStack(htmlElement);
+			if (htmlElement.getOpenTag().isSelfClosed())
+				env.popHtmlStack();
 		}
 		/*
 		 * HCloseTag
@@ -51,10 +51,10 @@ public class HtmlDomParser {
 			HCloseTag closeTag = (HCloseTag) saxNode;
 			if (env.closeTagIsValid(closeTag)) {
 				env.addCloseTagToCurrentHtmlElement(closeTag);
-				env.changeStateToParentElement();
+				env.popHtmlStack();
 			}
 			else {
-				MyLogger.log(MyLevel.USER_EXCEPTION, "In HtmlDomParser.java: Encountered CloseTag " + closeTag.getType() + " when in OpenTag " + env.getCurrentHtmlElement());
+				MyLogger.log(MyLevel.USER_EXCEPTION, "In HtmlDomParser.java: Encountered CloseTag " + closeTag.getType() + " when in OpenTag " + env.getCurrentHtmlElementType());
 			}
 		}
 		/*
@@ -62,7 +62,7 @@ public class HtmlDomParser {
 		 */
 		else {
 			HtmlText htmlText = new HtmlText((HText) saxNode);
-			env.addHtmlNodeToCurrentHtmlElement(htmlText);
+			env.addHtmlText(htmlText);
 		}
 	}
 	

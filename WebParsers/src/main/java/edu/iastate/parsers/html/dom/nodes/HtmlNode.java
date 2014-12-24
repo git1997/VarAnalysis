@@ -44,7 +44,7 @@ public abstract class HtmlNode {
 	 * Get properties
 	 */
 	
-	public HashSet<HtmlNode> getParentNode() {
+	public HashSet<HtmlNode> getParentNodes() {
 		return new HashSet<HtmlNode>(parentNodes);
 	}
 	

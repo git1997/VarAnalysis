@@ -1,19 +1,11 @@
 package edu.iastate.parsers.html.htmlparser;
 
-import java.util.Stack;
-
 import edu.iastate.parsers.conditional.CondList;
 import edu.iastate.parsers.conditional.CondListConcat;
 import edu.iastate.parsers.conditional.CondListItem;
 import edu.iastate.parsers.conditional.CondListSelect;
-import edu.iastate.parsers.html.dom.nodes.HtmlConcat;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
-import edu.iastate.parsers.html.dom.nodes.HtmlElement;
-import edu.iastate.parsers.html.dom.nodes.HtmlNode;
-import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
-import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
-import edu.iastate.symex.position.PositionRange;
 
 /**
  * 
@@ -21,117 +13,76 @@ import edu.iastate.symex.position.PositionRange;
  *
  */
 public class HtmlSaxNodesToHtmlDocument {
-
+	
+	private HtmlDomParser parser = new HtmlDomParser();
+	private DomParserEnv env = new DomParserEnv();
+	
 	/**
-	 * Parse a conditional list of HtmlSaxNodes and return an HtmlDocument
+	 * Parse a conditional list of HtmlSaxNodes and return an HtmlDocument 
 	 */
-	public HtmlDocument parse(CondList<HtmlSaxNode> saxNodes) {
-		HtmlDomParser parser = new HtmlDomParser(); 
-		
-		// Use a pseudo root element
-		HOpenTag rootOpenTag = new HOpenTag("ROOT", PositionRange.UNDEFINED);
-		HtmlElement rootElement = HtmlElement.createHtmlElement(rootOpenTag);
-		parser.pushHtmlStack(rootElement);
-
-		// Parse the saxNodes
-		parse(saxNodes, parser);
-		
-		// Create the HtmlDocument
-		HtmlDocument htmlDocument = new HtmlDocument();
-		for (HtmlNode element : rootElement.getChildNodes())
-			htmlDocument.addChildNode(element);
-		return htmlDocument;
+	public HtmlDocument parse(CondList<HtmlSaxNode> saxNodelist) {
+		parseList(saxNodelist);
+		return env.getParseResult();
 	}
 	
 	/**
-	 * Parse a general CondList of HtmlSaxNodes
+	 * Parse a general saxNodeList
 	 */
-	private void parse(CondList<HtmlSaxNode> saxNodes, HtmlDomParser parser) {
-		if (saxNodes instanceof CondListConcat<?>)
-			parse((CondListConcat<HtmlSaxNode>) saxNodes, parser);
+	private void parseList(CondList<HtmlSaxNode> saxNodelist) {
+		if (saxNodelist instanceof CondListConcat<?>)
+			parseConcat((CondListConcat<HtmlSaxNode>) saxNodelist);
 		
-		else if (saxNodes instanceof CondListSelect<?>)
-			parse((CondListSelect<HtmlSaxNode>) saxNodes, parser);
+		else if (saxNodelist instanceof CondListSelect<?>)
+			parseSelect((CondListSelect<HtmlSaxNode>) saxNodelist);
 		
-		else if (saxNodes instanceof CondListItem<?>)
-			parse((CondListItem<HtmlSaxNode>) saxNodes, parser);
+		else if (saxNodelist instanceof CondListItem<?>)
+			parseToken((CondListItem<HtmlSaxNode>) saxNodelist);
 		
-		else { // if (saxNodes instanceof CondListEmpty<?>)
+		else { // if (saxNodelist instanceof CondListEmpty<?>)
 			// Do nothing
 		}
 	}
 	
 	/**
-	 * Parse a ConcatNode
+	 * Parse a Concat
 	 */
-	private void parse(CondListConcat<HtmlSaxNode> concatNode, HtmlDomParser parser) {
-		for (CondList<HtmlSaxNode> childNode : concatNode.getChildNodes())
-			parse(childNode, parser);
+	private void parseConcat(CondListConcat<HtmlSaxNode> concat) {
+		for (CondList<HtmlSaxNode> childNode : concat.getChildNodes())
+			parseList(childNode);
 	}
 	
 	/**
-	 * Parse a SelectNode
-	 * TODO Revise this code
+	 * Parse a Select
 	 */
-	private void parse(CondListSelect<HtmlSaxNode> selectNode, HtmlDomParser parser) {
-		Stack<HtmlElement> lastHtmlStack = parser.getHtmlStack();
-		HtmlElement lastElement = lastHtmlStack.peek();
+	private void parseSelect(CondListSelect<HtmlSaxNode> select) {
+		/*
+		 * Parse the true branch
+		 */
+		DomParserEnv trueBranchEnv = new DomParserEnv(env);
+		env = trueBranchEnv;
+		parseList(select.getTrueBranchNode());
+		env = trueBranchEnv.getOuterScopeEnv();
 		
 		/*
-		 * Enter the true branch
+		 * Parse the false branch
 		 */
-		parser.clearHtmlStack();
-		HtmlElement rootElementTrue = HtmlElement.createHtmlElement(lastElement.getOpenTag());
-		parser.pushHtmlStack(rootElementTrue);
-				
-		if (selectNode.getTrueBranchNode() != null)
-			parse(selectNode.getTrueBranchNode(), parser);
-		HtmlElement rootElementTrueAfter = !parser.isEmptyHtmlStack() ? parser.getFirstElementInHtmlStack() : null;
-		
-		/*
-		 * Enter the false branch
-		 */
-		parser.clearHtmlStack();
-		HtmlElement rootElementFalse = HtmlElement.createHtmlElement(lastElement.getOpenTag());
-		parser.pushHtmlStack(rootElementFalse);
-		
-		if (selectNode.getFalseBranchNode() != null)
-			parse(selectNode.getFalseBranchNode(), parser);
-		HtmlElement rootElementFalseAfter = !parser.isEmptyHtmlStack() ? parser.getFirstElementInHtmlStack() : null;
+		DomParserEnv falseBranchEnv = new DomParserEnv(env);
+		env = falseBranchEnv;
+		parseList(select.getFalseBranchNode());
+		env = falseBranchEnv.getOuterScopeEnv();
 		
 		/*
 		 * Combine results
 		 */
-		
-		// Handle well-formed HTML
-		HtmlNode nodeInTrueBranch1 = HtmlConcat.createCompactConcat(rootElementTrue.getChildNodes());
-		HtmlNode nodeInFalseBranch1 = HtmlConcat.createCompactConcat(rootElementFalse.getChildNodes());
-		HtmlNode select1 = HtmlSelect.createCompactSelect(selectNode.getConstraint(), nodeInTrueBranch1, nodeInFalseBranch1);
-		if (select1 != null)
-			lastHtmlStack.peek().addChildNode(select1);
-		
-		// [Optional] Handle the case where one opening tag is closed in two different branches
-		if (rootElementTrueAfter != rootElementTrue && rootElementFalseAfter != rootElementFalse && lastHtmlStack.size() >= 2) {
-			HtmlNode select2 = HtmlSelect.createCompactSelect(selectNode.getConstraint(), rootElementTrue, rootElementFalse);
-			lastHtmlStack.pop();
-			lastHtmlStack.peek().replaceLastChildNode(select2);
-		}
-					
-		// Handle ill-formed HTML
-		HtmlNode nodeInTrueBranch3 = (rootElementTrueAfter != rootElementTrue ? rootElementTrueAfter : null);
-		HtmlNode nodeInFalseBranch3 = (rootElementFalseAfter != rootElementFalse ? rootElementFalseAfter : null);
-		HtmlNode select3 = HtmlSelect.createCompactSelect(selectNode.getConstraint(), nodeInTrueBranch3, nodeInFalseBranch3);
-		if (select3 != null)
-			lastHtmlStack.peek().addChildNode(select3);
-		
-		parser.setHtmlStack(lastHtmlStack);
+		env.updateAfterParsingBranches(select.getConstraint(), trueBranchEnv, falseBranchEnv);
 	}
-	
+
 	/**
 	 * Parse an HtmlSaxNode
 	 */
-	private void parse(CondListItem<HtmlSaxNode> saxNode, HtmlDomParser parser) {
-		parser.parse(saxNode.getItem());
+	private void parseToken(CondListItem<HtmlSaxNode> item) {
+		HtmlSaxNode htmlSaxNode = item.getItem();
+		parser.parse(htmlSaxNode, env);
    	}
 
 }

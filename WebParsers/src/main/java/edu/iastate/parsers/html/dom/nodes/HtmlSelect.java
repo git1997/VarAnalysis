@@ -10,16 +10,14 @@ import edu.iastate.symex.constraints.Constraint;
 public class HtmlSelect extends HtmlNode {
 	
 	private Constraint constraint;
-	private HtmlNode trueBranchNode;
-	private HtmlNode falseBranchNode;
 	
 	/**
 	 * Private constructor
 	 */
 	private HtmlSelect(Constraint constraint, HtmlNode trueBranchNode, HtmlNode falseBranchNode) {
 		this.constraint = constraint;
-		this.trueBranchNode = trueBranchNode;
-		this.falseBranchNode = falseBranchNode;
+		this.addChildNode(trueBranchNode);
+		this.addChildNode(falseBranchNode);
 	}
 	
 	/**
@@ -34,19 +32,19 @@ public class HtmlSelect extends HtmlNode {
 	}
 	
 	public HtmlNode getTrueBranchNode() {
-		return trueBranchNode;
+		return childNodes.get(0);
 	}
 
 	public HtmlNode getFalseBranchNode() {
-		return falseBranchNode;
+		return childNodes.get(1);
 	}
 	
 	@Override
 	public String toDebugString() {
 		String retString = System.lineSeparator() + "#if (" + constraint.toDebugString() + ")" + System.lineSeparator()
-				+ trueBranchNode.toDebugString() + System.lineSeparator()
+				+ getTrueBranchNode().toDebugString() + System.lineSeparator()
 				+ "#else" + System.lineSeparator()
-				+ falseBranchNode.toDebugString() + System.lineSeparator()
+				+ getFalseBranchNode().toDebugString() + System.lineSeparator()
 				+ "#endif" + System.lineSeparator();
 		return retString;
 	}
