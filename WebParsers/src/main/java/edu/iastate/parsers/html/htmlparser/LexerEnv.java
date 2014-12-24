@@ -6,6 +6,8 @@ import edu.iastate.parsers.conditional.CondListFactory;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.generatedlexer.Lexer;
 import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.util.logging.MyLevel;
+import edu.iastate.symex.util.logging.MyLogger;
 
 /**
  * 
@@ -79,10 +81,6 @@ public class LexerEnv {
 		this.currentOpenTag = currentOpenTag;
 	}
 	
-	protected void addLexResult(HtmlToken htmlToken) {
-		lexResult.add(condListFactory.createCondListItem(htmlToken));
-	}
-	
 	protected int getLexcicalState() {
 		return lexicalState;
 	}
@@ -91,12 +89,36 @@ public class LexerEnv {
 		return currentOpenTag;
 	}
 	
+	protected void addHtmlToken(HtmlToken htmlToken) {
+		lexResult.add(condListFactory.createCondListItem(htmlToken));
+	}
+	
 	/**
 	 * Updates the current Env after lexing two branches
 	 */
-	public void updateAfterLexingBranches(Constraint constraint, CondList<HtmlToken> lexResultInTrueBranch, CondList<HtmlToken> lexResultInFalseBranch) {
+	public void updateAfterLexingBranches(Constraint constraint, CondList<HtmlToken> lexResultInTrueBranch, CondList<HtmlToken> lexResultInFalseBranch, LexerEnv trueBranchEnv, LexerEnv falseBranchEnv) {
+		/*
+		 * Combine HtmlTokens in the two branches
+		 */
 		CondList<HtmlToken> select = condListFactory.createCompactSelect(constraint, lexResultInTrueBranch, lexResultInFalseBranch);
 		lexResult.add(select);
+		
+		/*
+		 * Check the state
+		 */
+		if (trueBranchEnv.getLexcicalState() != falseBranchEnv.getLexcicalState()) {
+			MyLogger.log(MyLevel.USER_EXCEPTION, "In LexerEnv.java: Lexer ends up in different states after branches: " + Lexer.getState(trueBranchEnv.getLexcicalState()) + " vs. " + Lexer.getState(falseBranchEnv.getLexcicalState()));
+		}
+		
+		if (trueBranchEnv.getCurrentOpenTag() != null && falseBranchEnv.getCurrentOpenTag() == null
+				|| trueBranchEnv.getCurrentOpenTag() == null && falseBranchEnv.getCurrentOpenTag() != null
+				|| trueBranchEnv.getCurrentOpenTag() != null && falseBranchEnv.getCurrentOpenTag() != null && !trueBranchEnv.getCurrentOpenTag().equals(falseBranchEnv.getCurrentOpenTag())) {
+			MyLogger.log(MyLevel.USER_EXCEPTION, "In LexerEnv.java: Lexer ends up in different openTags after branches.");
+		}
+		
+		// Use the state of the false branch since it's more likely to be a normal state
+		setLexicalState(falseBranchEnv.getLexcicalState());
+		setCurrentOpenTag(falseBranchEnv.getCurrentOpenTag());
 	}
 	
 }

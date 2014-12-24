@@ -72,7 +72,7 @@ public class DataModelToHtmlTokens extends DataModelVisitor {
 		/*
 		 * Combine results
 		 */
-		env.updateAfterLexingBranches(selectNode.getConstraint(), lexResultInTrueBranch, lexResultInFalseBranch);
+		env.updateAfterLexingBranches(selectNode.getConstraint(), lexResultInTrueBranch, lexResultInFalseBranch, trueBranchEnv, falseBranchEnv);
 	}
 
 	/**

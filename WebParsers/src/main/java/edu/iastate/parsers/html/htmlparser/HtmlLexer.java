@@ -40,7 +40,7 @@ public class HtmlLexer {
 				
 			PositionRange location = new RelativeRange(htmlLocation, token.getOffset(), token.getLexeme().length());
 			HtmlToken htmlToken = new HtmlToken(token, location);
-			env.addLexResult(htmlToken);
+			env.addHtmlToken(htmlToken);
 		}
 		
 		// Update the lexer state
