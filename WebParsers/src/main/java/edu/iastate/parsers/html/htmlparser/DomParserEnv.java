@@ -85,7 +85,7 @@ public class DomParserEnv {
 	 */
 	public HtmlDocument getParseResult() {
 		HtmlNode node = currentHtmlElements.iterator().next();
-		while (node.getParentNodes().isEmpty())
+		while (!node.getParentNodes().isEmpty())
 			node = node.getParentNodes().iterator().next();
 		// node should be the pseudoRoot now.
 		

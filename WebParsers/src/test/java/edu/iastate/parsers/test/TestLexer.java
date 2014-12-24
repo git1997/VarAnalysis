@@ -4,13 +4,10 @@ import java.io.File;
 import org.junit.Test;
 
 import edu.iastate.parsers.conditional.CondList;
-import edu.iastate.parsers.conditional.CondListConcat;
-import edu.iastate.parsers.conditional.CondListItem;
-import edu.iastate.parsers.conditional.CondListSelect;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.htmlparser.DataModelToHtmlTokens;
+import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
-import edu.iastate.symex.run.RunSymexForFile;
 import edu.iastate.symex.test.GenericTest;
 
 /**
@@ -32,38 +29,9 @@ public class TestLexer extends GenericTest {
 
 	@Override
 	public String getActualOutput(File inputFile) {
-		DataModel dataModel = new RunSymexForFile(inputFile).execute();
+		DataModel dataModel = new PhpExecuter().execute(inputFile);
 		CondList<HtmlToken> tokens = new DataModelToHtmlTokens().lex(dataModel);
-		
-		StringBuilder strBuilder = new StringBuilder();
-		writeTokensToText(tokens, strBuilder);
-		return strBuilder.toString();
-	}
-	
-	private void writeTokensToText(CondList<HtmlToken> tokens, StringBuilder strBuilder) {
-		if (tokens instanceof CondListConcat<?>) {
-			CondListConcat<HtmlToken> concat = (CondListConcat<HtmlToken>) tokens;
-			for (CondList<HtmlToken> childNode : concat.getChildNodes())
-				writeTokensToText(childNode, strBuilder);
-		}
-		else if (tokens instanceof CondListSelect<?>) {
-			CondListSelect<HtmlToken> select = (CondListSelect<HtmlToken>) tokens;
-			String constraint = select.getConstraint().toDebugString();
-			
-			strBuilder.append(System.lineSeparator() + "#if (" + constraint + ")" + System.lineSeparator());
-			writeTokensToText(select.getTrueBranchNode(), strBuilder);
-			strBuilder.append(System.lineSeparator() + "#else" + System.lineSeparator());
-			writeTokensToText(select.getFalseBranchNode(), strBuilder);
-			strBuilder.append(System.lineSeparator() + "#endif" + System.lineSeparator());
-		}
-		else if (tokens instanceof CondListItem<?>) {
-			CondListItem<HtmlToken> item = (CondListItem<HtmlToken>) tokens;
-			HtmlToken htmlToken = item.getItem();
-			strBuilder.append(htmlToken.toDebugString() + System.lineSeparator());
-		}
-		else { // if (tokens instanceof CondListEmpty<?>)
-			// Do nothing
-		}
+		return tokens.toIfDefString();
 	}
 	
 	/*

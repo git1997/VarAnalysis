@@ -251,7 +251,7 @@ public class WebParsersView extends ViewPart {
 		domResultTreeViewer.setInput(domResult);
 		domResultTreeViewer.expandToLevel(2);
 		tabFolder.setSelection(2);
-		domStyledText.setText(WriteHtmlDocumentToIfDefs.convert(domResult));
+		domStyledText.setText(domResult.toIfdefString());
 	}
 	
 }
