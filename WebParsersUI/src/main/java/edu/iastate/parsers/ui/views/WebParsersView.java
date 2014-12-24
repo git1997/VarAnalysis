@@ -19,12 +19,12 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.iastate.parsers.conditional.CondList;
-import edu.iastate.parsers.html.core.DataModelToHtmlTokens;
-import edu.iastate.parsers.html.core.HtmlSaxNodesToHtmlDocument;
-import edu.iastate.parsers.html.core.HtmlTokensToSaxNodes;
+import edu.iastate.parsers.html.core.WriteHtmlDocumentToIfDefs;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
-import edu.iastate.parsers.html.run.WriteHtmlDocumentToIfDefs;
+import edu.iastate.parsers.html.htmlparser.DataModelToHtmlTokens;
+import edu.iastate.parsers.html.htmlparser.HtmlSaxNodesToHtmlDocument;
+import edu.iastate.parsers.html.htmlparser.HtmlTokensToSaxNodes;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.run.RunSymexForFile;

@@ -10,7 +10,6 @@ import org.eclipse.ui.PlatformUI;
 import edu.iastate.parsers.html.dom.nodes.HtmlConcat;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
-import edu.iastate.parsers.html.dom.nodes.HtmlNode;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.dom.nodes.HtmlText;
 import edu.iastate.parsers.ui.UIHelper;
@@ -31,7 +30,7 @@ public class DomResultTreeViewer extends GenericTreeViewer {
 	
 	@Override
 	public Object[] getRootNodes(Object input) {
-		return ((HtmlDocument)input).getChildNodes().toArray(new Object[]{});
+		return ((HtmlDocument)input).getTopNodes().toArray(new Object[]{});
 	}
 
 	@Override
@@ -116,8 +115,8 @@ public class DomResultTreeViewer extends GenericTreeViewer {
 
 	@Override
 	public PositionRange getTreeNodePositionRange(Object element) {
-		if (element instanceof HtmlNode)
-			return ((HtmlNode) element).getLocation();
+		if (element instanceof HtmlElement)
+			return ((HtmlElement) element).getOpenTag().getLocation();
 		else
 			return PositionRange.UNDEFINED;
 	}
