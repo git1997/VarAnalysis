@@ -1,0 +1,38 @@
+Text: 1111111
+Text: 11111111111111
+Text: 1111111
+Text: 11111111111111
+
+#if ($c)
+Text: 2
+
+#else
+Text: 3
+
+#endif
+OpenTag: html
+OpenTag: script
+Text: 
+	function hi() {
+		x.y = y.x;
+		document.getElementById('id1').value =1;
+		document.form1.input2.value = document.form1.input2.value;
+		x = 1;
+		if (c)
+			x = 2;
+		else
+			x = 3;
+		alert(x);
+	}
+	hi();
+
+CloseTag: script
+OpenTag: a, href=testWebSlice.php?a=1
+CloseTag: a
+OpenTag: div, id=id1
+CloseTag: div
+OpenTag: form, name=form1, action=
+OpenTag: input, name=input1, value=1, self-closed
+OpenTag: input, name=input2, [$c] value=2, [!$c] value=3, self-closed
+CloseTag: form
+CloseTag: html

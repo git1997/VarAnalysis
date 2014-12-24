@@ -1,0 +1,20 @@
+OpenTag: html
+OpenTag: head
+OpenTag: script
+Text: 
+	JavaScript code
+
+CloseTag: script
+CloseTag: head
+OpenTag: body
+Text: 
+	Some text here
+	
+OpenTag: input, name=input1, value=0, style=3
+CloseTag: input
+OpenTag: input, name=input2, self-closed
+Text: 
+	Some text there
+
+CloseTag: body
+CloseTag: html
