@@ -2,6 +2,7 @@ package edu.iastate.parsers.html.htmlparser;
 
 import java.util.ArrayList;
 import edu.iastate.parsers.conditional.CondList;
+import edu.iastate.parsers.conditional.CondListEmpty;
 import edu.iastate.parsers.conditional.CondListFactory;
 import edu.iastate.parsers.conditional.CondListItem;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
@@ -113,11 +114,18 @@ public class SaxParserEnv {
 	 */
 	protected HOpenTag tryGetLastOpenTag() {
 		if (!parseResult.isEmpty()) {
-			HtmlSaxNode lastSaxNode = ((CondListItem<HtmlSaxNode>) parseResult.get(parseResult.size() - 1)).getItem();
-			if (lastSaxNode instanceof HOpenTag)
-				return (HOpenTag) lastSaxNode;
+			CondList<HtmlSaxNode> lastElement = parseResult.get(parseResult.size() - 1);
+			if (lastElement instanceof CondListItem<?>) {
+				HtmlSaxNode lastSaxNode = ((CondListItem<HtmlSaxNode>) lastElement).getItem();
+				if (lastSaxNode instanceof HOpenTag)
+					return (HOpenTag) lastSaxNode;
+				else {
+					MyLogger.log(MyLevel.USER_EXCEPTION, "In SaxParserEnv.java: Expected HOpenTag but found " + lastSaxNode.getClass().getSimpleName());
+					return null;
+				}
+			}
 			else {
-				MyLogger.log(MyLevel.USER_EXCEPTION, "In SaxParserEnv.java: Expected HOpenTag but found " + lastSaxNode.getClass().getSimpleName());
+				MyLogger.log(MyLevel.USER_EXCEPTION, "In SaxParserEnv.java: Expected HOpenTag but found " + lastElement.getClass().getSimpleName());
 				return null;
 			}
 		}
@@ -217,7 +225,9 @@ public class SaxParserEnv {
 		CondList<HtmlSaxNode> parseResultInTrueBranch = trueBranchEnv.getParseResult();
 		CondList<HtmlSaxNode> parseResultInFalseBranch = falseBranchEnv.getParseResult();
 		CondList<HtmlSaxNode> select = condListFactory.createCompactSelect(constraint, parseResultInTrueBranch, parseResultInFalseBranch);
-		parseResult.add(select);
+		if (!(select instanceof CondListEmpty<?>)) {
+			parseResult.add(select);
+		}
 		
 		/*
 		 * Check the state
