@@ -17,7 +17,7 @@ import edu.iastate.symex.datamodel.DataModel;
 public class ParseDataModel {
 	
 	/**
-	 * Parses a data model and returns an HtmlDocument node describing the parse result.
+	 * Parses a DataModel and returns an HtmlDocument
 	 * @param dataModel The dataModel to be parsed
 	 */
 	public HtmlDocument parse(DataModel dataModel) {
@@ -25,10 +25,10 @@ public class ParseDataModel {
 		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
 		
 		// Step 2: Convert CondList<HtmlToken> into CondList<HtmlSaxNode>
-		CondList<HtmlSaxNode> parseResult = new HtmlTokensToSaxNodes().parse(lexResult);
+		CondList<HtmlSaxNode> saxParseResult = new HtmlTokensToSaxNodes().parse(lexResult);
 		
 		// Step 3: Convert CondList<HtmlSaxNode> to HtmlDocument
-		HtmlDocument htmlDocument = new HtmlSaxNodesToHtmlDocument().parse(parseResult);
+		HtmlDocument htmlDocument = new HtmlSaxNodesToHtmlDocument().parse(saxParseResult);
 		
 		return htmlDocument;
 	}
