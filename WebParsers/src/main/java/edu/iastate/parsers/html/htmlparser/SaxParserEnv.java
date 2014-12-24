@@ -171,6 +171,7 @@ public class SaxParserEnv {
 					HtmlAttribute attrInTrueBranch = (pseudoAttrInTrueBranch != null ? combineAttributeInfo(attribute, pseudoAttrInTrueBranch) : attribute);
 					HtmlAttribute attrInFalseBranch = (pseudoAttrInFalseBranch != null ? combineAttributeInfo(attribute, pseudoAttrInFalseBranch) : attribute);
 				
+					// attribute might already have some constraint as well, but we ignore it for now (see the note below).
 					attrInTrueBranch.setConstraint(constraint);
 					attrInFalseBranch.setConstraint(ConstraintFactory.createNotConstraint(constraint));
 

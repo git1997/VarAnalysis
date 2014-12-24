@@ -1,0 +1,24 @@
+OpenTag: html
+OpenTag: head
+OpenTag: script
+Text: 
+	JavaScript code
+
+CloseTag: script
+CloseTag: head
+OpenTag: body
+Text: 
+	Some text here
+	
+OpenTag: input, name=input1, [$C] value= ab, [!$C] value= cd, [$C] val1=1, [$C] val2=2, [!$C] val3=3
+#if ($C)
+OpenTag: style
+#else
+OpenTag: div
+#endif
+OpenTag: input, name=input2, [$D] value=aabb, [$E] value=aaccdd, [!$E] value=aaccee, self-closed
+Text: 
+	Some text there
+
+CloseTag: body
+CloseTag: html
