@@ -21,7 +21,6 @@ import org.eclipse.ui.part.ViewPart;
 import edu.iastate.symex.run.RunSymexForFile;
 import edu.iastate.symex.ui.UIHelper;
 import edu.iastate.symex.datamodel.DataModel;
-import edu.iastate.symex.datamodel.WriteDataModelToIfDefs;
 
 /**
  * 
@@ -144,7 +143,7 @@ public class DataModelView extends ViewPart {
 		filePathLabel.setText(file.getAbsolutePath());
 		dataModelTreeViewer.setInput(dataModel);
 		dataModelTreeViewer.expandToLevel(2);
-		dataModelStyledText.setText(WriteDataModelToIfDefs.convert(dataModel));
+		dataModelStyledText.setText(dataModel.toIfdefString());
 	}
 	
 }
