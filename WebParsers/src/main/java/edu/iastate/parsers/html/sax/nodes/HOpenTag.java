@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
 import edu.iastate.parsers.html.dom.nodes.HtmlAttributeValue;
-import edu.iastate.parsers.html.dom.nodes.HtmlNode;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.symex.position.PositionRange;
 
@@ -66,10 +65,10 @@ public class HOpenTag extends HtmlSaxNode {
 	 */
 	
 	public HtmlAttribute getAttribute(String attributeName) {
-		// TODO There could be multiple attributes with the same name (under different constraints)
-		for (HtmlNode attribute : attributes) {
-			if (((HtmlAttribute) attribute).getName().equals(attributeName))
-				return (HtmlAttribute) attribute;
+		// TODO Need to notify the call site that there could be multiple attributes with the same name (under different constraints)
+		for (HtmlAttribute attribute : attributes) {
+			if (attribute.getName().equals(attributeName))
+				return attribute;
 		}
 		return null;
 	}
