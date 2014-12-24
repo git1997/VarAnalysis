@@ -2,6 +2,8 @@ package edu.iastate.parsers.html.dom.nodes;
 
 import java.util.ArrayList;
 
+import edu.iastate.parsers.html.core.WriteHtmlDocumentToIfDefs;
+
 /**
  * 
  * @author HUNG
@@ -21,6 +23,13 @@ public class HtmlDocument {
 	
 	public ArrayList<HtmlNode> getTopNodes() {
 		return new ArrayList<HtmlNode>(topNodes);
+	}
+	
+	/**
+	 * Writes the HtmlDocument to #ifdef format
+	 */
+	public String toIfdefString() {
+		return WriteHtmlDocumentToIfDefs.convert(this);
 	}
 
 	public String toDebugString() {
