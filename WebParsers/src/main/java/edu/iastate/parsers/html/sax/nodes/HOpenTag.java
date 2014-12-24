@@ -19,7 +19,7 @@ public class HOpenTag extends HtmlSaxNode {
 	
 	private ArrayList<HtmlAttribute> attributes = new ArrayList<HtmlAttribute>();
 	
-	private HtmlToken endBracket = null; // The token ">" or "/>" at the end of the tag
+	private ArrayList<HtmlToken> endBrackets = new ArrayList<HtmlToken>(); // The token ">" or "/>" at the end of the tag, there could be multiple endBrackets (although it rarely happens)
 	
 	/**
 	 * Constructor
@@ -37,12 +37,12 @@ public class HOpenTag extends HtmlSaxNode {
 		attributes.add(attribute);
 	}
 	
-	public void removeAllAttributes() {
-		attributes = new ArrayList<HtmlAttribute>();
+	public void removeLastAttribute() {
+		attributes.remove(attributes.size() - 1);
 	}
 	
-	public void setEndBracket(HtmlToken endBracket) {
-		this.endBracket = endBracket;
+	public void addEndBracket(HtmlToken endBracket) {
+		this.endBrackets.add(endBracket);
 	}
 	
 	/*
@@ -57,21 +57,16 @@ public class HOpenTag extends HtmlSaxNode {
 		return new ArrayList<HtmlAttribute>(attributes);
 	}
 	
-	public HtmlToken getEndBracket() {
-		return endBracket;
+	public ArrayList<HtmlToken> getEndBrackets() {
+		return new ArrayList<HtmlToken>(endBrackets);
 	}
 	
 	/*
 	 * Other methods
 	 */
 	
-	@Override
-	public HOpenTag clone() {
-		HOpenTag clone = new HOpenTag(type, location);
-		for (HtmlAttribute attr : attributes)
-			clone.addAttribute(attr.clone());
-		clone.setEndBracket(endBracket);
-		return clone;
+	public int getNumberOfAttributes() {
+		return attributes.size();
 	}
 	
 	public HtmlAttribute getAttribute(String attributeName) {
@@ -107,10 +102,10 @@ public class HOpenTag extends HtmlSaxNode {
 	}
 	
 	/**
-	 * Returns true if the open tag is self-closed (i.e., ending with "/>")
+	 * Returns true if the OpenTag is self-closed (i.e., ending with "/>")
 	 */
 	public boolean isSelfClosed() {
-		return (endBracket != null && endBracket.getLexeme().equals("/>"));
+		return (!endBrackets.isEmpty() && endBrackets.get(0).equals("/>"));
 	}
 	
 	@Override

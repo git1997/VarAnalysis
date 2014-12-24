@@ -51,14 +51,6 @@ public class HtmlAttributeValue extends HtmlNode {
 	 */
 	
 	@Override
-	public HtmlAttributeValue clone() {
-		HtmlAttributeValue clone = new HtmlAttributeValue();
-		clone.stringValue = stringValue;
-		clone.location = location;
-		return clone;
-	}
-	
-	@Override
 	public String toDebugString() {
 		return stringValue;
 	}
