@@ -15,7 +15,7 @@ public class Token {
 	private String lexeme;
 	private int offset;
 	
-	private String value; // Sometimes value is different than lexeme (e.g., an OpeningTag with lexeme = '<form' has value = 'form')
+	private String value; // Generally, value = lexeme. However, for convenience, OpenTag and CloseTag tokens have value different than lexeme (e.g., an OpenTag with lexeme = '<form' has value = 'form')
 	
 	/**
 	 * Constructor
