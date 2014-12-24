@@ -42,7 +42,7 @@ public class HOpenTag extends HtmlSaxNode {
 	}
 	
 	public void addEndBracket(HtmlToken endBracket) {
-		this.endBrackets.add(endBracket);
+		endBrackets.add(endBracket);
 	}
 	
 	/*
@@ -64,10 +64,6 @@ public class HOpenTag extends HtmlSaxNode {
 	/*
 	 * Other methods
 	 */
-	
-	public int getNumberOfAttributes() {
-		return attributes.size();
-	}
 	
 	public HtmlAttribute getAttribute(String attributeName) {
 		// TODO There could be multiple attributes with the same name (under different constraints)
@@ -105,7 +101,7 @@ public class HOpenTag extends HtmlSaxNode {
 	 * Returns true if the OpenTag is self-closed (i.e., ending with "/>")
 	 */
 	public boolean isSelfClosed() {
-		return (!endBrackets.isEmpty() && endBrackets.get(0).equals("/>"));
+		return (!endBrackets.isEmpty() && endBrackets.get(0).getLexeme().equals("/>"));
 	}
 	
 	@Override

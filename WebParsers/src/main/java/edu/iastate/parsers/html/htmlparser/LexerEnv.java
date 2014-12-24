@@ -32,7 +32,7 @@ public class LexerEnv {
 	/*
 	 * The lex result
 	 */
-	private ArrayList<CondList<HtmlToken>> lexResult;
+	private ArrayList<CondList<HtmlToken>> lexResult = new ArrayList<CondList<HtmlToken>>(); 
 	
 	/**
 	 * Constructor
@@ -41,7 +41,6 @@ public class LexerEnv {
 		this.outerScopeEnv = null;
 		this.lexicalState = Lexer.YYINITIAL;
 		this.currentOpenTag = null;
-		this.lexResult = new ArrayList<CondList<HtmlToken>>();
 	}
 	
 	/**
@@ -52,7 +51,6 @@ public class LexerEnv {
 		this.outerScopeEnv = outerScopeEnv;
 		this.lexicalState = outerScopeEnv.lexicalState;
 		this.currentOpenTag = outerScopeEnv.currentOpenTag;
-		this.lexResult = new ArrayList<CondList<HtmlToken>>();
 	}
 	
 	/**

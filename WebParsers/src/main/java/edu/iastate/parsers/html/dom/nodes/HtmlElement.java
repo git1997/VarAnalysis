@@ -2,6 +2,7 @@ package edu.iastate.parsers.html.dom.nodes;
 
 import java.util.ArrayList;
 
+import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.sax.nodes.HCloseTag;
 import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 
@@ -11,13 +12,14 @@ import edu.iastate.parsers.html.sax.nodes.HOpenTag;
  *
  */
 public class HtmlElement extends HtmlNode {
+
+	protected HOpenTag openTag;	 // The openTag of this HtmlElement
 	
 	protected HtmlElement parentElement = null;	// The parent element
-
-	protected HOpenTag openTag;					// The openTag of this HtmlElement
-	protected HCloseTag closeTag = null;		// The closeTag of this HtmlElement, can be null
 	
 	protected ArrayList<HtmlNode> childNodes = new ArrayList<HtmlNode>();	// Its child nodes
+	
+	protected ArrayList<HCloseTag> closeTags = new ArrayList<HCloseTag>();	// The closeTag of this HtmlElement, there could be multiple closeTags (although it rarely happens)
 	
 	/**
 	 * Protected constructor
@@ -57,10 +59,6 @@ public class HtmlElement extends HtmlNode {
 		this.parentElement = parentElement;
 	}
 	
-	public void setCloseTag(HCloseTag closeTag) {
-		this.closeTag = closeTag;
-	}
-	
 	public void addChildNode(HtmlNode childNode) {
 		childNodes.add(childNode);
 		
@@ -68,28 +66,41 @@ public class HtmlElement extends HtmlNode {
 			((HtmlElement) childNode).setParentElement(this);
 	}
 	
-	public void replaceLastChildNode(HtmlNode lastChildNode) {
-		childNodes.set(childNodes.size() - 1, lastChildNode);
+	public void removeLastChildNodes(int count) {
+		for (int i = 1; i <= count; i++)
+			removeLastChildNode();
+	}
+	
+	public void removeLastChildNode() {
+		HtmlNode lastChildNode = childNodes.get(childNodes.size() - 1); 
+		if (lastChildNode instanceof HtmlElement)
+			((HtmlElement) lastChildNode).setParentElement(null);
+		
+		childNodes.remove(childNodes.size() - 1);
+	}
+	
+	public void addCloseTag(HCloseTag closeTag) {
+		closeTags.add(closeTag);
 	}
 	
 	/*
 	 * Get properties
 	 */
 	
-	public HtmlElement getParentElement() {
-		return parentElement;
-	}
-	
 	public HOpenTag getOpenTag() {
 		return openTag;
 	}
 	
-	public HCloseTag getCloseTag() {
-		return closeTag;
+	public HtmlElement getParentElement() {
+		return parentElement;
 	}
 	
 	public ArrayList<HtmlNode> getChildNodes() {
 		return new ArrayList<HtmlNode>(childNodes);
+	}
+	
+	public ArrayList<HCloseTag> getCloseTags() {
+		return new ArrayList<HCloseTag>(closeTags);
 	}
 	
 	public String getType() {
@@ -110,6 +121,10 @@ public class HtmlElement extends HtmlNode {
 	
 	public String getAttributeStringValue(String attributeName) {
 		return openTag.getAttributeStringValue(attributeName);
+	}
+	
+	public ArrayList<HtmlToken> getEndBrackets() {
+		return openTag.getEndBrackets();
 	}
 	
 	@Override
