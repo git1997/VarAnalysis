@@ -265,7 +265,7 @@ private boolean zzAtBOL = true;
 		return currentOpenTag;
 	}
 	
-	private String getState(int state) {
+	public static String getState(int state) {
 		if (state == YYINITIAL)
 			return "YYINITIAL";
 		else if (state == ATTR_NAME)
