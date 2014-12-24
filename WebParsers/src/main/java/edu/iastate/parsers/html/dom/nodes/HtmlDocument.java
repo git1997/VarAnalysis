@@ -2,37 +2,31 @@ package edu.iastate.parsers.html.dom.nodes;
 
 import java.util.ArrayList;
 
-import edu.iastate.symex.position.PositionRange;
-
 /**
  * 
  * @author HUNG
  *
  */
-public class HtmlDocument extends HtmlNode {
+public class HtmlDocument {
 
-	private ArrayList<HtmlNode> childNodes = new ArrayList<HtmlNode>();
+	private ArrayList<HtmlNode> topNodes = new ArrayList<HtmlNode>();
 	
 	/**
 	 * Constructor
+	 * @param topNodes The top nodes in this HtmlDocument
 	 */
-	public HtmlDocument() {
-		super(PositionRange.UNDEFINED);
+	public HtmlDocument(ArrayList<HtmlNode> topNodes) {
+		this.topNodes = topNodes;
 	}
 	
-	public void addChildNode(HtmlNode childNode) {
-		childNodes.add(childNode);
-	}
-	
-	public ArrayList<HtmlNode> getChildNodes() {
-		return new ArrayList<HtmlNode>(childNodes);
+	public ArrayList<HtmlNode> getTopNodes() {
+		return new ArrayList<HtmlNode>(topNodes);
 	}
 
-	@Override
 	public String toDebugString() {
 		StringBuilder str = new StringBuilder();
-		for (HtmlNode child : childNodes)
-			str.append(child.toDebugString() + System.lineSeparator());
+		for (HtmlNode topNode : topNodes)
+			str.append(topNode.toDebugString() + System.lineSeparator());
 		return str.toString();
 	}
 

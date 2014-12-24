@@ -11,26 +11,32 @@ import edu.iastate.symex.util.StringUtils;
  */
 public class HtmlAttributeValue extends HtmlNode {
 
-	private String stringValue = "";
+	private String stringValue;
+	private PositionRange location;
 	
 	/**
 	 * Protected constructor. Called from HtmlAttribute only.
 	 */
 	protected HtmlAttributeValue() {
-		super(PositionRange.UNDEFINED);
+		this.stringValue = "";
+		this.location = PositionRange.UNDEFINED;
 	}
+	
+	/*
+	 * Set properties
+	 */
 	
 	/**
 	 * Protected method. Called from HtmlAttribute only.
 	 */
 	protected void addValueFragment(String valueFragment, PositionRange valueFragmentlocation) {
 		if (stringValue.isEmpty()) {
-			this.location = valueFragmentlocation;
 			this.stringValue = valueFragment;
+			this.location = valueFragmentlocation;
 		}
 		else {
-			this.location = new CompositeRange(this.location, valueFragmentlocation);
 			this.stringValue = this.stringValue + valueFragment;
+			this.location = new CompositeRange(this.location, valueFragmentlocation);
 		}
 	}
 	
@@ -42,8 +48,16 @@ public class HtmlAttributeValue extends HtmlNode {
 		stringValue = StringUtils.getUnescapedStringValuePreservingLength(stringValue, stringType);
 	}
 	
+	/*
+	 * Get properties
+	 */
+	
 	public String getStringValue() {
 		return stringValue;
+	}
+	
+	public PositionRange getLocation() {
+		return location;
 	}
 	
 	/*

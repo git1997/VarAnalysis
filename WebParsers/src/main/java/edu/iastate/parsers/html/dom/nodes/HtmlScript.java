@@ -22,14 +22,15 @@ public class HtmlScript extends HtmlElement {
 		
 		for (HtmlNode childNode : childNodes) {
 			if (childNode instanceof HtmlText) {
-				sourceCode.append(((HtmlText) childNode).getStringValue());
+				HtmlText text = (HtmlText) childNode;
+				sourceCode.append(text.getStringValue());
 				if (location == PositionRange.UNDEFINED)
-					location = childNode.getLocation();
+					location = text.getLocation();
 				else
-					location = new CompositeRange(location, childNode.getLocation());
+					location = new CompositeRange(location, text.getLocation());
 			}
 			else if (childNode instanceof HtmlSelect) {
-				// TODO Implement this case
+				// TODO Implement this case where there are alternatives in the JavaScript code
 			}
 		}
 		

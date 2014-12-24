@@ -17,7 +17,6 @@ public class HtmlSelect extends HtmlNode {
 	 * Private constructor
 	 */
 	private HtmlSelect(Constraint constraint, HtmlNode trueBranchNode, HtmlNode falseBranchNode) {
-		super(constraint.getLocation());
 		this.constraint = constraint;
 		this.trueBranchNode = trueBranchNode;
 		this.falseBranchNode = falseBranchNode;

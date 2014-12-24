@@ -9,10 +9,12 @@ import edu.iastate.symex.position.PositionRange;
  * @author HUNG
  *
  */
-public class HtmlAttribute extends HtmlNode {
+public class HtmlAttribute {
 	
-	private String name;
-	private HtmlAttributeValue value;
+	private String name;					// Name of the attribute
+	private PositionRange location;			// The location of the attribute's name
+	
+	private HtmlAttributeValue value;		// The attribute's value
 	
 	private HtmlToken eqToken = null;		// The '=' token after the attribute name
 	private HtmlToken attrValStart = null;	// The ' or " token at the start of the attribute value
@@ -25,8 +27,8 @@ public class HtmlAttribute extends HtmlNode {
 	 * Constructor
 	 */
 	public HtmlAttribute(String name, PositionRange location) {
-		super(location);
 		this.name = name;
+		this.location = location;
 		this.value = new HtmlAttributeValue();
 	}
 	
@@ -76,6 +78,10 @@ public class HtmlAttribute extends HtmlNode {
 		return name;
 	}
 	
+	public PositionRange getLocation() {
+		return location;
+	}
+	
 	public HtmlAttributeValue getAttributeValue() {
 		return value;
 	}
@@ -108,7 +114,7 @@ public class HtmlAttribute extends HtmlNode {
 		return value.getStringValue();
 	}
 	
-	public String getTrimmedLowerCaseValue() {
+	public String getTrimmedLowerCaseStringValue() {
 		return getStringValue().trim().toLowerCase();
 	}
 	
@@ -142,7 +148,7 @@ public class HtmlAttribute extends HtmlNode {
 	 */
 	public boolean containsJavascript() {
 		return getName().startsWith("on") // e.g. onclick, onsubmit, etc.
-			|| (getName().equals("href") && getTrimmedLowerCaseValue().startsWith("javascript")); // e.g <a href="javascript: login();"></a>
+			|| (getName().equals("href") && getTrimmedLowerCaseStringValue().startsWith("javascript")); // e.g <a href="javascript: login();"></a>
 	}
 	
 	/**
@@ -151,10 +157,9 @@ public class HtmlAttribute extends HtmlNode {
 	 */
 	public boolean containsQueryString() {
 		return  getName().equals("action")
-				|| (getName().equals("href") && !getTrimmedLowerCaseValue().startsWith("javascript")); // Make sure it's not Javascript
+				|| (getName().equals("href") && !getTrimmedLowerCaseStringValue().startsWith("javascript")); // Make sure it's not Javascript
 	}
 	
-	@Override
 	public String toDebugString() {
 		if (constraint.isTautology())
 			return name + (value != null ? "=" + value.toDebugString() : "");

@@ -15,18 +15,13 @@ public class HtmlElement extends HtmlNode {
 
 	protected HOpenTag openTag;	 // The openTag of this HtmlElement
 	
-	protected HtmlElement parentElement = null;	// The parent element
-	
-	protected ArrayList<HtmlNode> childNodes = new ArrayList<HtmlNode>();	// Its child nodes
-	
-	protected ArrayList<HCloseTag> closeTags = new ArrayList<HCloseTag>();	// The closeTag of this HtmlElement, there could be multiple closeTags (although it rarely happens)
+	protected ArrayList<HCloseTag> closeTags = new ArrayList<HCloseTag>();	// The closeTags of this HtmlElement, there could be multiple closeTags (although it rarely happens)
 	
 	/**
 	 * Protected constructor
 	 * @param openTag
 	 */
 	protected HtmlElement(HOpenTag openTag) {
-		super(openTag.getLocation());
 		this.openTag = openTag;
 		
 		for (HtmlAttribute attr : openTag.getAttributes())
@@ -51,34 +46,6 @@ public class HtmlElement extends HtmlNode {
 	 * Set properties
 	 */
 	
-	/**
-	 * Sets parentElement - Private access: Should only be called from HtmlElement.addChildNode
-	 * @param parentElement
-	 */
-	private void setParentElement(HtmlElement parentElement) {
-		this.parentElement = parentElement;
-	}
-	
-	public void addChildNode(HtmlNode childNode) {
-		childNodes.add(childNode);
-		
-		if (childNode instanceof HtmlElement)
-			((HtmlElement) childNode).setParentElement(this);
-	}
-	
-	public void removeLastChildNodes(int count) {
-		for (int i = 1; i <= count; i++)
-			removeLastChildNode();
-	}
-	
-	public void removeLastChildNode() {
-		HtmlNode lastChildNode = childNodes.get(childNodes.size() - 1); 
-		if (lastChildNode instanceof HtmlElement)
-			((HtmlElement) lastChildNode).setParentElement(null);
-		
-		childNodes.remove(childNodes.size() - 1);
-	}
-	
 	public void addCloseTag(HCloseTag closeTag) {
 		closeTags.add(closeTag);
 	}
@@ -89,14 +56,6 @@ public class HtmlElement extends HtmlNode {
 	
 	public HOpenTag getOpenTag() {
 		return openTag;
-	}
-	
-	public HtmlElement getParentElement() {
-		return parentElement;
-	}
-	
-	public ArrayList<HtmlNode> getChildNodes() {
-		return new ArrayList<HtmlNode>(childNodes);
 	}
 	
 	public ArrayList<HCloseTag> getCloseTags() {
