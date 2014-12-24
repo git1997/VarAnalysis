@@ -57,7 +57,6 @@ public class DataModelToHtmlTokens extends DataModelVisitor {
 		LexerEnv trueBranchEnv = new LexerEnv(env);
 		env = trueBranchEnv;
 		selectNode.getNodeInTrueBranch().accept(this);
-		CondList<HtmlToken> lexResultInTrueBranch = env.getLexResult();
 		env = trueBranchEnv.getOuterScopeEnv();
 		
 		/*
@@ -66,13 +65,12 @@ public class DataModelToHtmlTokens extends DataModelVisitor {
 		LexerEnv falseBranchEnv = new LexerEnv(env);
 		env = falseBranchEnv;
 		selectNode.getNodeInFalseBranch().accept(this);
-		CondList<HtmlToken> lexResultInFalseBranch = env.getLexResult();
 		env = falseBranchEnv.getOuterScopeEnv();
 		
 		/*
 		 * Combine results
 		 */
-		env.updateAfterLexingBranches(selectNode.getConstraint(), lexResultInTrueBranch, lexResultInFalseBranch, trueBranchEnv, falseBranchEnv);
+		env.updateAfterLexingBranches(selectNode.getConstraint(), trueBranchEnv, falseBranchEnv);
 	}
 
 	/**

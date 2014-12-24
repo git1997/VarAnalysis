@@ -96,10 +96,12 @@ public class LexerEnv {
 	/**
 	 * Updates the current Env after lexing two branches
 	 */
-	public void updateAfterLexingBranches(Constraint constraint, CondList<HtmlToken> lexResultInTrueBranch, CondList<HtmlToken> lexResultInFalseBranch, LexerEnv trueBranchEnv, LexerEnv falseBranchEnv) {
+	public void updateAfterLexingBranches(Constraint constraint, LexerEnv trueBranchEnv, LexerEnv falseBranchEnv) {
 		/*
-		 * Combine HtmlTokens in the two branches
+		 * Combine lexResults in the two branches
 		 */
+		CondList<HtmlToken> lexResultInTrueBranch = trueBranchEnv.getLexResult();
+		CondList<HtmlToken> lexResultInFalseBranch = falseBranchEnv.getLexResult();
 		CondList<HtmlToken> select = condListFactory.createCompactSelect(constraint, lexResultInTrueBranch, lexResultInFalseBranch);
 		lexResult.add(select);
 		
