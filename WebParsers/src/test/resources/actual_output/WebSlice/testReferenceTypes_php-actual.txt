@@ -56,6 +56,7 @@ document (JsVariableRef) @ testReferenceTypes.php:Line25:Offset406
 form1 (JsRefToHtmlForm) @ testReferenceTypes.php:Line25:Offset415
 	<- form1 (HtmlFormDecl) @ testReferenceTypes.php:Line38:Offset612
 input2 (JsRefToHtmlInput) @ testReferenceTypes.php:Line25:Offset421
+	<- input2 (HtmlInputDecl) @ testReferenceTypes.php:Line40:Offset678
 value (JsDeclOfHtmlInputValue) @ testReferenceTypes.php:Line25:Offset428
 	<- document (JsVariableRef) @ testReferenceTypes.php:Line25:Offset436
 	<- form1 (JsRefToHtmlForm) @ testReferenceTypes.php:Line25:Offset445
@@ -65,7 +66,10 @@ document (JsVariableRef) @ testReferenceTypes.php:Line25:Offset436
 form1 (JsRefToHtmlForm) @ testReferenceTypes.php:Line25:Offset445
 	<- form1 (HtmlFormDecl) @ testReferenceTypes.php:Line38:Offset612
 input2 (JsRefToHtmlInput) @ testReferenceTypes.php:Line25:Offset451
+	<- input2 (HtmlInputDecl) @ testReferenceTypes.php:Line40:Offset678
 value (JsRefToHtmlInputValue) @ testReferenceTypes.php:Line25:Offset458
+	<- value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line40:Offset686
+	<- value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line40:Offset686
 x (JsVariableDecl) @ testReferenceTypes.php:Line26:Offset467
 c (JsVariableRef) @ testReferenceTypes.php:Line27:Offset480
 x (JsVariableDecl) @ testReferenceTypes.php:Line28:Offset486
