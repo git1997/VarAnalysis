@@ -10,4 +10,4 @@ HtmlNode
 	HtmlEmpty
 HtmlAttribute
 HtmlAttributeValue
-HtmlNodeVisitor
+HtmlDocumentVisitor
