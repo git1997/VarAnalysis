@@ -24,7 +24,7 @@ public class TestLexer extends GenericTest {
 		TestLexer testLexer = new TestLexer();
 		//testLexer.enableOracleCreation();
 		
-		testLexer.testSimple();
+		testLexer.testBadForm2();
 	}
 
 	@Override
@@ -46,6 +46,11 @@ public class TestLexer extends GenericTest {
 	@Test
 	public void testBadForm() {
 		testFile("Lexer/testBadForm.php");
+	}
+	
+	@Test
+	public void testBadForm2() {
+		testFile("Lexer/testBadForm2.php");
 	}
 	
 }

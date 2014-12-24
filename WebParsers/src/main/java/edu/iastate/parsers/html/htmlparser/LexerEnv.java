@@ -2,6 +2,7 @@ package edu.iastate.parsers.html.htmlparser;
 
 import java.util.ArrayList;
 import edu.iastate.parsers.conditional.CondList;
+import edu.iastate.parsers.conditional.CondListEmpty;
 import edu.iastate.parsers.conditional.CondListFactory;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.generatedlexer.Lexer;
@@ -101,7 +102,9 @@ public class LexerEnv {
 		CondList<HtmlToken> lexResultInTrueBranch = trueBranchEnv.getLexResult();
 		CondList<HtmlToken> lexResultInFalseBranch = falseBranchEnv.getLexResult();
 		CondList<HtmlToken> select = condListFactory.createCompactSelect(constraint, lexResultInTrueBranch, lexResultInFalseBranch);
-		lexResult.add(select);
+		if (!(select instanceof CondListEmpty<?>)) {
+			lexResult.add(select);
+		}
 		
 		/*
 		 * Check the state

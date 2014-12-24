@@ -1,0 +1,110 @@
+Text: 1111111
+Text: 11111111111111
+Text: 1111111
+Text: 11111111111111
+
+#if ($c)
+Text: 2
+
+#else
+Text: 3
+
+#endif
+OpenTag: <html
+OpenTagEnd: >
+Text: 
+
+
+OpenTag: <script
+OpenTagEnd: >
+Text: 
+	function hi() {
+		x.y = y.x;
+		document.getElementById('id1').value =1;
+		document.form1.input2.value = document.form1.input2.value;
+		x = 1;
+		if (c)
+			x = 2;
+		else
+			x = 3;
+		alert(x);
+	}
+	hi();
+
+CloseTag: </script>
+Text: 
+
+
+OpenTag: <a
+AttrName: href
+Eq: =
+AttrValStart: "
+AttrValFrag: testWebSlice.php?a=1
+AttrValEnd: "
+OpenTagEnd: >
+CloseTag: </a>
+Text: 
+
+OpenTag: <div
+AttrName: id
+Eq: =
+AttrValStart: "
+AttrValFrag: id1
+AttrValEnd: "
+OpenTagEnd: >
+CloseTag: </div>
+Text: 
+
+OpenTag: <form
+AttrName: name
+Eq: =
+AttrValStart: "
+AttrValFrag: form1
+AttrValEnd: "
+AttrName: action
+Eq: =
+AttrValStart: "
+AttrValEnd: "
+OpenTagEnd: >
+Text: 
+	
+OpenTag: <input
+AttrName: name
+Eq: =
+AttrValStart: "
+AttrValFrag: input1
+AttrValEnd: "
+AttrName: VALUE
+Eq: =
+AttrValStart: "
+AttrValFrag: 1
+AttrValEnd: "
+OpenTagEnd: />
+Text: 
+	
+OpenTag: <input
+AttrName: name
+Eq: =
+AttrValStart: "
+AttrValFrag: input2
+AttrValEnd: "
+AttrName: value
+Eq: =
+AttrValStart: "
+
+#if ($c)
+AttrValFrag: 2
+
+#else
+AttrValFrag: 3
+
+#endif
+AttrValEnd: "
+OpenTagEnd: />
+Text: 
+
+CloseTag: </form>
+Text: 
+
+
+CloseTag: </html>

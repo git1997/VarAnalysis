@@ -24,6 +24,9 @@ public class HtmlSelect extends HtmlNode {
 	 * Creates an HtmlSelect
 	 */
 	public static HtmlNode createCompactSelect(Constraint constraint, HtmlNode trueBranchNode, HtmlNode falseBranchNode) {
+		if (trueBranchNode instanceof HtmlEmpty && falseBranchNode instanceof HtmlEmpty)
+			return HtmlEmpty.EMPTY;
+		
 		return new HtmlSelect(constraint, trueBranchNode, falseBranchNode);
 	}
 	

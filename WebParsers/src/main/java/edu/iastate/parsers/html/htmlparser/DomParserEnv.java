@@ -8,6 +8,7 @@ import java.util.Stack;
 import edu.iastate.parsers.html.dom.nodes.HtmlConcat;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
+import edu.iastate.parsers.html.dom.nodes.HtmlEmpty;
 import edu.iastate.parsers.html.dom.nodes.HtmlNode;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.dom.nodes.HtmlText;
@@ -190,8 +191,11 @@ public class DomParserEnv {
 			HtmlNode select = HtmlSelect.createCompactSelect(constraint, resultInTrueBranch, resultInFalseBranch);
 			
 			htmlElement.removeLastChildNodes(childNodesInTrueBranch.size() + childNodesInFalseBranch.size());
-			htmlElement.addChildNode(select);
-			recordModifications(htmlElement, select);
+			
+			if (!(select instanceof HtmlEmpty)) {
+				htmlElement.addChildNode(select);
+				recordModifications(htmlElement, select);
+			}
 		}
 		
 		/*

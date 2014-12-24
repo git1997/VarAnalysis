@@ -43,6 +43,9 @@ public class CondListFactory<T> {
 	 * Creates a CondListSelect
 	 */
 	public CondList<T> createCompactSelect(Constraint constraint, CondList<T> trueBranchNode, CondList<T> falseBranchNode) {
+		if (trueBranchNode instanceof CondListEmpty<?> && falseBranchNode instanceof CondListEmpty<?>)
+			return trueBranchNode;
+		
 		return new CondListSelect<T>(constraint, trueBranchNode, falseBranchNode);
 	}
 	
