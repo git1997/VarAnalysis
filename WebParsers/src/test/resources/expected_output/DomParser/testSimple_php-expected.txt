@@ -1,0 +1,18 @@
+<html> (OpenTag: html)
+	<head> (OpenTag: head)
+		<script> (OpenTag: script)
+
+		JS code
+	
+		</script>
+	</head>
+	<body> (OpenTag: body)
+		<form> (OpenTag: form, name=form1)
+			<input> (OpenTag: input, name=input1, self-closed)
+			</input>
+			<div> (OpenTag: div)
+Some text here
+			</div>
+		</form>
+	</body>
+</html>
