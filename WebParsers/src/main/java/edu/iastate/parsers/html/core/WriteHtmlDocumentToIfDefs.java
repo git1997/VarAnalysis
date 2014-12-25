@@ -4,6 +4,8 @@ import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocumentVisitor;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
+import edu.iastate.parsers.html.dom.nodes.HtmlText;
+import edu.iastate.symex.util.StringUtils;
 
 /**
  * 
@@ -13,6 +15,8 @@ import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 public class WriteHtmlDocumentToIfDefs extends HtmlDocumentVisitor {
 	
 	private StringBuilder strBuilder;
+	
+	private int depth; // Depth of the current node during traversal for pretty printing
 	
 	/**
 	 * Converts an HtmlDocument to #ifdefs format.
@@ -25,6 +29,7 @@ public class WriteHtmlDocumentToIfDefs extends HtmlDocumentVisitor {
 	
 	public WriteHtmlDocumentToIfDefs() {
 		this.strBuilder = new StringBuilder();
+		this.depth = 0;
 	}
 	
 	public String getResults() {
@@ -33,18 +38,27 @@ public class WriteHtmlDocumentToIfDefs extends HtmlDocumentVisitor {
 	
 	@Override
 	public void visitSelect(HtmlSelect htmlSelect) {
-		strBuilder.append(System.lineSeparator() + "#if (" + htmlSelect.getConstraint().toDebugString() + ")" + System.lineSeparator());
+		strBuilder.append("#if (" + htmlSelect.getConstraint().toDebugString() + ")" + System.lineSeparator());
 		visitNode(htmlSelect.getTrueBranchNode());
-		strBuilder.append(System.lineSeparator() + "#else" + System.lineSeparator());
+		strBuilder.append("#else" + System.lineSeparator());
 		visitNode(htmlSelect.getFalseBranchNode());
-		strBuilder.append(System.lineSeparator() + "#endif" + System.lineSeparator());
+		strBuilder.append("#endif" + System.lineSeparator());
 	}
 	
 	@Override
 	public void visitElement(HtmlElement htmlElement) {
-		strBuilder.append("<" + htmlElement.getType() + ">");
+		strBuilder.append(StringUtils.getIndentedTabs(depth));
+		strBuilder.append("<" + htmlElement.getType() + "> (" + htmlElement.getOpenTag().toDebugString() + ")" + System.lineSeparator());
+		depth++;
 	    super.visitElement(htmlElement);
-		strBuilder.append("</" + htmlElement.getType() + ">");	
+	    depth--;
+	    strBuilder.append(StringUtils.getIndentedTabs(depth));
+	    strBuilder.append("</" + htmlElement.getType() + ">" + System.lineSeparator());	
+	}
+	
+	@Override 
+	public void visitText(HtmlText htmlText) {
+		strBuilder.append(htmlText.getStringValue() + System.lineSeparator());
 	}
 	
 }
