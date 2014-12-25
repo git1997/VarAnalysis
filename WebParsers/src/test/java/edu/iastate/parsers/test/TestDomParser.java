@@ -22,7 +22,7 @@ public class TestDomParser extends GenericTest {
 		TestDomParser testDomParser = new TestDomParser();
 		//testDomParser.enableOracleCreation();
 		
-		testDomParser.testSimple();
+		testDomParser.testBranching();
 	}
 
 	@Override

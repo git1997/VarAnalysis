@@ -58,7 +58,7 @@ public class WriteHtmlDocumentToIfDefs extends HtmlDocumentVisitor {
 	
 	@Override 
 	public void visitText(HtmlText htmlText) {
-		strBuilder.append(htmlText.getStringValue() + System.lineSeparator());
+		strBuilder.append(htmlText.toDebugString() + System.lineSeparator());
 	}
 	
 }
