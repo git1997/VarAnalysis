@@ -53,7 +53,7 @@ public class WriteHtmlDocumentToIfDefs extends HtmlDocumentVisitor {
 	    super.visitElement(htmlElement);
 	    depth--;
 	    strBuilder.append(StringUtils.getIndentedTabs(depth));
-	    strBuilder.append("</" + htmlElement.getType() + ">" + System.lineSeparator());	
+	    strBuilder.append("</" + htmlElement.getType() + ">" + (htmlElement.getCloseTags().size() > 1 ? (" (" + htmlElement.getCloseTags().size() + " CloseTags)") : "") + System.lineSeparator());	
 	}
 	
 	@Override 
