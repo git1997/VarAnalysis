@@ -1,0 +1,37 @@
+<html> (OpenTag: html)
+	<head> (OpenTag: head)
+		<title> (OpenTag: title)
+Text: PHP Test
+		</title>
+	</head>
+	<body> (OpenTag: body)
+#if ($C)
+		<div> (OpenTag: div)
+			<style> (OpenTag: style)
+				<a> (OpenTag: a)
+				</a>
+Text: abc
+ 
+			</style>
+			<p> (OpenTag: p)
+Text: Paragraph
+			</p>
+		</div>
+#else
+		<div> (OpenTag: div)
+			<style> (OpenTag: style)
+				<a> (OpenTag: a)
+				</a>
+Text: abc
+ 
+			</style>
+			<p> (OpenTag: p)
+Text: Paragraph
+			</p>
+		</div>
+#endif
+		<footer> (OpenTag: footer)
+Text: Footer
+		</footer>
+	</body>
+</html>

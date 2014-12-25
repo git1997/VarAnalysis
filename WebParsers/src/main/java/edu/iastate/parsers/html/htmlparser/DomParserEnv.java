@@ -70,7 +70,9 @@ public class DomParserEnv {
 	 */
 	public DomParserEnv(DomParserEnv outerScopeEnv) {
 		this.outerScopeEnv = outerScopeEnv;
-		this.htmlStack = outerScopeEnv.htmlStack;
+		this.htmlStack = new Stack<String>();
+		for (String element : outerScopeEnv.htmlStack)
+			this.htmlStack.push(element);
 		this.currentHtmlElements = new HashSet<HtmlElement>(outerScopeEnv.currentHtmlElements);
 	}
 	
@@ -156,8 +158,7 @@ public class DomParserEnv {
 			if (node instanceof HtmlElement)
 				set.add((HtmlElement) node);
 			else {
-				for (HtmlNode node2 : node.getParentNodes())
-					set.addAll(getParentElements(node2));
+				set.addAll(getParentElements(node));
 			}
 		}
 		return set;

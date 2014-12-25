@@ -22,7 +22,7 @@ public class TestDomParser extends GenericTest {
 		TestDomParser testDomParser = new TestDomParser();
 		//testDomParser.enableOracleCreation();
 		
-		testDomParser.testBranching();
+		testDomParser.testMultipleOpenTags();
 	}
 
 	@Override
@@ -43,6 +43,11 @@ public class TestDomParser extends GenericTest {
 	@Test
 	public void testBranching() {
 		testFile("DomParser/testBranching.php");
+	}
+	
+	@Test
+	public void testMultipleOpenTags() {
+		testFile("DomParser/testMultipleOpenTags.php");
 	}
 	
 }
