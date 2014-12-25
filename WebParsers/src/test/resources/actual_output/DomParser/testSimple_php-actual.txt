@@ -1,7 +1,7 @@
 <html> (OpenTag: html)
 	<head> (OpenTag: head)
 		<script> (OpenTag: script)
-
+Text: 
 		JS code
 	
 		</script>
@@ -11,7 +11,7 @@
 			<input> (OpenTag: input, name=input1, self-closed)
 			</input>
 			<div> (OpenTag: div)
-Some text here
+Text: Some text here
 			</div>
 		</form>
 	</body>
