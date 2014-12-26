@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.iastate.parsers.conditional.CondList;
-import edu.iastate.parsers.html.core.WriteHtmlDocumentToIfDefs;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.htmlparser.DataModelToHtmlTokens;

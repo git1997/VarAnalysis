@@ -117,6 +117,10 @@ public class DomResultTreeViewer extends GenericTreeViewer {
 	public PositionRange getTreeNodePositionRange(Object element) {
 		if (element instanceof HtmlElement)
 			return ((HtmlElement) element).getOpenTag().getLocation();
+		
+		else if (element instanceof HtmlText)
+			return ((HtmlText) element).getLocation();
+		
 		else
 			return PositionRange.UNDEFINED;
 	}
