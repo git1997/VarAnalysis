@@ -46,14 +46,18 @@ public class DomParserEnv {
 	
 	/*
 	 * The parse result
-	 * A map from HtmlElement (in an outerScopeEnv) to its added childNodes in the current scope.
+	 * A map from HtmlElement (in an outerScopeEnv) to its added childNodes in the current scope
+	 * 	 (i.e., the effects the current scope has on outerScopeEnvs).
 	 * Note: Modifications to HTML elements created in the current scope need not be reported in this parse result,
-	 * since one of their parents or ancestors must have been included in the parse result already.
+	 * 	 since one of their parents or ancestors must have been included in the parse result already.
+	 * For example, if outerScopeEnv.currentHtmlElements contains <a>, <b>, and currentEnv adds <c> as
+	 *	 child node of <a>, <b>, and <d> as child node of <c>, then we report the added child node
+	 *	 at <a> and <b>, and don't have to report the added child node at <c>.
 	 */
 	private HashMap<HtmlElement, ArrayList<HtmlNode>> elementMap = new HashMap<HtmlElement, ArrayList<HtmlNode>>();
 	
 	// This set contains HtmlElements that are created in the current scope (see note above)
-	private HashSet<HtmlElement> createdElementsInCurrentScope = new HashSet<HtmlElement>();
+	private HashSet<HtmlElement> elementsCreatedInCurrentScope = new HashSet<HtmlElement>();
 	
 	/**
 	 * Constructor
@@ -114,7 +118,7 @@ public class DomParserEnv {
 	
 	protected HtmlElement createHtmlElementFromOpenTag(HOpenTag openTag) {
 		HtmlElement htmlElement = HtmlElement.createHtmlElement(openTag);
-		createdElementsInCurrentScope.add(htmlElement);
+		elementsCreatedInCurrentScope.add(htmlElement);
 		return htmlElement;
 	}
 	
@@ -129,33 +133,33 @@ public class DomParserEnv {
 		currentHtmlElements.add(htmlElement);
 	}
 	
-	/**
-	 * Record modifications made to HtmlElements in an outerScopeEnv
-	 */
-	private void recordModifications(HtmlElement parent, HtmlNode child) {
-		if (createdElementsInCurrentScope.contains(parent))
-			return; // Don't need to record modifications to HtmlElements created in the currentEnv
-		
-		if (!elementMap.containsKey(parent))
-			elementMap.put(parent, new ArrayList<HtmlNode>());
-		elementMap.get(parent).add(child);
-	}
-	
 	protected void addHtmlTextToCurrentHtmlElement(HtmlText htmlText) {
-		for (HtmlElement element : currentHtmlElements) {
-			element.addChildNode(htmlText);
-			recordModifications(element, htmlText);
+		for (HtmlElement parent : currentHtmlElements) {
+			parent.addChildNode(htmlText);
+			recordModifications(parent, htmlText);
 		}
 	}
 	
 	protected void addCloseTagToCurrentHtmlElement(HCloseTag closeTag) {
 		// If we want to track the constraints of the closeTags, we could record this type of modifications
-		// similarly to the case where a new child node is added the the current HtmlElement. 
-		// (@see DomParserEnv.recordModifications(HtmlElement, HtmlNode))
+		// similarly to the case where a new child node is added the the current HtmlElement
+		// (@see DomParserEnv.recordModifications(HtmlElement, HtmlNode)).
 		// However, currently each HtmlElement contains a set of closeTags (without constraints), 
-		//	 therefore we can freely add closeTags in the branches without worrying combining them after branches.
+		//	 therefore we can freely add closeTags in the branches without worrying about combining them after branches.
 		for (HtmlElement element : currentHtmlElements)
 			element.addCloseTag(closeTag);
+	}
+	
+	/**
+	 * Record modifications made to HtmlElements from an outerScopeEnv
+	 */
+	private void recordModifications(HtmlElement parent, HtmlNode child) {
+		if (elementsCreatedInCurrentScope.contains(parent))
+			return; // Don't need to record modifications to HtmlElements created in the currentEnv
+		
+		if (!elementMap.containsKey(parent))
+			elementMap.put(parent, new ArrayList<HtmlNode>());
+		elementMap.get(parent).add(child);
 	}
 	
 	protected void popHtmlStack() {
@@ -172,7 +176,7 @@ public class DomParserEnv {
 		for (HtmlNode node : htmlNode.getParentNodes()) {
 			if (node instanceof HtmlElement)
 				parentElements.add((HtmlElement) node);
-			else // node is either HtmlSelect or HtmlConcat
+			else // node is either HtmlSelect or HtmlConcat (HtmlText and HtmlEmpty can't be a parent node)
 				parentElements.addAll(getParentElements(node));
 		}
 		return parentElements;
@@ -193,14 +197,15 @@ public class DomParserEnv {
 			ArrayList<HtmlNode> childNodesInTrueBranch = (trueBranchEnv.elementMap.containsKey(htmlElement) ? trueBranchEnv.elementMap.get(htmlElement) : new ArrayList<HtmlNode>());
 			ArrayList<HtmlNode> childNodesInFalseBranch = (falseBranchEnv.elementMap.containsKey(htmlElement) ? falseBranchEnv.elementMap.get(htmlElement) : new ArrayList<HtmlNode>());
 			
+			// Backtrack from the two branches
+			htmlElement.removeLastChildNodes(childNodesInTrueBranch.size() + childNodesInFalseBranch.size());
+						
+			// Combine results from the two branches
 			HtmlNode resultInTrueBranch = HtmlConcat.createCompactConcat(childNodesInTrueBranch);
 			HtmlNode resultInFalseBranch = HtmlConcat.createCompactConcat(childNodesInFalseBranch);
 			HtmlNode select = HtmlSelect.createCompactSelect(constraint, resultInTrueBranch, resultInFalseBranch);
 			
-			// Backtrack from the two branches
-			htmlElement.removeLastChildNodes(childNodesInTrueBranch.size() + childNodesInFalseBranch.size());
-			
-			// Update the combined results from the two branches
+			// Update the htmlElement with the combined results
 			if (!(select instanceof HtmlEmpty)) {
 				htmlElement.addChildNode(select);
 				recordModifications(htmlElement, select);
@@ -226,7 +231,7 @@ public class DomParserEnv {
 		while (falseBranchEnv.htmlStack.size() > htmlStack.size())
 			falseBranchEnv.popHtmlStack();
 		
-		// Update currentHtmlElements with elements in the branches at the top of the common stack
+		// Update currentHtmlElements with the currentHtmlElements in the branches at the top of the common stack
 		// (Even though the stack is common between the two branches, the sets of currentHtmlElements in the branches
 		// can still be different because the htmlStack contains elements' types only, not the actual elements.)
 		currentHtmlElements = new HashSet<HtmlElement>();
