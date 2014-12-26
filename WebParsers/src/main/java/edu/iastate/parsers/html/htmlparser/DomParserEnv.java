@@ -227,7 +227,8 @@ public class DomParserEnv {
 			falseBranchEnv.popHtmlStack();
 		
 		// Update currentHtmlElements with elements in the branches at the top of the common stack
-		// (If the updated htmlStack is the same or shorter than the original, these two sets of HtmlElements are the same.)
+		// (Even though the stack is common between the two branches, the sets of currentHtmlElements in the branches
+		// can still be different because the htmlStack contains elements' types only, not the actual elements.)
 		currentHtmlElements = new HashSet<HtmlElement>();
 		currentHtmlElements.addAll(trueBranchEnv.currentHtmlElements);
 		currentHtmlElements.addAll(falseBranchEnv.currentHtmlElements);
