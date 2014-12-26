@@ -32,22 +32,28 @@ public class DomParserEnv {
 	private DomParserEnv outerScopeEnv;
 	
 	/*
-	 * State of the parser
-	 * (A stack of HtmlElements. Each layer in the stack contains HTML elements that are currently being modified.
-	 * For two consecutive layers, HtmlElements in the lower layer are parents of those in the higher layer.
-	 * HtmlElements in the same layer must have the same name.) 
+	 * State of the parser.
+	 * 	- htmlStack is a stack of HtmlElements' types. Each layer in the stack is the type of the HTML elements 
+	 * that are currently being modified. For two consecutive layers, HtmlElements in the lower layer are parents
+	 * of those in the higher layer.
+	 *  - currentHtmlElements is the set of HtmlElements that are being modified in the current (top) layer.
+	 * (There could be multiple HtmlElements being modified at the same time because they are alternatives
+	 * depending on a condition, e.g., two open tags with the same close tag.)
+	 * To enforce well-formedness, we require that HtmlElements in the same layer must have the same type.
 	 */
 	private Stack<String> htmlStack;
 	private HashSet<HtmlElement> currentHtmlElements;
 	
 	/*
 	 * The parse result
-	 * (A map from HtmlElement to its added childNodes)
+	 * A map from HtmlElement (in an outerScopeEnv) to its added childNodes in the current scope.
+	 * Note: Modifications to HTML elements created in the current scope need not be reported in this parse result,
+	 * since one of their parents or ancestors must have been included in the parse result already.
 	 */
 	private HashMap<HtmlElement, ArrayList<HtmlNode>> elementMap = new HashMap<HtmlElement, ArrayList<HtmlNode>>();
 	
-	// This set contains HtmlElements that are created in the current scope.
-	private HashSet<HtmlElement> createdElements = new HashSet<HtmlElement>();
+	// This set contains HtmlElements that are created in the current scope (see note above)
+	private HashSet<HtmlElement> createdElementsInCurrentScope = new HashSet<HtmlElement>();
 	
 	/**
 	 * Constructor
@@ -60,7 +66,6 @@ public class DomParserEnv {
 		// Create a pseudo HtmlElement to represent the root element
 		HtmlElement pseudoRoot = HtmlElement.createHtmlElement(new HOpenTag("PSEUDO_ROOT", PositionRange.UNDEFINED));
 		this.htmlStack.push(pseudoRoot.getType());
-		this.currentHtmlElements = new HashSet<HtmlElement>();
 		this.currentHtmlElements.add(pseudoRoot);
 	}
 	
@@ -90,7 +95,7 @@ public class DomParserEnv {
 		HtmlNode node = currentHtmlElements.iterator().next();
 		while (!node.getParentNodes().isEmpty())
 			node = node.getParentNodes().iterator().next();
-		// node should be the pseudoRoot now.
+		// node should be the pseudoRoot now (see DomParserEnv.DomParserEnv())
 		
 		return new HtmlDocument(node.getChildNodes());
 	}
@@ -109,32 +114,27 @@ public class DomParserEnv {
 	
 	protected HtmlElement createHtmlElementFromOpenTag(HOpenTag openTag) {
 		HtmlElement htmlElement = HtmlElement.createHtmlElement(openTag);
-		createdElements.add(htmlElement);
+		createdElementsInCurrentScope.add(htmlElement);
 		return htmlElement;
 	}
+	
 	protected void pushHtmlStack(HtmlElement htmlElement) {
-		for (HtmlElement element : currentHtmlElements) {
-			element.addChildNode(htmlElement);
-			recordModifications(element, htmlElement);
+		for (HtmlElement parent : currentHtmlElements) {
+			parent.addChildNode(htmlElement);
+			recordModifications(parent, htmlElement);
 		}
-		
-		recordCreatedElement(htmlElement);
 		
 		htmlStack.push(htmlElement.getType());
 		currentHtmlElements = new HashSet<HtmlElement>();
 		currentHtmlElements.add(htmlElement);
 	}
 	
-	protected void recordCreatedElement(HtmlElement htmlElement) {
-		
-	}
-	
 	/**
-	 * Record modifications in the currentEnv
+	 * Record modifications made to HtmlElements in an outerScopeEnv
 	 */
 	private void recordModifications(HtmlElement parent, HtmlNode child) {
-		if (createdElements.contains(parent))
-			return; // Don't need to record those created in the currentEnv
+		if (createdElementsInCurrentScope.contains(parent))
+			return; // Don't need to record modifications to HtmlElements created in the currentEnv
 		
 		if (!elementMap.containsKey(parent))
 			elementMap.put(parent, new ArrayList<HtmlNode>());
@@ -148,33 +148,34 @@ public class DomParserEnv {
 		}
 	}
 	
+	protected void addCloseTagToCurrentHtmlElement(HCloseTag closeTag) {
+		// If we want to track the constraints of the closeTags, we could record this type of modifications
+		// similarly to the case where a new child node is added the the current HtmlElement. 
+		// (@see DomParserEnv.recordModifications(HtmlElement, HtmlNode))
+		// However, currently each HtmlElement contains a set of closeTags (without constraints), 
+		//	 therefore we can freely add closeTags in the branches without worrying combining them after branches.
+		for (HtmlElement element : currentHtmlElements)
+			element.addCloseTag(closeTag);
+	}
+	
 	protected void popHtmlStack() {
 		htmlStack.pop();
-		HashSet<HtmlElement> parentSet = new HashSet<HtmlElement>();
+		HashSet<HtmlElement> parentElements = new HashSet<HtmlElement>();
 		for (HtmlElement element : currentHtmlElements) {
-			parentSet.addAll(getParentElements(element));
+			parentElements.addAll(getParentElements(element));
 		}
-		currentHtmlElements = parentSet;
+		currentHtmlElements = parentElements;
 	}
 		
 	private HashSet<HtmlElement> getParentElements(HtmlNode htmlNode) {
-		HashSet<HtmlElement> set = new HashSet<HtmlElement>();
+		HashSet<HtmlElement> parentElements = new HashSet<HtmlElement>();
 		for (HtmlNode node : htmlNode.getParentNodes()) {
 			if (node instanceof HtmlElement)
-				set.add((HtmlElement) node);
-			else {
-				set.addAll(getParentElements(node));
-			}
+				parentElements.add((HtmlElement) node);
+			else // node is either HtmlSelect or HtmlConcat
+				parentElements.addAll(getParentElements(node));
 		}
-		return set;
-	}
-		
-	protected void addCloseTagToCurrentHtmlElement(HCloseTag closeTag) {
-		// Could do the same as elementMap if we want to track the constraints of the closeTags.
-		// However currently each HtmlElement contains a set of closeTags (without constraints), 
-		//	 therefore we can freely add closeTags in the branches without worrying about backtracking.
-		for (HtmlElement element : currentHtmlElements)
-			element.addCloseTag(closeTag);
+		return parentElements;
 	}
 	
 	/**
@@ -196,8 +197,10 @@ public class DomParserEnv {
 			HtmlNode resultInFalseBranch = HtmlConcat.createCompactConcat(childNodesInFalseBranch);
 			HtmlNode select = HtmlSelect.createCompactSelect(constraint, resultInTrueBranch, resultInFalseBranch);
 			
+			// Backtrack from the two branches
 			htmlElement.removeLastChildNodes(childNodesInTrueBranch.size() + childNodesInFalseBranch.size());
 			
+			// Update the combined results from the two branches
 			if (!(select instanceof HtmlEmpty)) {
 				htmlElement.addChildNode(select);
 				recordModifications(htmlElement, select);
@@ -213,15 +216,18 @@ public class DomParserEnv {
 			MyLogger.log(MyLevel.USER_EXCEPTION, "In DomParserEnv.java: DomParser ends up in different states after branches: trueBranchState=" + stackInTrueBranch + " vs. falseBranchState=" + stackInFalseBranch);
 		}
 		
-		// Find the common stack between the two stacks
+		// Update the htmlStack with the common stack between the two stacks
+		// (Note that the updated stack could be longer or shorter than the original stack)
 		htmlStack = findCommonStack(trueBranchEnv.htmlStack, falseBranchEnv.htmlStack);
 		
-		// Backtrack to the common stack
+		// Backtrack the branches to the common stack
 		while (trueBranchEnv.htmlStack.size() > htmlStack.size())
 			trueBranchEnv.popHtmlStack();
 		while (falseBranchEnv.htmlStack.size() > htmlStack.size())
 			falseBranchEnv.popHtmlStack();
 		
+		// Update currentHtmlElements with elements in the branches at the top of the common stack
+		// (If the updated htmlStack is the same or shorter than the original, these two sets of HtmlElements are the same.)
 		currentHtmlElements = new HashSet<HtmlElement>();
 		currentHtmlElements.addAll(trueBranchEnv.currentHtmlElements);
 		currentHtmlElements.addAll(falseBranchEnv.currentHtmlElements);
@@ -234,6 +240,9 @@ public class DomParserEnv {
 		return str.toString();
 	}
 	
+	/**
+	 * Returns the common stack that is the prefix of the two stacks.
+	 */
 	private Stack<String> findCommonStack(Stack<String> htmlStack1, Stack<String> htmlStack2) {
 		Stack<String> stack = new Stack<String>();
 		for (int i = 0; i < Math.min(htmlStack1.size(), htmlStack2.size()); i++) {

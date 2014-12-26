@@ -9,7 +9,7 @@ import edu.iastate.symex.util.StringUtils;
  * @author HUNG
  *
  */
-public class HtmlAttributeValue extends HtmlNode {
+public class HtmlAttributeValue {
 
 	private String stringValue;
 	private PositionRange location;
@@ -64,7 +64,6 @@ public class HtmlAttributeValue extends HtmlNode {
 	 * Other methods
 	 */
 	
-	@Override
 	public String toDebugString() {
 		return stringValue;
 	}

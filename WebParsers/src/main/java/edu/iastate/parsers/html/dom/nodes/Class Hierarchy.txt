@@ -1,11 +1,10 @@
 HtmlDocument
 HtmlNode
-	HElement
-		HtmlElement
-			HtmlForm
-			HtmlInput
-			HtmlScript
-		HtmlText
+	HtmlElement
+		HtmlForm
+		HtmlInput
+		HtmlScript
+	HtmlText
 	HtmlSelect
 	HtmlConcat
 	HtmlEmpty
