@@ -20,8 +20,8 @@ public class HtmlSaxNodesToHtmlDocument {
 	/**
 	 * Parse a conditional list of HtmlSaxNodes and return an HtmlDocument 
 	 */
-	public HtmlDocument parse(CondList<HtmlSaxNode> saxNodelist) {
-		parseList(saxNodelist);
+	public HtmlDocument parse(CondList<HtmlSaxNode> saxNodeList) {
+		parseList(saxNodeList);
 		return env.getParseResult();
 	}
 	
@@ -36,7 +36,7 @@ public class HtmlSaxNodesToHtmlDocument {
 			parseSelect((CondListSelect<HtmlSaxNode>) saxNodelist);
 		
 		else if (saxNodelist instanceof CondListItem<?>)
-			parseToken((CondListItem<HtmlSaxNode>) saxNodelist);
+			parseSaxNode((CondListItem<HtmlSaxNode>) saxNodelist);
 		
 		else { // if (saxNodelist instanceof CondListEmpty<?>)
 			// Do nothing
@@ -80,7 +80,7 @@ public class HtmlSaxNodesToHtmlDocument {
 	/**
 	 * Parse an HtmlSaxNode
 	 */
-	private void parseToken(CondListItem<HtmlSaxNode> item) {
+	private void parseSaxNode(CondListItem<HtmlSaxNode> item) {
 		HtmlSaxNode htmlSaxNode = item.getItem();
 		parser.parse(htmlSaxNode, env);
    	}

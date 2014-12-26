@@ -103,10 +103,15 @@ public class DomParserEnv {
 		return htmlStack.peek();
 	}
 	
-	protected boolean closeTagIsValid(HCloseTag closeTag) {
+	protected boolean closeTagMatchedWithOpenTag(HCloseTag closeTag) {
 		return closeTag.getType().equals(getCurrentHtmlElementType());
 	}
 	
+	protected HtmlElement createHtmlElementFromOpenTag(HOpenTag openTag) {
+		HtmlElement htmlElement = HtmlElement.createHtmlElement(openTag);
+		createdElements.add(htmlElement);
+		return htmlElement;
+	}
 	protected void pushHtmlStack(HtmlElement htmlElement) {
 		for (HtmlElement element : currentHtmlElements) {
 			element.addChildNode(htmlElement);
@@ -121,7 +126,7 @@ public class DomParserEnv {
 	}
 	
 	protected void recordCreatedElement(HtmlElement htmlElement) {
-		createdElements.add(htmlElement);
+		
 	}
 	
 	/**
@@ -136,7 +141,7 @@ public class DomParserEnv {
 		elementMap.get(parent).add(child);
 	}
 	
-	protected void addHtmlText(HtmlText htmlText) {
+	protected void addHtmlTextToCurrentHtmlElement(HtmlText htmlText) {
 		for (HtmlElement element : currentHtmlElements) {
 			element.addChildNode(htmlText);
 			recordModifications(element, htmlText);

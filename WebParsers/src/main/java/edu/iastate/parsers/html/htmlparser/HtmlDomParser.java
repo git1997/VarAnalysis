@@ -20,14 +20,14 @@ import edu.iastate.symex.util.logging.MyLogger;
 public class HtmlDomParser {
 	
 	/**
-	 * Parses the htmlSaxNode
+	 * Parses an HtmlSaxNode
 	 */
 	public void parse(HtmlSaxNode saxNode, DomParserEnv env) {
 		/*
 		 * Handle self-closed tags (e.g., <br> or <emtpy>)
 		 */
 		if (isSelfClosedTag(env.getCurrentHtmlElementType())) {
-			if (saxNode instanceof HCloseTag && env.closeTagIsValid((HCloseTag) saxNode)) {
+			if (saxNode instanceof HCloseTag && env.closeTagMatchedWithOpenTag((HCloseTag) saxNode)) {
 				env.addCloseTagToCurrentHtmlElement((HCloseTag) saxNode);
 				env.popHtmlStack();
 				return;
@@ -39,7 +39,8 @@ public class HtmlDomParser {
 		 * HOpenTag
 		 */
 		if (saxNode instanceof HOpenTag) {
-			HtmlElement htmlElement = HtmlElement.createHtmlElement((HOpenTag) saxNode);
+			HOpenTag openTag = (HOpenTag) saxNode;
+			HtmlElement htmlElement = env.createHtmlElementFromOpenTag(openTag);
 			env.pushHtmlStack(htmlElement);
 			if (htmlElement.getOpenTag().isSelfClosed())
 				env.popHtmlStack();
@@ -49,7 +50,7 @@ public class HtmlDomParser {
 		 */
 		else if (saxNode instanceof HCloseTag) {
 			HCloseTag closeTag = (HCloseTag) saxNode;
-			if (env.closeTagIsValid(closeTag)) {
+			if (env.closeTagMatchedWithOpenTag(closeTag)) {
 				env.addCloseTagToCurrentHtmlElement(closeTag);
 				env.popHtmlStack();
 			}
@@ -62,12 +63,12 @@ public class HtmlDomParser {
 		 */
 		else {
 			HtmlText htmlText = new HtmlText((HText) saxNode);
-			env.addHtmlText(htmlText);
+			env.addHtmlTextToCurrentHtmlElement(htmlText);
 		}
 	}
 	
 	/**
-	 * List of self-closing tags 
+	 * List of self-closed tags 
 	 */
 	private static HashSet<String> selfClosedTags = new HashSet<String>(Arrays.asList(new String[]{"br", "empty", "input"}));
 	

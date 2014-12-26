@@ -98,6 +98,7 @@ public class HOpenTag extends HtmlSaxNode {
 	
 	/**
 	 * Returns true if the OpenTag is self-closed (i.e., ending with "/>")
+	 * (Assume that all alternative endBrackets of that OpenTag must be of the same type, i.e. either ">" or "/>")
 	 */
 	public boolean isSelfClosed() {
 		return (!endBrackets.isEmpty() && endBrackets.get(0).getLexeme().equals("/>"));
