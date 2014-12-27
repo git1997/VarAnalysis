@@ -17,13 +17,20 @@ import edu.iastate.analysis.references.JsRefToHtmlForm;
 import edu.iastate.analysis.references.JsRefToHtmlId;
 import edu.iastate.analysis.references.JsRefToHtmlInput;
 import edu.iastate.analysis.references.JsRefToHtmlInputValue;
+import edu.iastate.analysis.references.PhpFunctionCall;
 import edu.iastate.analysis.references.PhpRefToHtml;
+import edu.iastate.analysis.references.PhpRefToSqlTableColumn;
+import edu.iastate.analysis.references.PhpVariableRef;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.RegularReference;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByName;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByPosition;
 import edu.iastate.analysis.references.Reference.ReferenceComparatorByType;
+import edu.iastate.parsers.html.dom.nodes.HtmlAttribute;
+import edu.iastate.parsers.html.dom.nodes.HtmlElement;
+import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.symex.constraints.ConstraintFactory;
+import edu.iastate.symex.position.Position;
 
 /**
  * 
@@ -134,7 +141,7 @@ public class DataFlowManager {
 	 */
 	public void resolveDataFlows() {
 		ArrayList<Reference> referenceList = referenceManager.getReferenceList();
-		HashMap<String, ArrayList<Reference>> referenceNameMap = referenceManager.getReferenceListByName(); // Use a map of reference names to speed up searching
+		HashMap<String, ArrayList<Reference>> referenceNameMap = getReferenceListByName(referenceList); // Use a map of reference names to speed up searching
 		
 		resolveDataFlowsWithinServerCode(referenceList, referenceNameMap);
 		resolveDataFlowsWithinClientCode(referenceList, referenceNameMap);
@@ -221,43 +228,49 @@ public class DataFlowManager {
 	 * Resolves data flows from the server code and the client code
 	 */
 	private void resolveDataFlowsFromServerCodeToClientCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
-//		// TODO Handle generation-and-information-flow here.
-//		(new HtmlNodeVisitor() {
-//			public void visitElement(HtmlElement htmlElement) {
-//				super.visitElement(htmlElement);
-//				
-//				HtmlAttributeValue name = htmlElement.getAttributeValue("name");
-//				if (name != null) {
-//					Reference reference = findReferenceAtPosition(name.getLocation().getStartPosition());
-//					
-//					// TODO At this point, reference should be either null or a DeclaringReference,
-//					// However, when running on a real system, we encountered a case where reference is a RegularReference,
-//					// but we haven't debugged it yet.
-//					if (reference instanceof DeclaringReference) {
-//						HtmlAttribute valueAttribute = null;
-//						HtmlAttribute attributeAfterValue = null;
-//						
-//						ArrayList<HtmlAttribute> attributes = htmlElement.getAttributes();
-//						for (int i = 0; i < attributes.size(); i++)
-//							if (attributes.get(i).getName().equals("value")) {
-//								valueAttribute = attributes.get(i);
-//								if (i < attributes.size() - 1)
-//									attributeAfterValue = attributes.get(i + 1);
-//								break;
-//							}
-//						
-//						if (valueAttribute != null) {
-//							Position pos1 = valueAttribute.getLocation().getEndPosition();
-//							Position pos2 = attributeAfterValue != null ? attributeAfterValue.getLocation().getStartPosition() : null;
-//							int length = pos2 != null && pos2.getFile().equals(pos1.getFile()) && pos2.getOffset() > pos1.getOffset() ? pos2.getOffset() - pos1.getOffset() : 10;
-//							
-//							PositionRange range = new Range(pos1.getFile(), pos1.getOffset(), length);
-//							dataFlowManager.putMapDeclToRefLocations((DeclaringReference) reference, range);
-//						}
-//					}
-//				}
-//			}
-//		}).visitDocument(htmlDocument);
+		/*
+		 * NOTE: The correct algorithm would require every value to have an associated trace.
+		 * For example: 
+		 *		L1: $x = 'a';
+		 *		L2: echo "<input name='input1' value='$x'";
+		 * Value $x at line 2 should be ('a': $x:L2 -> $x:L1 -> 'a':L1)
+		 * However, currently we don't have that trace so the algorithm below is only an approximate solution.
+		 */
+		HashMap<String, ArrayList<Reference>> referencePositionMap = getReferenceListByPosition(referenceList); // Use a map of reference positions to speed up searching
+		
+		for (Reference ref1 : referenceList) {
+			/*
+			 * Connect a PHP reference and HtmlDeclOfHtmlInputValue
+			 */
+			if (ref1 instanceof HtmlDeclOfHtmlInputValue) {
+				HtmlAttribute attribute = ((HtmlDeclOfHtmlInputValue) ref1).getHtmlAttribute();
+				
+				HtmlElement htmlElement = attribute.getParentElement();
+				ArrayList<HtmlAttribute> attributes = attribute.getParentElement().getAttributes();
+				ArrayList<HtmlToken> endBrackets = htmlElement.getOpenTag().getEndBrackets();
+				int currentIdx = attributes.indexOf(attribute);
+				
+				Position currentPos = attribute.getLocation().getStartPosition();
+				Position nextPos = null;
+				if (currentIdx < attributes.size() - 1)
+					nextPos = attributes.get(currentIdx + 1).getLocation().getStartPosition();
+				else if (!endBrackets.isEmpty())
+					nextPos = endBrackets.get(0).getLocation().getStartPosition();
+				
+				if (nextPos == null || !currentPos.getFile().equals(nextPos.getFile()))
+					continue;
+				
+				File file = currentPos.getFile();
+				for (int offset = currentPos.getOffset(); offset < nextPos.getOffset(); offset++) {
+					Position pos = new Position(file, offset);
+					if (referencePositionMap.containsKey(pos.getSignature()))
+						for (Reference ref2 : referencePositionMap.get(pos.getSignature()))
+							if (ref2 instanceof PhpVariableRef || ref2 instanceof PhpFunctionCall
+									|| ref2 instanceof PhpRefToHtml	|| ref2 instanceof PhpRefToSqlTableColumn)
+								addDataFlow((RegularReference) ref2, (DeclaringReference) ref1);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -381,6 +394,33 @@ public class DataFlowManager {
 	/*
 	 * Utility methods
 	 */
+	
+	/**
+	 * Returns references as a map of reference names to speed up searching 
+	 */
+	private HashMap<String, ArrayList<Reference>> getReferenceListByName(ArrayList<Reference> references) {
+		HashMap<String, ArrayList<Reference>> map = new HashMap<String, ArrayList<Reference>>(); 
+		for (Reference reference : references) {
+			if (!map.containsKey(reference.getName()))
+				map.put(reference.getName(), new ArrayList<Reference>());
+			map.get(reference.getName()).add(reference);
+		}
+		return map;
+	}
+	
+	/**
+	 * Returns references as a map of reference positions to speed up searching 
+	 */
+	private HashMap<String, ArrayList<Reference>> getReferenceListByPosition(ArrayList<Reference> references) {
+		HashMap<String, ArrayList<Reference>> map = new HashMap<String, ArrayList<Reference>>(); 
+		for (Reference reference : references) {
+			String position = reference.getStartPosition().getSignature();
+			if (!map.containsKey(position))
+				map.put(position, new ArrayList<Reference>());
+			map.get(position).add(reference);
+		}
+		return map;
+	}
 	
 	/**
 	 * Returns true if there is at least one case where both ref1 and ref2 can exist.
