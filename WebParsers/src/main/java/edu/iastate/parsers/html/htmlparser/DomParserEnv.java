@@ -113,7 +113,11 @@ public class DomParserEnv {
 	}
 	
 	protected boolean closeTagMatchedWithOpenTag(HCloseTag closeTag) {
-		return closeTag.getType().equals(getCurrentHtmlElementType());
+		return closeTag.getType().equals(htmlStack.peek());
+	}
+	
+	protected boolean closeTagMatchedWithOuterOpenTag(HCloseTag closeTag) {
+		return htmlStack.size() > 1 && closeTag.getType().equals(htmlStack.get(htmlStack.size() - 2));
 	}
 	
 	protected HtmlElement createHtmlElementFromOpenTag(HOpenTag openTag) {
@@ -187,6 +191,21 @@ public class DomParserEnv {
 	 */
 	public void updateAfterParsingBranches(Constraint constraint, DomParserEnv trueBranchEnv, DomParserEnv falseBranchEnv) {
 		/*
+		 * Check the state
+		 */
+		String stackInTrueBranch = stackToString(trueBranchEnv.htmlStack);
+		String stackInFalseBranch = stackToString(falseBranchEnv.htmlStack);
+		if (!stackInTrueBranch.equals(stackInFalseBranch)) {
+			String stackBeforeBranch = stackToString(this.htmlStack);
+			MyLogger.log(MyLevel.USER_EXCEPTION, "In DomParserEnv.java: DomParser ends up in different states after branches: " +
+														"before=" + stackBeforeBranch + "; true=" + stackInTrueBranch + " vs. false=" + stackInFalseBranch + 
+														" | (1 of) currentHtmlElements: " + 
+														"before=" + getAnyElementInSet(this.currentHtmlElements).getOpenTag().getLocation().getStartPosition().toDebugString() + "; " +
+														"true=" + getAnyElementInSet(trueBranchEnv.currentHtmlElements).getOpenTag().getLocation().getStartPosition().toDebugString() + 
+														" vs. false=" + getAnyElementInSet(falseBranchEnv.currentHtmlElements).getOpenTag().getLocation().getStartPosition().toDebugString());
+		}
+		
+		/*
 		 * Combine parseResults in the two branches
 		 */
 		HashSet<HtmlElement> elementMapKeySet = new HashSet<HtmlElement>();
@@ -213,13 +232,8 @@ public class DomParserEnv {
 		}
 		
 		/*
-		 * Check the state
+		 * Update the state
 		 */
-		String stackInTrueBranch = stackToString(trueBranchEnv.htmlStack);
-		String stackInFalseBranch = stackToString(falseBranchEnv.htmlStack);
-		if (!stackInTrueBranch.equals(stackInFalseBranch)) {
-			MyLogger.log(MyLevel.USER_EXCEPTION, "In DomParserEnv.java: DomParser ends up in different states after branches: trueBranchState=" + stackInTrueBranch + " vs. falseBranchState=" + stackInFalseBranch);
-		}
 		
 		// Update the htmlStack with the common stack between the two stacks
 		// (Note that the updated stack could be longer or shorter than the original stack)
@@ -239,10 +253,19 @@ public class DomParserEnv {
 		currentHtmlElements.addAll(falseBranchEnv.currentHtmlElements);
 	}
 	
+	/*
+	 * Utility methods
+	 */
+
+	private HtmlElement getAnyElementInSet(HashSet<HtmlElement> htmlElements) {
+		return htmlElements.iterator().next();
+	}
+	
 	private String stackToString(Stack<String> htmlStack) {
 		StringBuilder str = new StringBuilder();
 		for (String element : htmlStack)
 			str.append("<" + element + ">");
+		str.append("(size=" + htmlStack.size() + ")");
 		return str.toString();
 	}
 	
