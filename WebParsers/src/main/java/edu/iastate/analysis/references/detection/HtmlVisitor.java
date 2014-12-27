@@ -221,7 +221,7 @@ public class HtmlVisitor extends HtmlDocumentVisitor {
 		if (attribute.getParentElement() instanceof HtmlInput) {
 			HtmlInput inputTag = (HtmlInput) attribute.getParentElement();
 		
-			Reference reference = new HtmlDeclOfHtmlInputValue(attribute.getName(), attribute.getLocation(), (HtmlInputDecl) declMap.get(inputTag));
+			Reference reference = new HtmlDeclOfHtmlInputValue(attribute.getName(), attribute.getLocation(), (HtmlInputDecl) declMap.get(inputTag), attribute);
 			addReference(reference);
 		}	
 	}

@@ -76,7 +76,7 @@ public class PhpVisitor implements IEntityDetectionListener {
 	 */
 	private void addReference(Reference reference, ASTNode astNode, Env env) {
 		reference.setEntryFile(entryFile);
-		reference.setConstraint(env.getConjunctedConstraintUpToPhpEnvScope());
+		reference.setConstraint(env.getConjunctedConstraintUpToGlobalEnvScope());
 		referenceManager.addReference(reference);
 		
 		/*
