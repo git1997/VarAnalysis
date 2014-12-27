@@ -55,7 +55,15 @@ public class HtmlDomParser {
 				env.popHtmlStack();
 			}
 			else {
-				MyLogger.log(MyLevel.USER_EXCEPTION, "In HtmlDomParser.java: Encountered CloseTag " + closeTag.getType() + " when in OpenTag " + env.getCurrentHtmlElementType());
+				MyLogger.log(MyLevel.USER_EXCEPTION, "In HtmlDomParser.java: Encountered CloseTag " + closeTag.getType() + " when in OpenTag " + env.getCurrentHtmlElementType() + " @ " + closeTag.getLocation().getStartPosition().toDebugString());
+				// [BEGIN OF HTML ERROR RECOVERY]
+				// Attempt to tolerate this error if the closeTag mathces the parent of the current openTag
+				if (env.closeTagMatchedWithOuterOpenTag(closeTag)) {
+					env.popHtmlStack();
+					env.addCloseTagToCurrentHtmlElement(closeTag);
+					env.popHtmlStack();
+				}
+				// [END OF HTML ERROR RECOVERY]
 			}
 		}
 		/*
