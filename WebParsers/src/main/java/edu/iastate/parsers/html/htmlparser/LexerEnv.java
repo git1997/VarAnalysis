@@ -103,7 +103,7 @@ public class LexerEnv {
 		if (trueBranchEnv.lexicalState != falseBranchEnv.lexicalState) {
 			MyLogger.log(MyLevel.USER_EXCEPTION, "In LexerEnv.java: Lexer ends up in different states after branches: " +
 														"before=" + Lexer.getState(this.lexicalState) + "; true=" + Lexer.getState(trueBranchEnv.lexicalState)  + " vs. false=" + Lexer.getState(falseBranchEnv.lexicalState) +
-														"| Last token: " +
+														" | Last token: " +
 														"before=" + getLastTokenInLexResult(this.lexResult) + "; true=" + getLastTokenInLexResult(trueBranchEnv.lexResult) + " vs. false=" + getLastTokenInLexResult(falseBranchEnv.lexResult));
 		}
 		if (trueBranchEnv.currentOpenTag != null && falseBranchEnv.currentOpenTag == null
