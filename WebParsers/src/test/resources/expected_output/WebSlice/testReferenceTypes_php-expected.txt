@@ -86,6 +86,7 @@ value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line39:Offset652
 input2 (HtmlInputDecl) @ testReferenceTypes.php:Line40:Offset678
 value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line40:Offset686
 value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line40:Offset686
+	<- x (PhpVariableRef) @ testReferenceTypes.php:Line40:Offset704
 x (PhpVariableRef) @ testReferenceTypes.php:Line40:Offset704
 	<- x (PhpVariableDecl) @ testReferenceTypes.php:Line14:Offset277
 	<- x (PhpVariableDecl) @ testReferenceTypes.php:Line16:Offset293
