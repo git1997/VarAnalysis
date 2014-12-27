@@ -102,9 +102,9 @@ public class LexerEnv {
 		 */
 		if (trueBranchEnv.lexicalState != falseBranchEnv.lexicalState) {
 			MyLogger.log(MyLevel.USER_EXCEPTION, "In LexerEnv.java: Lexer ends up in different states after branches: " +
-															"before=" + Lexer.getState(this.lexicalState) + "; true=" + Lexer.getState(trueBranchEnv.lexicalState)  + " vs. false=" + Lexer.getState(falseBranchEnv.lexicalState) +
-															"| Last token: " +
-															"before=" + getLastTokenInLexResult(this.lexResult) + "; true=" + getLastTokenInLexResult(trueBranchEnv.lexResult) + " vs. false=" + getLastTokenInLexResult(falseBranchEnv.lexResult));
+														"before=" + Lexer.getState(this.lexicalState) + "; true=" + Lexer.getState(trueBranchEnv.lexicalState)  + " vs. false=" + Lexer.getState(falseBranchEnv.lexicalState) +
+														"| Last token: " +
+														"before=" + getLastTokenInLexResult(this.lexResult) + "; true=" + getLastTokenInLexResult(trueBranchEnv.lexResult) + " vs. false=" + getLastTokenInLexResult(falseBranchEnv.lexResult));
 		}
 		if (trueBranchEnv.currentOpenTag != null && falseBranchEnv.currentOpenTag == null
 				|| trueBranchEnv.currentOpenTag == null && falseBranchEnv.currentOpenTag!= null
@@ -132,6 +132,10 @@ public class LexerEnv {
 		setLexicalState(falseBranchEnv.getLexcicalState());
 		setCurrentOpenTag(falseBranchEnv.getCurrentOpenTag());
 	}
+	
+	/*
+	 * Utility methods
+	 */
 	
 	/**
 	 * Returns a string describing the last HtmlToken in a lexResult (for debugging only)
