@@ -1,0 +1,29 @@
+============================================
+| INSTALLATION INSTRUCTIONS FOR SchoolMate |
+============================================
+
+
+REQUIREMENTS
+----------
+Webserver
+PHP 4+
+php_pdf (for report cards)
+MySQL
+
+----------
+
+Unzip the archive you downloaded to your website's document root.
+
+Import the SchoolMate.sql file into your MySQL database either with the following command,with PHPMyAdmin, or your favorite MySQL application:
+
+mysql < SchoolMate.sql
+
+NOTE: you may have to specify a username with appropriate permissions.
+
+Create a new user in your MySQL database and only give it permissions to the new schoolmate database.
+
+Open index.php that you extracted with your favorite text editor and change the dbuser and dbpass variables to the username and password you just created.
+
+Now go to http://localhost to test it.
+
+If you experience problems installing the program, visit the forums at http://sourceforge.net/projects/schoolmate
