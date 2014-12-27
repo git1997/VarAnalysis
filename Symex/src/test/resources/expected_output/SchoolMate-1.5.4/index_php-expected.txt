@@ -737,29 +737,7 @@ odd
 #endrepeat
 
 #else
-
-#if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
-<tr class='
-#if ($row%2==0)
-even
-#else
-odd
-#endif
-'>
-	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$class[0]]' onClick='updateboxes([Symbolic:$actualrow]);' /></td>
-	  <td>[Symbolic:$class[2]]</td>
-	  <td>[Symbolic:$teacher[0]] [Symbolic:$teacher[1]]</td>
-	  <td>[Symbolic:$semester[0]]</td>
-	  <td>[Symbolic:$class[3]]</td>
-	  <td>[Symbolic:$class[4]]</td>
-	  <td>[Symbolic:$class[5]]</td>
-	  <td>[Symbolic:$class[7]]</td>
-	  <td>[Symbolic:$sub[0]] [Symbolic:$sub[1]]</td>
-	 </tr>
-#else
 [Special]
-#endif
-
 #endif
  </table>
   <br>
@@ -4372,6 +4350,10 @@ odd
 #endif
 ' valign='top'>
   <td>[Symbolic:$i]</td><td align='left'>
+#repeat ($class = mysql_fetch_row($query))
+
+#repeat ($j<count($days))
+
 #if ($days[$j] == 'M')
 <b>[Symbolic:$class[0]]</b><br />
 		   Section: [Symbolic:$class[3]]<br />
@@ -4386,7 +4368,15 @@ odd
 #else
 [Special]
 #endif
+
+#endrepeat
+
+#endrepeat
 &nbsp;</td><td align='left'>
+#repeat ($class = mysql_fetch_row($query))
+
+#repeat ($j<count($days))
+
 #if ($days[$j] == 'M')
 [Special]
 #else
@@ -4407,7 +4397,15 @@ odd
 #endif
 
 #endif
+
+#endrepeat
+
+#endrepeat
 &nbsp;</td><td align='left'>
+#repeat ($class = mysql_fetch_row($query))
+
+#repeat ($j<count($days))
+
 #if ($days[$j] == 'M')
 [Special]
 #else
@@ -4434,7 +4432,15 @@ odd
 #endif
 
 #endif
+
+#endrepeat
+
+#endrepeat
 &nbsp;</td><td align='left'>
+#repeat ($class = mysql_fetch_row($query))
+
+#repeat ($j<count($days))
+
 #if ($days[$j] == 'M')
 [Special]
 #else
@@ -4467,7 +4473,15 @@ odd
 #endif
 
 #endif
+
+#endrepeat
+
+#endrepeat
 &nbsp;</td><td align='left'>
+#repeat ($class = mysql_fetch_row($query))
+
+#repeat ($j<count($days))
+
 #if ($days[$j] == 'M')
 [Special]
 #else
@@ -4506,6 +4520,10 @@ odd
 #endif
 
 #endif
+
+#endrepeat
+
+#endrepeat
 &nbsp;</td></tr>
 #endrepeat
   </table>
@@ -4701,8 +4719,7 @@ SELECTED
 #endrepeat
 
 #else
-<option value='[Symbolic:$classes[0]]'>[Symbolic:$classes[1]]</option>
-
+[Special]
 #endif
 	</select>
    <input type='button' value='Add' onClick='document.registration.addreg.value=1;document.registration.submit();' />
@@ -5148,6 +5165,10 @@ odd
 #endif
 ' valign='top'>
   <td>[Symbolic:$i]</td><td align='left'>
+#repeat ($id = mysql_fetch_row($sql))
+
+#repeat ($class = mysql_fetch_row($query))
+
 #repeat ($j<count($days))
 
 #if ($days[$j] == 'M')
@@ -5166,7 +5187,15 @@ odd
 #endif
 
 #endrepeat
+
+#endrepeat
+
+#endrepeat
 &nbsp;</td><td align='left'>
+#repeat ($id = mysql_fetch_row($sql))
+
+#repeat ($class = mysql_fetch_row($query))
+
 #repeat ($j<count($days))
 
 #if ($days[$j] == 'M')
@@ -5191,7 +5220,15 @@ odd
 #endif
 
 #endrepeat
+
+#endrepeat
+
+#endrepeat
 &nbsp;</td><td align='left'>
+#repeat ($id = mysql_fetch_row($sql))
+
+#repeat ($class = mysql_fetch_row($query))
+
 #repeat ($j<count($days))
 
 #if ($days[$j] == 'M')
@@ -5222,7 +5259,15 @@ odd
 #endif
 
 #endrepeat
+
+#endrepeat
+
+#endrepeat
 &nbsp;</td><td align='left'>
+#repeat ($id = mysql_fetch_row($sql))
+
+#repeat ($class = mysql_fetch_row($query))
+
 #repeat ($j<count($days))
 
 #if ($days[$j] == 'M')
@@ -5259,7 +5304,15 @@ odd
 #endif
 
 #endrepeat
+
+#endrepeat
+
+#endrepeat
 &nbsp;</td><td align='left'>
+#repeat ($id = mysql_fetch_row($sql))
+
+#repeat ($class = mysql_fetch_row($query))
+
 #repeat ($j<count($days))
 
 #if ($days[$j] == 'M')
@@ -5300,6 +5353,10 @@ odd
 #endif
 
 #endif
+
+#endrepeat
+
+#endrepeat
 
 #endrepeat
 &nbsp;</td></tr>
@@ -5515,42 +5572,7 @@ odd
 #endrepeat
 <tr class='even'><td>&nbsp;</td><td>N/A</td><td>N/A</td></tr>
 #else
-<tr style='color: red; font-weight: bold;' align='center' class='
-#if ($row%2==0)
-even
-#else
-odd
-#endif
-'>
-   <td><input type='checkbox' name='delete[]' value='[Symbolic:$reg[0]]' onClick='updateboxes(0);' /></td>
-   <td>
-#if ($class[0]!="")
-
-#if ($ret_date == "00/00/0000")
-
-#else
-[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
-#endif
-
-#else
-
-#endif
-</td>
-   <td>
-#if ($class[1]!="")
-
-#if ($ret_date == "00/00/0000")
-
-#else
-[Symbolic:$month]/[Symbolic:$day]/[Symbolic:$year]
-#endif
-
-#else
-
-#endif
-</td>
-   </tr>
-   
+[Special]
 #endif
 
    <tr class='header' align='center'>
@@ -5761,14 +5783,7 @@ SELECTED
 #endrepeat
 
 #else
-<option value='[Symbolic:$classes[0]]' 
-#if ($_POST['selectclass']==$classes[0])
-SELECTED
-#else
-
-#endif
->[Symbolic:$classes[1]]</option>
-
+[Special]
 #endif
   </select>
   <br><br>
@@ -5828,48 +5843,7 @@ F
 #endrepeat
 
 #else
-<tr class='
-#if ($row%2==0)
-even
-#else
-odd
-#endif
-'>
-	<td align='left' style='padding-left: 30px;'>[Symbolic:$name[0]] [Symbolic:$name[1]]</td>
-	<td>[Symbolic:$current]</td>
-	<td>[Symbolic:$total]</td>
-	<td>
-#if ($total != 0)
-[Symbolic:number_format(100*($current / $total),2)]
-#else
-0.00
-#endif
-&#37;</td>
-	<td>
-#if ($perc >= $classinfo[1])
-A
-#else
-
-#if ($perc >= $classinfo[2])
-B
-#else
-
-#if ($perc >= $classinfo[3])
-C
-#else
-
-#if ($perc >= $classinfo[4])
-D
-#else
-F
-#endif
-
-#endif
-
-#endif
-
-#endif
-</td><tr class='even'><td colspan='5'>There are no students registered for this class.</td></tr>
+<tr class='even'><td colspan='5'>There are no students registered for this class.</td></tr>
 #endif
   </table>
   <br />
@@ -6217,15 +6191,7 @@ odd
 #endrepeat
 
 #else
-<tr class='
-#if ($row%2==0)
-even
-#else
-odd
-#endif
-'>
-   <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$class[1]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$class[1]]</a></td>
-  </tr>
+[Special]
 #endif
 </table>
    <input type='hidden' name='page2' value='[Symbolic:$page2]' />
@@ -7632,16 +7598,8 @@ SELECTED
    </tr>
    
 #if ($_POST['semester']!=NULL)
-<tr class='
-#if ($row%2==0)
-even
-#else
-odd
-#endif
-'>
-   <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$info[0]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$info[0]]</a></td>
-   </tr>
-#else
+
+#repeat ($class = mysql_fetch_row($query))
 
 #repeat ($info = mysql_fetch_row($q))
 <tr class='
@@ -7655,6 +7613,10 @@ odd
    </tr>
 #endrepeat
 
+#endrepeat
+
+#else
+[Special]
 #endif
 </table>
    <input type='hidden' name='page2' value='[Symbolic:$page2]' />
@@ -8447,16 +8409,8 @@ SELECTED
    </tr>
    
 #if ($_POST['semester']!=NULL)
-<tr class='
-#if ($row%2==0)
-even
-#else
-odd
-#endif
-'>
-   <td><a class='items' href="JavaScript:document.classes.selectclass.value=[Symbolic:$class[0]];document.classes.page2.value=1;document.classes.submit();" onMouseover="window.status='View Information For [Symbolic:$info[0]]';return true;" onMouseout="window.status='';return true;">[Symbolic:$info[0]]</a></td>
-   </tr>
-#else
+
+#repeat ($class = mysql_fetch_row($query))
 
 #repeat ($info = mysql_fetch_row($q))
 <tr class='
@@ -8470,6 +8424,10 @@ odd
    </tr>
 #endrepeat
 
+#endrepeat
+
+#else
+[Special]
 #endif
 </table>
    <input type='hidden' name='page2' value='[Symbolic:$page2]' />
