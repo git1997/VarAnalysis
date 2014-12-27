@@ -3,7 +3,6 @@ package edu.iastate.analysis.references.detection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import edu.iastate.analysis.references.Reference;
@@ -64,19 +63,6 @@ public class ReferenceManager {
 	}
 	
 	/**
-	 * Returns references as a map of reference names to speed up searching 
-	 */
-	public HashMap<String, ArrayList<Reference>> getReferenceListByName() {
-		HashMap<String, ArrayList<Reference>> map = new HashMap<String, ArrayList<Reference>>(); 
-		for (Reference reference : getReferenceList()) {
-			if (!map.containsKey(reference.getName()))
-				map.put(reference.getName(), new ArrayList<Reference>());
-			map.get(reference.getName()).add(reference);
-		}
-		return map;
-	}
-	
-	/**
 	 * Returns a sorted list of references
 	 */
 	public ArrayList<Reference> getSortedReferenceListByTypeThenNameThenPosition() {
@@ -108,7 +94,7 @@ public class ReferenceManager {
 	
 	private static String writeReferenceToText(Reference ref) {
 		Position startPosition = ref.getLocation().getStartPosition();
-		return ref.getName() + " (" + ref.getType() + ") @ " + startPosition.getFile().getName() + ":Line" + startPosition.getLine() + ":Offset" + startPosition.getOffset(); 
+		return ref.getName() + " (" + ref.getType() + ") @ " + startPosition.toDebugString(); 
 	}
 	
 	/**
@@ -126,12 +112,13 @@ public class ReferenceManager {
 		public int compare(Reference ref1, Reference ref2) {
 			ArrayList<Reference> refs1 = dataFlowManager.getDataFlowTo(ref1);
 			ArrayList<Reference> refs2 = dataFlowManager.getDataFlowTo(ref2);
-			Collections.sort(refs1, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), null));
-			Collections.sort(refs2, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), null));
 			
 			int result = new Integer(refs1.size()).compareTo(new Integer(refs2.size()));
 			if (result != 0)
 				return result;
+			
+			Collections.sort(refs1, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), null));
+			Collections.sort(refs2, new Reference.ReferenceComparator(new ReferenceComparatorByPosition(), new ReferenceComparatorByName(), null));
 			
 			for (int i = 0; i < refs1.size(); i++) {
 				String r1 = writeReferenceToText(refs1.get(i));
