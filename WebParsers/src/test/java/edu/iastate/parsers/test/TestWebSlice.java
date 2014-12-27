@@ -22,7 +22,7 @@ public class TestWebSlice extends GenericTest {
 		TestWebSlice testWebSlice = new TestWebSlice();
 		//testWebSlice.enableOracleCreation();
 		
-		testWebSlice.testReferenceTypes();
+		testWebSlice.testGenInfoFlow();
 	}
 
 	@Override
@@ -63,6 +63,11 @@ public class TestWebSlice extends GenericTest {
 	@Test
 	public void testDuplicateSlices() {
 		testFile("WebSlice/testDuplicateSlices.php");
+	}
+	
+	@Test
+	public void testGenInfoFlow() {
+		testFile("WebSlice/testGenInfoFlow.php");
 	}
 	
 }

@@ -1,0 +1,34 @@
+hey (PhpFunctionDecl) @ testGenInfoFlow.php:Line2:Offset16
+	<- z (PhpVariableRef) @ testGenInfoFlow.php:Line4:Offset74
+hey (PhpFunctionDecl) @ testGenInfoFlow.php:Line2:Offset16
+	<- z (PhpVariableRef) @ testGenInfoFlow.php:Line4:Offset74
+z (PhpVariableDecl) @ testGenInfoFlow.php:Line3:Offset26
+z (PhpVariableDecl) @ testGenInfoFlow.php:Line3:Offset26
+input3 (HtmlInputDecl) @ testGenInfoFlow.php:Line4:Offset61
+value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line4:Offset68
+	<- z (PhpVariableRef) @ testGenInfoFlow.php:Line4:Offset74
+value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line4:Offset68
+	<- z (PhpVariableRef) @ testGenInfoFlow.php:Line4:Offset74
+z (PhpVariableRef) @ testGenInfoFlow.php:Line4:Offset74
+	<- z (PhpVariableDecl) @ testGenInfoFlow.php:Line3:Offset26
+z (PhpVariableRef) @ testGenInfoFlow.php:Line4:Offset74
+	<- z (PhpVariableDecl) @ testGenInfoFlow.php:Line3:Offset26
+C (PhpVariableRef) @ testGenInfoFlow.php:Line6:Offset88
+hey (PhpFunctionCall) @ testGenInfoFlow.php:Line7:Offset99
+	<- hey (PhpFunctionDecl) @ testGenInfoFlow.php:Line2:Offset16
+hey (PhpFunctionCall) @ testGenInfoFlow.php:Line9:Offset119
+	<- hey (PhpFunctionDecl) @ testGenInfoFlow.php:Line2:Offset16
+x (PhpVariableDecl) @ testGenInfoFlow.php:Line10:Offset127
+y (PhpVariableDecl) @ testGenInfoFlow.php:Line11:Offset136
+form1 (HtmlFormDecl) @ testGenInfoFlow.php:Line14:Offset160
+input1 (HtmlInputDecl) @ testGenInfoFlow.php:Line15:Offset192
+value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line15:Offset200
+	<- input1 (PhpRefToHtml) @ testGenInfoFlow.php:Line15:Offset225
+input1 (PhpRefToHtml) @ testGenInfoFlow.php:Line15:Offset225
+	<- value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line15:Offset200
+	<- value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line16:Offset263
+input1 (HtmlInputDecl) @ testGenInfoFlow.php:Line16:Offset255
+value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line16:Offset263
+	<- y (PhpVariableRef) @ testGenInfoFlow.php:Line16:Offset281
+y (PhpVariableRef) @ testGenInfoFlow.php:Line16:Offset281
+	<- y (PhpVariableDecl) @ testGenInfoFlow.php:Line11:Offset136
