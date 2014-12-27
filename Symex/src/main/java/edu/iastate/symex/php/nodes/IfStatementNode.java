@@ -113,7 +113,7 @@ public class IfStatementNode extends StatementNode {
 		if (trueStatement != null) {
 			BranchEnv trueBranchEnv = new BranchEnv(env, constraint);
 			trueBranchRetValue = trueStatement.execute(trueBranchEnv);
-			dirtyValuesInTrueBranch = env.backtrackAfterBranchExecution(trueBranchEnv);
+			dirtyValuesInTrueBranch = env.backtrackAfterExecution(trueBranchEnv);
 		}
 
 		/*
@@ -127,7 +127,7 @@ public class IfStatementNode extends StatementNode {
 		if (falseStatement != null) {
 			BranchEnv falseBranchEnv = new BranchEnv(env, ConstraintFactory.createNotConstraint(constraint));
 			falseBranchRetValue = falseStatement.execute(falseBranchEnv);
-			dirtyValuesInFalseBranch = env.backtrackAfterBranchExecution(falseBranchEnv);
+			dirtyValuesInFalseBranch = env.backtrackAfterExecution(falseBranchEnv);
 		}
 		
 		// Update the env

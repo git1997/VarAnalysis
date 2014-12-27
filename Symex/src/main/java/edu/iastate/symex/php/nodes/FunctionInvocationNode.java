@@ -308,7 +308,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			branchEnv.appendOutput(arguments);
 			branchEnv.addOutputAtExitToFinalOutput();
 		
-			env.backtrackAfterBranchExecution(branchEnv);
+			env.backtrackAfterExecution(branchEnv);
 			return SpecialNode.ControlNode.EXIT;
 		}
 		// [END OF ADHOC CODE]

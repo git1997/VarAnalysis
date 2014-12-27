@@ -28,14 +28,17 @@ public class Position {
 		this.offset = offset;
 	}
 	
+	/**
+	 * Returns the file, or null if the position is UNDEFINED
+	 */
 	public File getFile() {
 		return file;
 	}
-	
-	public String getFilePath() {
-		return (file != null ? file.getAbsolutePath() : null);
-	}
-	
+
+	/**
+	 * Returns the offset, or -1 if the position is UNDEFINED
+	 * @return
+	 */
 	public int getOffset() {
 		return offset;
 	}
@@ -43,7 +46,11 @@ public class Position {
 	public boolean isUndefined() {
 		return this == UNDEFINED;
 	}
-	
+
+	/**
+	 * Returns the lines, or -1 if the position is UNDEFINED
+	 * @return
+	 */
 	public int getLine() {
 		if (line == -2) {
 			if (isUndefined())
@@ -53,6 +60,21 @@ public class Position {
 		}
 		
 		return line;
+	}
+	
+	/**
+	 * Returns the absolute path of the file, or null if the position is UNDEFINED
+	 */
+	public String getFilePath() {
+		return (file != null ? file.getAbsolutePath() : null);
+	}
+
+	/**
+	 * Returns the (simple) name of the file, or null if the position is UNDEFINED
+	 * @return
+	 */
+	public String getFileName() {
+		return (file != null ? file.getName() : null);
 	}
 	
 	/**
@@ -66,10 +88,20 @@ public class Position {
 	}
 	
 	/**
-	 * Returns a string that uniquely identifies the position.
+	 * Returns a string that uniquely identifies the position, or "UNDEFINED" if the position is UNDEFINED
 	 */
 	public String getSignature() {
-		return getFilePath() + "@" + getOffset();
+		if (this.isUndefined())
+			return "UNDEFINED";
+		else
+			return getFilePath() + "@" + getOffset();
+	}
+	
+	public String toDebugString() {
+		if (this.isUndefined())
+			return "UNDEFINED";
+		else
+			return getFileName() + ":Line" + getLine() + ":Offset" + getOffset();
 	}
 	
 }
