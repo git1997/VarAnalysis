@@ -11,21 +11,29 @@ import edu.iastate.symex.util.FileIO;
  */
 public class Position {
 	
-	public static final Position UNDEFINED = new Position(null, -1);
+	public static final Position UNDEFINED = new Position();
 	
-	private File file;		// null means the position is not defined
-	private int offset;		// -1 means the position is not defined
+	private File file;		// null means the position is undefined
+	private int offset;		// -1 means the position is undefined
 	
 	private int line = -2; 	// -2 means line has not been computed, 
-							// -1 means line has been computed and is unresolved,
-							// 0+ means line has been computed and is resolved.
+							// -1 means line has been computed and is undefined,
+							// 0+ means line has been computed and is defined.
 	
 	/**
-	 * Constructor.
+	 * Constructor
 	 */	
 	public Position(File file, int offset) {
 		this.file = file;
 		this.offset = offset;
+	}
+	
+	/**
+	 * Private constructor for an undefined Position
+	 */
+	private Position() {
+		this.file = null;
+		this.offset = -1;
 	}
 	
 	/**
@@ -37,44 +45,16 @@ public class Position {
 
 	/**
 	 * Returns the offset, or -1 if the position is UNDEFINED
-	 * @return
 	 */
 	public int getOffset() {
 		return offset;
 	}
 	
+	/**
+	 * Returns true if the position is UNDEFINED
+	 */
 	public boolean isUndefined() {
 		return this == UNDEFINED;
-	}
-
-	/**
-	 * Returns the lines, or -1 if the position is UNDEFINED
-	 * @return
-	 */
-	public int getLine() {
-		if (line == -2) {
-			if (isUndefined())
-				line = -1;
-			else
-				line = FileIO.getLineFromOffsetInFile(file, offset);
-		}
-		
-		return line;
-	}
-	
-	/**
-	 * Returns the absolute path of the file, or null if the position is UNDEFINED
-	 */
-	public String getFilePath() {
-		return (file != null ? file.getAbsolutePath() : null);
-	}
-
-	/**
-	 * Returns the (simple) name of the file, or null if the position is UNDEFINED
-	 * @return
-	 */
-	public String getFileName() {
-		return (file != null ? file.getName() : null);
 	}
 	
 	/**
@@ -88,17 +68,45 @@ public class Position {
 	}
 	
 	/**
+	 * Returns the absolute path of the file, or null if the position is UNDEFINED
+	 */
+	public String getFilePath() {
+		return (!isUndefined() ? file.getAbsolutePath() : null);
+	}
+
+	/**
+	 * Returns the simple name of the file, or null if the position is UNDEFINED
+	 */
+	public String getFileName() {
+		return (!isUndefined() ? file.getName() : null);
+	}
+
+	/**
+	 * Returns the line, or -1 if the position is UNDEFINED
+	 */
+	public int getLine() {
+		if (line == -2) {
+			if (isUndefined())
+				line = -1;
+			else
+				line = FileIO.getLineFromOffsetInFile(file, offset);
+		}
+		
+		return line;
+	}
+	
+	/**
 	 * Returns a string that uniquely identifies the position, or "UNDEFINED" if the position is UNDEFINED
 	 */
 	public String getSignature() {
-		if (this.isUndefined())
+		if (isUndefined())
 			return "UNDEFINED";
 		else
 			return getFilePath() + "@" + getOffset();
 	}
 	
 	public String toDebugString() {
-		if (this.isUndefined())
+		if (isUndefined())
 			return "UNDEFINED";
 		else
 			return getFileName() + ":Line" + getLine() + ":Offset" + getOffset();

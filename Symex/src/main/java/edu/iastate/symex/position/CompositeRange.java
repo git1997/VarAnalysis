@@ -33,15 +33,9 @@ public class CompositeRange extends PositionRange {
 
 	@Override
 	public int getLength() {
-		return range1.getLength() + range2.getLength();
-	}
-
-	@Override
-	public Position getPositionAtRelativeOffset(int relOffset) {
-		if (relOffset < range1.getLength())
-			return range1.getPositionAtRelativeOffset(relOffset);
-		else
-			return range2.getPositionAtRelativeOffset(relOffset - range1.getLength());
+		int length1 = range1.getLength();
+		int length2 = range2.getLength();
+		return (length1 == -1 || length2 == -1 ? -1 : (length1 + length2));
 	}
 
 	@Override
@@ -49,8 +43,19 @@ public class CompositeRange extends PositionRange {
 		ArrayList<Range> ranges = new ArrayList<Range>();
 		ranges.addAll(range1.getRanges());
 		ranges.addAll(range2.getRanges());
-		
 		return ranges;
+	}
+
+	@Override
+	public Position getPositionAtRelativeOffset(int relOffset) {
+		int length1 = range1.getLength();
+		
+		if (length1 == -1)
+			return Position.UNDEFINED;
+		else if (relOffset < length1)
+			return range1.getPositionAtRelativeOffset(relOffset);
+		else
+			return range2.getPositionAtRelativeOffset(relOffset - length1);
 	}
 	
 }

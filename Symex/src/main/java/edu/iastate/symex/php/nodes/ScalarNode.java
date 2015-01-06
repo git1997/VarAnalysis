@@ -147,9 +147,11 @@ public class ScalarNode extends ExpressionNode {
 				/*
 				 * There are 2 strategies for position mapping:
 				 * 	1. A generated " character is mapped to \" in the source code: Correct but range.Length != stringValue.Length
-				 *  2. A generated " character is mapped to " in the source code: Acceptable, and more importantly, range.Length == stringValue.Length, which facilitates
-				 *				position tracking during parsing
-				 * Let's use strategy 2 for now.
+				 *  2. A generated " character is mapped to " in the source code: Acceptable, and more importantly, range.Length == stringValue.Length,
+				 *  		which facilitates position tracking.
+				 * If we want to use strategy 1, we need to modify the implementation of Range: add one more field stringLength to represent the length
+				 *   of the string that is mapped to that range and call sites of Range should call Range.getStringLength() rather than Range.getLength().
+				 * However, for simplicity, let's use strategy 2 for now.
 				 */
 				beginIndex = endIndex;
 				endIndex = endIndex + 2;

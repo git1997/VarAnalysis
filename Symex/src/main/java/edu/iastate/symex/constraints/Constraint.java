@@ -1,6 +1,7 @@
 package edu.iastate.symex.constraints;
 
 import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 
 /**
  * 
@@ -16,7 +17,7 @@ public abstract class Constraint {
 	/**
 	 * Location(s) of the constraint in the source code
 	 */
-	protected PositionRange location = PositionRange.UNDEFINED;
+	protected PositionRange location = Range.UNDEFINED;
 	
 	/*
 	 * Methods

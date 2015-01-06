@@ -15,7 +15,7 @@ import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.FileNode;
 import edu.iastate.symex.php.nodes.FunctionDeclarationNode;
-import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 
 /**
  * 
@@ -168,7 +168,7 @@ public class GlobalEnv extends PhpEnv {
 			// 		Constraint constraint = outputAtExits.getUncoveredConstraint();
 			// However, getUncoveredConstraint() often hangs when there are too many constraints.
 			// As a work-around, let's create a simple constraint representing the normal case:
-			Constraint constraint = ConstraintFactory.createAtomicConstraint("NORMAL_OUTPUT", PositionRange.UNDEFINED);
+			Constraint constraint = ConstraintFactory.createAtomicConstraint("NORMAL_OUTPUT", Range.UNDEFINED);
 			
 			return DataNodeFactory.createCompactSelectNode(constraint, normalOutput, outputAtExitsValue);
 		}

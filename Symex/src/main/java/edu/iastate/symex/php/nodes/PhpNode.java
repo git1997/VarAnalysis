@@ -31,7 +31,7 @@ public abstract class PhpNode {
 		
 		this.astNode = astNode;
 		this.range = new Range(file, astNode.getStart(), astNode.getLength());
-		this.sourceCode = ASTHelper.inst.getSourceCodeOfPhpASTNode(astNode); // TODO sourceCode.length should equal positionRange.length
+		this.sourceCode = ASTHelper.inst.getSourceCodeOfPhpASTNode(astNode); // sourceCode.length is guaranteed to equal range.length
 	}
 	
 	/**

@@ -3,4 +3,3 @@ PositionRange
 	CompositeRange
 	RelativeRange
 	Range
-	UndefinedRange

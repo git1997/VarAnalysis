@@ -4,10 +4,8 @@ import java.util.ArrayList;
 
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.PhpNode;
-import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.Range;
 import edu.iastate.symex.position.PositionRange;
-import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.SpecialNode.ReferenceNode;
@@ -73,34 +71,22 @@ public class DataNodeFactory {
 			LiteralNode node1 = (LiteralNode) compactChildNodes.get(compactChildNodes.size() - 1);
 			LiteralNode node2 = (LiteralNode) childNode;
 
+			// Normally, we should not combine consecutive literal nodes because new literal nodes in branches or loops would be combined
+			// 	 with those before the branches or loops, making it difficult to merge the results after the branches/loops.
+			// However, if the locations of the two literal nodes are adjacent, we can combine them.
 			if (node1.getLocation() instanceof Range && node2.getLocation() instanceof Range
-					&& node1.getLocation().getEndPosition().sameAs(node2.getLocation().getStartPosition())
-					&& node1.getLocation().getLength() == node1.getStringValue().length()
-					&& node2.getLocation().getLength() == node2.getStringValue().length()) {
-				// Combine consecutive literal nodes when the two nodes have adjacent positions.
-				PositionRange range = new Range(node1.getLocation().getStartPosition().getFile(),
-						node1.getLocation().getStartPosition().getOffset(), 
-						node1.getLocation().getLength() + node2.getLocation().getLength());
+					&& node1.getLocation().getEndPosition().sameAs(node2.getLocation().getStartPosition())) {
+				Range range = new Range(node1.getLocation().getStartPosition().getFile(), node1.getLocation().getStartPosition().getOffset(), node1.getLocation().getLength() + node2.getLocation().getLength());
 				String stringValue = node1.getStringValue() + node2.getStringValue();
 
 				LiteralNode combinedLiteralNode = createLiteralNode(stringValue, range);
 				compactChildNodes.set(compactChildNodes.size() - 1, combinedLiteralNode);
 			}
-			else if (SymexConfig.COMBINE_CONSECUTIVE_LITERAL_NODES) {
-				// Combine consecutive literal nodes even when the nodes DO NOT have adjacent positions
-				PositionRange range = new CompositeRange(node1.getLocation(), node2.getLocation());
-				String stringValue = node1.getStringValue() + node2.getStringValue();
-
-				LiteralNode combinedLiteralNode = createLiteralNode(stringValue, range);
-				compactChildNodes.set(compactChildNodes.size() - 1, combinedLiteralNode);
-			}
-			else {
+			else
 				compactChildNodes.add(childNode);
-			}
 		}
-		else {
+		else
 			compactChildNodes.add(childNode);
-		}
 	}	
 	
 	/*
@@ -117,7 +103,7 @@ public class DataNodeFactory {
 
 	public static LiteralNode createLiteralNode(String stringValue) {
 		// The value is dynamically generated and cannot be traced back to the source code.
-		return createLiteralNode(stringValue, PositionRange.UNDEFINED); 
+		return createLiteralNode(stringValue, new Range(stringValue.length())); 
 	}
 	
 	/**

@@ -9,49 +9,34 @@ import java.util.ArrayList;
  */
 public abstract class PositionRange {
 	
-	public static final UndefinedRange UNDEFINED = new UndefinedRange();
-	
 	/**
-	 * Returns the length of the position range
+	 * Returns the length of the positionRange, or -1 if the length is undefined
 	 */
 	public abstract int getLength();
 	
 	/**
-	 * Returns the position at a relative offset to the start position of the position range
-	 */
-	public abstract Position getPositionAtRelativeOffset(int relOffset);
-	
-	/**
-	 * Returns the (absolute) ranges at a relative offset to the start position of the position range
-	 */
-	public ArrayList<Range> getRangesAtRelativeOffset(int relOffset, int length) {
-		return new RelativeRange(this, relOffset, length).getRanges();
-	}
-	
-	/**
-	 * Returns the (absolute) ranges in this position range
+	 * Returns the (atomic) ranges in this positionRange
 	 */
 	public abstract ArrayList<Range> getRanges();
 	
 	/**
-	 * Returns the start position of the position range
+	 * Returns the position at a relative offset to the start position of the positionRange (could return UNDEFINED)
+	 */
+	public abstract Position getPositionAtRelativeOffset(int relOffset);
+	
+	/**
+	 * Returns the start position of the positionRange (could return UNDEFINED)
 	 */
 	public Position getStartPosition() {
 		return getPositionAtRelativeOffset(0);
 	}
 	
 	/**
-	 * Returns the end position of the position range (exclusive)
+	 * Returns the end position of the positionRange, exclusive (could return UNDEFINED)
 	 */
 	public Position getEndPosition() {
-		return getPositionAtRelativeOffset(getLength());
-	}
-	
-	/**
-	 * Returns true if the position range is undefined.
-	 */
-	public boolean isUndefined() {
-		return (this == UNDEFINED);
+		int length = getLength();
+		return (length == -1 ? Position.UNDEFINED : getPositionAtRelativeOffset(length));
 	}
 	
 }
