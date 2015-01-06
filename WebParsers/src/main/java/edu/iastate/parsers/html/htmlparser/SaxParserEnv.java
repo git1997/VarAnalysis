@@ -11,7 +11,7 @@ import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
-import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 
@@ -132,10 +132,10 @@ public class SaxParserEnv {
 		else {
 			// Create a pseudoOpenTag to store new attributes that are added to the openTag that is outside the branch
 			if (pseudoOpenTag == null) {
-				pseudoOpenTag = new HOpenTag("PSEUDO_OPEN_TAG", PositionRange.UNDEFINED);
+				pseudoOpenTag = new HOpenTag("PSEUDO_OPEN_TAG", Range.UNDEFINED);
 
 				// Also create a pseudoAttribute to store updated properties of the last attribute of that openTag
-				HtmlAttribute pseudoAttribute = new HtmlAttribute("PSEUDO_ATTRIBUTE", PositionRange.UNDEFINED);
+				HtmlAttribute pseudoAttribute = new HtmlAttribute("PSEUDO_ATTRIBUTE", Range.UNDEFINED);
 				pseudoOpenTag.addAttribute(pseudoAttribute);
 			}
 			return pseudoOpenTag;

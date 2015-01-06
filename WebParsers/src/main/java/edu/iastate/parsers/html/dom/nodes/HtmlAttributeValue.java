@@ -2,6 +2,7 @@ package edu.iastate.parsers.html.dom.nodes;
 
 import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 import edu.iastate.symex.util.StringUtils;
 
 /**
@@ -19,7 +20,7 @@ public class HtmlAttributeValue {
 	 */
 	protected HtmlAttributeValue() {
 		this.stringValue = "";
-		this.location = PositionRange.UNDEFINED;
+		this.location = Range.UNDEFINED;
 	}
 	
 	/*

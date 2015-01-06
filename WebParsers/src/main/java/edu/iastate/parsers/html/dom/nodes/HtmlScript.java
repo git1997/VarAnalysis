@@ -4,6 +4,7 @@ import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HText;
 import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 
 /**
  * 
@@ -18,13 +19,13 @@ public class HtmlScript extends HtmlElement {
 	
 	public HText getSourceCode() {
 		StringBuilder sourceCode = new StringBuilder();
-		PositionRange location = PositionRange.UNDEFINED;
+		PositionRange location = null;
 		
 		for (HtmlNode childNode : childNodes) {
 			if (childNode instanceof HtmlText) {
 				HtmlText text = (HtmlText) childNode;
 				sourceCode.append(text.getStringValue());
-				if (location == PositionRange.UNDEFINED)
+				if (location == null)
 					location = text.getLocation();
 				else
 					location = new CompositeRange(location, text.getLocation());
@@ -33,6 +34,9 @@ public class HtmlScript extends HtmlElement {
 				// TODO Implement this case where there are alternatives in the JavaScript code
 			}
 		}
+		
+		if (location == null)
+			location = Range.UNDEFINED;
 		
 		return new HText(sourceCode.toString(), location);
 	}

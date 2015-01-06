@@ -15,7 +15,7 @@ import edu.iastate.parsers.html.dom.nodes.HtmlText;
 import edu.iastate.parsers.html.sax.nodes.HCloseTag;
 import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.symex.constraints.Constraint;
-import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 
@@ -68,7 +68,7 @@ public class DomParserEnv {
 		this.currentHtmlElements = new HashSet<HtmlElement>();
 		
 		// Create a pseudo HtmlElement to represent the root element
-		HtmlElement pseudoRoot = HtmlElement.createHtmlElement(new HOpenTag("PSEUDO_ROOT", PositionRange.UNDEFINED));
+		HtmlElement pseudoRoot = HtmlElement.createHtmlElement(new HOpenTag("PSEUDO_ROOT", Range.UNDEFINED));
 		this.htmlStack.push(pseudoRoot.getType());
 		this.currentHtmlElements.add(pseudoRoot);
 	}

@@ -118,7 +118,7 @@ public abstract class GenericTreeViewer extends TreeViewer {
 	
 	public void treeNodeSelected(Object element) {
 		Range range = getTreeNodePositionFirstRange(element);
-		if (range != null) {
+		if (!range.isUndefined()) {
 			UIHelper.selectAndReveal(range.getFile(), range.getOffset(), range.getLength());
 			getControl().setFocus();
 		}
@@ -186,17 +186,17 @@ public abstract class GenericTreeViewer extends TreeViewer {
 	
 	public String getTreeNodeFilePath(Object element) {
 		Range range = getTreeNodePositionFirstRange(element);
-		return range == null ? "" : UIHelper.standardizeFilePath(range.getFilePath());
+		return range.isUndefined() ? "" : UIHelper.standardizeFilePath(range.getFilePath());
 	}
 	
 	public String getTreeNodeLineRange(Object element) {
 		Range range = getTreeNodePositionFirstRange(element);
-		return range == null ? "" : (String.valueOf(range.getStartPosition().getLine()) + "-" + String.valueOf(range.getEndPosition().getLine()));
+		return range.isUndefined() ? "" : (String.valueOf(range.getStartPosition().getLine()) + "-" + String.valueOf(range.getEndPosition().getLine()));
 	}
 	
 	public String getTreeNodeOffsetRange(Object element) {
 		Range range = getTreeNodePositionFirstRange(element);
-		return range == null ? "" : (String.valueOf(range.getOffset()) + "-" + String.valueOf(range.getOffset() + range.getLength() - 1));
+		return range.isUndefined() ? "" : (String.valueOf(range.getOffset()) + "-" + String.valueOf(range.getOffset() + range.getLength() - 1));
 	}
 	
 	/*
@@ -207,7 +207,7 @@ public abstract class GenericTreeViewer extends TreeViewer {
 	
 	public Range getTreeNodePositionFirstRange(Object element) {
 		ArrayList<Range> ranges = getTreeNodePositionRange(element).getRanges();
-		return ranges.isEmpty() ? null : ranges.get(0);
+		return ranges.isEmpty() ? Range.UNDEFINED : ranges.get(0);
 	}
 	
 	/**

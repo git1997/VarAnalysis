@@ -136,7 +136,7 @@ public class HtmlVisitor extends HtmlDocumentVisitor {
 	 */
 	@Override
 	public void visitAttribute(HtmlAttribute attribute) {
-		if (attribute.getStringValue().isEmpty() || attribute.getAttributeValue().getLocation().isUndefined())
+		if (attribute.getStringValue().isEmpty())
 			return;
 		
 		if (attribute.isNameAttribute())

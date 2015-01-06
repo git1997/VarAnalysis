@@ -10,6 +10,7 @@ import org.eclipse.ui.PlatformUI;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.detection.ReferenceManager;
 import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
 
 /**
@@ -83,7 +84,7 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 		if (element instanceof Reference)
 			return ((Reference) element).getLocation();
 		else
-			return PositionRange.UNDEFINED;
+			return Range.UNDEFINED;
 	}
 	
 }

@@ -111,7 +111,7 @@ public class JsAstTreeViewer extends GenericTreeViewer {
 			return new Range(UIHelper.iFileToFile(UIHelper.getActiveEditorFile()), ((ASTNode) element).getStartPosition(), ((ASTNode) element).getLength());
 		}
 		else
-			return PositionRange.UNDEFINED;
+			return Range.UNDEFINED;
 	}
 	
 	private class Descriptor {

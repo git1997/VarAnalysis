@@ -17,6 +17,7 @@ import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
 
 /**
@@ -145,7 +146,7 @@ public class SaxResultTreeViewer extends GenericTreeViewer {
 			return ((HtmlAttributeValue) element).getLocation();
 		}
 		else
-			return PositionRange.UNDEFINED;
+			return Range.UNDEFINED;
 	}
 	
 	/**

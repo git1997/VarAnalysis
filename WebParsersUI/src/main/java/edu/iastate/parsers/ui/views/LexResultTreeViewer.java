@@ -14,6 +14,7 @@ import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
 
 /**
@@ -119,7 +120,7 @@ public class LexResultTreeViewer extends GenericTreeViewer {
 			return constraint.getLocation();
 		}
 		else
-			return PositionRange.UNDEFINED;
+			return Range.UNDEFINED;
 	}
 	
 	/**

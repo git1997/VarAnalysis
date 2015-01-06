@@ -16,6 +16,7 @@ import edu.iastate.symex.datamodel.nodes.RepeatNode;
 import edu.iastate.symex.datamodel.nodes.SelectNode;
 import edu.iastate.symex.datamodel.nodes.SymbolicNode;
 import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 import edu.iastate.symex.ui.UIHelper;
 
 /**
@@ -149,16 +150,16 @@ public class DataModelTreeViewer extends GenericTreeViewer {
 	@Override
 	public PositionRange getTreeNodePositionRange(Object element) {
 		if (element instanceof SelectNode)
-			return (((SelectNode) element).getConstraint() != null ? ((SelectNode) element).getConstraint().getLocation() : PositionRange.UNDEFINED);
+			return (((SelectNode) element).getConstraint() != null ? ((SelectNode) element).getConstraint().getLocation() : Range.UNDEFINED);
 		
 		else if (element instanceof SymbolicNode)
-			return (((SymbolicNode) element).getPhpNode() != null ? ((SymbolicNode) element).getPhpNode().getLocation() : PositionRange.UNDEFINED);
+			return (((SymbolicNode) element).getPhpNode() != null ? ((SymbolicNode) element).getPhpNode().getLocation() : Range.UNDEFINED);
 		
 		else if (element instanceof LiteralNode)
 			return ((LiteralNode) element).getLocation();
 		
 		else
-			return PositionRange.UNDEFINED;
+			return Range.UNDEFINED;
 	}
 	
 }
