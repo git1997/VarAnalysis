@@ -93,6 +93,10 @@ public class DataNodeFactory {
 	 * Create Literal Nodes
 	 */
 	
+	/**
+	 * Creates a LiteralNode
+	 * Note: stringValue.length() must be equal to location.getLength() to ensure correct location tracking.
+	 */
 	public static LiteralNode createLiteralNode(String stringValue, PositionRange location) {
 		return new LiteralNode(stringValue, location);
 	}

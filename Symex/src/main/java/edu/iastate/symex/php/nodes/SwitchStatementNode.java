@@ -15,6 +15,7 @@ import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
 import edu.iastate.symex.position.CompositeRange;
 import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
 
 /**
  * 
@@ -150,7 +151,7 @@ public class SwitchStatementNode extends StatementNode {
 				/*
 				 * Else, execute both branches.
 				 */
-				PositionRange location = new CompositeRange(expressionString.getLocation(), thenBranch.getConditionString().getLocation());
+				PositionRange location = new CompositeRange(new CompositeRange(expressionString.getLocation(), new Range(" == ".length())), thenBranch.getConditionString().getLocation());
 				String stringValue = expressionString.getStringValue() + " == " + thenBranch.getConditionString().getStringValue(); 
 				LiteralNode conditionString = DataNodeFactory.createLiteralNode(stringValue, location);
 				Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
