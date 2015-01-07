@@ -19,13 +19,13 @@ public class HtmlScript extends HtmlElement {
 	
 	public HText getSourceCode() {
 		StringBuilder sourceCode = new StringBuilder();
-		PositionRange location = null;
+		PositionRange location = new Range(0);
 		
 		for (HtmlNode childNode : childNodes) {
 			if (childNode instanceof HtmlText) {
 				HtmlText text = (HtmlText) childNode;
 				sourceCode.append(text.getStringValue());
-				if (location == null)
+				if (sourceCode.length() == 0)
 					location = text.getLocation();
 				else
 					location = new CompositeRange(location, text.getLocation());
@@ -34,9 +34,6 @@ public class HtmlScript extends HtmlElement {
 				// TODO Implement this case where there are alternatives in the JavaScript code
 			}
 		}
-		
-		if (location == null)
-			location = Range.UNDEFINED;
 		
 		return new HText(sourceCode.toString(), location);
 	}

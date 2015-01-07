@@ -15,7 +15,7 @@ public abstract class PositionRange {
 	public abstract int getLength();
 	
 	/**
-	 * Returns the (atomic) ranges in this positionRange
+	 * Returns the ranges in this positionRange, containing at least 1 range
 	 */
 	public abstract ArrayList<Range> getRanges();
 	

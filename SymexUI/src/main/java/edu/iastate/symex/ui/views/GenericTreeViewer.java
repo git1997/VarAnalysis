@@ -1,7 +1,5 @@
 package edu.iastate.symex.ui.views;
 
-import java.util.ArrayList;
-
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -206,8 +204,7 @@ public abstract class GenericTreeViewer extends TreeViewer {
 	public abstract PositionRange getTreeNodePositionRange(Object element);
 	
 	public Range getTreeNodePositionFirstRange(Object element) {
-		ArrayList<Range> ranges = getTreeNodePositionRange(element).getRanges();
-		return ranges.isEmpty() ? Range.UNDEFINED : ranges.get(0);
+		return getTreeNodePositionRange(element).getRanges().get(0);
 	}
 	
 	/**

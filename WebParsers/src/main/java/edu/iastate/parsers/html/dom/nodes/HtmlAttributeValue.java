@@ -20,7 +20,7 @@ public class HtmlAttributeValue {
 	 */
 	protected HtmlAttributeValue() {
 		this.stringValue = "";
-		this.location = Range.UNDEFINED;
+		this.location = new Range(0);
 	}
 	
 	/*
