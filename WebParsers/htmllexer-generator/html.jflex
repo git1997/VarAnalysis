@@ -63,12 +63,10 @@ WhiteSpace 	=	[ \t\r\n\f]
 /*======================= Lexical Rules =======================*/
  
 <YYINITIAL> {
-	"<"{SimpleName}			{ String tagName = yytext().substring(1); 
-							  currentOpenTag = tagName;
-							  yybegin(ATTR_NAME); 		return new Token(Token.Type.OpenTag, yytext(), yychar, tagName); }
+	"<"{SimpleName}			{ currentOpenTag = yytext().substring(1); 
+							  yybegin(ATTR_NAME); 		return new Token(Token.Type.OpenTag, yytext(), yychar); }
 	
-	"</"{SimpleName}">"		{ String tagName = yytext().substring(2, yytext().length() - 1);
-														return new Token(Token.Type.CloseTag, yytext(), yychar, tagName); }
+	"</"{SimpleName}">"		{							return new Token(Token.Type.CloseTag, yytext(), yychar); }
 	
 	[^"<"]* | "<"			{ 							return new Token(Token.Type.Text, yytext(), yychar); }
 }
@@ -119,8 +117,7 @@ WhiteSpace 	=	[ \t\r\n\f]
 }
 
 <SCRIPT> {
-	"</script>"				{ String tagName = yytext().substring(2, yytext().length() - 1);
-							  yybegin(YYINITIAL);		return new Token(Token.Type.CloseTag, yytext(), yychar, tagName); }
+	"</script>"				{ yybegin(YYINITIAL);		return new Token(Token.Type.CloseTag, yytext(), yychar); }
 														
 	[^"<"]* | "<"			{ 							return new Token(Token.Type.Text, yytext(), yychar); }
 }

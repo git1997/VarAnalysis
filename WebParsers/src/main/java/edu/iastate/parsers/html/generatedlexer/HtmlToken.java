@@ -34,10 +34,6 @@ public class HtmlToken {
 		return token.getLexeme();
 	}
 	
-	public String getValue() {
-		return token.getValue();
-	}
-	
 	public PositionRange getLocation() {
 		return location;
 	}

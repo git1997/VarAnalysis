@@ -23,19 +23,19 @@ public class HtmlSaxParser {
 	 */
 	public void parse(HtmlToken htmlToken, SaxParserEnv env) {
 		Type tokenType = htmlToken.getType();
-		String tokenValue = htmlToken.getValue();
+		String tokenValue = htmlToken.getLexeme();
 		PositionRange tokenLocation = htmlToken.getLocation();
 		
 		if (!env.isInsideOpenTag()) {
 			switch (tokenType) {
 				case OpenTag: {
-					HOpenTag openTag = new HOpenTag(tokenValue.toLowerCase(), tokenLocation); 
+					HOpenTag openTag = new HOpenTag(tokenValue.substring(1).toLowerCase(), tokenLocation); 
 					env.addHtmlSaxNode(openTag);
 					env.setParsingState(ParsingState.INSIDE_OPEN_TAG);
 					break;
 				}
 				case CloseTag: {
-					HCloseTag closeTag = new HCloseTag(tokenValue.toLowerCase(), tokenLocation);
+					HCloseTag closeTag = new HCloseTag(tokenValue.substring(2, tokenValue.length() - 1).toLowerCase(), tokenLocation);
 					env.addHtmlSaxNode(closeTag);
 					env.setParsingState(ParsingState.OUTSIDE_TEXT);
 					break;

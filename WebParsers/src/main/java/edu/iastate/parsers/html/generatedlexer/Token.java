@@ -15,23 +15,13 @@ public class Token {
 	private String lexeme;
 	private int offset;
 	
-	private String value; // Generally, value = lexeme. However, for convenience, OpenTag and CloseTag tokens have value different than lexeme (e.g., an OpenTag with lexeme = '<form' has value = 'form')
-	
-	/**
-	 * Constructor
-	 */
-	public Token(Type type, String lexeme, int offset, String value) {
-		this.type = type;
-		this.lexeme = lexeme;
-		this.offset = offset;
-		this.value = value;
-	}
-	
 	/**
 	 * Constructor
 	 */
 	public Token(Type type, String lexeme, int offset) {
-		this(type, lexeme, offset, lexeme);
+		this.type = type;
+		this.lexeme = lexeme;
+		this.offset = offset;
 	}
 	
 	/*
@@ -50,10 +40,6 @@ public class Token {
 		return offset;
 	}
 	
-	public String getValue() {
-		return value;
-	}
-
 	/**
 	 * Used for debugging
 	 */
