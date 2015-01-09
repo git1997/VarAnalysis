@@ -42,6 +42,10 @@ public class FileIO {
 			System.exit(0);
 		}
 	}
+	
+	public static void writeStringToFile(String string, String outputFile) {
+		writeStringToFile(string, new File(outputFile));
+	}
 
 	public static String readStringFromFile(File inputFile) {
 		try {
@@ -52,6 +56,10 @@ public class FileIO {
 			//return null;
 			return "";
 		}
+	}
+	
+	public static String readStringFromFile(String inputFile) {
+		return readStringFromFile(new File(inputFile));
 	}
 
 	public static String readStringFromStream(InputStream is) {
