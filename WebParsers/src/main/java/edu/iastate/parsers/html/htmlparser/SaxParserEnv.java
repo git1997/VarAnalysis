@@ -199,15 +199,20 @@ public class SaxParserEnv {
 				borrowedAttrInTrueBranch.setConstraint(trueConstraint);
 				borrowedAttrInFalseBranch.setConstraint(falseConstraint);
 				
-				// NOTE: In difficult cases, the constraint of an attribute may be incomplete, and some values may be missing.
-				// For xample: If branching takes place at attribute A (name=n, value=v) under constraint C,
+				// TODO APPROXIMATION: Currently, we can handle correctly the case where branching takes place outside an open tag or before an attribute name.
+				// However, if branching takes place after an attribute name, the values and constraints of the attributes may be missing or incorrect.
+				// It is not a big problem now since we expect such cases to be rare.
+				// If we want to handle those cases, we will need to implement the attributes of an open tag as Choices.
+				// 
+				// Example: If branching takes place at attribute A (name=n, value=v) under constraint C,
 				//   and v is added with attribute values v1 and v2 in the branches, 
 				// 	 then we replace A with two attributes A1 (name=n, value=v+v1, constraint=C) and A2 (name=n, value=v+v2, constraint=!C).
 				// If branching takes place again right after that with added attribute values v3 and v4 under constraint D,
 				//   strictly speaking, we should have 4 new attributes with values (v+v1+v3, C&D), (v+v1+v4, C&!D), (v+v2+v3, !C&D), (v+v2+v4, !C&!D).
-				// However, in the current algorithm, only the last attribute is replaced,
-				//   therefore, in this example we will end up with 3 attributes (v+v1, C), (v+v2+v3, !C&D), (v+v2+v4, !C&!D).
-				// It should probably work for now because we expect to see branching taking place not too often in an attribute value.
+				// However, in the current algorithm, only the last attribute before the branches is replaced with the first attributes in the branches
+				//   (in fact, several last attributes before the branches and several first attributes in each branch may refer to the same attribute,
+				//   only with different values and constraints). 
+				// Therefore, in this example we will end up with 3 attributes (v+v1, C), (v+v2+v3, !C&D), (v+v2+v4, !C&!D) instead of 4.
 				openTag.removeLastAttribute();
 				if (compareAttributes(borrowedAttrInTrueBranch, borrowedAttrInFalseBranch)) {
 					HtmlAttribute attribute = borrowedAttrInTrueBranch;
