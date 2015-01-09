@@ -11,7 +11,6 @@ import edu.iastate.parsers.html.sax.nodes.HOpenTag;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
-import edu.iastate.symex.position.Range;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 
@@ -47,10 +46,9 @@ public class SaxParserEnv {
 	
 	/*
 	 * Sometimes, branching takes place when the parser is inside an openTag.
-	 * In that case, the following information is used to record updated properties of the last attribute of the openTag
-	 * 	 and the new attributes that are added to that openTag in the branch. 
+	 * In that case, the Env in the branch "borrows" the openTag from the outerEnv.
 	 */
-	private HOpenTag pseudoOpenTag = null;
+	private HOpenTag borrowedOpenTag = null;
 	
 	/**
 	 * Constructor
@@ -110,7 +108,6 @@ public class SaxParserEnv {
 	/**
 	 * Returns an OpenTag if the last parsed SAX node is an OpenTag.
 	 * Also, handle the case where branching takes place inside an OpenTag (the current parseResult in the branch is empty).
-	 * @return
 	 */
 	protected HOpenTag tryGetLastOpenTag() {
 		if (!parseResult.isEmpty()) {
@@ -130,15 +127,29 @@ public class SaxParserEnv {
 			}
 		}
 		else {
-			// Create a pseudoOpenTag to store new attributes that are added to the openTag that is outside the branch
-			if (pseudoOpenTag == null) {
-				pseudoOpenTag = new HOpenTag("PSEUDO_OPEN_TAG", Range.UNDEFINED);
-
-				// Also create a pseudoAttribute to store updated properties of the last attribute of that openTag
-				HtmlAttribute pseudoAttribute = new HtmlAttribute("PSEUDO_ATTRIBUTE", Range.UNDEFINED);
-				pseudoOpenTag.addAttribute(pseudoAttribute);
+			if (borrowedOpenTag != null)
+				return borrowedOpenTag;
+			
+			if (outerScopeEnv != null) {
+				// Borrow the openTag from the outerScopeEnv
+				HOpenTag openTag = outerScopeEnv.tryGetLastOpenTag();
+				if (openTag != null) {
+					borrowedOpenTag = new HOpenTag(openTag.getType(), openTag.getLocation()); // Create a new OpenTag (with 0 attributes) so the original OpenTag is untouched
+					
+					// Also, borrow the last attribute of that openTag (if any), because the parser may need to update the last attribute of the last OpenTag
+					HtmlAttribute attribute = openTag.getLastAttributeOrNull();
+					if (attribute != null)
+						borrowedOpenTag.addAttribute(attribute.cloneWithoutConstraint()); // Get a clone copy so the original attribute is untouched
+					
+					return borrowedOpenTag;
+				}
+				else
+					return null;
 			}
-			return pseudoOpenTag;
+			else {
+				MyLogger.log(MyLevel.USER_EXCEPTION, "In SaxParserEnv.java: Expected HOpenTag but couldn't find it.");
+				return null;
+			}
 		}
 	}
 	
@@ -163,74 +174,69 @@ public class SaxParserEnv {
 		/*
 		 * If branching takes place when the parser is inside an openTag, then update the attributes of this openTag.
 		 */
-		// Get the attributes added in the branches
-		ArrayList<HtmlAttribute> attrsInTrueBranch = (trueBranchEnv.pseudoOpenTag != null ? trueBranchEnv.pseudoOpenTag.getAttributes() : new ArrayList<HtmlAttribute>());
-		ArrayList<HtmlAttribute> attrsInFalseBranch = (falseBranchEnv.pseudoOpenTag != null ? falseBranchEnv.pseudoOpenTag.getAttributes() : new ArrayList<HtmlAttribute>());
-		
-		// Get the endBrackets added in the branches
-		ArrayList<HtmlToken> endBracketsInTrueBranch = (trueBranchEnv.pseudoOpenTag != null ? trueBranchEnv.pseudoOpenTag.getEndBrackets() : new ArrayList<HtmlToken>());
-		ArrayList<HtmlToken> endBracketsInFalseBranch = (falseBranchEnv.pseudoOpenTag != null ? falseBranchEnv.pseudoOpenTag.getEndBrackets() : new ArrayList<HtmlToken>());
-					
-		// Get and remove the first pseudoAttribute in the attribute list, @see SaxParserEnv.tryGetLastOpenTag().
-		HtmlAttribute pseudoAttrInTrueBranch = (!attrsInTrueBranch.isEmpty() ? attrsInTrueBranch.remove(0) : null);
-		HtmlAttribute pseudoAttrInFalseBranch = (!attrsInFalseBranch.isEmpty() ? attrsInFalseBranch.remove(0) : null);
-		
-		// Update the last attribute of the current openTag if it is modified in the branches
-		if (pseudoAttrInTrueBranch != null && pseudoAttributeIsUpdated(pseudoAttrInTrueBranch) 
-					|| pseudoAttrInFalseBranch != null && pseudoAttributeIsUpdated(pseudoAttrInFalseBranch)) {
-			HOpenTag openTag = this.tryGetLastOpenTag();
-			if (openTag != null) {
-				HtmlAttribute attribute = openTag.getLastAttributeOrNull();
-				if (attribute != null) { 
-					HtmlAttribute attrInTrueBranch = (pseudoAttrInTrueBranch != null ? combineAttributeInfo(attribute, pseudoAttrInTrueBranch) : attribute);
-					HtmlAttribute attrInFalseBranch = (pseudoAttrInFalseBranch != null ? combineAttributeInfo(attribute, pseudoAttrInFalseBranch) : attribute);
-				
-					// attribute might already have some constraint as well, but we ignore it for now (see the note below).
-					attrInTrueBranch.setConstraint(constraint);
-					attrInFalseBranch.setConstraint(ConstraintFactory.createNotConstraint(constraint));
+		if (trueBranchEnv.borrowedOpenTag != null || falseBranchEnv.borrowedOpenTag != null) {
+			// Get the attributes added in the branches, the first of them may be cloned from the outerEnv (which is this Env). @see SaxParserEnv.tryGetLastOpenTag()
+			ArrayList<HtmlAttribute> attrsInTrueBranch = (trueBranchEnv.borrowedOpenTag != null ? trueBranchEnv.borrowedOpenTag.getAttributes() : new ArrayList<HtmlAttribute>());
+			ArrayList<HtmlAttribute> attrsInFalseBranch = (falseBranchEnv.borrowedOpenTag != null ? falseBranchEnv.borrowedOpenTag.getAttributes() : new ArrayList<HtmlAttribute>());
+			
+			// Get the endBrackets added in the branches
+			ArrayList<HtmlToken> endBracketsInTrueBranch = (trueBranchEnv.borrowedOpenTag != null ? trueBranchEnv.borrowedOpenTag.getEndBrackets() : new ArrayList<HtmlToken>());
+			ArrayList<HtmlToken> endBracketsInFalseBranch = (falseBranchEnv.borrowedOpenTag != null ? falseBranchEnv.borrowedOpenTag.getEndBrackets() : new ArrayList<HtmlToken>());
+			
+			// Get the openTag before branching and its last attribute
+			HOpenTag openTag = this.tryGetLastOpenTag(); // not null
+			HtmlAttribute lastAttribute = openTag.getLastAttributeOrNull(); // can be null
+			
+			// Update the last attribute of the openTag if it is modified in the branches
+			if (lastAttribute != null) {
+				HtmlAttribute borrowedAttrInTrueBranch = (trueBranchEnv.borrowedOpenTag != null ? attrsInTrueBranch.remove(0) : lastAttribute.cloneWithoutConstraint());
+				HtmlAttribute borrowedAttrInFalseBranch = (falseBranchEnv.borrowedOpenTag != null ? attrsInFalseBranch.remove(0) : lastAttribute.cloneWithoutConstraint());
 
-					// Note: If branching takes place at attribute A (name=n, value=v), and A.v is updated with attribute values A.v1 and A.v2 in the branches, 
-					// 	 then we replace A with two attributes A1 (name=n, value=v+v1, constraint=C) and A2 (name=n, value=v+v2, constraint=!C).
-					// However, if branching takes place again right after that with attribute values A.v3 and A.v4, stricly speaking, 
-					// 	 we should have 4 new attributes with values (v+v1+v3), (v+v1+v4), (v+v2+v3), (v+v2+v4).
-					// In the current algorithm, only the last attribute is replaced,
-					// so in that example we will end up with 3 attributes (v+v1), (v+v2+v3), (v+v2+v4).
-					// It should probably work for now because we expect to see braching taking place at most 1 time in an attribute value.
-					openTag.removeLastAttribute();
-					openTag.addAttribute(attrInTrueBranch);
-					openTag.addAttribute(attrInFalseBranch);
+				Constraint notConstraint = ConstraintFactory.createNotConstraint(constraint);
+				Constraint trueConstraint = ConstraintFactory.createAndConstraint(ConstraintFactory.createAndConstraint(lastAttribute.getConstraint(), constraint), borrowedAttrInTrueBranch.getConstraint());
+				Constraint falseConstraint = ConstraintFactory.createAndConstraint(ConstraintFactory.createAndConstraint(lastAttribute.getConstraint(), notConstraint), borrowedAttrInFalseBranch.getConstraint());
+				
+				borrowedAttrInTrueBranch.setConstraint(trueConstraint);
+				borrowedAttrInFalseBranch.setConstraint(falseConstraint);
+				
+				// NOTE: In difficult cases, the constraint of an attribute may be incomplete, and some values may be missing.
+				// For xample: If branching takes place at attribute A (name=n, value=v) under constraint C,
+				//   and v is added with attribute values v1 and v2 in the branches, 
+				// 	 then we replace A with two attributes A1 (name=n, value=v+v1, constraint=C) and A2 (name=n, value=v+v2, constraint=!C).
+				// If branching takes place again right after that with added attribute values v3 and v4 under constraint D,
+				//   strictly speaking, we should have 4 new attributes with values (v+v1+v3, C&D), (v+v1+v4, C&!D), (v+v2+v3, !C&D), (v+v2+v4, !C&!D).
+				// However, in the current algorithm, only the last attribute is replaced,
+				//   therefore, in this example we will end up with 3 attributes (v+v1, C), (v+v2+v3, !C&D), (v+v2+v4, !C&!D).
+				// It should probably work for now because we expect to see branching taking place not too often in an attribute value.
+				openTag.removeLastAttribute();
+				if (compareAttributes(borrowedAttrInTrueBranch, borrowedAttrInFalseBranch)) {
+					HtmlAttribute attribute = borrowedAttrInTrueBranch;
+					attribute.setConstraint(ConstraintFactory.createOrConstraint(trueConstraint, falseConstraint));
+					openTag.addAttribute(attribute);
 				}
 				else {
-					MyLogger.log(MyLevel.USER_EXCEPTION, "In SaxParserEnv.java: Can't find last attribute of open tag.");
+					openTag.addAttribute(borrowedAttrInTrueBranch);
+					openTag.addAttribute(borrowedAttrInFalseBranch);
 				}
 			}
-		}
 			
-		// Add new attributes to the current openTag if they are added in the branches
-		if (!attrsInTrueBranch.isEmpty() || !attrsInFalseBranch.isEmpty()) {
-			HOpenTag openTag = this.tryGetLastOpenTag();
-			if (openTag != null) {
-				for (HtmlAttribute attr : attrsInTrueBranch) {
-					attr.setConstraint(constraint);
-					openTag.addAttribute(attr);
-				}
-				for (HtmlAttribute attr : attrsInFalseBranch) {
-					attr.setConstraint(ConstraintFactory.createNotConstraint(constraint));
-					openTag.addAttribute(attr);
-				}
+			// Add new attributes to the current openTag
+			for (HtmlAttribute attr : attrsInTrueBranch) {
+				attr.setConstraint(ConstraintFactory.createAndConstraint(constraint, attr.getConstraint()));
+				openTag.addAttribute(attr);
 			}
-		}
+			for (HtmlAttribute attr : attrsInFalseBranch) {
+				Constraint notConstraint = ConstraintFactory.createNotConstraint(constraint);
+				attr.setConstraint(ConstraintFactory.createAndConstraint(notConstraint, attr.getConstraint()));
+				openTag.addAttribute(attr);
+			}
 		
-		// Add new endBrackets to the current openTag if they are added in the branches
-		if (!endBracketsInTrueBranch.isEmpty() || !endBracketsInFalseBranch.isEmpty()) {
-			HOpenTag openTag = this.tryGetLastOpenTag();
-			if (openTag != null) {
-				for (HtmlToken endBracket : endBracketsInTrueBranch) {
-					openTag.addEndBracket(endBracket); // Currently, we don't assign a constraint to endBrackets
-				}
-				for (HtmlToken endBracket : endBracketsInFalseBranch) {
-					openTag.addEndBracket(endBracket); // Currently, we don't assign a constraint to endBrackets
-				}
+			// Add new endBrackets to the current openTag
+			for (HtmlToken endBracket : endBracketsInTrueBranch) {
+				openTag.addEndBracket(endBracket); // Currently, we don't assign a constraint to endBrackets
+			}
+			for (HtmlToken endBracket : endBracketsInFalseBranch) {
+				openTag.addEndBracket(endBracket); // Currently, we don't assign a constraint to endBrackets
 			}
 		}
 		
@@ -277,38 +283,15 @@ public class SaxParserEnv {
 	}
 	
 	/**
-	 * Returns true if the pseudoAttribute is updated in the branch.
+	 * Returns true if the two attributes are the same (their constraints may still be different)
 	 */
-	private boolean pseudoAttributeIsUpdated(HtmlAttribute attribute) {
-		return (!attribute.getStringValue().isEmpty() || attribute.getEqToken() != null || attribute.getAttrValStart() != null || attribute.getAttrValEnd() != null);
-	}
-	
-	/**
-	 * Creates a new attribute based on information extracted from the two attributes
-	 */
-	private HtmlAttribute combineAttributeInfo(HtmlAttribute attr1, HtmlAttribute attr2) {
-		// Use the name and location of attribute 1
-		HtmlAttribute attribute = new HtmlAttribute(attr1.getName(), attr1.getLocation());
-		
-		attribute.addAttrValFrag(attr1.getStringValue(), attr1.getAttributeValue().getLocation());
-		attribute.addAttrValFrag(attr2.getStringValue(), attr2.getAttributeValue().getLocation());
-		
-		if (attr1.getEqToken() != null)
-			attribute.setEqToken(attr1.getEqToken());
-		else
-			attribute.setEqToken(attr2.getEqToken());
-				
-		if (attr1.getAttrValStart() != null)
-			attribute.setAttrValStart(attr1.getAttrValStart());
-		else
-			attribute.setAttrValStart(attr2.getAttrValStart());
-		
-		if (attr1.getAttrValEnd() != null) 
-			attribute.setAttrValEnd(attr1.getAttrValEnd());
-		else
-			attribute.setAttrValEnd(attr2.getAttrValEnd());
-		
-		return attribute;
+	private boolean compareAttributes(HtmlAttribute attr1, HtmlAttribute attr2) {
+		return attr1.getName().equals(attr2.getName())
+				&& attr1.getLocation() == attr2.getLocation()
+				&& attr1.getStringValue().equals(attr2.getStringValue())
+				&& attr1.getEqToken() == attr2.getEqToken()
+				&& attr1.getAttrValStart() == attr2.getAttrValStart()
+				&& attr1.getAttrValEnd() == attr2.getAttrValEnd();
 	}
 	
 }

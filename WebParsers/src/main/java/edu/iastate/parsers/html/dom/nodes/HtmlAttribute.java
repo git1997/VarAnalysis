@@ -110,8 +110,7 @@ public class HtmlAttribute {
 	 * Other methods
 	 */
 	
-	@Override
-	public HtmlAttribute clone() {
+	public HtmlAttribute cloneWithoutConstraint() {
 		HtmlAttribute clone = new HtmlAttribute(name, location);
 		clone.value = value.clone();
 		
@@ -120,7 +119,6 @@ public class HtmlAttribute {
 		clone.attrValEnd = attrValEnd;
 		
 		clone.parentElement = parentElement;
-		clone.constraint = constraint;
 		
 		return clone;
 	}
