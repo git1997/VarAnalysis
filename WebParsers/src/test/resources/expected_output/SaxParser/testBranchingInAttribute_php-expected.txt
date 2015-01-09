@@ -16,7 +16,7 @@ OpenTag: style
 #else
 OpenTag: div
 #endif
-OpenTag: input, name=input2, [$D] value=aabb, [$E] value=aaccdd, [!$E] value=aaccee, self-closed
+OpenTag: input, name=input2, [$D] value=aabb, [!$D & $E] value=aaccdd, [!$D & !$E] value=aaccee, self-closed
 Text: 
 	Some text there
 

@@ -110,6 +110,21 @@ public class HtmlAttribute {
 	 * Other methods
 	 */
 	
+	@Override
+	public HtmlAttribute clone() {
+		HtmlAttribute clone = new HtmlAttribute(name, location);
+		clone.value = value.clone();
+		
+		clone.eqToken = eqToken;
+		clone.attrValStart = attrValStart;
+		clone.attrValEnd = attrValEnd;
+		
+		clone.parentElement = parentElement;
+		clone.constraint = constraint;
+		
+		return clone;
+	}
+	
 	public String getStringValue() {
 		return value.getStringValue();
 	}
