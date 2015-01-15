@@ -4,8 +4,8 @@ import java.io.File;
 
 import org.junit.Test;
 
+import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
-import edu.iastate.symex.run.RunSymexForFile;
 
 /**
  * 
@@ -26,7 +26,7 @@ public class TestSymex extends GenericTest {
 
 	@Override
 	public String getActualOutput(File inputFile) {
-		DataModel dataModel = new RunSymexForFile(inputFile).execute();
+		DataModel dataModel = new PhpExecuter().execute(inputFile);
 		return dataModel.toIfdefString();
 	}
 	

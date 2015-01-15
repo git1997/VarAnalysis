@@ -4,8 +4,8 @@ import java.io.File;
 
 import org.junit.Test;
 
+import edu.iastate.parsers.html.core.PhpExecuterAndParser;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
-import edu.iastate.parsers.html.run.RunHtmlParserForFile;
 import edu.iastate.symex.test.GenericTest;
 
 /**
@@ -27,7 +27,7 @@ public class TestDomParser extends GenericTest {
 
 	@Override
 	public String getActualOutput(File inputFile) {
-		HtmlDocument htmlDocument = new RunHtmlParserForFile(inputFile).execute();
+		HtmlDocument htmlDocument = new PhpExecuterAndParser().executeAndParse(inputFile);
 		return htmlDocument.toIfdefString();
 	}
 	
