@@ -24,7 +24,7 @@ import org.eclipse.wst.jsdt.core.dom.AST;
 import org.eclipse.wst.jsdt.core.dom.ASTNode;
 import org.eclipse.wst.jsdt.core.dom.ASTParser;
 
-import edu.iastate.analysis.references.detection.FindReferencesInFile;
+import edu.iastate.analysis.references.detection.ReferenceDetector;
 import edu.iastate.analysis.references.detection.ReferenceManager;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.parsers.ui.UIHelper;
@@ -269,7 +269,7 @@ public class WebAnalysisView extends ViewPart {
 	 * Run Analysis and show results 
 	 */
 	private void runAnalysisAndShowResults(File file) {
-		ReferenceManager referenceManager = new FindReferencesInFile(file).execute();
+		ReferenceManager referenceManager = new ReferenceDetector().detect(file);
 		
 		filePathLabel.setText(file.getAbsolutePath());
 		forwardSliceTreeViewer.setInput(referenceManager);

@@ -19,15 +19,15 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.iastate.parsers.conditional.CondList;
+import edu.iastate.parsers.html.core.PhpExecuterAndParser;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.htmlparser.DataModelToHtmlTokens;
-import edu.iastate.parsers.html.htmlparser.HtmlSaxNodesToHtmlDocument;
 import edu.iastate.parsers.html.htmlparser.HtmlTokensToSaxNodes;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.parsers.ui.UIHelper;
-import edu.iastate.symex.run.RunSymexForFile;
 import edu.iastate.symex.ui.views.GenericTreeViewer;
+import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
 
 /**
@@ -214,7 +214,7 @@ public class WebParsersView extends ViewPart {
 	 * Run Lexer and show results 
 	 */
 	private void runLexerAndShowResults(File file) {
-		DataModel dataModel = new RunSymexForFile(file).execute();
+		DataModel dataModel = new PhpExecuter().execute(file);
 		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
 		
 		filePathLabel.setText(file.getAbsolutePath());
@@ -227,7 +227,7 @@ public class WebParsersView extends ViewPart {
 	 * Run SaxParser and show results 
 	 */
 	private void runSaxParserAndShowResults(File file) {
-		DataModel dataModel = new RunSymexForFile(file).execute();
+		DataModel dataModel = new PhpExecuter().execute(file);
 		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
 		CondList<HtmlSaxNode> saxResult = new HtmlTokensToSaxNodes().parse(lexResult);
 		
@@ -241,10 +241,7 @@ public class WebParsersView extends ViewPart {
 	 * Run DomParser and show results 
 	 */
 	private void runDomParserAndShowResults(File file) {
-		DataModel dataModel = new RunSymexForFile(file).execute();
-		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
-		CondList<HtmlSaxNode> saxResult = new HtmlTokensToSaxNodes().parse(lexResult);
-		HtmlDocument domResult = new HtmlSaxNodesToHtmlDocument().parse(saxResult);
+		HtmlDocument domResult = new PhpExecuterAndParser().executeAndParse(file);
 		
 		filePathLabel.setText(file.getAbsolutePath());
 		domResultTreeViewer.setInput(domResult);

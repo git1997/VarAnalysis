@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.iastate.symex.run.RunSymexForFile;
 import edu.iastate.symex.ui.UIHelper;
+import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
 
 /**
@@ -138,7 +138,7 @@ public class DataModelView extends ViewPart {
 	 * Run Symex and show results 
 	 */
 	private void runSymexAndShowResults(File file) {
-		DataModel dataModel = new RunSymexForFile(file).execute();
+		DataModel dataModel = new PhpExecuter().execute(file);
 		
 		filePathLabel.setText(file.getAbsolutePath());
 		dataModelTreeViewer.setInput(dataModel);
