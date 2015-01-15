@@ -27,7 +27,7 @@ public class ExpressionStatementNode extends StatementNode {
 	}
 	
 	@Override
-	public DataNode execute(Env env) {
+	public DataNode execute_(Env env) {
 		// Return the value of the enclosed expression (e.g., the function call die() returns an EXIT value,
 		// this value should be propagated to the the enclosing statement).  
 		return expression.execute(env);

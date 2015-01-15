@@ -20,6 +20,9 @@ import org.eclipse.php.internal.core.ast.nodes.SwitchStatement;
 import org.eclipse.php.internal.core.ast.nodes.TryStatement;
 import org.eclipse.php.internal.core.ast.nodes.WhileStatement;
 
+import edu.iastate.symex.analysis.WebDebugger;
+import edu.iastate.symex.core.Env;
+import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
@@ -65,5 +68,34 @@ public abstract class StatementNode extends PhpNode {
 			default: 								MyLogger.log(MyLevel.TODO, "Statement (" + statement.getClass().getSimpleName() + ") unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(statement)); return new UnresolvedStatementNode(statement);
 		}
 	}
+	
+	@Override
+	public DataNode execute(Env env) {
+		/*
+		 * The following code is used for web debugger. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB DEBUGGER CODE
+		if (WebDebugger.isEnabled())
+			WebDebugger.onStatementExecuteStart(this, env);
+		// END OF WEB DEBUGGER CODE
+		  
+		DataNode retValue = execute_(env);
+		
+		/*
+		 * The following code is used for web debugger. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB DEBUGGER CODE
+		if (WebDebugger.isEnabled())
+			WebDebugger.onStatementExecuteEnd(this, env);
+		// END OF WEB DEBUGGER CODE
+		
+		return retValue;
+	}
+	
+	/**
+	 * Executes a statement.
+	 * See edu.iastate.symex.php.nodes.StatementNode.execute(Env) for more details.
+	 */
+	public abstract DataNode execute_(Env env);
 	
 }

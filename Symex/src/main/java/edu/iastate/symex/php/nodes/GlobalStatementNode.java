@@ -34,7 +34,7 @@ public class GlobalStatementNode extends StatementNode {
 	}
 	
 	@Override
-	public DataNode execute(Env env) {
+	public DataNode execute_(Env env) {
 		for (VariableNode variable : variables) {
 			String variableName = variable.getResolvedVariableNameOrNull(env);
 			if (variableName != null)

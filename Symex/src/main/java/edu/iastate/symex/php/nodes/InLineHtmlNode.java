@@ -22,7 +22,7 @@ public class InLineHtmlNode extends StatementNode {
 	}
 	
 	@Override
-	public DataNode execute(Env env) {
+	public DataNode execute_(Env env) {
 		env.appendOutput(DataNodeFactory.createLiteralNode(this));
 		return SpecialNode.ControlNode.OK;
 	}

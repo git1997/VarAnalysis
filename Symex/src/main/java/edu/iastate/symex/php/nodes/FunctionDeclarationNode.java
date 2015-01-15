@@ -70,7 +70,7 @@ public class FunctionDeclarationNode extends StatementNode {
 	// END OF BABELREF CODE
 
 	@Override
-	public DataNode execute(Env env) {
+	public DataNode execute_(Env env) {
 		/*
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */

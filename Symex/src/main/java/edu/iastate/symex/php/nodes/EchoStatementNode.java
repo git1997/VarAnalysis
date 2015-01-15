@@ -32,7 +32,7 @@ public class EchoStatementNode extends StatementNode {
 	}
 	
 	@Override
-	public DataNode execute(Env env) {
+	public DataNode execute_(Env env) {
 		ArrayList<DataNode> resolvedValues = new ArrayList<DataNode>();
 		for (ExpressionNode expression : expressions) {
 			DataNode resolvedValue = expression.execute(env);

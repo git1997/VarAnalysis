@@ -83,7 +83,7 @@ public class ClassDeclarationNode extends StatementNode {
 	}
 	
 	@Override
-	public DataNode execute(Env env) {
+	public DataNode execute_(Env env) {
 		env.putClass(this.getName(), this);
 		return SpecialNode.ControlNode.OK;
 	}

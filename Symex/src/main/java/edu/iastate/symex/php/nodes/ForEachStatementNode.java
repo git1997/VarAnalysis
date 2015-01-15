@@ -45,7 +45,7 @@ public class ForEachStatementNode extends StatementNode {
 	}
 	
 	@Override
-	public DataNode execute(Env env) {
+	public DataNode execute_(Env env) {
 		DataNode expressionResult = expressionNode.execute(env);
 		
 		ArrayNode array = (expressionResult instanceof ArrayNode ? (ArrayNode) expressionResult : null);

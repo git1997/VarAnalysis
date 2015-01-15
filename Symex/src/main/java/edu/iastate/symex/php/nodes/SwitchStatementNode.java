@@ -92,7 +92,7 @@ public class SwitchStatementNode extends StatementNode {
 	}
 
 	@Override
-	public DataNode execute(Env env) {
+	public DataNode execute_(Env env) {
 		DataNode expressionResult = expression.execute(env);
 		FakeSwitchStatementNode fakeSwitchExpressionNode = new FakeSwitchStatementNode((SwitchStatement) this.getAstNode(), expressionResult, expressionString, switchCases);
 		return fakeSwitchExpressionNode.execute(env);
@@ -119,7 +119,7 @@ public class SwitchStatementNode extends StatementNode {
 		}
 		
 		@Override
-		public DataNode execute(Env env) {
+		public DataNode execute_(Env env) {
 			// Turn a SwitchStatement into an IfStatement such that:
 			//  + The then branch is the first SwitchCase
 			//  + The else branch is a FakeSwitchStatement, consisting of the remaining SwitchCases except the first SwitchCase
