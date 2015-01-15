@@ -110,7 +110,7 @@ public class HtmlVisitor extends HtmlDocumentVisitor {
 				String javascriptSource = FileIO.readStringFromFile(included);
 				Range javascriptLocation = new Range(included, 0, javascriptSource.length());
 			
-				ReferenceDetector.findReferencesInJavascriptCode(javascriptSource, javascriptLocation, constraint, entryFile, referenceManager);
+				ReferenceFinder.findReferencesInJavascriptCode(javascriptSource, javascriptLocation, constraint, entryFile, referenceManager);
 			}
 			return;
 		}
@@ -128,7 +128,7 @@ public class HtmlVisitor extends HtmlDocumentVisitor {
 		// Also make sure that the length is unchanged so that the entities can be correctly traced later.
 		javascriptCode = javascriptCode.replaceAll("<!--", "    ").replaceAll("-->", "   ");
 		
-		ReferenceDetector.findReferencesInJavascriptCode(javascriptCode, javascriptLocation, constraint, entryFile, referenceManager);
+		ReferenceFinder.findReferencesInJavascriptCode(javascriptCode, javascriptLocation, constraint, entryFile, referenceManager);
 	}
 	
 	/**
@@ -232,7 +232,7 @@ public class HtmlVisitor extends HtmlDocumentVisitor {
 	private void findEntitiesInEventHandler(HtmlAttributeValue attributeValue) {
 		String javascriptCode = attributeValue.getStringValue();
 		PositionRange javascriptLocation = attributeValue.getLocation();
-		ReferenceDetector.findReferencesInJavascriptCode(javascriptCode, javascriptLocation, constraint, entryFile, referenceManager);
+		ReferenceFinder.findReferencesInJavascriptCode(javascriptCode, javascriptLocation, constraint, entryFile, referenceManager);
 	}
 	
 	/**

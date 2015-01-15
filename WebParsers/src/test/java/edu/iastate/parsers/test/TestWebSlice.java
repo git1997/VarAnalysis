@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.junit.Test;
 
-import edu.iastate.analysis.references.detection.FindReferencesInFile;
+import edu.iastate.analysis.references.detection.ReferenceDetector;
 import edu.iastate.analysis.references.detection.ReferenceManager;
 import edu.iastate.symex.test.GenericTest;
 
@@ -27,7 +27,7 @@ public class TestWebSlice extends GenericTest {
 
 	@Override
 	public String getActualOutput(File inputFile) {
-		ReferenceManager referenceManager = new FindReferencesInFile(inputFile).execute();
+		ReferenceManager referenceManager = new ReferenceDetector().detect(inputFile);
 		return referenceManager.writeReferenceListToText();
 	}
 	

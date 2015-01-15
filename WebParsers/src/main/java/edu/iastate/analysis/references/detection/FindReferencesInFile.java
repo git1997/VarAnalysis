@@ -74,11 +74,11 @@ public class FindReferencesInFile {
 	private DataModel createDataModelAndFindPhpSqlReferences(ReferenceManager referenceManager) {
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Creating data model and finding PHP/SQL references...");
 		
-		ReferenceDetector.findReferencesInPhpCode(phpFile, referenceManager);
+		ReferenceFinder.findReferencesInPhpCode(phpFile, referenceManager);
 		
 		DataModel dataModel = new PhpExecuter().execute(phpFile);
 		
-		ReferenceDetector.findReferencesInPhpCodeFinished();
+		ReferenceFinder.findReferencesInPhpCodeFinished();
 		
 		return dataModel;
 	}
@@ -98,7 +98,7 @@ public class FindReferencesInFile {
 	private void findReferencesInHtmlDocument(HtmlDocument htmlDocument, ReferenceManager referenceManager) {
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Finding HTML/JavaScript references...");
 
-		ReferenceDetector.findReferencesInHtmlDocument(htmlDocument, phpFile, referenceManager);
+		ReferenceFinder.findReferencesInHtmlDocument(htmlDocument, phpFile, referenceManager);
 	}
 	
 	/**
