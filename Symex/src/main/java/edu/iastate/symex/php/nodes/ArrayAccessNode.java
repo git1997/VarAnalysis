@@ -54,7 +54,7 @@ public class ArrayAccessNode extends VariableNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		if (WebAnalysis.entityDetectionListener != null && key != null)
+		if (WebAnalysis.isEnabled() && key != null)
 			WebAnalysis.onArrayAccessExecute((ArrayAccess) this.getAstNode(), this, dataNode, indexNode, env);
 		// END OF WEB ANALYSIS CODE
 		

@@ -106,7 +106,7 @@ public class IfStatementNode extends StatementNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		if (WebAnalysis.entityDetectionListener != null)
+		if (WebAnalysis.isEnabled())
 			WebAnalysis.onTrueBranchExecutionStarted(env);
 		// END OF WEB ANALYSIS CODE
 		
@@ -120,7 +120,7 @@ public class IfStatementNode extends StatementNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		if (WebAnalysis.entityDetectionListener != null)
+		if (WebAnalysis.isEnabled())
 			WebAnalysis.onFalseBranchExecutionStarted(env);
 		// END OF WEB ANALYSIS CODE
 		
@@ -137,7 +137,7 @@ public class IfStatementNode extends StatementNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		if (WebAnalysis.entityDetectionListener != null)
+		if (WebAnalysis.isEnabled())
 			WebAnalysis.onBothBranchesExecutionFinished(new HashSet<PhpVariable>(dirtyValuesInTrueBranch.keySet()), new HashSet<PhpVariable>(dirtyValuesInFalseBranch.keySet()), env);
 		// END OF WEB ANALYSIS CODE
 		

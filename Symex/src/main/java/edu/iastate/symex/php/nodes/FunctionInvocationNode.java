@@ -147,7 +147,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		if (WebAnalysis.entityDetectionListener != null)
+		if (WebAnalysis.isEnabled())
 			WebAnalysis.onFunctionInvocationExecute((FunctionInvocation) this.getAstNode(), env);
 		// END OF WEB ANALYSIS CODE
 					
@@ -189,7 +189,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 						 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 						 */
 						// BEGIN OF WEB ANALYSIS CODE
-						if (WebAnalysis.entityDetectionListener != null)
+						if (WebAnalysis.isEnabled())
 							WebAnalysis.onFunctionInvocationParameterPassing((FormalParameter) parameter.getAstNode(), phpVariable, (Expression) arguments.get(parameterIndex).getAstNode(), env);
 						// END OF WEB ANALYSIS CODE
 						
@@ -208,7 +208,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 			 */
 			// BEGIN OF WEB ANALYSIS CODE
-			if (WebAnalysis.entityDetectionListener != null) {
+			if (WebAnalysis.isEnabled()) {
 				PhpVariable phpVariable = functionEnv.getVariable(parameterName);
 				WebAnalysis.onFunctionInvocationParameterPassing((FormalParameter) parameter.getAstNode(), phpVariable, (Expression) arguments.get(parameterIndex).getAstNode(), env);
 			}
@@ -364,7 +364,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		if (WebAnalysis.entityDetectionListener != null)
+		if (WebAnalysis.isEnabled())
 			return WebAnalysis.onMysqlQuery((FunctionInvocation) this.getAstNode(), arguments.get(0), env);
 		// END OF WEB ANALYSIS CODE
 		
@@ -379,7 +379,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		if (WebAnalysis.entityDetectionListener != null)
+		if (WebAnalysis.isEnabled())
 			return WebAnalysis.onMysqlFetchArray((FunctionInvocation) this.getAstNode(), arguments.get(0), env);
 		// END OF WEB ANALYSIS CODE
 		

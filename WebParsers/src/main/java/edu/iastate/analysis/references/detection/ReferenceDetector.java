@@ -23,11 +23,11 @@ public class ReferenceDetector {
 	 */
 	public static void findReferencesInPhpCode(File entryFile, ReferenceManager referenceManager) {
 		PhpVisitor phpVisitor = new PhpVisitor(entryFile, referenceManager);
-		WebAnalysis.entityDetectionListener = phpVisitor;
+		WebAnalysis.setListener(phpVisitor);
 	};
 	
 	public static void findReferencesInPhpCodeFinished() {
-		WebAnalysis.entityDetectionListener = null;
+		WebAnalysis.setListener(null);
 	}
 	
 	/**

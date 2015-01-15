@@ -75,7 +75,7 @@ public class FunctionDeclarationNode extends StatementNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		if (WebAnalysis.entityDetectionListener != null)
+		if (WebAnalysis.isEnabled())
 			WebAnalysis.onFunctionDeclarationExecute((FunctionDeclaration) this.getAstNode(), env);
 		// END OF WEB ANALYSIS CODE
 		

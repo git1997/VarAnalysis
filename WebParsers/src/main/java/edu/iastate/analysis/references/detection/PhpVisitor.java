@@ -28,7 +28,7 @@ import edu.iastate.analysis.references.PhpVariableRef;
 import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.RegularReference;
 import edu.iastate.analysis.references.SqlTableColumnDecl;
-import edu.iastate.symex.analysis.WebAnalysis.IEntityDetectionListener;
+import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
@@ -48,7 +48,7 @@ import edu.iastate.symex.util.ASTHelper;
  * @author HUNG
  *
  */
-public class PhpVisitor implements IEntityDetectionListener {
+public class PhpVisitor implements WebAnalysis.IListener {
 	
 	private File entryFile;
 	private ReferenceManager referenceManager;

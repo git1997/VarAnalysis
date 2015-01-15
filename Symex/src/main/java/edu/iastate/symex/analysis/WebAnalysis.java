@@ -23,13 +23,21 @@ import edu.iastate.symex.php.nodes.ArrayAccessNode;
  */
 public class WebAnalysis {
 	
-	public static IEntityDetectionListener entityDetectionListener = null; // Usage of this interface must check for null before calling
+	private static IListener listener = null;
+	
+	public static void setListener(IListener listener) {
+		WebAnalysis.listener = listener;
+	}
+	
+	public static boolean isEnabled() {
+		return listener != null;
+	}
 	
 	/*
-	 * Interfaces
+	 * Interface
 	 */
 	
-	public interface IEntityDetectionListener {
+	public interface IListener {
 		
 		/*
 		 * Handle variables 
@@ -83,55 +91,55 @@ public class WebAnalysis {
 	 */
 	
 	public static void onAssignmentExecute(Assignment assignment, PhpVariable phpVariableDecl, Env env) {
-		entityDetectionListener.onAssignmentExecute(assignment, phpVariableDecl, env);
+		listener.onAssignmentExecute(assignment, phpVariableDecl, env);
 	}
 	
 	public static void onVariableExecute(Variable variable, PhpVariable phpVariable, Env env) {
-		entityDetectionListener.onVariableExecute(variable, phpVariable, env);
+		listener.onVariableExecute(variable, phpVariable, env);
 	}
 	
 	public static void onArrayAccessExecute(ArrayAccess arrayAccess, ArrayAccessNode arrayAccessNode, DataNode arrayNode, DataNode keyNode, Env env) {
-		entityDetectionListener.onArrayAccessExecute(arrayAccess, arrayAccessNode, arrayNode, keyNode, env);
+		listener.onArrayAccessExecute(arrayAccess, arrayAccessNode, arrayNode, keyNode, env);
 	}
 	
 	public static void onFunctionDeclarationExecute(FunctionDeclaration functionDeclaration, Env env) {
-		entityDetectionListener.onFunctionDeclarationExecute(functionDeclaration, env);
+		listener.onFunctionDeclarationExecute(functionDeclaration, env);
 	}
 	
 	public static void onFunctionInvocationExecute(FunctionInvocation functionInvocation, Env env) {
-		entityDetectionListener.onFunctionInvocationExecute(functionInvocation, env);
+		listener.onFunctionInvocationExecute(functionInvocation, env);
 	}
 	
 	public static void onFunctionInvocationParameterPassing(FormalParameter parameter, PhpVariable phpVariable, Expression argument, Env env) {
-		entityDetectionListener.onFunctionInvocationParameterPassing(parameter, phpVariable, argument, env);
+		listener.onFunctionInvocationParameterPassing(parameter, phpVariable, argument, env);
 	}
 	
 	public static void onReturnStatementExecute(ReturnStatement returnStatement, Env env) {
-		entityDetectionListener.onReturnStatementExecute(returnStatement, env);
+		listener.onReturnStatementExecute(returnStatement, env);
 	}
 	
 	public static void onFunctionInvocationFinished(HashSet<PhpVariable> nonLocalDirtyVariablesInFunction, Env env) {
-		entityDetectionListener.onFunctionInvocationFinished(nonLocalDirtyVariablesInFunction, env);
+		listener.onFunctionInvocationFinished(nonLocalDirtyVariablesInFunction, env);
 	}
 	
 	public static DataNode onMysqlQuery(FunctionInvocation functionInvocation, DataNode argumentValue, Env env) {
-		return entityDetectionListener.onMysqlQuery(functionInvocation, argumentValue, env);
+		return listener.onMysqlQuery(functionInvocation, argumentValue, env);
 	}
 	
 	public static DataNode onMysqlFetchArray(FunctionInvocation functionInvocation, DataNode argumentValue, Env env) {
-		return entityDetectionListener.onMysqlFetchArray(functionInvocation, argumentValue, env);
+		return listener.onMysqlFetchArray(functionInvocation, argumentValue, env);
 	}
 	
 	public static void onTrueBranchExecutionStarted(Env env) {
-		entityDetectionListener.onTrueBranchExecutionStarted(env);
+		listener.onTrueBranchExecutionStarted(env);
 	}
 	
 	public static void onFalseBranchExecutionStarted(Env env) {
-		entityDetectionListener.onFalseBranchExecutionStarted(env);
+		listener.onFalseBranchExecutionStarted(env);
 	}
 	
 	public static void onBothBranchesExecutionFinished(HashSet<PhpVariable> dirtyVariablesInTrueBranch, HashSet<PhpVariable> dirtyVariablesInFalseBranch, Env env) {
-		entityDetectionListener.onBothBranchesExecutionFinished(dirtyVariablesInTrueBranch, dirtyVariablesInFalseBranch, env);
+		listener.onBothBranchesExecutionFinished(dirtyVariablesInTrueBranch, dirtyVariablesInFalseBranch, env);
 	}
 
 }

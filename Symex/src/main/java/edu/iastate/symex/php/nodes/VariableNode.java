@@ -72,7 +72,7 @@ public class VariableNode extends VariableBaseNode {
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
-		if (WebAnalysis.entityDetectionListener != null) {
+		if (WebAnalysis.isEnabled()) {
 			PhpVariable phpVariable = env.getVariable(variableName);
 			WebAnalysis.onVariableExecute((Variable) this.getAstNode(), phpVariable, env); // phpVariable could be null
 		}

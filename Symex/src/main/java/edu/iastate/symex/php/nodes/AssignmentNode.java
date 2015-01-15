@@ -82,7 +82,7 @@ public class AssignmentNode extends ExpressionNode {
 			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
 			 */
 			// BEGIN OF WEB ANALYSIS CODE
-			if (WebAnalysis.entityDetectionListener != null)
+			if (WebAnalysis.isEnabled())
 				WebAnalysis.onAssignmentExecute((Assignment) this.getAstNode(), phpVariable, env);
 			// END OF WEB ANALYSIS CODE
 		}
