@@ -2,8 +2,8 @@ package edu.iastate.analysis.references.detection;
 
 import java.io.File;
 
-import edu.iastate.parsers.html.core.ParseDataModel;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
+import edu.iastate.parsers.html.htmlparser.DataModelParser;
 import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
 import edu.iastate.symex.util.Timer;
@@ -89,7 +89,7 @@ public class FindReferencesInFile {
 	private HtmlDocument parseDataModel(DataModel dataModel) {
 		MyLogger.log(MyLevel.PROGRESS, "[FindReferencesInFile:" + phpFile + "] Parsing data model...");
 		
-		return new ParseDataModel().parse(dataModel);
+		return new DataModelParser().parse(dataModel);
 	}
 	
 	/**

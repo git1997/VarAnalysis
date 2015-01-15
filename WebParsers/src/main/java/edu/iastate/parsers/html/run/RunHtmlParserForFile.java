@@ -2,8 +2,8 @@ package edu.iastate.parsers.html.run;
 
 import java.io.File;
 
-import edu.iastate.parsers.html.core.ParseDataModel;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
+import edu.iastate.parsers.html.htmlparser.DataModelParser;
 import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
 import edu.iastate.symex.util.Timer;
@@ -57,7 +57,7 @@ public class RunHtmlParserForFile {
 		MyLogger.log(MyLevel.PROGRESS, "[RunHtmlParserForFile:" + file + "] Started.");
 		
 		DataModel dataModel = new PhpExecuter().execute(file);
-		HtmlDocument htmlDocument = new ParseDataModel().parse(dataModel);
+		HtmlDocument htmlDocument = new DataModelParser().parse(dataModel);
 		
 		MyLogger.log(MyLevel.PROGRESS, "[RunHtmlParserForFile:" + file + "] Done in " + timer.getElapsedSecondsInText() + ".");
 		return htmlDocument;

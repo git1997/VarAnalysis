@@ -1,11 +1,8 @@
-package edu.iastate.parsers.html.core;
+package edu.iastate.parsers.html.htmlparser;
 
 import edu.iastate.parsers.conditional.CondList;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.generatedlexer.HtmlToken;
-import edu.iastate.parsers.html.htmlparser.DataModelToHtmlTokens;
-import edu.iastate.parsers.html.htmlparser.HtmlSaxNodesToHtmlDocument;
-import edu.iastate.parsers.html.htmlparser.HtmlTokensToSaxNodes;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
 import edu.iastate.symex.datamodel.DataModel;
 
@@ -14,7 +11,7 @@ import edu.iastate.symex.datamodel.DataModel;
  * @author HUNG
  *
  */
-public class ParseDataModel {
+public class DataModelParser {
 	
 	/**
 	 * Parses a DataModel and returns an HtmlDocument
