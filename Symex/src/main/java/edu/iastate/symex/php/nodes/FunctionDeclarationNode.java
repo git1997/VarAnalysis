@@ -21,7 +21,7 @@ public class FunctionDeclarationNode extends StatementNode {
 	
 	private ArrayList<FormalParameterNode> formalParameters = new ArrayList<FormalParameterNode>();	// The parameters of the function 
 	
-	private BlockNode body;	// The body of the function
+	private BlockNode body;	// The body of the function, can be null
 	
 	/*
 	Represents a function declaration 
@@ -40,7 +40,7 @@ public class FunctionDeclarationNode extends StatementNode {
 		for (FormalParameter formalParameter : functionDeclaration.formalParameters()) {
 			formalParameters.add(new FormalParameterNode(formalParameter));
 		}
-		body = new BlockNode(functionDeclaration.getBody());
+		body = (functionDeclaration.getBody() != null ? new BlockNode(functionDeclaration.getBody()) : null);
 	}
 	
 	public String getName() {
@@ -51,6 +51,9 @@ public class FunctionDeclarationNode extends StatementNode {
 		return new ArrayList<FormalParameterNode>(formalParameters);
 	}
 	
+	/**
+	 * Returns the body of the function, can be null
+	 */
 	public BlockNode getBody() {
 		return body;
 	}

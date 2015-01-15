@@ -222,7 +222,12 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		functionEnv.pushFunctionToStack(functionName);
 		//MyLogger.log(MyLevel.PROGRESS, "Executing files " + env.getFileStack() + " functions " + env.getFunctionStack() + " ...");
 		
-		function.getBody().execute(functionEnv);
+		if (function.getBody() != null)
+			function.getBody().execute(functionEnv);
+		else {
+			MyLogger.log(MyLevel.TODO, "In FunctionInvocationNode.java: Abstract functions not yet implemented.");
+			// TODO Handle abstract function here
+		}
 		
 		//MyLogger.log(MyLevel.PROGRESS, "Done with files " + env.getFileStack() + " functions " + env.getFunctionStack() + ".");
 		functionEnv.popFunctionFromStack();
@@ -298,7 +303,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 * Implements the standard PHP function: exit
 	 */
 	private DataNode php_exit(ArrayList<DataNode> arguments, Env env) {
-		// [ADHOC CODE] TODO Work-around to handle statments such as below
+		// [ADHOC CODE] TODO Work-around to handle statements such as below
 		// 		mysql_connect(...) or die("Could not connect: " . mysql_error())
 		if (this.getAstNode().getParent() instanceof InfixExpression
 				&& ((InfixExpression) this.getAstNode().getParent()).getOperator() == InfixExpression.OP_STRING_OR) {
