@@ -4,6 +4,7 @@ OK			constraints
 OK			core
 OK			datamodel
 OK			datamodel.nodes
+OK			debug
 OK			errormodel
 OK			php.nodes
 OK			position
