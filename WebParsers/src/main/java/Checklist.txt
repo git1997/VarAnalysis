@@ -21,3 +21,5 @@ new PhpExecuterAndParser().executeAndParse()			File				HtmlDocument
 	new DataModelParser().parse()							DataModel		    HtmlDocument
 new ReferenceDetector().detect()						File				ReferenceManager
 new Debugger().debug()									File				DebugInfo
+
+Client usage of these methods includes: Classes with "main" method, test code, and GUI.

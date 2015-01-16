@@ -101,7 +101,15 @@ public class LexerEnv {
 		 * Check the state
 		 */
 		if (trueBranchEnv.lexicalState != falseBranchEnv.lexicalState) {
-			MyLogger.log(MyLevel.USER_EXCEPTION, "In LexerEnv.java: Lexer ends up in different states after branches: " +
+			if (trueBranchEnv.lexicalState == Lexer.ATTR_NAME && falseBranchEnv.lexicalState == Lexer.EQ
+					|| trueBranchEnv.lexicalState == Lexer.EQ && falseBranchEnv.lexicalState == Lexer.ATTR_NAME) {
+				// Certain attribute names need not have attribute values,
+				// for example: selected, checked, disabled as in <input type="text" #if (C) disabled #else #endif />
+				// Therefore, if one branch is expecting an EQ and the other branch is expecting an ATTR_NAME, 
+				// then this is not an error.
+			}
+			else
+				MyLogger.log(MyLevel.USER_EXCEPTION, "In LexerEnv.java: Lexer ends up in different states after branches: " +
 														"before=" + Lexer.getState(this.lexicalState) + "; true=" + Lexer.getState(trueBranchEnv.lexicalState)  + " vs. false=" + Lexer.getState(falseBranchEnv.lexicalState) +
 														" | Last token: " +
 														"before=" + getLastTokenInLexResult(this.lexResult) + "; true=" + getLastTokenInLexResult(trueBranchEnv.lexResult) + " vs. false=" + getLastTokenInLexResult(falseBranchEnv.lexResult));
@@ -131,6 +139,13 @@ public class LexerEnv {
 		 */
 		setLexicalState(falseBranchEnv.getLexcicalState());
 		setCurrentOpenTag(falseBranchEnv.getCurrentOpenTag());
+		
+		// Handle this special case when certain attribute names need not have attribute values,
+		// for example: selected, checked, disabled as in <input type="text" #if (C) disabled #else #endif />
+		if (trueBranchEnv.lexicalState == Lexer.ATTR_NAME && falseBranchEnv.lexicalState == Lexer.EQ
+				|| trueBranchEnv.lexicalState == Lexer.EQ && falseBranchEnv.lexicalState == Lexer.ATTR_NAME) {
+			setLexicalState(Lexer.ATTR_NAME);
+		}
 	}
 	
 	/*

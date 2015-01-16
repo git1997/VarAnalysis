@@ -160,12 +160,16 @@ public class SaxParserEnv {
 		/*
 		 * Check the state
 		 */
-		if (trueBranchEnv.isInsideOpenTag() != falseBranchEnv.isInsideOpenTag()) {
-			// If both branches are outside an open tag, it doesn't matter if one is OUTSIDE_TEXT and the other is INSIDE_TEXT.
-			// E.g., <div>#if ($C) 'abc' #else '' #endif, then the state after the true branch is INSIDE_TEXT and the state after the false branch is OUTSIDE_TEXT.
-			// This is not an error. The distinction between these two states only serves to eliminate empty texts between open tags 
-			// (see HtmlSaxParser.parse(HtmlToken, SaxParserEnv). 
-			MyLogger.log(MyLevel.USER_EXCEPTION, "In SaxParserEnv.java: SaxParser ends up in different states after branches: " +
+		if (trueBranchEnv.parsingState != falseBranchEnv.parsingState) {
+			if (trueBranchEnv.parsingState == ParsingState.INSIDE_TEXT && falseBranchEnv.parsingState == ParsingState.OUTSIDE_TEXT
+					|| trueBranchEnv.parsingState == ParsingState.OUTSIDE_TEXT && falseBranchEnv.parsingState == ParsingState.INSIDE_TEXT) {
+				// If both branches are outside an open tag, it doesn't matter if one is OUTSIDE_TEXT and the other is INSIDE_TEXT.
+				// E.g., <div>#if ($C) 'abc' #else '' #endif, then the state after the true branch is INSIDE_TEXT and the state after the false branch is OUTSIDE_TEXT.
+				// This is not an error. The distinction between these two states only serves to eliminate empty texts between open tags 
+				// (see HtmlSaxParser.parse(HtmlToken, SaxParserEnv).
+			}
+			else 
+				MyLogger.log(MyLevel.USER_EXCEPTION, "In SaxParserEnv.java: SaxParser ends up in different states after branches: " +
 														"before=" + this.parsingState + "; true=" + trueBranchEnv.parsingState + " vs. false=" + falseBranchEnv.parsingState + 
 														" | Last SaxNode: " + 
 														"before=" + getLastSaxNodeInParseResult(this.parseResult) + "; true=" + getLastSaxNodeInParseResult(trueBranchEnv.parseResult) + " vs. false=" + getLastSaxNodeInParseResult(falseBranchEnv.parseResult));
@@ -262,7 +266,8 @@ public class SaxParserEnv {
 		setParsingState(falseBranchEnv.getParsingState());
 		
 		// Handle this special case when both branches are outside an open tag, and one of them is inside text (e.g., <div>#if ($C) 'abc' #else '' #endif)
-		if (!falseBranchEnv.isInsideOpenTag() && trueBranchEnv.isInsideText()) {
+		if (trueBranchEnv.parsingState == ParsingState.INSIDE_TEXT && falseBranchEnv.parsingState == ParsingState.OUTSIDE_TEXT
+				|| trueBranchEnv.parsingState == ParsingState.OUTSIDE_TEXT && falseBranchEnv.parsingState == ParsingState.INSIDE_TEXT) {
 			setParsingState(ParsingState.INSIDE_TEXT);
 		}
 	}

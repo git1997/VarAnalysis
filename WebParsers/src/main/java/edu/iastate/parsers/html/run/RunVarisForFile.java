@@ -18,7 +18,8 @@ public class RunVarisForFile {
 	/**
 	 * PHP file to test
 	 */	
-	public static String PHP_FILE = "/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/index.php";
+	public static String PHP_FILE = //"/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/index.php";
+									"/Work/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
 
 	/**
 	 * The entry point of the program
