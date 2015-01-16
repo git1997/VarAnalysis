@@ -1,149 +1,205 @@
 package edu.iastate.symex.ui.views;
 
 import java.io.File;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.viewers.TreeViewer;
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
-import edu.iastate.symex.ui.UIHelper;
 import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
+import edu.iastate.symex.datamodel.nodes.ConcatNode;
+import edu.iastate.symex.datamodel.nodes.LiteralNode;
+import edu.iastate.symex.datamodel.nodes.RepeatNode;
+import edu.iastate.symex.datamodel.nodes.SelectNode;
+import edu.iastate.symex.datamodel.nodes.SymbolicNode;
+import edu.iastate.symex.position.PositionRange;
+import edu.iastate.symex.position.Range;
+import edu.iastate.symex.ui.UIHelper;
+import edu.iastate.ui.views.GenericTreeViewer;
+import edu.iastate.ui.views.GenericView;
+import edu.iastate.ui.views.ITreeViewer;
 
 /**
  * 
  * @author HUNG
  *
  */
-public class DataModelView extends ViewPart {
-
-	/*
-	 * DataModelView controls
-	 */
-	private Label filePathLabel;
+public class DataModelView extends GenericView implements ITreeViewer {
 	
-	private Button runSymexButton;
-	
-	private TreeViewer dataModelTreeViewer;
-
-	private StyledText dataModelStyledText;
+	private GenericTreeViewer treeViewer;
+	private StyledText styledText;
 	
 	/**
-	 * Main method to test the user interface.
+	 * Constructor
 	 */
-	public static void main(String[] args) {
-		Display display = new Display();
-		Shell shell = new Shell(display);
-		shell.setSize(1000, 250);
-		DataModelView dataModelView = new DataModelView();
-		dataModelView.createPartControl(shell);
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
+	public DataModelView() {
+		super(1, 2);
+	}
+	
+	@Override
+	public Button createButton(Composite parent, int buttonNumber) {
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText("Run Symex");
+		return button;
+	}
+	
+	@Override
+	public Control createTabControl(TabFolder tabFolder, TabItem tabItem, int tabNumber) {
+		if (tabNumber == 0) {
+			tabItem.setText("Tree");
+			treeViewer = new GenericTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION, this);
+			return treeViewer.getControl();
 		}
-		display.dispose();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
-	@Override
-	public void setFocus() {
-		dataModelTreeViewer.getControl().setFocus();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
-	@Override
-	public void createPartControl(Composite parent) {
-		parent.setLayout(new GridLayout(2, false));
-		
-		filePathLabel = new Label(parent, SWT.NONE);
-		filePathLabel.setText("");
-		filePathLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		
-		runSymexButton = new Button(parent, SWT.PUSH);
-	    runSymexButton.setText("Run Symex");
-	    runSymexButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
-	    
-		TabFolder tabFolder = new TabFolder(parent, SWT.BORDER);
-		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,	1));
-
-		dataModelTreeViewer = new DataModelTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
-		
-		TabItem tabItem1 = new TabItem(tabFolder, SWT.NONE);
-		tabItem1.setText("Tree");
-		tabItem1.setControl(dataModelTreeViewer.getControl());
-		
-		dataModelStyledText = new StyledText(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		dataModelStyledText.setText("");
-		//dataModelStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
-		tabItem2.setText("Text");
-		tabItem2.setControl(dataModelStyledText);
-		
-	    // Event handling
-	    // --------------
-	    registerEventHandlers();
-	}
-	
-	/**
-	 * Registers event handlers
-	 */
-	private void registerEventHandlers() {
-	    runSymexButton.addSelectionListener(new SelectionListener() {
-	    	
-	    	@Override
-	    	public void widgetSelected(SelectionEvent event) {
-	    		runSymexButtonClicked();
-	    	}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				runSymexButtonClicked();
-			}
-    	});
-	}
-	
-	/**
-	 * Invoked when the RunSymex button is clicked.
-	 */
-	private void runSymexButtonClicked() {
-		UIHelper.saveAllEditors();
-		if (UIHelper.getActiveEditor() != null) {
-			IFile file = UIHelper.getActiveEditorFile();
-			runSymexAndShowResults(UIHelper.iFileToFile(file));
+		else {
+			tabItem.setText("Text");
+			styledText = new StyledText(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+			return styledText;
 		}
 	}
 	
-	/**
-	 * Run Symex and show results 
-	 */
-	private void runSymexAndShowResults(File file) {
+	@Override
+	public void buttonClicked(File file, int buttonNumber) {
 		DataModel dataModel = new PhpExecuter().execute(file);
 		
-		filePathLabel.setText(file.getAbsolutePath());
-		dataModelTreeViewer.setInput(dataModel);
-		dataModelTreeViewer.expandToLevel(2);
-		dataModelStyledText.setText(dataModel.toIfdefString());
+		treeViewer.setInput(dataModel);
+		treeViewer.expandToLevel(2);
+		styledText.setText(dataModel.toIfdefString());
+	}
+	
+	@Override
+	public Object[] getRootNodes(Object input) {
+		DataModel dataModel = (DataModel) input;
+		return new Object[]{dataModel.getRoot()};
+	}
+
+	@Override
+	public Object[] getChildren(Object element) {
+		ArrayList<Object> children = new ArrayList<Object>();
+		
+		if (element instanceof ConcatNode) {
+			children.addAll(((ConcatNode) element).getChildNodes());
+		}
+		
+		else if (element instanceof SelectNode) {
+			SelectNode selectNode = (SelectNode) element;
+			children.add(new SelectChildNode(selectNode.getNodeInTrueBranch(), true));
+			children.add(new SelectChildNode(selectNode.getNodeInFalseBranch(), false));
+		}
+		
+		else if (element instanceof SelectChildNode) {
+			children.add(((SelectChildNode) element).getChildNode());
+		}
+		
+		else if (element instanceof RepeatNode) {
+			children.add(((RepeatNode) element).getChildNode());
+		}
+		
+		else if (element instanceof SymbolicNode) {
+			if (((SymbolicNode) element).getParentNode() != null)
+				children.add(((SymbolicNode) element).getParentNode());
+		}
+		
+		else {
+			// Other nodes have no children.
+		}
+		
+		return children.toArray(new Object[]{});
+	}
+	
+	/**
+	 * SelectChildNode represents a branch of a SelectNode.
+	 */
+	private class SelectChildNode {
+		
+		private Object childNode;
+		private boolean isTrueBranch;
+		
+		public SelectChildNode(Object childNode, boolean isTrueBranch) {
+			this.childNode = childNode;
+			this.isTrueBranch = isTrueBranch;
+		}
+		
+		public Object getChildNode() {
+			return childNode;
+		}
+		
+		public boolean isTrueBranch() {
+			return isTrueBranch;
+		}
+
+	}
+	
+	@Override
+	public String getTreeNodeLabel(Object element) {
+		if (element instanceof SelectChildNode)
+			return (((SelectChildNode) element).isTrueBranch() ? "True" : "False");
+		else
+			return element.getClass().getSimpleName().replace("Node", "");
+	}
+	
+	@Override
+	public Image getTreeNodeIcon(Object element) {
+		// http://shinych.blogspot.com/2007/05/eclipse-shared-images.html
+		String imageID;
+		
+		if (element instanceof ConcatNode)
+			imageID = ISharedImages.IMG_OBJ_FOLDER;
+		
+		else if (element instanceof SelectNode)
+			imageID = ISharedImages.IMG_TOOL_CUT;
+		
+		else if (element instanceof SelectChildNode)
+			imageID = ISharedImages.IMG_TOOL_FORWARD;
+		
+		else if (element instanceof RepeatNode)
+			imageID = ISharedImages.IMG_TOOL_REDO;
+		
+		else if (element instanceof SymbolicNode)
+			imageID = ISharedImages.IMG_OBJS_WARN_TSK;
+		
+		else
+			imageID = ISharedImages.IMG_OBJ_FILE;
+		
+		return PlatformUI.getWorkbench().getSharedImages().getImage(imageID);
+	}
+	
+	@Override
+	public String getTreeNodeDescription(Object element) {
+		if (element instanceof SelectNode)
+			return (((SelectNode) element).getConstraint() != null ? ((SelectNode) element).getConstraint().toDebugString() : "");
+		
+		else if (element instanceof SymbolicNode)
+			return (((SymbolicNode) element).getPhpNode() != null ? ((SymbolicNode) element).getPhpNode().getSourceCode() : "");
+		
+		else if (element instanceof LiteralNode)
+			return UIHelper.standardizeText(((LiteralNode) element).getStringValue());
+		
+		else
+			return "";
+	}
+	
+	@Override
+	public PositionRange getTreeNodeLocation(Object element) {
+		if (element instanceof SelectNode)
+			return (((SelectNode) element).getConstraint() != null ? ((SelectNode) element).getConstraint().getLocation() : Range.UNDEFINED);
+		
+		else if (element instanceof SymbolicNode)
+			return (((SymbolicNode) element).getPhpNode() != null ? ((SymbolicNode) element).getPhpNode().getLocation() : Range.UNDEFINED);
+		
+		else if (element instanceof LiteralNode)
+			return ((LiteralNode) element).getLocation();
+		
+		else
+			return Range.UNDEFINED;
 	}
 	
 }

@@ -21,6 +21,13 @@
             id="edu.iastate.symex.ui.views.DataModelView"
             name="Symbolic Output">
       </view>
+      <view
+            category="edu.iastate.symex.category.symex"
+            class="edu.iastate.symex.ui.views.DebuggerView"
+            icon="src/main/resources/icons/sample.gif"
+            id="edu.iastate.symex.ui.views.DebuggerView"
+            name="Symex Debugger">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

@@ -1,4 +1,4 @@
-package edu.iastate.symex.ui.views;
+package edu.iastate.ui.views;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -12,7 +12,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.Range;
 import edu.iastate.symex.ui.UIHelper;
 
@@ -21,10 +20,14 @@ import edu.iastate.symex.ui.UIHelper;
  * @author HUNG
  *
  */
-public abstract class GenericTreeViewer extends TreeViewer {
+public class GenericTreeViewer extends TreeViewer {
 	
-	public GenericTreeViewer(Composite parent, int style) {
+	private ITreeViewer treeViewerImpl;
+	
+	public GenericTreeViewer(Composite parent, int style, final ITreeViewer treeViewerImpl) {
 		super(parent, style);
+		
+		this.treeViewerImpl = treeViewerImpl;
 		
 		/*
 		 * Layout
@@ -49,7 +52,7 @@ public abstract class GenericTreeViewer extends TreeViewer {
 		/*
 		 * Content provider
 		 */
-		setContentProvider(new MyContentProvider(this));
+		setContentProvider(new MyContentProvider());
 		setInput(null);
 		
 		/*
@@ -61,11 +64,11 @@ public abstract class GenericTreeViewer extends TreeViewer {
 		column.setLabelProvider(new ColumnLabelProvider() {
 			
 			public String getText(Object element) {
-				return getTreeNodeLabel(element);
+				return treeViewerImpl.getTreeNodeLabel(element);
 			}
 			
 			public Image getImage(Object element) {
-				return getTreeNodeIcon(element);
+				return treeViewerImpl.getTreeNodeIcon(element);
 			}
 		});
 		
@@ -75,7 +78,7 @@ public abstract class GenericTreeViewer extends TreeViewer {
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
-				return getTreeNodeDescription(element);
+				return treeViewerImpl.getTreeNodeDescription(element);
 			}
 		});
 		
@@ -85,7 +88,8 @@ public abstract class GenericTreeViewer extends TreeViewer {
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
-				return getTreeNodeFilePath(element);
+				Range range = treeViewerImpl.getTreeNodeLocation(element).getRanges().get(0);
+				return range.isUndefined() ? "" : UIHelper.standardizeFilePath(range.getFilePath());
 			}
 		});
 		
@@ -95,7 +99,8 @@ public abstract class GenericTreeViewer extends TreeViewer {
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
-				return getTreeNodeLineRange(element);
+				Range range = treeViewerImpl.getTreeNodeLocation(element).getRanges().get(0);
+				return range.isUndefined() ? "" : (String.valueOf(range.getStartPosition().getLine()) + "-" + String.valueOf(range.getEndPosition().getLine()));
 			}
 		});
 		
@@ -105,7 +110,8 @@ public abstract class GenericTreeViewer extends TreeViewer {
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
-				return getTreeNodeOffsetRange(element);
+				Range range = treeViewerImpl.getTreeNodeLocation(element).getRanges().get(0);
+				return range.isUndefined() ? "" : (String.valueOf(range.getOffset()) + "-" + String.valueOf(range.getOffset() + range.getLength() - 1));
 			}
 		});
 	}
@@ -115,7 +121,7 @@ public abstract class GenericTreeViewer extends TreeViewer {
 	 */
 	
 	public void treeNodeSelected(Object element) {
-		Range range = getTreeNodePositionFirstRange(element);
+		Range range = treeViewerImpl.getTreeNodeLocation(element).getRanges().get(0);
 		if (!range.isUndefined()) {
 			UIHelper.selectAndReveal(range.getFile(), range.getOffset(), range.getLength());
 			getControl().setFocus();
@@ -127,14 +133,27 @@ public abstract class GenericTreeViewer extends TreeViewer {
 	 */
 	
 	private class MyContentProvider implements ITreeContentProvider {
-		
-		private GenericTreeViewer treeViewer;
-		//private HashMap<Object, Object> childToParentMap = new HashMap<Object, Object>();
-		
-		public MyContentProvider(GenericTreeViewer treeViewer) {
-			this.treeViewer = treeViewer;
+
+		@Override
+		public Object[] getElements(Object arg0) {
+			return treeViewerImpl.getRootNodes(arg0);
 		}
 
+		@Override
+		public Object[] getChildren(Object arg0) {
+			return treeViewerImpl.getChildren(arg0);
+		}
+
+		@Override
+		public boolean hasChildren(Object arg0) {
+			return getChildren(arg0).length > 0;
+		}
+
+		@Override
+		public Object getParent(Object arg0) {
+			return null;
+		}
+		
 		@Override
 		public void dispose() {
 		}
@@ -142,73 +161,12 @@ public abstract class GenericTreeViewer extends TreeViewer {
 		@Override
 		public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
 		}
-
-		@Override
-		public Object[] getChildren(Object arg0) {
-			Object[] children = treeViewer.getChildren(arg0);
-			//for (Object child : children)
-			//	childToParentMap.put(arg0, child);
-			return children;
-		}
-
-		@Override
-		public Object[] getElements(Object arg0) {
-			return treeViewer.getRootNodes(arg0);
-		}
-
-		@Override
-		public Object getParent(Object arg0) {
-			return null; //childToParentMap.get(arg0);
-		}
-
-		@Override
-		public boolean hasChildren(Object arg0) {
-			return getChildren(arg0).length > 0;
-		}
 		
-	}
-	
-	public abstract Object[] getRootNodes(Object input);
-	
-	public abstract Object[] getChildren(Object element);
-	
-	/*
-	 * Label provider
-	 */
-	
-	public abstract String getTreeNodeLabel(Object element);
-	
-	public abstract Image getTreeNodeIcon(Object element);
-	
-	public abstract String getTreeNodeDescription(Object element);
-	
-	public String getTreeNodeFilePath(Object element) {
-		Range range = getTreeNodePositionFirstRange(element);
-		return range.isUndefined() ? "" : UIHelper.standardizeFilePath(range.getFilePath());
-	}
-	
-	public String getTreeNodeLineRange(Object element) {
-		Range range = getTreeNodePositionFirstRange(element);
-		return range.isUndefined() ? "" : (String.valueOf(range.getStartPosition().getLine()) + "-" + String.valueOf(range.getEndPosition().getLine()));
-	}
-	
-	public String getTreeNodeOffsetRange(Object element) {
-		Range range = getTreeNodePositionFirstRange(element);
-		return range.isUndefined() ? "" : (String.valueOf(range.getOffset()) + "-" + String.valueOf(range.getOffset() + range.getLength() - 1));
-	}
-	
-	/*
-	 * Other methods
-	 */
-	
-	public abstract PositionRange getTreeNodePositionRange(Object element);
-	
-	public Range getTreeNodePositionFirstRange(Object element) {
-		return getTreeNodePositionRange(element).getRanges().get(0);
 	}
 	
 	/**
 	 * This class is used to wrap around the root of a tree.
+	 * This is a work-around for the fact that the argument to ITreeContentProvider.gelElements() must not be a node in the tree.
 	 */
 	public static class TreeInput {
 		

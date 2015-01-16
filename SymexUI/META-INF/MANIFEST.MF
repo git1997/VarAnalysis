@@ -14,4 +14,5 @@ Import-Package: org.eclipse.core.resources,
  org.eclipse.ui.texteditor
 Bundle-Activator: edu.iastate.symex.ui.Activator
 Export-Package: edu.iastate.symex.ui,
- edu.iastate.symex.ui.views
+ edu.iastate.symex.ui.views,
+ edu.iastate.ui.views
