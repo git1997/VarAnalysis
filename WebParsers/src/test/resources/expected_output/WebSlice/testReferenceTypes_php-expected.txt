@@ -2,6 +2,7 @@ x (PhpVariableDecl) @ testReferenceTypes.php:Line2:Offset8
 	<- input2 (PhpRefToHtml) @ testReferenceTypes.php:Line2:Offset20
 input2 (PhpRefToHtml) @ testReferenceTypes.php:Line2:Offset20
 	<- value (JsDeclOfHtmlInputValue) @ testReferenceTypes.php:Line25:Offset428
+	<- input2 (HtmlInputDecl) @ testReferenceTypes.php:Line40:Offset678
 	<- value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line40:Offset686
 	<- value (HtmlDeclOfHtmlInputValue) @ testReferenceTypes.php:Line40:Offset686
 y (PhpVariableDecl) @ testReferenceTypes.php:Line3:Offset31

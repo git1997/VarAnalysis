@@ -25,7 +25,9 @@ input1 (HtmlInputDecl) @ testGenInfoFlow.php:Line15:Offset192
 value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line15:Offset200
 	<- input1 (PhpRefToHtml) @ testGenInfoFlow.php:Line15:Offset225
 input1 (PhpRefToHtml) @ testGenInfoFlow.php:Line15:Offset225
+	<- input1 (HtmlInputDecl) @ testGenInfoFlow.php:Line15:Offset192
 	<- value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line15:Offset200
+	<- input1 (HtmlInputDecl) @ testGenInfoFlow.php:Line16:Offset255
 	<- value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line16:Offset263
 input1 (HtmlInputDecl) @ testGenInfoFlow.php:Line16:Offset255
 value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line16:Offset263
