@@ -3,7 +3,6 @@ package edu.iastate.parsers.ui.views;
 import java.util.ArrayList;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -15,18 +14,15 @@ import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.Range;
-import edu.iastate.symex.ui.views.GenericTreeViewer;
+import edu.iastate.ui.views.GenericTreeViewer;
+import edu.iastate.ui.views.ITreeViewer;
 
 /**
  * 
  * @author HUNG
  *
  */
-public class LexResultTreeViewer extends GenericTreeViewer {
-	
-	public LexResultTreeViewer(Composite parent, int style) {
-		super(parent, style);
-	}
+public class LexResultTreeViewer implements ITreeViewer {
 	
 	@Override
 	public Object[] getRootNodes(Object input) {
@@ -110,7 +106,7 @@ public class LexResultTreeViewer extends GenericTreeViewer {
 	}
 
 	@Override
-	public PositionRange getTreeNodePositionRange(Object element) {
+	public PositionRange getTreeNodeLocation(Object element) {
 		if (element instanceof CondListItem<?>) {
 			HtmlToken item = (HtmlToken) ((CondListItem<?>) element).getItem();
 			return item.getLocation();

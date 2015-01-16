@@ -6,26 +6,22 @@ import java.util.List;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.nodes.StructuralPropertyDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.Range;
-import edu.iastate.symex.ui.views.GenericTreeViewer;
+import edu.iastate.ui.views.GenericTreeViewer;
+import edu.iastate.ui.views.ITreeViewer;
 
 /**
  * 
  * @author HUNG
  *
  */
-public class PhpAstTreeViewer extends GenericTreeViewer {
+public class PhpAstTreeViewer implements ITreeViewer {
 
-	public PhpAstTreeViewer(Composite parent, int style) {
-		super(parent, style);
-	}
-	
 	@Override
 	public Object[] getRootNodes(Object input) {
 		return new Object[]{ ((GenericTreeViewer.TreeInput) input).getRoot() };
@@ -106,7 +102,7 @@ public class PhpAstTreeViewer extends GenericTreeViewer {
 	}
 
 	@Override
-	public PositionRange getTreeNodePositionRange(Object element) {
+	public PositionRange getTreeNodeLocation(Object element) {
 		if (element instanceof ASTNode) {
 			return new Range(UIHelper.iFileToFile(UIHelper.getActiveEditorFile()), ((ASTNode) element).getStart(), ((ASTNode) element).getLength());
 		}

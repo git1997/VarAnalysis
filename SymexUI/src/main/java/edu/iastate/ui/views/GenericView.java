@@ -137,12 +137,12 @@ public class GenericView extends ViewPart {
 	    	
 				@Override
 				public void widgetSelected(SelectionEvent event) {
-					buttonClicked(buttons.indexOf(buttonNumber));
+					buttonClicked(buttonNumber);
 				}
 
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
-					buttonClicked(buttons.indexOf(buttonNumber));
+					buttonClicked(buttonNumber);
 				}
 			});
 		}

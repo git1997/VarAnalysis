@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.wst.jsdt.core.dom.ASTNode;
@@ -13,19 +12,16 @@ import org.eclipse.wst.jsdt.core.dom.StructuralPropertyDescriptor;
 import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.Range;
-import edu.iastate.symex.ui.views.GenericTreeViewer;
+import edu.iastate.ui.views.GenericTreeViewer;
+import edu.iastate.ui.views.ITreeViewer;
 
 /**
  * 
  * @author HUNG
  *
  */
-public class JsAstTreeViewer extends GenericTreeViewer {
+public class JsAstTreeViewer implements ITreeViewer {
 
-	public JsAstTreeViewer(Composite parent, int style) {
-		super(parent, style);
-	}
-	
 	@Override
 	public Object[] getRootNodes(Object input) {
 		return new Object[]{ ((GenericTreeViewer.TreeInput) input).getRoot() };
@@ -106,7 +102,7 @@ public class JsAstTreeViewer extends GenericTreeViewer {
 	}
 
 	@Override
-	public PositionRange getTreeNodePositionRange(Object element) {
+	public PositionRange getTreeNodeLocation(Object element) {
 		if (element instanceof ASTNode) {
 			return new Range(UIHelper.iFileToFile(UIHelper.getActiveEditorFile()), ((ASTNode) element).getStartPosition(), ((ASTNode) element).getLength());
 		}

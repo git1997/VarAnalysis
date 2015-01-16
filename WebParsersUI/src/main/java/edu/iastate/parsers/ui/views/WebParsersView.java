@@ -1,23 +1,14 @@
 package edu.iastate.parsers.ui.views;
 
 import java.io.File;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.part.ViewPart;
-
 import edu.iastate.parsers.conditional.CondList;
 import edu.iastate.parsers.html.core.PhpExecuterAndParser;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
@@ -25,229 +16,92 @@ import edu.iastate.parsers.html.generatedlexer.HtmlToken;
 import edu.iastate.parsers.html.htmlparser.DataModelToHtmlTokens;
 import edu.iastate.parsers.html.htmlparser.HtmlTokensToSaxNodes;
 import edu.iastate.parsers.html.sax.nodes.HtmlSaxNode;
-import edu.iastate.parsers.ui.UIHelper;
-import edu.iastate.symex.ui.views.GenericTreeViewer;
 import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
+import edu.iastate.ui.views.GenericTreeViewer;
+import edu.iastate.ui.views.GenericView;
 
 /**
  * 
  * @author HUNG
  *
  */
-public class WebParsersView extends ViewPart {
+public class WebParsersView extends GenericView {
 
-	/*
-	 * WebParsersView controls
-	 */
-	private Label filePathLabel;
-	
-	private Button runLexerButton, runSaxParserButton, runDomParserButton;
-	
-	private TabFolder tabFolder;
-	
 	private TreeViewer lexResultTreeViewer, saxResultTreeViewer, domResultTreeViewer;
 
 	private StyledText domStyledText;
 	
 	/**
-	 * Main method to test the user interface.
+	 * Constructor
 	 */
-	public static void main(String[] args) {
-		Display display = new Display();
-		Shell shell = new Shell(display);
-		shell.setSize(1000, 250);
-		WebParsersView dataModelView = new WebParsersView();
-		dataModelView.createPartControl(shell);
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		display.dispose();
+	public WebParsersView() {
+		super(3, 4);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
 	@Override
-	public void setFocus() {
-		lexResultTreeViewer.getControl().setFocus();
+	public Button createButton(Composite parent, int buttonNumber) {
+		Button button = new Button(parent, SWT.PUSH);
+		if (buttonNumber == 0)
+			button.setText("Run Lexer");
+		else if (buttonNumber == 1)
+			button.setText("Run SaxParser");
+		else 
+			button.setText("Run DomParser");
+		return button;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
-	public void createPartControl(Composite parent) {
-		parent.setLayout(new GridLayout(4, false));
-		
-		filePathLabel = new Label(parent, SWT.NONE);
-		filePathLabel.setText("");
-		filePathLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		
-		runLexerButton = new Button(parent, SWT.PUSH);
-	    runLexerButton.setText("Run Lexer");
-	    runLexerButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
-	    
-	    runSaxParserButton = new Button(parent, SWT.PUSH);
-	    runSaxParserButton.setText("Run SaxParser");
-	    runSaxParserButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
-	    
-	    runDomParserButton = new Button(parent, SWT.PUSH);
-	    runDomParserButton.setText("Run DomParser");
-	    runDomParserButton.setLayoutData(new GridData(SWT.RIGHT, SWT.TOP, false, false));
-	    
-		tabFolder = new TabFolder(parent, SWT.BORDER);
-		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4,	1));
-
-		lexResultTreeViewer = new LexResultTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
-		saxResultTreeViewer = new SaxResultTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
-		domResultTreeViewer = new DomResultTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
-		
-		TabItem tabItem1 = new TabItem(tabFolder, SWT.NONE);
-		tabItem1.setText("Lex Result");
-		tabItem1.setControl(lexResultTreeViewer.getControl());
-		
-		TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
-		tabItem2.setText("Sax Result");
-		tabItem2.setControl(saxResultTreeViewer.getControl());
-		
-		TabItem tabItem3 = new TabItem(tabFolder, SWT.NONE);
-		tabItem3.setText("Dom Result");
-		tabItem3.setControl(domResultTreeViewer.getControl());
-		
-		domStyledText = new StyledText(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		domStyledText.setText("");
-		//domStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		TabItem tabItem4 = new TabItem(tabFolder, SWT.NONE);
-		tabItem4.setText("Dom (Text)");
-		tabItem4.setControl(domStyledText);
-		
-	    // Event handling
-	    // --------------
-	    registerEventHandlers();
-	}
-	
-	/**
-	 * Registers event handlers
-	 */
-	private void registerEventHandlers() {
-	    runLexerButton.addSelectionListener(new SelectionListener() {
-	    	
-	    	@Override
-	    	public void widgetSelected(SelectionEvent event) {
-	    		runLexerButtonClicked();
-	    	}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				runLexerButtonClicked();
-			}
-    	});
-	    
-	    runSaxParserButton.addSelectionListener(new SelectionListener() {
-	    	
-	    	@Override
-	    	public void widgetSelected(SelectionEvent event) {
-	    		runSaxParserButtonClicked();
-	    	}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				runSaxParserButtonClicked();
-			}
-    	});
-	    
-	    runDomParserButton.addSelectionListener(new SelectionListener() {
-	    	
-	    	@Override
-	    	public void widgetSelected(SelectionEvent event) {
-	    		runDomParserButtonClicked();
-	    	}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				runDomParserButtonClicked();
-			}
-    	});
-	}
-	
-	/**
-	 * Invoked when the RunLexer button is clicked.
-	 */
-	private void runLexerButtonClicked() {
-		UIHelper.saveAllEditors();
-		if (UIHelper.getActiveEditor() != null) {
-			IFile file = UIHelper.getActiveEditorFile();
-			runLexerAndShowResults(UIHelper.iFileToFile(file));
+	public Control createTabControl(TabFolder tabFolder, TabItem tabItem, int tabNumber) {
+		if (tabNumber == 0) {
+			tabItem.setText("Lex Result");
+			lexResultTreeViewer = new GenericTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION, new LexResultTreeViewer());
+			return lexResultTreeViewer.getControl();
+		}
+		else if (tabNumber == 1) {
+			tabItem.setText("Sax Result");
+			saxResultTreeViewer = new GenericTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION, new SaxResultTreeViewer());
+			return saxResultTreeViewer.getControl();
+		}
+		else if (tabNumber == 2){
+			tabItem.setText("Dom Result");
+			domResultTreeViewer = new GenericTreeViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION, new DomResultTreeViewer());
+			return domResultTreeViewer.getControl();
+		}
+		else {
+			tabItem.setText("Dom (Text)");
+			domStyledText = new StyledText(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+			return domStyledText;
 		}
 	}
 	
-	/**
-	 * Invoked when the RunSaxParser button is clicked.
-	 */
-	private void runSaxParserButtonClicked() {
-		UIHelper.saveAllEditors();
-		if (UIHelper.getActiveEditor() != null) {
-			IFile file = UIHelper.getActiveEditorFile();
-			runSaxParserAndShowResults(UIHelper.iFileToFile(file));
+	@Override
+	public void buttonClicked(File file, int buttonNumber) {
+		if (buttonNumber == 0) {
+			DataModel dataModel = new PhpExecuter().execute(file);
+			CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
+		
+			lexResultTreeViewer.setInput(new GenericTreeViewer.TreeInput(lexResult));
+			lexResultTreeViewer.expandToLevel(2);
+			tabFolder.setSelection(0);
 		}
-	}
-	
-	/**
-	 * Invoked when the RunDomParser button is clicked.
-	 */
-	private void runDomParserButtonClicked() {
-		UIHelper.saveAllEditors();
-		if (UIHelper.getActiveEditor() != null) {
-			IFile file = UIHelper.getActiveEditorFile();
-			runDomParserAndShowResults(UIHelper.iFileToFile(file));
+		else if (buttonNumber == 1) {
+			DataModel dataModel = new PhpExecuter().execute(file);
+			CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
+			CondList<HtmlSaxNode> saxResult = new HtmlTokensToSaxNodes().parse(lexResult);
+		
+			saxResultTreeViewer.setInput(new GenericTreeViewer.TreeInput(saxResult));
+			saxResultTreeViewer.expandToLevel(2);
+			tabFolder.setSelection(1);
 		}
-	}
-	
-	/**
-	 * Run Lexer and show results 
-	 */
-	private void runLexerAndShowResults(File file) {
-		DataModel dataModel = new PhpExecuter().execute(file);
-		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
+		else {
+			HtmlDocument domResult = new PhpExecuterAndParser().executeAndParse(file);
 		
-		filePathLabel.setText(file.getAbsolutePath());
-		lexResultTreeViewer.setInput(new GenericTreeViewer.TreeInput(lexResult));
-		lexResultTreeViewer.expandToLevel(2);
-		tabFolder.setSelection(0);
-	}
-	
-	/**
-	 * Run SaxParser and show results 
-	 */
-	private void runSaxParserAndShowResults(File file) {
-		DataModel dataModel = new PhpExecuter().execute(file);
-		CondList<HtmlToken> lexResult = new DataModelToHtmlTokens().lex(dataModel);
-		CondList<HtmlSaxNode> saxResult = new HtmlTokensToSaxNodes().parse(lexResult);
-		
-		filePathLabel.setText(file.getAbsolutePath());
-		saxResultTreeViewer.setInput(new GenericTreeViewer.TreeInput(saxResult));
-		saxResultTreeViewer.expandToLevel(2);
-		tabFolder.setSelection(1);
-	}
-	
-	/**
-	 * Run DomParser and show results 
-	 */
-	private void runDomParserAndShowResults(File file) {
-		HtmlDocument domResult = new PhpExecuterAndParser().executeAndParse(file);
-		
-		filePathLabel.setText(file.getAbsolutePath());
-		domResultTreeViewer.setInput(domResult);
-		domResultTreeViewer.expandToLevel(2);
-		tabFolder.setSelection(2);
-		domStyledText.setText(domResult.toIfdefString());
+			domResultTreeViewer.setInput(domResult);
+			domResultTreeViewer.expandToLevel(2);
+			tabFolder.setSelection(2);
+			domStyledText.setText(domResult.toIfdefString());
+		}
 	}
 	
 }

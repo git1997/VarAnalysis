@@ -24,6 +24,16 @@ public class GenericTreeViewer extends TreeViewer {
 	
 	private ITreeViewer treeViewerImpl;
 	
+	public ITreeViewer getTreeViewerImpl() {
+		return treeViewerImpl;
+	}
+	
+	/**
+	 * Constructor
+	 * @param parent
+	 * @param style
+	 * @param treeViewerImpl
+	 */
 	public GenericTreeViewer(Composite parent, int style, final ITreeViewer treeViewerImpl) {
 		super(parent, style);
 		

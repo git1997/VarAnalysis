@@ -3,7 +3,6 @@ package edu.iastate.parsers.ui.views;
 import java.util.ArrayList;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -11,26 +10,29 @@ import edu.iastate.analysis.references.Reference;
 import edu.iastate.analysis.references.detection.ReferenceManager;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.Range;
-import edu.iastate.symex.ui.views.GenericTreeViewer;
+import edu.iastate.ui.views.ITreeViewer;
 
 /**
  * 
  * @author HUNG
  *
  */
-public class AnalysisResultTreeViewer extends GenericTreeViewer {
+public class AnalysisResultTreeViewer implements ITreeViewer {
 	
 	private boolean forwardSliceEnabled;
+	
 	private ReferenceManager referenceManager = null;
 	
-	public AnalysisResultTreeViewer(Composite parent, int style, boolean forwardSlice) {
-		super(parent, style);
+	/**
+	 * Constructor
+	 * @param forwardSlice
+	 */
+	public AnalysisResultTreeViewer(boolean forwardSlice) {
 		this.forwardSliceEnabled = forwardSlice;
 	}
 	
-	public void setInput(ReferenceManager referenceManager) {
-		this.referenceManager = referenceManager; // Must be set first
-		super.setInput(referenceManager);
+	public void setReferenceManager(ReferenceManager referenceManager) {
+		this.referenceManager = referenceManager;
 	}
 	
 	@Override
@@ -80,7 +82,7 @@ public class AnalysisResultTreeViewer extends GenericTreeViewer {
 	}
 
 	@Override
-	public PositionRange getTreeNodePositionRange(Object element) {
+	public PositionRange getTreeNodeLocation(Object element) {
 		if (element instanceof Reference)
 			return ((Reference) element).getLocation();
 		else
