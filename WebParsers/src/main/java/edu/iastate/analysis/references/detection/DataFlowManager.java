@@ -317,6 +317,19 @@ public class DataFlowManager {
 						addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
 				}
 			}
+			/*
+			 * Connect HtmlInputDecl (representing value provided by user) and PhpRefToHtml
+			 * TODO Need to exclude certain input types (e.g., "hidden")
+			 */
+			else if (ref1 instanceof HtmlInputDecl) {
+				String submitToPage = getApproxSubmitToPage((HtmlInputDecl) ref1);
+				String inputName = ((HtmlInputDecl) ref1).getName();
+				
+				for (Reference ref2 : referenceNameMap.get(inputName)) {
+					if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
+						addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
+				}
+			}
 		}
 	}
 	
@@ -461,11 +474,15 @@ public class DataFlowManager {
 		return submitToPage;
 	}
 	
-	private String getApproxSubmitToPage(HtmlDeclOfHtmlInputValue inputValue) {
-		String submitToPage = inputValue.getHtmlInputDecl().getSubmitToPage();
+	private String getApproxSubmitToPage(HtmlInputDecl htmlInputDecl) {
+		String submitToPage = htmlInputDecl.getSubmitToPage();
 		if (submitToPage == null || submitToPage.isEmpty())
-			submitToPage = inputValue.getEntryFile().getName();
+			submitToPage = htmlInputDecl.getEntryFile().getName();
 		return submitToPage;
+	}
+	
+	private String getApproxSubmitToPage(HtmlDeclOfHtmlInputValue inputValue) {
+		return getApproxSubmitToPage(inputValue.getHtmlInputDecl());
 	}
 	
 	private HashSet<String> getApproxSubmitToPages(JsDeclOfHtmlInputValue inputValue) {
@@ -488,6 +505,8 @@ public class DataFlowManager {
 	 */
 	private boolean matchSubmitToPageToEntryFile(String submitToPage, File entryFile) {
 		// TODO Revise this code
+		if (submitToPage.startsWith("./"))
+			submitToPage = submitToPage.substring("./".length());
 		return entryFile.getAbsolutePath().endsWith(submitToPage);
 	}
 	

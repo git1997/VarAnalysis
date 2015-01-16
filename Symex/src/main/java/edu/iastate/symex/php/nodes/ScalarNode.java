@@ -90,7 +90,7 @@ public class ScalarNode extends ExpressionNode {
 			case 8:
 				DataNode constantValue = env.getPredefinedConstantValue(stringValue);
 				if (constantValue == SpecialNode.UnsetNode.UNSET)
-					return DataNodeFactory.createSymbolicNode(this);
+					return DataNodeFactory.createLiteralNode(this);
 				else if (constantValue instanceof SymbolicNode)
 					return DataNodeFactory.createSymbolicNode(this, (SymbolicNode) constantValue);
 				else

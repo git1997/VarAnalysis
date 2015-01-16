@@ -95,16 +95,14 @@ public class WebAnalysisView extends GenericView {
 		if (buttonNumber == 0) {
 			ReferenceManager referenceManager = new ReferenceDetector().detect(file);
 		
-			((AnalysisResultTreeViewer) forwardSliceTreeViewer.getTreeViewerImpl()).setReferenceManager(referenceManager);
 			forwardSliceTreeViewer.setInput(referenceManager);
 			forwardSliceTreeViewer.expandToLevel(1);
 			
-			((AnalysisResultTreeViewer) backwardSliceTreeViewer.getTreeViewerImpl()).setReferenceManager(referenceManager);
 			backwardSliceTreeViewer.setInput(referenceManager);
 			backwardSliceTreeViewer.expandToLevel(1);
 			
-			tabFolder.setSelection(1);
 			statsStyledText.setText(new ShowStatisticsOnReferences().showStatistics(referenceManager));
+			tabFolder.setSelection(1);
 		}
 		else if (buttonNumber == 1) {
 			try {

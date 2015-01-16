@@ -122,7 +122,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			return php_urlencode(argumentValues, env);
 		else if (functionName.equals("mysql_query"))
 			return php_mysql_query(argumentValues, env);
-		else if (functionName.equals("mysql_fetch_array") || functionName.equals("mysql_fetch_assoc")) // Equivalent
+		else if (functionName.equals("mysql_fetch_array") || functionName.equals("mysql_fetch_assoc") || functionName.equals("mysql_fetch_row")) // Equivalent
 			return php_mysql_fetch_array(argumentValues, env);
 		
 		/*
