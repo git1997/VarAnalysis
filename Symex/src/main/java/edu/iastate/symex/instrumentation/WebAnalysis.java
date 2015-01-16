@@ -1,4 +1,4 @@
-package edu.iastate.symex.analysis;
+package edu.iastate.symex.instrumentation;
 
 import java.util.HashSet;
 

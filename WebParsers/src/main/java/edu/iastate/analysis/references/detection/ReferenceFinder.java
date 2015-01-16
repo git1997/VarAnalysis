@@ -7,8 +7,8 @@ import org.eclipse.wst.jsdt.core.dom.ASTNode;
 import org.eclipse.wst.jsdt.core.dom.ASTParser;
 
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
-import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.constraints.Constraint;
+import edu.iastate.symex.instrumentation.WebAnalysis;
 import edu.iastate.symex.position.PositionRange;
 
 /**

@@ -2,10 +2,10 @@ package edu.iastate.symex.php.nodes;
 
 import org.eclipse.php.internal.core.ast.nodes.ReturnStatement;
 
-import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
+import edu.iastate.symex.instrumentation.WebAnalysis;
 
 /**
  * 

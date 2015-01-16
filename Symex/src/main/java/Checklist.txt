@@ -1,4 +1,3 @@
-OK			analysis
 OK			config
 OK			constraints
 OK			core
@@ -6,6 +5,7 @@ OK			datamodel
 OK			datamodel.nodes
 OK			debug
 OK			errormodel
+OK			instrumentation
 OK			php.nodes
 OK			position
 OK			run

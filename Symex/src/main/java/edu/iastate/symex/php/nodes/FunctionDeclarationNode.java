@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.eclipse.php.internal.core.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.ast.nodes.FunctionDeclaration;
 
-import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
+import edu.iastate.symex.instrumentation.WebAnalysis;
 
 /**
  * 

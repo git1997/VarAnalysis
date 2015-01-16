@@ -5,7 +5,6 @@ import java.util.HashSet;
 
 import org.eclipse.php.internal.core.ast.nodes.IfStatement;
 
-import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.BranchEnv;
@@ -15,6 +14,7 @@ import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
+import edu.iastate.symex.instrumentation.WebAnalysis;
 
 /**
  * 

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
@@ -15,6 +14,7 @@ import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.ObjectNode;
 import edu.iastate.symex.datamodel.nodes.RepeatNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
+import edu.iastate.symex.instrumentation.WebAnalysis;
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.FileNode;
 import edu.iastate.symex.php.nodes.FunctionDeclarationNode;

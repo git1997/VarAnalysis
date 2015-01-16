@@ -1,4 +1,4 @@
-package edu.iastate.symex.analysis;
+package edu.iastate.symex.instrumentation;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.php.nodes.StatementNode;

@@ -2,9 +2,9 @@ package edu.iastate.symex.debug;
 
 import java.io.File;
 
-import edu.iastate.symex.analysis.WebDebugger;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.PhpExecuter;
+import edu.iastate.symex.instrumentation.WebDebugger;
 import edu.iastate.symex.php.nodes.StatementNode;
 
 /**

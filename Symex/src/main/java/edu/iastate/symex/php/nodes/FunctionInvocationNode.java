@@ -8,7 +8,6 @@ import org.eclipse.php.internal.core.ast.nodes.FormalParameter;
 import org.eclipse.php.internal.core.ast.nodes.FunctionInvocation;
 import org.eclipse.php.internal.core.ast.nodes.InfixExpression;
 
-import edu.iastate.symex.analysis.WebAnalysis;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.BranchEnv;
@@ -22,6 +21,7 @@ import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.ObjectNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
+import edu.iastate.symex.instrumentation.WebAnalysis;
 
 /**
  * 
