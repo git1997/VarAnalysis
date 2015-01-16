@@ -16,6 +16,7 @@ import edu.iastate.parsers.html.dom.nodes.HtmlElement;
 import edu.iastate.parsers.html.dom.nodes.HtmlForm;
 import edu.iastate.parsers.html.dom.nodes.HtmlInput;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocumentVisitor;
+import edu.iastate.parsers.html.dom.nodes.HtmlNode;
 import edu.iastate.parsers.html.dom.nodes.HtmlScript;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.sax.nodes.HText;
@@ -85,8 +86,17 @@ public class HtmlVisitor extends HtmlDocumentVisitor {
 	public void visitElement(HtmlElement htmlElement) {
 		if (htmlElement instanceof HtmlScript)
 			visitScript((HtmlScript) htmlElement);
-		else 
-			super.visitElement(htmlElement);
+		else {
+			// Visit "name" attribute first
+			for (HtmlAttribute attribute : htmlElement.getAttributes())
+				if (attribute.isNameAttribute())
+					visitAttribute(attribute);
+			for (HtmlAttribute attribute : htmlElement.getAttributes())
+				if (!attribute.isNameAttribute())
+					visitAttribute(attribute);
+			for (HtmlNode childNode : htmlElement.getChildNodes())
+				visitNode(childNode);
+		}
 	}
 	
 	/**
@@ -218,7 +228,8 @@ public class HtmlVisitor extends HtmlDocumentVisitor {
 	 */
 	private void createEntitiesFromValueAttribute(HtmlAttribute attribute) {
 		// Create an HtmlDeclOfHtmlInputValue
-		if (attribute.getParentElement() instanceof HtmlInput) {
+		if (attribute.getParentElement() instanceof HtmlInput 
+				&& ((HtmlInput) attribute.getParentElement()).getInputName() != null) { // Requires that the input must have a name
 			HtmlInput inputTag = (HtmlInput) attribute.getParentElement();
 		
 			Reference reference = new HtmlDeclOfHtmlInputValue(attribute.getName(), attribute.getLocation(), (HtmlInputDecl) declMap.get(inputTag), attribute);
