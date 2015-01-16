@@ -67,10 +67,7 @@ public class Trace {
 	}
 	
 	private String printData(Object data) {
-		if (data instanceof StatementNode)
-			return ((StatementNode) data).getLocation().getStartPosition().toDebugString();
-		else
-			return "";
+		return ((StatementNode) data).getLocation().getStartPosition().toDebugString();
 	}
 	
 }
