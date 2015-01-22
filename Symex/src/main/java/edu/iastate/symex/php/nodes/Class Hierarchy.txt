@@ -37,6 +37,7 @@ PhpNode
 		BlockNode
 		BreakStatementNode
 		ClassDeclarationNode
+		ContinueStatementNode
 		DoStatementNode
 		EchoStatementNode
 		EmptyStatementNode

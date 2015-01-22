@@ -3,6 +3,7 @@ package edu.iastate.symex.php.nodes;
 import org.eclipse.php.internal.core.ast.nodes.Block;
 import org.eclipse.php.internal.core.ast.nodes.BreakStatement;
 import org.eclipse.php.internal.core.ast.nodes.ClassDeclaration;
+import org.eclipse.php.internal.core.ast.nodes.ContinueStatement;
 import org.eclipse.php.internal.core.ast.nodes.DoStatement;
 import org.eclipse.php.internal.core.ast.nodes.EchoStatement;
 import org.eclipse.php.internal.core.ast.nodes.EmptyStatement;
@@ -50,6 +51,7 @@ public abstract class StatementNode extends PhpNode {
 			case Statement.BLOCK:					return new BlockNode((Block) statement);
 			case Statement.BREAK_STATEMENT:			return new BreakStatementNode((BreakStatement) statement);
 			case Statement.CLASS_DECLARATION:		return new ClassDeclarationNode((ClassDeclaration) statement);
+			case Statement.CONTINUE_STATEMENT:		return new ContinueStatementNode((ContinueStatement) statement);
 			case Statement.DO_STATEMENT:			return new DoStatementNode((DoStatement) statement);
 			case Statement.ECHO_STATEMENT: 			return new EchoStatementNode((EchoStatement) statement);
 			case Statement.EMPTY_STATEMENT:			return new EmptyStatementNode((EmptyStatement) statement);
