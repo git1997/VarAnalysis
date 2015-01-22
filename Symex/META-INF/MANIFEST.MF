@@ -16,8 +16,7 @@ Export-Package: edu.iastate.symex.config,
  edu.iastate.symex.run,
  edu.iastate.symex.test,
  edu.iastate.symex.util,
- edu.iastate.symex.util.logging,
- edu.iastate.symex.util.sourcetracing
+ edu.iastate.symex.util.logging
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.9.100",
  org.eclipse.php.core;bundle-version="3.2.0",
  org.eclipse.dltk.core;bundle-version="5.0.0",
