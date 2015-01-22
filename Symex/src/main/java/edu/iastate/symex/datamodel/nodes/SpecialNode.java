@@ -123,6 +123,7 @@ public abstract class SpecialNode extends DataNode {
 		public static ControlNode EXIT		= new ControlNode();
 		public static ControlNode RETURN 	= new ControlNode();
 		public static ControlNode BREAK 	= new ControlNode();
+		public static ControlNode CONTINUE 	= new ControlNode();
 		
 		/**
 		 * Private constructor.
