@@ -26,6 +26,8 @@ public class Position {
 	public Position(File file, int offset) {
 		this.file = file;
 		this.offset = offset;
+		
+		//this.line = getLine(); // Uncomment this when debugging to get line information
 	}
 	
 	/**

@@ -8,57 +8,68 @@ import java.util.ArrayList;
  * @author HUNG
  *
  * There are 3 types of ranges:
- * 	 + Defined Range, e.g. (file: "index.php", offset: 1, length: 2)
- *   + Undefined Range with defined length, e.g. (file: null, offset: -1, length: 2)
- *   + Undefined Range with undefined length, e.g. (file: null, offset: -1, length -1)
+ * 	 + Type 1: Defined Range, e.g. (file: "index.php", offset: 1, length: 2)
+ *   + Type 2: Undefined Range with defined length, e.g. (file: null, offset: -1, length: 2)
+ *   + Type 3: Undefined Range with undefined length, e.g. (file: null, offset: -1, length -1)
  */
 public class Range extends PositionRange {
 	
-	public static final Range UNDEFINED = new Range();
+	public static final Range UNDEFINED = new Range(); // Undefined Range with undefined length (type 3)
 	
-	private File file;		// null means the range is undefined (can still have length)
-	private int offset;		// -1 means the range is undefined (can still have length)
-	private int length;		// -1 means the range is undefined (and length is also undefined)
+	private Position position;	// can be defined (type 1) or undefined (type 2 or 3)
+	private int length;			// -1 means length is undefined (type 3)
 	
 	/**
-	 * Constructor
+	 * Constructor for a defined Range (Type 1)
+	 */
+	public Range(Position position, int length) {
+		this.position = position;
+		this.length = length;
+	}
+	
+	/**
+	 * Constructor for a defined Range (Type 1)
 	 */
 	public Range(File file, int offset, int length) {
-		this.file = file;
-		this.offset = offset;
+		this.position = new Position(file, offset);
 		this.length = length;
 	}
 	
 	/**
-	 * Constructor for an undefined Range with a defined length
+	 * Constructor for an undefined Range with a defined length (Type 2)
 	 */
 	public Range(int length) {
-		this.file = null;
-		this.offset = -1;
+		this.position = Position.UNDEFINED;
 		this.length = length;
 	}
 	
 	/**
-	 * Private constructor for an undefined Range with an undefined length
+	 * Private constructor for an undefined Range with an undefined length (Type 3)
 	 */
 	private Range() {
-		this.file = null;
-		this.offset = -1;
+		this.position = Position.UNDEFINED;
 		this.length = -1;
+	}
+	
+	/**
+	 * Returns the position, could be UNDEFINED
+	 */
+	public Position getPosition() {
+		return position;
 	}
 	
 	/**
 	 * Returns the file, or null if the range is UNDEFINED
 	 */
 	public File getFile() {
-		return file;
+		return position.getFile();
 	}
 
 	/**
 	 * Returns the offset, or -1 if the range is UNDEFINED
 	 */
 	public int getOffset() {
-		return offset;
+		return position.getOffset();
 	}
 	
 	/**
@@ -73,21 +84,21 @@ public class Range extends PositionRange {
 	 * Returns true if the range is UNDEFINED
 	 */
 	public boolean isUndefined() {
-		return file == null;
+		return position.isUndefined();
 	}
 	
 	/**
 	 * Returns the absolute path of the file, or null if the range is UNDEFINED
 	 */
 	public String getFilePath() {
-		return (!isUndefined() ? file.getAbsolutePath() : null);
+		return position.getFilePath();
 	}
 
 	/**
 	 * Returns the simple name of the file, or null if the range is UNDEFINED
 	 */
 	public String getFileName() {
-		return (!isUndefined() ? file.getName() : null);
+		return position.getFileName();
 	}
 	
 	@Override
@@ -99,7 +110,7 @@ public class Range extends PositionRange {
 	
 	@Override
 	public Position getPositionAtRelativeOffset(int relOffset) {
-		return (isUndefined() ? Position.UNDEFINED : new Position(file, offset + relOffset));
+		return (isUndefined() ? Position.UNDEFINED : new Position(position.getFile(), position.getOffset() + relOffset));
 	}
 	
 }
