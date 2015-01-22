@@ -132,29 +132,29 @@ public class IfStatementNode extends StatementNode {
 		}
 		
 		/*
-		 * Handle return/exit statements in the branches.
-		 * For an ifStatement: E; if (C) { A; return; } else { B; } D;
-		 * the best transformation is
-		 * 		=> E; if (C) A; else { B; D; }
-		 * However, currently we can probably only use an approximate transformation as follows
-		 * 		=> E; B; D; (disregard A)
+		 * Update variables' values after executing the two branches.
 		 * 
-		 * The reason we want to cut the branch with exit/return is so that if there's echo statements in there, they don't get concatenated with
-		 * other strings after the branch.
-		 * 
-		 * To keep the some important values (output, return values) that are cut, at exit/return statements, we store these values immediately.
-		 * However, at return statements, we may still lose some OUTPUT values.
+		 * If a branch contains an exit/return statement, then it needs a different treatment.
+		 * For example, with an ifStatement: if (C) { A; return; } else B;
+		 *   we disregard the results from the true branch entirely.
+		 * The reason is that we don't want values in the "exception" flows to intefere with values in the normal flow.
+		 *   (e.g, if there are echo statements in the exception branch, we don't want to them to get concatenated with other strings after the branches.)
+		 * To prevent some important values (output, return values) from getting lost due to the above cutting,
+		 *    at exit/return statements, we store these values immediately. See the implementation of
+		 *    ReturnStatement and FunctionInvocation(exit) for more details.
 		 */
 		if (isExitOrReturn(trueBranchRetValue)) {
 			if (isExitOrReturn(falseBranchRetValue)) {
 				// Do nothing
 			}
 			else {
+				// Exception case
 				env.updateWithOneBranchOnly(dirtyVarsInFalseBranch);
 			}
 		}
 		else {
 			if (isExitOrReturn(falseBranchRetValue)) {
+				// Exception case
 				env.updateWithOneBranchOnly(dirtyVarsInTrueBranch);
 			}
 			else {
