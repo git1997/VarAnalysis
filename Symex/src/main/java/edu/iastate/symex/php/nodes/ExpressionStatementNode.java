@@ -4,6 +4,7 @@ import org.eclipse.php.internal.core.ast.nodes.ExpressionStatement;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.ControlNode;
 
 /**
  * 
@@ -28,9 +29,11 @@ public class ExpressionStatementNode extends StatementNode {
 	
 	@Override
 	public DataNode execute_(Env env) {
-		// Return the value of the enclosed expression (e.g., the function call die() returns an EXIT value,
-		// this value should be propagated to the the enclosing statement).  
-		return expression.execute(env);
+		DataNode retValue = expression.execute(env); 
+		if (retValue == ControlNode.EXIT) // e.g. the function call die() returns EXIT
+			return ControlNode.EXIT;
+		else
+			return ControlNode.OK;
 	}
 	
 }

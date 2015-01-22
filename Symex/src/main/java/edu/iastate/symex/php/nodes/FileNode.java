@@ -10,6 +10,7 @@ import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.ControlNode;
 import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.FileIO;
 
@@ -35,14 +36,14 @@ public class FileNode {
 		 * Prepare to parse the source file
 		 */
 		ASTParser parser = ASTParser.newParser(PHPVersion.PHP5, true);
-		char[] source = FileIO.readStringFromFile(file).toCharArray();
+		String source = FileIO.readStringFromFile(file);
 		
 		/*
 		 * Parse the source file
 		 */
 		Program program = null;
 		try {
-			parser.setSource(source);
+			parser.setSource(source.toCharArray());
 			program = parser.createAST(null);
 		} catch (Exception e) {
 			MyLogger.log(MyLevel.JAVA_EXCEPTION, "In FileNode.java: Error parsing " + file + " (" + e.getMessage() + ")");
@@ -65,12 +66,12 @@ public class FileNode {
 		env.putFile(file, this);
 		
 		env.pushFileToStack(file);
-		DataNode retValue = null;
+		DataNode control = ControlNode.OK;
 		if (programNode != null)
-			retValue = programNode.execute(env);
+			control = programNode.execute(env);
 		env.popFileFromStack();
 		
-		return retValue;
+		return control;
 	}
 
 }

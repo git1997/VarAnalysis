@@ -694,7 +694,7 @@ public abstract class Env {
 		 */
 		// BEGIN OF WEB ANALYSIS CODE
 		if (WebAnalysis.isEnabled())
-			WebAnalysis.onFunctionInvocationFinished(nonLocalDirtyVarsInFunction, this);
+			WebAnalysis.onFunctionInvocationFinished(new HashSet<PhpVariable>(nonLocalDirtyVarsInFunction), this);
 		// END OF WEB ANALYSIS CODE
 	}
 	
