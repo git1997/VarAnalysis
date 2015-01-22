@@ -9,7 +9,8 @@ import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.datamodel.nodes.SpecialNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.UnsetNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.ControlNode;
 
 /**
  * 
@@ -85,22 +86,30 @@ public class IncludeNode extends ExpressionNode {
 		FileNode fileNode = env.getFile(includedFile);
 		if (fileNode == null)
 			fileNode = new FileNode(includedFile);
-		fileNode.execute(env);
+		
+		DataNode control = fileNode.execute(env);
+		
+		DataNode retValue = env.getReturnValue();
+		if (retValue == UnsetNode.UNSET)
+			retValue = DataNodeFactory.createSymbolicNode(this);
 
 		/*
 		 * Finish up
 		 */
 		// MyLogger.log(MyLevel.PROGRESS, "Done with " + fileTrace + ".");
 
-		// Save the new return value and restore the backup return value
-		DataNode newPhpReturn = env.getReturnValue();
+		// Restore the backup return value
 		env.restoreReturnValue(backupPhpReturn);
 
-		// Return the return value after executing the file
-		if (newPhpReturn != SpecialNode.UnsetNode.UNSET)
-			return newPhpReturn;
-		else
-			return DataNodeFactory.createSymbolicNode(this);
+		// Return the retValue (not the CONTROL value) because IncludeNode is an expression, except for the case of EXIT
+		if (control == ControlNode.EXIT) // EXIT
+			return ControlNode.EXIT;
+		else if (control instanceof ControlNode) // OK, RETURN, BREAK, CONTINUE
+			return retValue;
+		else {
+			// TODO Handle multiple returned CONTROL values here
+			return retValue;
+		}
 	}
 
 }

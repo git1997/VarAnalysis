@@ -1,12 +1,16 @@
 package edu.iastate.symex.php.nodes;
 
+import java.util.HashMap;
+
 import org.eclipse.php.internal.core.ast.nodes.WhileStatement;
 
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.BranchEnv;
 import edu.iastate.symex.core.Env;
+import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.DataNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.ControlNode;
 
 /**
  * 
@@ -50,11 +54,20 @@ public class WhileStatementNode extends StatementNode {
 	public static DataNode execute(Env env, Constraint constraint, StatementNode statement) {
 		BranchEnv loopEnv = new BranchEnv(env, constraint);
 
-		DataNode retValue = statement.execute(loopEnv);
+		DataNode control = statement.execute(loopEnv);
 		
-		env.updateAfterLoopExecution(loopEnv);
+		HashMap<PhpVariable, DataNode> dirtyVarsInLoop = env.backtrackAfterExecution(loopEnv);
 		
-		return retValue; // TODO Revise, see if it's correct
+		if (control == ControlNode.OK || control == ControlNode.BREAK || control == ControlNode.CONTINUE) { // OK, BREAK, CONTINUE
+			env.updateAfterLoopExecution(loopEnv, dirtyVarsInLoop);
+			return ControlNode.OK;
+		}
+		else if (control instanceof ControlNode) // EXIT, RETURN
+			return control;
+		else {
+			// TODO Handle multiple returned CONTROL values here
+			return ControlNode.OK;
+		}
 	}
 
 }

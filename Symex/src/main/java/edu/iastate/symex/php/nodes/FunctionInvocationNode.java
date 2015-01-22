@@ -2,6 +2,8 @@ package edu.iastate.symex.php.nodes;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.eclipse.php.internal.core.ast.nodes.Expression;
 import org.eclipse.php.internal.core.ast.nodes.FormalParameter;
@@ -21,6 +23,7 @@ import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.ObjectNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.ControlNode;
 import edu.iastate.symex.instrumentation.WebAnalysis;
 
 /**
@@ -108,6 +111,8 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			return php_print(argumentValues, env);
 		else if (functionName.equals("define"))
 			return php_define(argumentValues, env);
+		else if (functionName.equals("defined"))
+			return php_defined(argumentValues, env);
 		else if (functionName.equals("dirname"))
 			return php_dirname(argumentValues, env);
 		else if (functionName.equals("file_exists"))
@@ -222,29 +227,55 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		functionEnv.pushFunctionToStack(functionName);
 		//MyLogger.log(MyLevel.PROGRESS, "Executing files " + env.getFileStack() + " functions " + env.getFunctionStack() + " ...");
 		
+		DataNode control;
 		if (function.getBody() != null)
-			function.getBody().execute(functionEnv);
+			control = function.getBody().execute(functionEnv);
 		else {
-			MyLogger.log(MyLevel.TODO, "In FunctionInvocationNode.java: Abstract functions not yet implemented.");
 			// TODO Handle abstract function here
+			MyLogger.log(MyLevel.TODO, "In FunctionInvocationNode.java: Abstract functions not yet implemented.");
+			control = ControlNode.OK;
 		}
+		
+		DataNode retValue = functionEnv.getReturnValue();
+		if (retValue == SpecialNode.UnsetNode.UNSET)
+			retValue = DataNodeFactory.createSymbolicNode(this);
+		
+		HashMap<PhpVariable, DataNode> dirtyVarsInFunction = env.backtrackAfterExecution(functionEnv);
 		
 		//MyLogger.log(MyLevel.PROGRESS, "Done with files " + env.getFileStack() + " functions " + env.getFunctionStack() + ".");
 		functionEnv.popFunctionFromStack();
 		
 		/*
-		 * Finish up
+		 * Return values
 		 */
-
-		// Update the env
-		env.updateAfterFunctionExecution(functionEnv);
-		
-		// Get the return value of the function.
-		DataNode returnValue = functionEnv.getReturnValue();
-		if (returnValue != SpecialNode.UnsetNode.UNSET)
-			return returnValue;
-		else
-			return DataNodeFactory.createSymbolicNode(this);
+		if (control == ControlNode.EXIT) { // EXIT
+			/*
+			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+			 */
+			// BEGIN OF WEB ANALYSIS CODE
+			if (WebAnalysis.isEnabled())
+				WebAnalysis.onFunctionInvocationFinished(new HashSet<PhpVariable>(), env);
+			// END OF WEB ANALYSIS CODE
+			
+			return ControlNode.EXIT;
+		}
+		else if (control instanceof ControlNode) { // OK, RETURN, BREAK, CONTINUE
+			// Update the env
+			env.updateAfterFunctionExecution(functionEnv, dirtyVarsInFunction);
+			return retValue;
+		}
+		else {
+			/*
+			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+			 */
+			// BEGIN OF WEB ANALYSIS CODE
+			if (WebAnalysis.isEnabled())
+				WebAnalysis.onFunctionInvocationFinished(new HashSet<PhpVariable>(), env);
+			// END OF WEB ANALYSIS CODE
+			
+			// TODO Handle multiple returned CONTROL values here
+			return retValue;
+		}
 	}
 	
 	/*
@@ -268,6 +299,22 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			DataNode constantValue = arguments.get(1);
 			if (constantName != null)
 				env.setPredefinedConstantValue(constantName, constantValue);
+		}
+		return DataNodeFactory.createSymbolicNode(this);
+	}
+	
+	/**
+	 * Implements the standard PHP function: defined
+	 */
+	private DataNode php_defined(ArrayList<DataNode> arguments, Env env) {	
+		if (arguments.size() == 1) {
+			String constantName = arguments.get(0).getExactStringValueOrNull();
+			if (constantName == null)
+				return DataNodeFactory.createSymbolicNode(this);
+			else if (env.getPredefinedConstantValue(constantName) != SpecialNode.UnsetNode.UNSET)
+				return SpecialNode.BooleanNode.TRUE;
+			else
+				return SpecialNode.BooleanNode.FALSE;
 		}
 		return DataNodeFactory.createSymbolicNode(this);
 	}
