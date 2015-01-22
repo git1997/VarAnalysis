@@ -16,9 +16,9 @@ public class RunDebuggerForFile {
 	/**
 	 * PHP file to test
 	 */	
-	public static String PHP_FILE = "/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/TestProject/index.php";
+	public static String PHP_FILE = //"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/TestProject/index.php";
 									//"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/SchoolMate-1.5.4/index.php";
-									//"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/WordPress-4.1/index.php";
+									"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/WordPress-4.1/index.php";
 
 	/**
 	 * The entry point of the program
@@ -40,7 +40,8 @@ public class RunDebuggerForFile {
 		/*
 		 * Print results
 		 */
-		MyLogger.log(MyLevel.INFO, debugInfo.getTrace().printTraceToString());
+		MyLogger.log(MyLevel.INFO, debugInfo.getDataModel().toIfdefString());
+		//MyLogger.log(MyLevel.INFO, debugInfo.getTrace().printTraceToString());
 	}
 	
 }
