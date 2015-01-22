@@ -91,6 +91,7 @@ public class WebAnalysisView extends GenericView {
 		}
 	}
 	
+	@Override
 	public void buttonClicked(File file, int buttonNumber) {
 		if (buttonNumber == 0) {
 			ReferenceManager referenceManager = new ReferenceDetector().detect(file);
