@@ -539,13 +539,6 @@ public abstract class Env {
 	 */
 	
 	/**
-	 * Returns the set of dirtyVariables
-	 */
-	public HashSet<PhpVariable> getDirtyVariables() {
-		return new HashSet<PhpVariable>(dirtyVariables.keySet());
-	}
-	
-	/**
 	 * Backtracks the current Env after executing a branch/loop/function.
 	 * 
 	 * IDEA: During branch/loop/function execution, dirtyVariables contain the original values of variables in the outer scope,
@@ -568,41 +561,15 @@ public abstract class Env {
 	/**
 	 * Updates the current Env after executing two branches.
 	 * 
-	 * IDEA: At this point, the variables' values have been restored to their values before entering the branches, 
-	 *   see IfStatementNode.execute(Env, Constraint, PhpNode, PhpNode) and Env.backtrackAfterExecution(Env).
-	 * Now dirtyVarsInTrueBranch and dirtyVarsInFalseBranch contain modified values in the branches.
-	 * This method will combine modified values in the branches to update the values of dirty variables after executing the two branches. 
+	 * IDEA: At this point, the variables' values have been restored to their original values before entering the branches, 
+	 *   (by calling Env.backtrackAfterExecution(Env) prior to calling this method).
+	 *   Now dirtyVarsInTrueBranch and dirtyVarsInFalseBranch contain modified values in the branches.
+	 *   This method will combine modified values in the branches to update the values of dirty variables after executing the two branches. 
 	 * @param constraint
 	 * @param dirtyVarsInTrueBranch
 	 * @param dirtyVarsInFalseBranch
-	 * @paramm trueBranchRetValue
-	 * @param falseBranchRetValue
 	 */
-	public void updateAfterBranchExecution(Constraint constraint, HashMap<PhpVariable, DataNode> dirtyVarsInTrueBranch, HashMap<PhpVariable, DataNode>  dirtyVarsInFalseBranch, DataNode trueBranchRetValue, DataNode falseBranchRetValue) {
-		/*
-		 * Handle return/exit statements in the branches.
-		 * For an ifStatement: E; if (C) { A; return; } else { B; } D;
-		 * the best transformation is
-		 * 		=> E; if (C) A; else { B; D; }
-		 * However, currently we can probably only use an approximate transformation as follows
-		 * 		=> E; B; D; (disregard A)
-		 */
-		if (isTerminated(trueBranchRetValue)) {
-			if (isTerminated(falseBranchRetValue)) 
-				return;
-			else {
-				updateWithOneBranchOnly(dirtyVarsInFalseBranch);
-				return;
-			}
-		}
-		else if (isTerminated(falseBranchRetValue)) {
-			updateWithOneBranchOnly(dirtyVarsInTrueBranch);
-			return;
-		}
-		
-		/*
-		 * Handle regular cases
-		 */
+	public void updateAfterBranchExecution(Constraint constraint, HashMap<PhpVariable, DataNode> dirtyVarsInTrueBranch, HashMap<PhpVariable, DataNode>  dirtyVarsInFalseBranch) {
 		HashSet<PhpVariable> variables = new HashSet<PhpVariable>();
 		variables.addAll(dirtyVarsInTrueBranch.keySet());
 		variables.addAll(dirtyVarsInFalseBranch.keySet());
@@ -615,29 +582,22 @@ public abstract class Env {
 		}
 	}
 	
-	private void updateWithOneBranchOnly(HashMap<PhpVariable, DataNode> dirtyVarsInBranch) {
-		for (PhpVariable variable : dirtyVarsInBranch.keySet())
+	public void updateWithOneBranchOnly(HashMap<PhpVariable, DataNode> dirtyVarsInBranch) {
+		for (PhpVariable variable : dirtyVarsInBranch.keySet()) {
 			writeVariable(variable, dirtyVarsInBranch.get(variable)); // This method also updates dirtyVariables for the current Env
-	}
-	
-	/**
-	 * Returns true if the branch is terminated by EXIT/RETURN statements.
-	 */
-	private boolean isTerminated(DataNode branchRetValue) {
-		return branchRetValue == SpecialNode.ControlNode.EXIT || branchRetValue == SpecialNode.ControlNode.RETURN;
+		}
 	}
 	
 	/**
 	 * Updates the current Env after executing a loop.
 	 * 
-	 * IDEA: After calling Env.backtrackAfterExecution(Env), the variables' values will be be restored to their original values
-	 *   before entering the loop, and dirtyVarsInLoop now contains modified values in the loop.
-	 * This method will compare the original values and modified values to update the values of dirty variables after executing the loop.
+	 * IDEA: At this point, the variables' values have been restored to their original values before entering the loop, 
+	 *   (by calling Env.backtrackAfterExecution(Env) prior to calling this method).
+	 *   Now dirtyVarsInLoop contains modified values in the loop.
+	 *   This method will compare the original values and modified values to update the values of dirty variables after executing the loop.
 	 * @param loopEnv
 	 */
-	public void updateAfterLoopExecution(BranchEnv loopEnv) {
-		HashMap<PhpVariable, DataNode> dirtyVarsInLoop = this.backtrackAfterExecution(loopEnv);
-		
+	public void updateAfterLoopExecution(BranchEnv loopEnv, HashMap<PhpVariable, DataNode> dirtyVarsInLoop) {
 		Constraint constraint = loopEnv.getConstraint();
 		
 		for (PhpVariable variable : dirtyVarsInLoop.keySet()) {
@@ -712,18 +672,16 @@ public abstract class Env {
 	/**
 	 * Updates the current Env after executing a function.
 	 *
-	 * IDEA: After calling Env.backtrackAfterExecution(Env), the variables' values will be be restored to their original values
-	 *   before entering the function, and dirtyVarsInFunction now contains modified values in the function. Note that
-	 *   these might include local variables in the function.
-	 * This method will propagate modified values of non-local dirty variables to the current Env.
+	 * IDEA: At this point, the variables' values have been restored to their original values before entering the function, 
+	 *   (by calling Env.backtrackAfterExecution(Env) prior to calling this method).
+	 *   Now dirtyVarsInFunction contains modified values in the function. Note that these might include local variables in the function.
+	 *   This method will propagate modified values of non-local dirty variables to the current Env.
 	 * @param functionEnv
 	 */
-	public void updateAfterFunctionExecution(FunctionEnv functionEnv) {
-		HashMap<PhpVariable, DataNode> dirtyVarsInFunction = this.backtrackAfterExecution(functionEnv);
-		
+	public void updateAfterFunctionExecution(FunctionEnv functionEnv, HashMap<PhpVariable, DataNode> dirtyVarsInFunction) {
 		// Consider only variables that are dirty and not local to the functionEnv
 		HashSet<PhpVariable> localVarsInFunction = functionEnv.getVariablesCreatedFromCurrentScope();
-		HashSet<PhpVariable> nonLocalDirtyVarsInFunction = functionEnv.getDirtyVariables();
+		HashSet<PhpVariable> nonLocalDirtyVarsInFunction = new HashSet<PhpVariable>(dirtyVarsInFunction.keySet());
 		nonLocalDirtyVarsInFunction.removeAll(localVarsInFunction);
 		
 		for (PhpVariable variable : nonLocalDirtyVarsInFunction) {
