@@ -105,8 +105,4 @@ public class StringUtils {
 		return tabs;
 	}
 	
-	public static String getFileSystemSlash() {
-		return "/";
-	}
-	
 }

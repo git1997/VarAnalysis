@@ -9,18 +9,17 @@ public class Timer {
 	
 	public static Timer inst = new Timer();
 	
-	private long startTime = System.currentTimeMillis();
+	private long startTime;
 	
-	public void reset() {
+	/**
+	 * Constructor
+	 */
+	public Timer() {
 		startTime = System.currentTimeMillis();
 	}
 	
-	public float getCurrentSeconds() {
-		return (float) System.currentTimeMillis() / 1000;
-	}
-	
-	public String getCurrentSecondsInText() {
-		return String.format("%.3f second(s)", getCurrentSeconds());
+	public void reset() {
+		startTime = System.currentTimeMillis();
 	}
 	
 	public float getElapsedSeconds() {
