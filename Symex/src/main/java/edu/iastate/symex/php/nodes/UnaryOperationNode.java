@@ -5,6 +5,7 @@ import org.eclipse.php.internal.core.ast.nodes.UnaryOperation;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
 
 /**
  * 
@@ -13,7 +14,7 @@ import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
  */
 public class UnaryOperationNode extends ExpressionNode {
 
-	//private int operator;
+	private int operator;
 	private ExpressionNode expression; 
 	
 	/*
@@ -26,13 +27,17 @@ public class UnaryOperationNode extends ExpressionNode {
 	*/ 
 	public UnaryOperationNode(UnaryOperation unaryOperation) {
 		super(unaryOperation);
-		//this.operator = unaryOperation.getOperator();
+		this.operator = unaryOperation.getOperator();
 		this.expression = ExpressionNode.createInstance(unaryOperation.getExpression());
 	}
 
 	@Override
 	public DataNode execute(Env env) {
-		expression.execute(env);
+		DataNode value = expression.execute(env);
+		
+		if (operator == UnaryOperation.OP_NOT && value instanceof BooleanNode)
+			return ((BooleanNode) value).negate();
+		
 		return DataNodeFactory.createSymbolicNode(this);
 	}
 
