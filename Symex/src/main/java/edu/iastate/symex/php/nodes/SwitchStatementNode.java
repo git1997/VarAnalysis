@@ -55,7 +55,8 @@ public class SwitchStatementNode extends StatementNode {
 		}
 		
 		/*
-		 * Modify the statementNodes within switchCaseNodes.
+		 * Modify the statementNodes within switchCaseNodes so that there's no fall through across cases,
+		 *   and there's no BREAK statements anymore.
 		 * For example, 
 		 * 		case 0: echo '0'; 
 		 * 		case 1: echo '1'. 
@@ -65,7 +66,7 @@ public class SwitchStatementNode extends StatementNode {
 		 * 		case 1: echo '1'; break;
 		 * Then, the statementNodes of case 0 include echo '0' only. 
 		 */
-		for (int i = 0; i < switchCaseNodes.size() - 1; i++) {
+		for (int i = 0; i < switchCaseNodes.size(); i++) {
 			if (!switchCaseNodes.get(i).hasBreakStatement()) {
 				for (int j = i + 1; j < switchCaseNodes.size(); j++) {
 					switchCaseNodes.get(i).addStatementNodes(switchCaseNodes.get(j));
@@ -156,7 +157,7 @@ public class SwitchStatementNode extends StatementNode {
 				LiteralNode conditionString = DataNodeFactory.createLiteralNode(stringValue, location);
 				Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
 
-				return IfStatementNode.execute(env, constraint, thenBranch, elseBranch);
+				return IfStatementNode.execute(env, constraint, thenBranch, elseBranch, false);
 			}
 		}
 		

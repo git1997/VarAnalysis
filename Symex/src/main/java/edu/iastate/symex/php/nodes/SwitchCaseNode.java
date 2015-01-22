@@ -43,7 +43,7 @@ public class SwitchCaseNode extends StatementNode {
 		for (Statement statement : switchCase.actions()) {
 			StatementNode statementNode = StatementNode.createInstance(statement);
 			statementNodes.add(statementNode);
-			if (statement.getType() == Statement.RETURN_STATEMENT || statement.getType() == Statement.BREAK_STATEMENT) {
+			if (statement.getType() == Statement.BREAK_STATEMENT) {
 				hasBreakStatement = true;
 				break;
 			}
@@ -86,11 +86,12 @@ public class SwitchCaseNode extends StatementNode {
 	 * Used by SwitchStatementNode only.
 	 * @see edu.iastate.symex.php.nodes.SwitchStatementNode.SwitchStatementNode(SwitchStatement)
 	 */
-	public void removeBreakStatementNode() {
+	protected void removeBreakStatementNode() {
 		for (int i = 0; i < statements.size(); i++) {
 			if (statements.get(i) instanceof BreakStatementNode) {
-				while (i < statements.size())
-					statements.remove(i);
+				for (int j = statements.size() - 1; j >= i; j--)
+					statements.remove(j);
+				break;
 			}
 		}
 	}
