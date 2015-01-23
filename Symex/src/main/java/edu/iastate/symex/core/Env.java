@@ -367,15 +367,16 @@ public abstract class Env {
 	
 	/**
 	 * Merges the current output value in the normal flow with the output values collected at exit statements.
-	 * (The normal flow may not exist (all flows end with exit), but it doesn't affect the correctness of the current implementation.) 
+	 * Note that the normal flow may not exist (all flows end with exit). 
 	 */
 	public void mergeCurrentOutputWithOutputAtExits() {
 		DataNode outputAtExits = getGlobalEnv().getOutputAtExits_().getValue();
 		if (outputAtExits != null) {
 			// TODO The correct way to compute the constraint is as follows:
-			// 			Constraint constraint = outputAtExits.getUncoveredConstraint();
+			// 			Constraint constraint = getGlobalEnv().getOutputAtExits_().getUncoveredConstraint();
+			// Then, we need to check whether constraint is satisfiable (constraint == FALSE means that there's no normal flow).
 			// However, getUncoveredConstraint() often hangs when there are too many constraints.
-			// As a work-around, let's create a simple constraint representing the normal case:
+			// As a work-around, let's create a simple constraint representing the normal case, and assume that the normal flow exists (which is often true).
 			Constraint constraint = ConstraintFactory.createAtomicConstraint("NORMAL_OUTPUT", Range.UNDEFINED);
 
 			DataNode mergedOutput = DataNodeFactory.createCompactSelectNode(constraint, getCurrentOutput(), outputAtExits);
@@ -386,14 +387,16 @@ public abstract class Env {
 	
 	/**
 	 * Merges the current output value in the normal flow with the output values collected at return statements.
-	 * (The normal flow may not exist (all flows end with return), but it doesn't affect the correctness of the current implementation.) 
+	 * Note that the normal flow may not exist (all flows end with return). 
 	 */
 	public void mergeCurrentOutputWithOutputAtReturns() {
 		DataNode outputAtReturns = getPhpEnv().getOutputAtReturns_().getValue();
 		if (outputAtReturns != null) {
+			// TODO Need to verify whether calling getUncoveredConstraint() slows down the execution significantly.
+			// If so, we need to do some optimization here (e.g., checking whether the output is really changed at return statements).
 			Constraint constraint = getPhpEnv().getOutputAtReturns_().getUncoveredConstraint();
 			
-			DataNode mergedOutput = DataNodeFactory.createCompactSelectNode(constraint, getCurrentOutput(), outputAtReturns);
+			DataNode mergedOutput = (constraint.isSatisfiable() ? DataNodeFactory.createCompactSelectNode(constraint, getCurrentOutput(), outputAtReturns) : outputAtReturns);
 			setCurrentOutput(mergedOutput);
 			getPhpEnv().clearOutputAtReturns_();
 		}

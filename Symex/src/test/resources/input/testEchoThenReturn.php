@@ -8,5 +8,16 @@ function hi() {
 	echo "Hi";
 }
 
+function hello() {
+	if ($c) {
+		echo "Hello2";
+		return;
+	}
+	echo "Hi2";
+	return;
+}
+
 hi();
+
+hello();
 ?>

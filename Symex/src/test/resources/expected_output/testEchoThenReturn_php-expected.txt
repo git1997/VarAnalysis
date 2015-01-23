@@ -4,3 +4,9 @@ Hi
 #else
 Hello
 #endif
+
+#if ($c)
+Hello2
+#else
+Hi2
+#endif
