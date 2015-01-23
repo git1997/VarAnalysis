@@ -1,0 +1,6 @@
+
+#if (!$c)
+Hi
+#else
+Hello
+#endif
