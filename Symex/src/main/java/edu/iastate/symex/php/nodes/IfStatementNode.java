@@ -134,14 +134,14 @@ public class IfStatementNode extends StatementNode {
 		/*
 		 * Update variables' values after executing the two branches.
 		 * 
-		 * If a branch contains an exit/return statement, then it needs a different treatment.
+		 * If a branch contains an exit/return statement, then we apply a different treatment.
 		 * For example, with an ifStatement: if (C) { A; return; } else B;
 		 *   we disregard the results from the true branch entirely.
 		 * The reason is that we don't want values in the "exception" flows to intefere with values in the normal flow.
-		 *   (e.g, if there are echo statements in the exception branch, we don't want to them to get concatenated with other strings after the branches.)
+		 *   (e.g., if there are echo statements in the exception branch, we don't want to them to get concatenated with other strings after the branches.)
 		 * To prevent some important values (output, return values) from getting lost due to the above cutting,
-		 *    at exit/return statements, we store these values immediately. See the implementation of
-		 *    ReturnStatement and FunctionInvocation(exit) for more details.
+		 *    at exit/return statements, we store these values immediately.
+		 * See the implementation of ReturnStatement and FunctionInvocation(exit) for more details.
 		 */
 		if (isExitOrReturn(trueBranchRetValue)) {
 			if (isExitOrReturn(falseBranchRetValue)) {
