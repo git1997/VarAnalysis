@@ -6,16 +6,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
 
-import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.constraints.Constraint;
-import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.FileNode;
 import edu.iastate.symex.php.nodes.FunctionDeclarationNode;
-import edu.iastate.symex.position.Range;
 
 /**
  * 
@@ -46,12 +41,10 @@ public class GlobalEnv extends PhpEnv {
 	private HashSet<File> invokedFiles = new HashSet<File>(); // May contain files that are not in the fileStack (already executed)
 
 	/*
-	 * Manage the output.
-	 * During execution, the final output will be collected from
-	 * the output value in the normal flow, plus the output values at exit statements.
+	 * Collect output values at exit statements.
+	 * The final output value will include those output values PLUS the output value from the normal flow.
 	 */
-	private DataNode normalOutput = SpecialNode.UnsetNode.UNSET;
-	private ValueSet outputAtExits = new ValueSet(); // Collection of output values at exit statements
+	private ValueSet outputAtExits = new ValueSet();
 	
 	/**
 	 * Constructor
@@ -158,30 +151,19 @@ public class GlobalEnv extends PhpEnv {
 	}
 	
 	/*
-	 * Manage the output
+	 * Manage the output value
 	 */
 	
-	protected DataNode getFinalOutput_() {
-		DataNode outputAtExitsValue = outputAtExits.getValue();
-		if (outputAtExitsValue != SpecialNode.UnsetNode.UNSET && SymexConfig.COLLECT_OUTPUTS_FROM_EXIT_STATEMENTS) {
-			// TODO The correct statement for constraint should be as follows:
-			// 		Constraint constraint = outputAtExits.getUncoveredConstraint();
-			// However, getUncoveredConstraint() often hangs when there are too many constraints.
-			// As a work-around, let's create a simple constraint representing the normal case:
-			Constraint constraint = ConstraintFactory.createAtomicConstraint("NORMAL_OUTPUT", Range.UNDEFINED);
-			
-			return DataNodeFactory.createCompactSelectNode(constraint, normalOutput, outputAtExitsValue);
-		}
-		else
-			return normalOutput;
+	protected ValueSet getOutputAtExits_() {
+		return outputAtExits;
 	}
 	
-	protected void addOuptutAtExitToFinalOutput_(Constraint constraint, DataNode value) {
+	protected void collectOutputAtExit_(Constraint constraint, DataNode value) {
 		outputAtExits.addValue(constraint, value);
 	}
 	
-	protected void addNormalOutputToFinalOutput_(DataNode value) {
-		 normalOutput = value;
+	protected void clearOutputAtExits_() {
+		outputAtExits = new ValueSet();
 	}
 	
 }

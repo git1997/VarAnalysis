@@ -236,6 +236,8 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			control = ControlNode.OK;
 		}
 		
+		functionEnv.mergeCurrentOutputWithOutputAtReturns();
+		
 		DataNode retValue = functionEnv.getReturnValue();
 		if (retValue == SpecialNode.UnsetNode.UNSET)
 			retValue = DataNodeFactory.createSymbolicNode(this);
@@ -358,7 +360,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 			BranchEnv branchEnv = new BranchEnv(env, constraint);
 			
 			branchEnv.appendOutput(arguments);
-			branchEnv.addOutputAtExitToFinalOutput();
+			branchEnv.collectOutputAtExit();
 		
 			env.backtrackAfterExecution(branchEnv);
 			return SpecialNode.ControlNode.EXIT;
@@ -366,7 +368,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 		// [END OF ADHOC CODE]
 		
 		env.appendOutput(arguments);
-		env.addOutputAtExitToFinalOutput();
+		env.collectOutputAtExit();
 		return SpecialNode.ControlNode.EXIT;
 	}
 	

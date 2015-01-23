@@ -8,7 +8,6 @@ import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -23,10 +22,12 @@ public abstract class PhpEnv extends Env {
 	private HashMap<String, PhpVariable> variableTable = new HashMap<String, PhpVariable>();
 	
 	/*
-	 * Manage the return values (by a function call or include statement).
-	 * The return values are composed of all the return values at return statements.
+	 * Collect output values and return values at return statements.
+	 * The final output value will include those output values PLUS the output value from the normal flow.
+	 * The final return value will include those return values.
 	 */
-	private ValueSet returnValue = new ValueSet();
+	private ValueSet outputAtReturns = new ValueSet();
+	private ValueSet valueAtReturns = new ValueSet();
 	
 	/**
 	 * Constructor
@@ -69,32 +70,57 @@ public abstract class PhpEnv extends Env {
 	}
 	
 	/*
-	 * Manage the return value
+	 * Mange the output value
 	 */
 	
-	protected DataNode getReturnValue_() {
-		return returnValue.getValue();
+	protected ValueSet getOutputAtReturns_() {
+		return outputAtReturns;
 	}
 	
-	protected void addReturnValue_(Constraint constraint, DataNode value) {
-		returnValue.addValue(constraint, value);
+	protected void collectOutputAtReturn_(Constraint constraint, DataNode value) {
+		outputAtReturns.addValue(constraint, value);
+	}
+	
+	protected void clearOutputAtReturns_() {
+		outputAtReturns = new ValueSet();
 	}
 	
 	/*
-	 * Handle return values for include statements
-	 * @see IncludeNode.execute(env)
+	 * Manage the return value
 	 */
 	
-	public Object backupReturnValue_() {
-		return returnValue;
+	protected ValueSet getValueAtReturns_() {
+		return valueAtReturns;
 	}
 	
-	public void removeReturnValue_() {
-		returnValue = new ValueSet();
+	protected void collectValueAtReturn_(Constraint constraint, DataNode value) {
+		valueAtReturns.addValue(constraint, value);
 	}
 	
-	public void restoreReturnValue_(Object value) {
-		returnValue = (ValueSet) value;
+	protected void clearValueAtReturns_() {
+		valueAtReturns = new ValueSet();
+	}
+	
+	/*
+	 * Handle output values and return values when executing a file
+	 * @see FileNode.execute(env)
+	 */
+	
+	protected Object backupOutputAtReturns_() {
+		return outputAtReturns;
+	}
+	
+	protected void restoreOutputAtReturns_(Object value) {
+		outputAtReturns = (ValueSet) value;
+	}
+	
+	
+	protected Object backupValueAtReturns_() {
+		return valueAtReturns;
+	}
+	
+	protected void restoreValueAtReturns_(Object value) {
+		valueAtReturns = (ValueSet) value;
 	}
 	
 }
@@ -132,19 +158,16 @@ class ValueSet {
 	}
 	
 	/**
-	 * Returns a value representing the valueSet.
+	 * Returns a value representing the valueSet, or NULL if the valueSet is empty.
 	 * (The last constraint in the valueSet is assumed to add up to TRUE, i.e. constrain[1] | constraint[2] | ... | constraint[n] == TRUE)
 	 */
 	public DataNode getValue() {
-		int size = values.size();
-		DataNode retValue = SpecialNode.UnsetNode.UNSET;
-		for (int i = size - 1; i >= 0; i--) {
-			Constraint constraint = constraints.get(i);
-			DataNode value = values.get(i);
-			if (retValue == SpecialNode.UnsetNode.UNSET)
-				retValue = value;
-			else
-				retValue = DataNodeFactory.createCompactSelectNode(constraint, value, retValue);
+		if (values.isEmpty())
+			return null;
+		
+		DataNode retValue = values.get(values.size() - 1);
+		for (int i = values.size() - 2; i >= 0; i--) {
+			retValue = DataNodeFactory.createCompactSelectNode(constraints.get(i), values.get(i), retValue);
 		}
 		return retValue;
 	}

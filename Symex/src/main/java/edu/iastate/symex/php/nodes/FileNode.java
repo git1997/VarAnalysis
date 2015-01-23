@@ -1,7 +1,6 @@
 package edu.iastate.symex.php.nodes;
 
 import java.io.File;
-
 import org.eclipse.php.internal.core.PHPVersion;
 import org.eclipse.php.internal.core.ast.nodes.ASTParser;
 import org.eclipse.php.internal.core.ast.nodes.Program;
@@ -11,6 +10,7 @@ import edu.iastate.symex.util.logging.MyLogger;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode.ControlNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.UnsetNode;
 import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.FileIO;
 
@@ -65,13 +65,33 @@ public class FileNode {
 	public DataNode execute(Env env) {
 		env.putFile(file, this);
 		
+		if (programNode == null)
+			return UnsetNode.UNSET;
+		
+		Object backupOutput = env.backupOutputAtReturns();
+		Object backupReturn = env.backupValueAtReturns();
+		
+		env.clearOutputAtReturns();
+		env.clearValueAtReturns();
+		
 		env.pushFileToStack(file);
-		DataNode control = ControlNode.OK;
-		if (programNode != null)
-			control = programNode.execute(env);
+		DataNode control = programNode.execute(env);
 		env.popFileFromStack();
 		
-		return control;
+		env.mergeCurrentOutputWithOutputAtReturns();
+		DataNode retValue = env.getReturnValue();
+		
+		env.restoreOutputAtReturns(backupOutput);
+		env.restoreValueAtReturns(backupReturn);
+		
+		if (control == ControlNode.EXIT) // EXIT
+			return ControlNode.EXIT;
+		else if (control instanceof ControlNode) // OK, RETURN, BREAK, CONTINUE
+			return retValue;
+		else {
+			// TODO Handle multiple returned CONTROL values here
+			return retValue;
+		}
 	}
 
 }

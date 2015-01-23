@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
@@ -18,6 +19,7 @@ import edu.iastate.symex.instrumentation.WebAnalysis;
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.FileNode;
 import edu.iastate.symex.php.nodes.FunctionDeclarationNode;
+import edu.iastate.symex.position.Range;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
 
@@ -341,57 +343,100 @@ public abstract class Env {
 		
 		setCurrentOutput(newValue);
 	}
+	
+	/**
+	 * Collects the output value at some exit statement
+	 */
+	public void collectOutputAtExit() {
+		getGlobalEnv().collectOutputAtExit_(getConjunctedConstraintUpToGlobalEnvScope(), getCurrentOutput());
+	}
+	
+	/**
+	 * Collects the output value at some return statement
+	 */
+	public void collectOutputAtReturn() {
+		getPhpEnv().collectOutputAtReturn_(getConjunctedConstraintUpToPhpEnvScope(), getCurrentOutput());
+	}
+	
+	/**
+	 * Collectes the return value at some return statement
+	 */
+	public void collectValueAtReturn(DataNode value) {
+		getPhpEnv().collectValueAtReturn_(getConjunctedConstraintUpToPhpEnvScope(), value);
+	}
+	
+	/**
+	 * Merges the current output value in the normal flow with the output values collected at exit statements.
+	 * (The normal flow may not exist (all flows end with exit), but it doesn't affect the correctness of the current implementation.) 
+	 */
+	public void mergeCurrentOutputWithOutputAtExits() {
+		DataNode outputAtExits = getGlobalEnv().getOutputAtExits_().getValue();
+		if (outputAtExits != null) {
+			// TODO The correct way to compute the constraint is as follows:
+			// 			Constraint constraint = outputAtExits.getUncoveredConstraint();
+			// However, getUncoveredConstraint() often hangs when there are too many constraints.
+			// As a work-around, let's create a simple constraint representing the normal case:
+			Constraint constraint = ConstraintFactory.createAtomicConstraint("NORMAL_OUTPUT", Range.UNDEFINED);
 
-	/**
-	 * Gets the final output
-	 */
-	public DataNode getFinalOutput() {
-		return getGlobalEnv().getFinalOutput_();
+			DataNode mergedOutput = DataNodeFactory.createCompactSelectNode(constraint, getCurrentOutput(), outputAtExits);
+			setCurrentOutput(mergedOutput);
+			getGlobalEnv().clearOutputAtExits_();
+		}
 	}
 	
 	/**
-	 * Adds an output value at some exit statement to the final output
+	 * Merges the current output value in the normal flow with the output values collected at return statements.
+	 * (The normal flow may not exist (all flows end with return), but it doesn't affect the correctness of the current implementation.) 
 	 */
-	public void addOutputAtExitToFinalOutput() {
-		getGlobalEnv().addOuptutAtExitToFinalOutput_(getConjunctedConstraintUpToGlobalEnvScope(), getCurrentOutput());
+	public void mergeCurrentOutputWithOutputAtReturns() {
+		DataNode outputAtReturns = getPhpEnv().getOutputAtReturns_().getValue();
+		if (outputAtReturns != null) {
+			Constraint constraint = getPhpEnv().getOutputAtReturns_().getUncoveredConstraint();
+			
+			DataNode mergedOutput = DataNodeFactory.createCompactSelectNode(constraint, getCurrentOutput(), outputAtReturns);
+			setCurrentOutput(mergedOutput);
+			getPhpEnv().clearOutputAtReturns_();
+		}
 	}
 	
 	/**
-	 * Adds the output value in the normal flow to the final output
-	 */
-	public void addNormalOutputToFinalOutput() {
-		getGlobalEnv().addNormalOutputToFinalOutput_(getCurrentOutput());
-	}
-	
-	/**
-	 * Gets the return value
+	 * Returns all return values collected at return statements
 	 */
 	public DataNode getReturnValue() {
-		return getPhpEnv().getReturnValue_();
-	}
-	
-	/**
-	 * Adds a return value (at some return statement)
-	 */
-	public void addReturnValue(DataNode value) {
-		getPhpEnv().addReturnValue_(getConjunctedConstraintUpToPhpEnvScope(), value);
+		DataNode returnValue = getPhpEnv().getValueAtReturns_().getValue();
+		if (returnValue == null)
+			return SpecialNode.UnsetNode.UNSET;
+		else
+			return returnValue;
 	}
 	
 	/*
-	 * Handle return values for include statements
-	 * @see IncludeNode.execute(env)
+	 * Handle output values and return values when executing a file
+	 * @see FileNode.execute(env)
 	 */
 	
-	public Object backupReturnValue() {
-		return getPhpEnv().backupReturnValue_();
+	public Object backupOutputAtReturns() {
+		return getPhpEnv().backupOutputAtReturns_();
 	}
 	
-	public void removeReturnValue() {
-		getPhpEnv().removeReturnValue_();
+	public void clearOutputAtReturns() {
+		getPhpEnv().clearOutputAtReturns_();
 	}
 	
-	public void restoreReturnValue(Object value) {
-		getPhpEnv().restoreReturnValue_(value);
+	public void restoreOutputAtReturns(Object value) {
+		getPhpEnv().restoreOutputAtReturns_(value);
+	}
+	
+	public Object backupValueAtReturns() {
+		return getPhpEnv().backupValueAtReturns_();
+	}
+	
+	public void clearValueAtReturns() {
+		getPhpEnv().clearValueAtReturns_();
+	}
+	
+	public void restoreValueAtReturns(Object value) {
+		getPhpEnv().restoreValueAtReturns_(value);
 	}
 	
 	/*
@@ -706,7 +751,8 @@ public abstract class Env {
 	 * Performs a few tasks when the execution is finished.
 	 */
 	public void finishExecution() {
-		addNormalOutputToFinalOutput();
+		if (SymexConfig.COLLECT_OUTPUTS_FROM_EXIT_STATEMENTS)
+			mergeCurrentOutputWithOutputAtExits();
 	}
 	
 }
