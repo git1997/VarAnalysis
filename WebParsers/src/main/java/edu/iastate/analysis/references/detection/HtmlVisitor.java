@@ -107,7 +107,7 @@ public class HtmlVisitor extends HtmlDocumentVisitor {
 		 * Handle <script type="text/javascript" src="javascript.js"/>
 		 */
 		if (htmlScript.getAttributeValue("src") != null) {
-			// TODO Review this code
+			// TODO Revise this code, see edu.iastate.symex.core.Env.resolveFile(DataNode)
 			String includedFile = htmlScript.getAttributeValue("src").getStringValue();
 			File currentFile = htmlScript.getOpenTag().getLocation().getStartPosition().getFile();
 			String includedFilePath = FileIO.resolveIncludedFilePath(currentFile.getParent(), currentFile.getAbsolutePath(), includedFile);

@@ -32,7 +32,7 @@ public class ExpressionStatementNode extends StatementNode {
 		DataNode retValue = expression.execute(env); 
 		if (retValue == ControlNode.EXIT) // e.g. the function call die() returns EXIT
 			return ControlNode.EXIT;
-		else
+		else // TODO Might need to handle multiple returned CONTROL values here
 			return ControlNode.OK;
 	}
 	

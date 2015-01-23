@@ -5,6 +5,7 @@ import org.eclipse.php.internal.core.ast.nodes.ReturnStatement;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.UnsetNode;
 import edu.iastate.symex.instrumentation.WebAnalysis;
 
 /**
@@ -29,18 +30,18 @@ public class ReturnStatementNode extends StatementNode {
 	
 	@Override
 	public DataNode execute_(Env env) {
-		if (expression != null) {
-			DataNode returnValue = expression.execute(env);
-			env.addReturnValue(returnValue);
+		DataNode returnValue = (expression != null ? expression.execute(env) : UnsetNode.UNSET);
+		env.collectValueAtReturn(returnValue);
+		env.collectOutputAtReturn();
 			
-			/*
-			 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
-			 */
-			// BEGIN OF WEB ANALYSIS CODE
-			if (WebAnalysis.isEnabled())
-				WebAnalysis.onReturnStatementExecute((ReturnStatement) this.getAstNode(), env);
-			// END OF WEB ANALYSIS CODE
-		}		
+		/*
+		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
+		 */
+		// BEGIN OF WEB ANALYSIS CODE
+		if (WebAnalysis.isEnabled())
+			WebAnalysis.onReturnStatementExecute((ReturnStatement) this.getAstNode(), env);
+		// END OF WEB ANALYSIS CODE
+		
 		return SpecialNode.ControlNode.RETURN;
 	}
 

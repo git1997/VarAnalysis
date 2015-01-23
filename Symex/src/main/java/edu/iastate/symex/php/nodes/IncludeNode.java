@@ -10,7 +10,6 @@ import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.SpecialNode.UnsetNode;
-import edu.iastate.symex.datamodel.nodes.SpecialNode.ControlNode;
 
 /**
  * 
@@ -69,10 +68,6 @@ public class IncludeNode extends ExpressionNode {
 		 * Prepare to execute the file
 		 */
 
-		// Before executing the file, do some backup with the current return value
-		Object backupPhpReturn = env.backupReturnValue();
-		env.removeReturnValue();
-
 		// Print the trace of included files
 		StringBuilder fileTrace = new StringBuilder();
 		for (File invokedFile : env.getFileStack())
@@ -87,9 +82,7 @@ public class IncludeNode extends ExpressionNode {
 		if (fileNode == null)
 			fileNode = new FileNode(includedFile);
 		
-		DataNode control = fileNode.execute(env);
-		
-		DataNode retValue = env.getReturnValue();
+		DataNode retValue = fileNode.execute(env);
 		if (retValue == UnsetNode.UNSET)
 			retValue = DataNodeFactory.createSymbolicNode(this);
 
@@ -98,18 +91,7 @@ public class IncludeNode extends ExpressionNode {
 		 */
 		// MyLogger.log(MyLevel.PROGRESS, "Done with " + fileTrace + ".");
 
-		// Restore the backup return value
-		env.restoreReturnValue(backupPhpReturn);
-
-		// Return the retValue (not the CONTROL value) because IncludeNode is an expression, except for the case of EXIT
-		if (control == ControlNode.EXIT) // EXIT
-			return ControlNode.EXIT;
-		else if (control instanceof ControlNode) // OK, RETURN, BREAK, CONTINUE
-			return retValue;
-		else {
-			// TODO Handle multiple returned CONTROL values here
-			return retValue;
-		}
+		return retValue;
 	}
 
 }

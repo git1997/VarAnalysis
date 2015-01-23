@@ -24,7 +24,7 @@ public class PhpExecuter {
 		fileNode.execute(env);
 		env.finishExecution();
 		
-		DataNode output = env.getFinalOutput();
+		DataNode output = env.getCurrentOutput();
 		return new DataModel(output);
 	}
 	
