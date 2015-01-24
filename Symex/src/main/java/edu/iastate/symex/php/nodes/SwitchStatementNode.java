@@ -55,16 +55,25 @@ public class SwitchStatementNode extends StatementNode {
 		}
 		
 		/*
-		 * Modify the statementNodes within switchCaseNodes so that there's no fall through across cases,
-		 *   and there's no BREAK statements anymore.
-		 * For example, 
+		 * Modify the statementNodes within switchCaseNodes so that there's no fall through across cases
+		 *   (so we can turn a SwitchStatement into equivalent IfStatements),
+		 * Also, make sure that there's no BREAK statements in the SwitchStatement anymore
+		 *   (that is, BREAK statements should be "eaten" by the SwitchStatement, not by an enclosing loop for example).
+		 * Example:
 		 * 		case 0: echo '0'; 
-		 * 		case 1: echo '1'. 
-		 * Then, the statementNodes of case 0 include echo '0' and echo '1'.
-		 * If 
-		 * 		case 0: echo '0'; break;
 		 * 		case 1: echo '1'; break;
-		 * Then, the statementNodes of case 0 include echo '0' only. 
+		 * 		case 2: echo '2'; 
+		 * First we turn them into 
+		 * 		case 0: echo '0'; echo '1';
+		 * 		case 1: echo '1';
+		 * 		case 2: echo '2';
+		 * Then we turn them into 
+		 * 		if (case 0)
+		 * 			{ echo '0'; echo '1'; }
+		 * 		else if (case 1)
+		 * 			echo '1';
+		 * 		else
+		 * 			echo '2';
 		 */
 		for (int i = 0; i < switchCaseNodes.size(); i++) {
 			if (!switchCaseNodes.get(i).hasBreakStatement()) {
@@ -78,6 +87,7 @@ public class SwitchStatementNode extends StatementNode {
 		}
 		
 		// Reorder the switchCaseNodes so that the default switchCase is put at the end.
+		// TODO Is this necessary, and more importantly, is this the correct way to handle a SwitchStatement?
 		for (int i = 0; i < switchCaseNodes.size() - 1; i++) { // Use size() - 1, so that if it's already at the end, don't do anything
 			if (switchCaseNodes.get(i).isDefault()) {
 				SwitchCaseNode defaultSwitchCaseNode = switchCaseNodes.get(i);
