@@ -21,7 +21,7 @@ public class PhpExecuter {
 		GlobalEnv env = new GlobalEnv();
 		FileNode fileNode = new FileNode(file);
 
-		fileNode.execute(env);
+		fileNode.execute(env); // TODO Consider the returned CONTROL value?
 		env.finishExecution();
 		
 		DataNode output = env.getCurrentOutput();

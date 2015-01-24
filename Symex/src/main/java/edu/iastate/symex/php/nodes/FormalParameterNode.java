@@ -9,9 +9,6 @@ import org.eclipse.php.internal.core.ast.nodes.Variable;
 import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
-import edu.iastate.symex.core.Env;
-import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.SpecialNode;
 
 /**
  * 
@@ -79,10 +76,4 @@ public class FormalParameterNode extends PhpNode {
 		return defaultValue;
 	}
 	
-	@Override
-	public DataNode execute(Env env) {
-		MyLogger.log(MyLevel.USER_EXCEPTION, "In FormalParameterNode.java: FormalParameterNode + " + this.getSourceCode() + " should not get executed.");
-		return SpecialNode.ControlNode.OK;
-	}
-
 }

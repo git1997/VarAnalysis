@@ -30,10 +30,12 @@ public class ExpressionStatementNode extends StatementNode {
 	@Override
 	public DataNode execute_(Env env) {
 		DataNode retValue = expression.execute(env); 
-		if (retValue == ControlNode.EXIT) // e.g. the function call die() returns EXIT
+		if (retValue == ControlNode.EXIT)
 			return ControlNode.EXIT;
-		else // TODO Might need to handle multiple returned CONTROL values here?
+		else {
+			// TODO Consider handling multi-value in which concrete values are non-CONTROL or EXIT?
 			return ControlNode.OK;
+		}
 	}
 	
 }

@@ -157,7 +157,7 @@ public class SwitchStatementNode extends StatementNode {
 				LiteralNode conditionString = DataNodeFactory.createLiteralNode(stringValue, location);
 				Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
 
-				return IfStatementNode.execute(env, constraint, thenBranch, elseBranch, false);
+				return IfStatementNode.execute(env, constraint, thenBranch, elseBranch, true);
 			}
 		}
 		

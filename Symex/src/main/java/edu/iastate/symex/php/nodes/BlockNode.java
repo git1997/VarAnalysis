@@ -46,7 +46,7 @@ public class BlockNode extends StatementNode {
 		// Execute function/class declarations first
 		for (StatementNode statementNode : statements) {
 			if (statementNode instanceof FunctionDeclarationNode || statementNode instanceof ClassDeclarationNode)
-				statementNode.execute(env);
+				statementNode.execute(env); // Always return OK
 		}
 			
 		// Then, execute the regular statements

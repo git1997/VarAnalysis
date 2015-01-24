@@ -31,7 +31,7 @@ public class ConditionalExpressionNode extends ExpressionNode {
 	
 	@Override
 	public DataNode execute(Env env) {
-		return IfStatementNode.execute(env, condition, ifTrue, ifFalse, true);
+		return IfStatementNode.execute(env, condition, ifTrue, ifFalse, false);
 	}
 
 }

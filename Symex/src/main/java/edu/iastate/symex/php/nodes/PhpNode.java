@@ -6,8 +6,6 @@ import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 
 import edu.iastate.symex.position.Range;
 import edu.iastate.symex.util.ASTHelper;
-import edu.iastate.symex.core.Env;
-import edu.iastate.symex.datamodel.nodes.DataNode;
 
 /**
  * 
@@ -57,14 +55,4 @@ public abstract class PhpNode {
 		return sourceCode;
 	}
 		
-	/**
-	 * Executes the given PHP node and updates env along the way.
-	 * The returned value could be a CONTROL value such as OK or EXIT (@see edu.iastate.symex.datamodel.nodes.SpecialNode.ControlNode).
-	 * An expression typically returns a non-CONTROL value, but it can also returns a CONTROL value (e.g., FunctionInvocation 'exit').
-	 * A statement must always return a CONTROL value. 
-	 * @param env contains PHP elements such as variables and functions during the execution.
-	 * @return A DataNode describing the returned value. 
-	 */
-	public abstract DataNode execute(Env env);
-	
 }

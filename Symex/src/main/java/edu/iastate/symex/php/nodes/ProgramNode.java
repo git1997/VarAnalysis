@@ -27,7 +27,10 @@ public class ProgramNode extends PhpNode {
 		}
 	}
 	
-	@Override
+	/**
+	 * Executes a PHP program. See edu.iastate.symex.php.nodes.StatementNode.execute(Env)
+	 * @param env
+	 */
 	public DataNode execute(Env env) {
 		return BlockNode.executeStatements(statements, env);
 	}

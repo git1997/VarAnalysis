@@ -54,7 +54,7 @@ public class IfStatementNode extends StatementNode {
 	
 	@Override
 	public DataNode execute_(Env env) {
-		return IfStatementNode.execute(env, condition, trueStatement, falseStatement, false);
+		return IfStatementNode.execute(env, condition, trueStatement, falseStatement, true);
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class IfStatementNode extends StatementNode {
 	 * Depending on the evaluated result of the condition, we may execute only one branch or both branches.
 	 * @see {@link edu.iastate.symex.php.nodes.ConditionalExpressionNode#execute(Env)}
 	 */
-	public static DataNode execute(Env env, ExpressionNode condition, PhpNode trueNode, PhpNode falseNode, boolean isExpression) {
+	public static DataNode execute(Env env, ExpressionNode condition, PhpNode trueNode, PhpNode falseNode, boolean isStatement) {
 		DataNode evaluatedCondition = condition.execute(env);
 		BooleanNode conditionValue = evaluatedCondition.convertToBooleanValue();
 		
@@ -71,15 +71,15 @@ public class IfStatementNode extends StatementNode {
 		 */
 		if (conditionValue.isTrueValue()) {
 			if (trueNode != null)
-				return trueNode.execute(env);
+				return (isStatement ? ((StatementNode) trueNode).execute(env) : ((ExpressionNode) trueNode).execute(env));
 			else 
-				return (isExpression ? UnsetNode.UNSET : ControlNode.OK);
+				return (isStatement ? ControlNode.OK : UnsetNode.UNSET);
 		}
 		else if (conditionValue.isFalseValue()) {
 			if (falseNode != null)
-				return falseNode.execute(env);
+				return (isStatement ? ((StatementNode) falseNode).execute(env) : ((ExpressionNode) falseNode).execute(env));
 			else
-				return (isExpression ? UnsetNode.UNSET : ControlNode.OK);
+				return (isStatement ? ControlNode.OK : UnsetNode.UNSET);
 		}
 		
 		/*
@@ -87,21 +87,21 @@ public class IfStatementNode extends StatementNode {
 		 */
 		Constraint constraint = ConstraintFactory.createAtomicConstraint(condition.getSourceCode(), condition.getLocation());
 		
-		return execute(env, constraint, trueNode, falseNode, isExpression);
+		return execute(env, constraint, trueNode, falseNode, isStatement);
 	}
 	
 	/**
 	 * Executes different branches and updates the env accordingly.
 	 * @see {@link edu.iastate.symex.php.nodes.SwitchStatementNode.FakeSwitchStatementNode#execute(Env)}
 	 */
-	public static DataNode execute(Env env, Constraint constraint, PhpNode trueNode, PhpNode falseNode, boolean isExpression) {
+	public static DataNode execute(Env env, Constraint constraint, PhpNode trueNode, PhpNode falseNode, boolean isStatement) {
 		/*
 		 * Execute the branches
 		 */
 		HashMap<PhpVariable, DataNode> dirtyVarsInTrueBranch = new HashMap<PhpVariable, DataNode>();
 		HashMap<PhpVariable, DataNode> dirtyVarsInFalseBranch = new HashMap<PhpVariable, DataNode>();
-		DataNode trueBranchRetValue = (isExpression ? UnsetNode.UNSET : ControlNode.OK);
-		DataNode falseBranchRetValue = (isExpression ? UnsetNode.UNSET : ControlNode.OK);
+		DataNode trueBranchRetValue = (isStatement ? ControlNode.OK : UnsetNode.UNSET);
+		DataNode falseBranchRetValue = (isStatement ? ControlNode.OK : UnsetNode.UNSET);
 
 		/*
 		 * The following code is used for web analysis. Comment out/Uncomment out if necessary.
@@ -113,7 +113,7 @@ public class IfStatementNode extends StatementNode {
 		
 		if (trueNode != null) {
 			BranchEnv trueBranchEnv = new BranchEnv(env, constraint);
-			trueBranchRetValue = trueNode.execute(trueBranchEnv);
+			trueBranchRetValue = (isStatement ? ((StatementNode) trueNode).execute(trueBranchEnv) : ((ExpressionNode) trueNode).execute(trueBranchEnv));
 			dirtyVarsInTrueBranch = env.backtrackAfterExecution(trueBranchEnv);
 		}
 
@@ -127,7 +127,7 @@ public class IfStatementNode extends StatementNode {
 		
 		if (falseNode != null) {
 			BranchEnv falseBranchEnv = new BranchEnv(env, ConstraintFactory.createNotConstraint(constraint));
-			falseBranchRetValue = falseNode.execute(falseBranchEnv);
+			falseBranchRetValue = (isStatement ? ((StatementNode) falseNode).execute(falseBranchEnv) : ((ExpressionNode) falseNode).execute(falseBranchEnv));
 			dirtyVarsInFalseBranch = env.backtrackAfterExecution(falseBranchEnv);
 		}
 		

@@ -33,7 +33,7 @@ public class DoStatementNode extends StatementNode {
 
 	@Override
 	public DataNode execute_(Env env) {
-		body.execute(env);
+		body.execute(env); // TODO Consider the returned CONTROL value?
 		condition.execute(env);
 		
 		Constraint constraint = ConstraintFactory.createAtomicConstraint(condition.getSourceCode(), condition.getLocation());

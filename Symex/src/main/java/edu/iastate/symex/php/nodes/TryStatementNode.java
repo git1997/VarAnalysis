@@ -42,7 +42,7 @@ public class TryStatementNode extends StatementNode {
 	
 	@Override
 	public DataNode execute_(Env env) {
-		body.execute(env);
+		body.execute(env); // TODO Consider the returned CONTROL value?
 		//for (BlockNode catchBlockNode : catchBlockNodes) {
 		//	catchBlockNode.execute(env);
 		//}

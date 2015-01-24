@@ -60,7 +60,8 @@ public class FileNode {
 	}
 	
 	/**
-	 * @see {@link edu.iastate.symex.php.nodes.PhpNode#execute(Env)}
+	 * Executes a PHP file. See edu.iastate.symex.php.nodes.ExpressionNode.execute(Env)
+	 * @param env
 	 */
 	public DataNode execute(Env env) {
 		env.putFile(file, this);

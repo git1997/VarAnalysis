@@ -53,15 +53,15 @@ public class ForEachStatementNode extends StatementNode {
 		String valueVarName = (valueNode instanceof VariableNode ? ((VariableNode) valueNode).getVariableNameBeforeRunTimeOrNull() : null);
 		
 		if (array != null && valueVarName != null) {
-			DataNode retValue = SpecialNode.ControlNode.OK;
+			DataNode control = SpecialNode.ControlNode.OK;
 			for (String key : array.getKeys()) {
 				DataNode value = array.getElementValue(key);
 				if (keyVarName != null)
 					env.getOrPutThenWriteVariable(keyVarName, DataNodeFactory.createLiteralNode(key));
 				env.getOrPutThenWriteVariable(valueVarName, value);
-				retValue = statementNode.execute(env);
+				control = statementNode.execute(env);
 			}
-			return retValue; // TODO Revise this retValue
+			return control; // TODO Revise this returned CONTROL value
 		}
 		else {
 			Constraint constraint = ConstraintFactory.createAtomicConstraint(expressionNode.getSourceCode(), expressionNode.getLocation());

@@ -71,7 +71,11 @@ public abstract class StatementNode extends PhpNode {
 		}
 	}
 	
-	@Override
+	/**
+	 * Executes the statement.
+	 * The returned value must be a CONTROL value (or a multi-value of type CONTROL). 
+	 * @param env
+	 */
 	public DataNode execute(Env env) {
 		/*
 		 * The following code is used for web debugger. Comment out/Uncomment out if necessary.

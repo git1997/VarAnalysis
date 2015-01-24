@@ -18,6 +18,8 @@ import org.eclipse.php.internal.core.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.ast.nodes.UnaryOperation;
 import org.eclipse.php.internal.core.ast.nodes.VariableBase;
 
+import edu.iastate.symex.core.Env;
+import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.util.ASTHelper;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
@@ -63,5 +65,13 @@ public abstract class ExpressionNode extends PhpNode {
 			default:									MyLogger.log(MyLevel.TODO, "Expression (" + expression.getClass().getSimpleName() + ") unimplemented: " + ASTHelper.inst.getSourceCodeOfPhpASTNode(expression)); return new UnresolvedExpressionNode(expression);
 		}
 	}
+	
+	/**
+	 * Executes the expression.
+	 * The returned value must be either a non-CONTROL value, an EXIT value (from FunctionInvocation 'exit'),
+	 * 	 or a multi-value in which concrete values are non-CONTROL or EXIT.
+	 * @param env 
+	 */
+	public abstract DataNode execute(Env env);
 	
 }
