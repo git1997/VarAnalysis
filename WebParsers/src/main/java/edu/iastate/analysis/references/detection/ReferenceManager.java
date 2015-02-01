@@ -56,6 +56,14 @@ public class ReferenceManager {
 	}
 	
 	/**
+	 * Adds references from another referenceManager.
+	 * @param referenceManager
+	 */
+	public void addReferences(ReferenceManager referenceManager) {
+		references.addAll(referenceManager.references);
+	}
+	
+	/**
 	 * Gets references
 	 */
 	public ArrayList<Reference> getReferenceList() {
