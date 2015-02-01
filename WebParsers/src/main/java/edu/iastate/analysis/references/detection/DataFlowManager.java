@@ -40,7 +40,7 @@ import edu.iastate.symex.position.Position;
  */
 public class DataFlowManager {
 	
-	private ReferenceManager referenceManager;
+	private ReferenceManager referenceManager; // Nodes that are managed by this DataFlowManager must be present in the referenceManager
 	
 	// Set of references that have data flow from a given reference
 	private HashMap<Reference, HashSet<Reference>> dataFlowFrom = new HashMap<Reference, HashSet<Reference>>();
@@ -114,6 +114,30 @@ public class DataFlowManager {
 		dataFlowTo.remove(reference);
 	}
 	
+	/**
+	 * Adds data flows (and references) from another DataFlowManager.
+	 * Also resolve any data flows that can exist between the two DataFlowManagers.
+	 * @param dataFlowManager
+	 */
+	public void addDataFlows(DataFlowManager dataFlowManager) {
+		ArrayList<Reference> referenceList1 = referenceManager.getReferenceList();
+		ArrayList<Reference> referenceList2 = dataFlowManager.referenceManager.getReferenceList();
+		
+		this.referenceManager.addReferences(dataFlowManager.referenceManager);
+		
+		for (Reference ref1 : dataFlowManager.dataFlowFrom.keySet()) {
+			dataFlowFrom.put(ref1, dataFlowManager.dataFlowFrom.get(ref1));
+		}
+		for (Reference ref1 : dataFlowManager.dataFlowTo.keySet()) {
+			dataFlowTo.put(ref1, dataFlowManager.dataFlowTo.get(ref1));
+		}
+		
+		resolveDataFlowsFromClientCodeToServerCode(referenceList1, referenceList2);
+		resolveDataFlowsFromClientCodeToServerCode(referenceList2, referenceList1);
+		
+		removeDuplicates();
+	}
+	
 	/*
 	 * GETTING DATA FLOWS
 	 */
@@ -140,38 +164,35 @@ public class DataFlowManager {
 	 * Resolves data flows
 	 */
 	public void resolveDataFlows() {
-		ArrayList<Reference> referenceList = referenceManager.getReferenceList();
-		HashMap<String, ArrayList<Reference>> referenceNameMap = getReferenceListByName(referenceList); // Use a map of reference names to speed up searching
+		resolveDataFlowsWithinServerCode();
+		resolveDataFlowsWithinClientCode();
+		resolveDataFlowsFromServerCodeToClientCode();
+		resolveDataFlowsFromClientCodeToServerCode();
 		
-		resolveDataFlowsWithinServerCode(referenceList, referenceNameMap);
-		resolveDataFlowsWithinClientCode(referenceList, referenceNameMap);
-		resolveDataFlowsFromServerCodeToClientCode(referenceList, referenceNameMap);
-		resolveDataFlowsFromClientCodeToServerCode(referenceList, referenceNameMap);
-		
-		removeDuplicates(referenceList);
+		removeDuplicates();
 	}
 	
 	/**
 	 * Resolves data flows within the server code
 	 */
-	private void resolveDataFlowsWithinServerCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsWithinServerCode() {
 		// Data flows within and across PHP and SQL has been automatically resolved during symbolic execution.
 	}
 	
 	/**
 	 * Resolves data flows within the client code
 	 */
-	private void resolveDataFlowsWithinClientCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsWithinClientCode() {
 		// [DONE] No data flow within HTML
-		resolveDataFlowsWithinJavaScriptCode(referenceList, referenceNameMap);
-		resolveDataFlowsFromHtmlToJavaScript(referenceList, referenceNameMap);
+		resolveDataFlowsWithinJavaScriptCode();
+		resolveDataFlowsFromHtmlToJavaScript();
 		// [DONE] No data flow from JavaScript to HTML (since HTML code can be viewed as JS code declaring variables, regular JS code cannot flow data back to those declarations)
 	}
 	
 	/**
 	 * Resolves data flows within JavaScript code
 	 */
-	private void resolveDataFlowsWithinJavaScriptCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsWithinJavaScriptCode() {
 		// NOTE: The data flows within each JavaScript code fragment have been resolved but those across the fragments are not yet resolved.
 		// Therefore, we connect them here. This method should not reconnect data flows within each JavaScript code fragment.
 	}
@@ -179,7 +200,10 @@ public class DataFlowManager {
 	/**
 	 * Resolves data flows from HTML to JavaScript
 	 */
-	private void resolveDataFlowsFromHtmlToJavaScript(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsFromHtmlToJavaScript() {
+		ArrayList<Reference> referenceList = referenceManager.getReferenceList();
+		HashMap<String, ArrayList<Reference>> referenceNameMap = getReferenceListByName(referenceList); // Use a map of reference names to speed up searching
+
 		for (Reference ref1 : referenceList) {
 			String name = ref1.getName();
 			
@@ -227,7 +251,7 @@ public class DataFlowManager {
 	/**
 	 * Resolves data flows from the server code and the client code
 	 */
-	private void resolveDataFlowsFromServerCodeToClientCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsFromServerCodeToClientCode() {
 		/*
 		 * NOTE: The correct algorithm would require every value to have an associated trace.
 		 * For example: 
@@ -236,6 +260,7 @@ public class DataFlowManager {
 		 * Value $x at line 2 should be ('a': $x:L2 -> $x:L1 -> 'a':L1)
 		 * However, currently we don't have that trace so the algorithm below is only an approximate solution.
 		 */
+		ArrayList<Reference> referenceList = referenceManager.getReferenceList();
 		HashMap<String, ArrayList<Reference>> referencePositionMap = getReferenceListByPosition(referenceList); // Use a map of reference positions to speed up searching
 		
 		for (Reference ref1 : referenceList) {
@@ -274,13 +299,25 @@ public class DataFlowManager {
 	}
 	
 	/**
-	 * Resolves data flows from the client code to the server code
+	 * Resolves data flows from the client code to the server code.
 	 */
-	private void resolveDataFlowsFromClientCodeToServerCode(ArrayList<Reference> referenceList, HashMap<String, ArrayList<Reference>> referenceNameMap) {
+	private void resolveDataFlowsFromClientCodeToServerCode() {
+		resolveDataFlowsFromClientCodeToServerCode(referenceManager.getReferenceList(), referenceManager.getReferenceList());
+	}
+	
+	/**
+	 * Resolves data flows from the client code to the server code.
+	 * The two referenceLists can be the same.
+	 * @param referenceListOfClientCode
+	 * @param referenceListOfServerCode
+	 */
+	private void resolveDataFlowsFromClientCodeToServerCode(ArrayList<Reference> referenceListOfClientCode, ArrayList<Reference> referenceListOfServerCode) {
 		// TODO Should we create a pseudo node to serve as the transit point of values from client code to server code?
 		// That would reduce the number of edges crossing the two sides.
+
+		HashMap<String, ArrayList<Reference>> referenceNameMap = getReferenceListByName(referenceListOfServerCode); // Use a map of reference names to speed up searching
 		
-		for (Reference ref1 : referenceList) {
+		for (Reference ref1 : referenceListOfClientCode) {
 			String name = ref1.getName();
 			
 			/*
@@ -288,10 +325,11 @@ public class DataFlowManager {
 			 */
 			if (ref1 instanceof HtmlQueryDecl) {
 				String submitToPage = getApproxSubmitToPage((HtmlQueryDecl) ref1);
-				for (Reference ref2 : referenceNameMap.get(name)) {
-					if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
-						addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
-				}
+				if (referenceNameMap.containsKey(name))
+					for (Reference ref2 : referenceNameMap.get(name)) {
+						if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
+							addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
+					}
 			}
 			/*
 			 * Connect HtmlDeclOfHtmlInputValue and PhpRefToHtml
@@ -300,10 +338,11 @@ public class DataFlowManager {
 				String submitToPage = getApproxSubmitToPage((HtmlDeclOfHtmlInputValue) ref1);
 				String inputName = ((HtmlDeclOfHtmlInputValue) ref1).getHtmlInputDecl().getName();
 				
-				for (Reference ref2 : referenceNameMap.get(inputName)) {
-					if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
-						addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
-				}
+				if (referenceNameMap.containsKey(inputName))
+					for (Reference ref2 : referenceNameMap.get(inputName)) {
+						if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
+							addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
+					}
 			}
 			/*
 			 * Connect JsDeclOfHtmlInputValue and PhpRefToHtml
@@ -312,10 +351,11 @@ public class DataFlowManager {
 				HashSet<String> submitToPages = getApproxSubmitToPages((JsDeclOfHtmlInputValue) ref1);
 				String inputName = ((JsDeclOfHtmlInputValue) ref1).getJsRefToHtmlInput().getName();
 				
-				for (Reference ref2 : referenceNameMap.get(inputName)) {
-					if (ref2 instanceof PhpRefToHtml && matchSubmitToPagesToEntryFile(submitToPages, ref2.getEntryFile()))
-						addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
-				}
+				if (referenceNameMap.containsKey(inputName))
+					for (Reference ref2 : referenceNameMap.get(inputName)) {
+						if (ref2 instanceof PhpRefToHtml && matchSubmitToPagesToEntryFile(submitToPages, ref2.getEntryFile()))
+							addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
+					}
 			}
 			/*
 			 * Connect HtmlInputDecl (representing value provided by user) and PhpRefToHtml
@@ -325,10 +365,11 @@ public class DataFlowManager {
 				String submitToPage = getApproxSubmitToPage((HtmlInputDecl) ref1);
 				String inputName = ((HtmlInputDecl) ref1).getName();
 				
-				for (Reference ref2 : referenceNameMap.get(inputName)) {
-					if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
-						addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
-				}
+				if (referenceNameMap.containsKey(inputName))
+					for (Reference ref2 : referenceNameMap.get(inputName)) {
+						if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
+							addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
+					}
 			}
 		}
 	}
@@ -336,10 +377,11 @@ public class DataFlowManager {
 	/**
 	 * Remove data flows that are duplicates of each other
 	 */
-	private void removeDuplicates(ArrayList<Reference> referenceList) {
+	private void removeDuplicates() {
 		/*
 		 * Put references into groups (connected components through data-flow links)
 		 */
+		ArrayList<Reference> referenceList = referenceManager.getReferenceList();
 		HashMap<Reference, Integer> refToGroupId = new HashMap<Reference, Integer>();
 		HashMap<Integer, ArrayList<Reference>> groupIdToRefs = new HashMap<Integer, ArrayList<Reference>>();
 		
