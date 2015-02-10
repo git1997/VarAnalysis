@@ -276,7 +276,7 @@ public class FileIO {
 	}
 	
 	/**
-	 * Returns the line nummber of an offset position in a file.
+	 * Returns the line number of an offset position in a file.
 	 * Line starts from 1.
 	 */
 	public static int getLineFromOffsetInFile(File file, int offset) {
