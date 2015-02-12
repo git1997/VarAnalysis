@@ -81,4 +81,15 @@
 			target="org.eclipse.php.core.phpsource">
 		</highlighting>
 	</extension>
+	<extension
+			id="VarisCompletionProposalComputer"
+			point="org.eclipse.dltk.ui.scriptCompletionProposalComputer">
+		<scriptCompletionProposalComputer
+				categoryId="edu.iastate.varis.ui.proposalCategory.varisTemplates"
+				class="edu.iastate.varis.ui.contentassist.VarisCompletionComputer"
+				toolkitId="org.eclipse.php.core.PHPNature">
+			<partition type="org.eclipse.php.PHP_DEFAULT">
+			</partition>
+		</scriptCompletionProposalComputer>
+	</extension>	
 </plugin>

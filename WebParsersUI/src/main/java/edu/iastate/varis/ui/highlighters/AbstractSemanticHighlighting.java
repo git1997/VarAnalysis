@@ -19,6 +19,7 @@ import org.eclipse.wst.sse.ui.ISemanticHighlighting;
 import org.eclipse.wst.sse.ui.ISemanticHighlightingExtension2;
 
 import edu.iastate.parsers.ui.UIHelper;
+import edu.iastate.varis.ui.core.VarisManager;
 
 /**
  * 
@@ -42,7 +43,7 @@ public abstract class AbstractSemanticHighlighting implements ISemanticHighlight
 	}
 	
 	public Position[] consumes(IStructuredDocumentRegion region) {
-		if (region.getStart() != 0)
+		if (!VarisManager.getInstance().isEnabled() || region.getStart() != 0)
 			return new Position[0];
 		
 		resolveSourceModule();

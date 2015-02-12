@@ -36,7 +36,7 @@ public class SemanticHighlightingManager {
 		new HtmlVisitor().visitDocument(htmlDocument);
 	}
 	
-	public void reset() {
+	public void removeHtmlDocuments() {
 		htmlTagNamePositions = new HashMap<File, LinkedList<Position>>();
 		htmlAttrNamePositions = new HashMap<File, LinkedList<Position>>();
 		htmlAttrValuePositions = new HashMap<File, LinkedList<Position>>();

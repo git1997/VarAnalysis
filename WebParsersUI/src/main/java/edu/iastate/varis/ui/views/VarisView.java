@@ -17,7 +17,7 @@ import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.symex.ui.UIHelper;
 import edu.iastate.symex.util.FileIO;
 import edu.iastate.ui.views.GenericView;
-import edu.iastate.varis.ui.highlighters.SemanticHighlightingManager;
+import edu.iastate.varis.ui.core.VarisManager;
 
 /**
  * 
@@ -67,13 +67,16 @@ public class VarisView extends GenericView {
 				for (File entry : entries) {
 					statusStyledText.append("Executing " + entry.getAbsolutePath() + "..." + System.lineSeparator());
 					HtmlDocument htmlDocument = new PhpExecuterAndParser().executeAndParse(entry);
-					SemanticHighlightingManager.getInstance().addHtmlDocument(htmlDocument);
+					VarisManager.getInstance().addHtmlDocument(htmlDocument);
 				}
+				VarisManager.getInstance().enable();
+				
 				statusStyledText.append("Done.");
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(UIHelper.getActiveEditor());
 			}
 			else {
-				SemanticHighlightingManager.getInstance().reset();
+				VarisManager.getInstance().removeHtmlDocuments();
+				VarisManager.getInstance().disable();
 				
 				statusStyledText.setText("");
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(UIHelper.getActiveEditor());
@@ -85,6 +88,9 @@ public class VarisView extends GenericView {
 		ArrayList<File> entries = new ArrayList<File>();
 		
 		File entriesFile = new File(UIHelper.getProjectPath(), ENTRIES_FILE_NAME);
+		if (!entriesFile.exists())
+			return entries;
+		
 		String entriesFileContent = FileIO.readStringFromFile(entriesFile);
 		for (String entry : entriesFileContent.split("\n")) {
 			entry = entry.trim();
