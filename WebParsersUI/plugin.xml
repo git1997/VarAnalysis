@@ -25,6 +25,17 @@
             id="edu.iastate.parsers.ui.views.WebAnalysisView"
             name="Web Analysis">
       </view>
+      <category
+            id="edu.iastate.varis.category.varis"
+            name="Varis">
+      </category>
+      <view
+            category="edu.iastate.varis.category.varis"
+            class="edu.iastate.varis.ui.views.VarisView"
+            icon="src/main/resources/icons/sample.gif"
+            id="edu.iastate.varis.ui.views.VarisView"
+            name="Varis">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -49,4 +60,25 @@
          </action>
       </viewerContribution>
    </extension>
+	<extension
+			point="org.eclipse.wst.sse.ui.semanticHighlighting">
+		<highlighting
+			class="edu.iastate.varis.ui.highlighters.HtmlTagNameHighlighting"
+			target="org.eclipse.php.core.phpsource">
+		</highlighting>
+	</extension>
+	<extension
+			point="org.eclipse.wst.sse.ui.semanticHighlighting">
+		<highlighting
+			class="edu.iastate.varis.ui.highlighters.HtmlAttrNameHighlighting"
+			target="org.eclipse.php.core.phpsource">
+		</highlighting>
+	</extension>
+	<extension
+			point="org.eclipse.wst.sse.ui.semanticHighlighting">
+		<highlighting
+			class="edu.iastate.varis.ui.highlighters.HtmlAttrValueHighlighting"
+			target="org.eclipse.php.core.phpsource">
+		</highlighting>
+	</extension>
 </plugin>
