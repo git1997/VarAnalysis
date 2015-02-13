@@ -30,7 +30,7 @@ public class VarisCompletionComputer implements IScriptCompletionProposalCompute
 		List<ICompletionProposal> result= new ArrayList<ICompletionProposal>(proposals.length);
 		for (int i = 0; i < proposals.length; i++) {
 			IContextInformation info = new ContextInformation(proposals[i], "Varis Recommendation");
-			result.add(new CompletionProposal(proposals[i], arg0.getInvocationOffset(), 0, proposals[i].length(), null, proposals[i], info, "<b>Varis Recommendation:</b><br />Attribute: " + proposals[i]));
+			result.add(new CompletionProposal(proposals[i], arg0.getInvocationOffset(), 0, proposals[i].length(), null, proposals[i], info, "<p><b>Varis Recommendation</b></p><p>Attribute: " + proposals[i] + "</p>"));
 		}
 		return result;
 	}

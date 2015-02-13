@@ -2,6 +2,7 @@ package edu.iastate.varis.ui.core;
 
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.varis.ui.highlighters.SemanticHighlightingManager;
+import edu.iastate.varis.ui.hyperlinks.HyperlinkManager;
 
 /**
  * 
@@ -32,10 +33,12 @@ public class VarisManager {
 	
 	public void addHtmlDocument(HtmlDocument htmlDocument) {
 		SemanticHighlightingManager.getInstance().addHtmlDocument(htmlDocument);
+		HyperlinkManager.getInstance().addHtmlDocument(htmlDocument);
 	}
 	
 	public void removeHtmlDocuments() {
 		SemanticHighlightingManager.getInstance().removeHtmlDocuments();
+		HyperlinkManager.getInstance().removeHtmlDocuments();
 	}
 	
 }
