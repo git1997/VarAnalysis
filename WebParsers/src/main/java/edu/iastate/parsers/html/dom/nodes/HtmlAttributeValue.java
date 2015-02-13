@@ -74,7 +74,10 @@ public class HtmlAttributeValue {
 	}
 	
 	public String toDebugString() {
-		return stringValue;
+		if (stringValue.matches("11+"))
+			return "SYM";
+		else
+			return stringValue;
 	}
 	
 }
