@@ -25,7 +25,10 @@ public class HyperlinkDetector extends AbstractHyperlinkDetector {
 		File file = UIHelper.iFileToFile(UIHelper.getActiveEditorFile());
 		ArrayList<Hyperlink> hyperlinks = HyperlinkManager.getInstance().detectHyperlinks(file, region);
 		
-		return hyperlinks.toArray(new IHyperlink[hyperlinks.size()]);
+		if (hyperlinks.isEmpty())
+			return null;
+		else
+			return hyperlinks.toArray(new IHyperlink[hyperlinks.size()]);
 	}
 
 }
