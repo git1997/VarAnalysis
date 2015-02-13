@@ -9,9 +9,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.wst.jsdt.core.dom.ASTNode;
 import org.eclipse.wst.jsdt.core.dom.StructuralPropertyDescriptor;
 
-import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.Range;
+import edu.iastate.symex.ui.UIHelper;
 import edu.iastate.ui.views.GenericTreeViewer;
 import edu.iastate.ui.views.ITreeViewer;
 

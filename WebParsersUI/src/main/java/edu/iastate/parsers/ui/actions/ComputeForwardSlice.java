@@ -6,9 +6,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 
-import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.parsers.ui.views.WebAnalysisView;
 import edu.iastate.symex.position.Position;
+import edu.iastate.symex.ui.UIHelper;
 
 /**
  * 

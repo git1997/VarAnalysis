@@ -11,10 +11,10 @@ import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.dom.nodes.HtmlElement;
 import edu.iastate.parsers.html.dom.nodes.HtmlSelect;
 import edu.iastate.parsers.html.dom.nodes.HtmlText;
-import edu.iastate.parsers.ui.UIHelper;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.position.PositionRange;
 import edu.iastate.symex.position.Range;
+import edu.iastate.symex.ui.UIHelper;
 import edu.iastate.ui.views.ITreeViewer;
 
 /**
