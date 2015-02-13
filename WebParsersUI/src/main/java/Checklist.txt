@@ -1,3 +1,9 @@
-OK		edu.iastate.parsers.ui
-OK		edu.iastate.parsers.ui.actions
-OK		edu.iastate.parsers.ui.views
+edu.iastate.parsers.ui					OK
+edu.iastate.parsers.ui.actions			OK
+edu.iastate.parsers.ui.views			OK
+edu.iastate.varis.ui.actions			OK
+edu.iastate.varis.ui.contentassist		OK
+edu.iastate.varis.ui.core				OK
+edu.iastate.varis.ui.highlighters		OK
+edu.iastate.varis.ui.hyperlinks			OK
+edu.iastate.varis.ui.views				OK
