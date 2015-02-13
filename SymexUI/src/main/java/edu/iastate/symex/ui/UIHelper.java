@@ -48,11 +48,11 @@ public class UIHelper {
 	}
 	
 	public static String getProjectPath() {
-		return getActiveEditorFile().getProject().getLocation().toOSString().replace("/", "\\");
+		return getActiveEditorFile().getProject().getLocation().toOSString();
 	}
 	
 	public static String getRelativeFilePath() {
-		return getActiveEditorFile().getProjectRelativePath().toOSString().replace("/", "\\");
+		return getActiveEditorFile().getProjectRelativePath().toOSString();
 	}
 	
 	/**
