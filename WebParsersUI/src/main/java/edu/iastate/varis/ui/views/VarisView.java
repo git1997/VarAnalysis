@@ -73,6 +73,7 @@ public class VarisView extends GenericView {
 				
 				statusStyledText.append("Done.");
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(UIHelper.getActiveEditor());
+				//UIHelper.getActiveEditor().setFocus();
 			}
 			else {
 				VarisManager.getInstance().removeHtmlDocuments();
@@ -80,6 +81,7 @@ public class VarisView extends GenericView {
 				
 				statusStyledText.setText("");
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(UIHelper.getActiveEditor());
+				//UIHelper.getActiveEditor().setFocus();
 			}
 		}
 	}

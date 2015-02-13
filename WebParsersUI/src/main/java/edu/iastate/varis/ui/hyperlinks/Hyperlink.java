@@ -1,6 +1,7 @@
 package edu.iastate.varis.ui.hyperlinks;
 
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 
 import edu.iastate.symex.position.Range;
@@ -38,18 +39,7 @@ public class Hyperlink implements IHyperlink {
 
 	@Override
 	public IRegion getHyperlinkRegion() {
-		return new IRegion() {
-
-			@Override
-			public int getOffset() {
-				return fromLocation.getOffset();
-			}
-
-			@Override
-			public int getLength() {
-				return fromLocation.getLength();
-			}
-		};
+		return new Region(fromLocation.getOffset(), fromLocation.getLength());
 	}
 
 }

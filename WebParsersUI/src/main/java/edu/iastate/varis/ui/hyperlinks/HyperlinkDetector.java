@@ -15,7 +15,7 @@ import edu.iastate.varis.ui.core.VarisManager;
  * @author HUNG
  *
  */
-public class HyperLinkDetector extends AbstractHyperlinkDetector {
+public class HyperlinkDetector extends AbstractHyperlinkDetector {
 
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
@@ -23,19 +23,9 @@ public class HyperLinkDetector extends AbstractHyperlinkDetector {
 			return null;
 		
 		File file = UIHelper.iFileToFile(UIHelper.getActiveEditorFile());
-		ArrayList<Hyperlink> hyperlinks = new ArrayList<Hyperlink>();
-		
-		for (Hyperlink hyperlink : HyperlinkManager.getInstance().getHyperlinks(file)) {
-			if (regionOverlapped(region, hyperlink.getHyperlinkRegion()))
-				hyperlinks.add(hyperlink);
-		}
+		ArrayList<Hyperlink> hyperlinks = HyperlinkManager.getInstance().detectHyperlinks(file, region);
 		
 		return hyperlinks.toArray(new IHyperlink[hyperlinks.size()]);
-	}
-	
-	private boolean regionOverlapped(IRegion region1, IRegion region2) {
-		return (region1.getOffset() + region1.getLength() >= region2.getOffset()
-				&& region1.getOffset() <= region2.getOffset() + region2.getLength());
 	}
 
 }

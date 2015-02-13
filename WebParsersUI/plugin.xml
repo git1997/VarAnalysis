@@ -101,5 +101,18 @@
 			name="HyperLinkDetector"
 			targetId="org.eclipse.php.core.phpsource">
 		</hyperlinkDetector>
-	</extension>	
+	</extension>
+    <extension
+			point="org.eclipse.ui.popupMenus">
+		<viewerContribution
+				id="edu.iastate.varis.ui.viewerContribution.JumpToDeclaration"
+				targetID="org.eclipse.php.core.phpsource.source.EditorContext">
+			<action
+				class="edu.iastate.varis.ui.actions.JumpToDeclaration"
+				id="edu.iastate.varis.ui.actions.JumpToDeclaration"
+				label="Jump to Declaration (Varis)"
+				menubarPath="additions">
+			</action>
+		</viewerContribution>
+	</extension>
 </plugin>

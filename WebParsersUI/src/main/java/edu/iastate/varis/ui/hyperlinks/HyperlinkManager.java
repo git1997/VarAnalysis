@@ -1,8 +1,11 @@
 package edu.iastate.varis.ui.hyperlinks;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+
+import org.eclipse.jface.text.IRegion;
 
 import edu.iastate.parsers.html.dom.nodes.HtmlDocument;
 import edu.iastate.parsers.html.dom.nodes.HtmlDocumentVisitor;
@@ -38,6 +41,20 @@ public class HyperlinkManager {
 			return new LinkedList<Hyperlink>(hyperlinks.get(file));
 		else
 			return new LinkedList<Hyperlink>();
+	}
+	
+	public ArrayList<Hyperlink> detectHyperlinks(File file, IRegion region) {
+		ArrayList<Hyperlink> hyperlinks = new ArrayList<Hyperlink>();
+		for (Hyperlink hyperlink : getHyperlinks(file)) {
+			if (regionOverlapped(region, hyperlink.getHyperlinkRegion()))
+				hyperlinks.add(hyperlink);
+		}
+		return hyperlinks;
+	}
+	
+	private boolean regionOverlapped(IRegion region1, IRegion region2) {
+		return (region1.getOffset() + region1.getLength() >= region2.getOffset()
+				&& region1.getOffset() <= region2.getOffset() + region2.getLength());
 	}
 	
 	class HtmlVisitor extends HtmlDocumentVisitor {
