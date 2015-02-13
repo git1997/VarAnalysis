@@ -96,9 +96,9 @@
 			point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
 		<hyperlinkDetector
 			activate="true"
-			class="edu.iastate.varis.ui.hyperlinks.HyperLinkDetector"
-			id="edu.iastate.varis.ui.hyperlinks.HyperLinkDetector"
-			name="HyperLinkDetector"
+			class="edu.iastate.varis.ui.hyperlinks.HyperlinkDetector"
+			id="edu.iastate.varis.ui.hyperlinks.HyperlinkDetector"
+			name="HyperlinkDetector"
 			targetId="org.eclipse.php.core.phpsource">
 		</hyperlinkDetector>
 	</extension>
