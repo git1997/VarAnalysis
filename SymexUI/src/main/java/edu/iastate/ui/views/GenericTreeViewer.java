@@ -107,6 +107,7 @@ public class GenericTreeViewer extends TreeViewer {
 			public String getText(Object element) {
 				Range range = treeViewerImpl.getTreeNodeLocation(element).getRanges().get(0);
 				return range.isUndefined() ? "" : (String.valueOf(range.getStartPosition().getLine()) + "-" + String.valueOf(range.getEndPosition().getLine()));
+				//return range.isUndefined() ? "" : (String.valueOf(range.getStartPosition().getLine()));
 			}
 		});
 		
@@ -118,6 +119,7 @@ public class GenericTreeViewer extends TreeViewer {
 			public String getText(Object element) {
 				Range range = treeViewerImpl.getTreeNodeLocation(element).getRanges().get(0);
 				return range.isUndefined() ? "" : (String.valueOf(range.getOffset()) + "-" + String.valueOf(range.getOffset() + range.getLength() - 1));
+				//return range.isUndefined() ? "" : (String.valueOf(range.getOffset()));
 			}
 		});
 	}
