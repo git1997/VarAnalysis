@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class CountLOC {
 	
-	public static String projectName	= "webchess-1.0.0";
+	public static String projectName	= "AddressBook-6.2.12";
 	public static String projectFolder	= "/Work/Data/Web Projects/Server Code/" + projectName;
 
 	public static void main(String[] args) {
