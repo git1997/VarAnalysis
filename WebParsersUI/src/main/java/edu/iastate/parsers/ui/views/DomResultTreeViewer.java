@@ -117,6 +117,9 @@ public class DomResultTreeViewer implements ITreeViewer {
 		else if (element instanceof HtmlText)
 			return ((HtmlText) element).getLocation();
 		
+		else if (element instanceof HtmlSelect)
+			return ((HtmlSelect) element).getConstraint().getLocation();
+		
 		else
 			return Range.UNDEFINED;
 	}
