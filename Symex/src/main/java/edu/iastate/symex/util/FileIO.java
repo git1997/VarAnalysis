@@ -261,17 +261,10 @@ public class FileIO {
 	 */
 	public static int getLinesOfCodeInFile(File file) {
 		String fileContent = FileIO.readStringFromFile(file);
-		int offset = 0;
 		int line = 1;
-		while (true) {
-			offset = fileContent.indexOf('\n', offset);
-			if (offset == -1)
-				break;
-			if (offset != -1) {
-				offset++;
+		for (int i = 0; i < fileContent.length(); i++)
+			if (fileContent.charAt(i) == '\n')
 				line++;
-			}
-		}
 		return line;
 	}
 	
@@ -281,19 +274,10 @@ public class FileIO {
 	 */
 	public static int getLineFromOffsetInFile(File file, int offset) {
 		String fileContent = FileIO.readStringFromFile(file);
-		int position = 0;
 		int line = 1;
-		while (true) {
-			if (position > offset)
-				return line - 1;
-			position = fileContent.indexOf('\n', position);
-			if (position == -1)
-				break;
-			if (position != -1) {
-				position++;
+		for (int i = 0; i < offset; i++)
+			if (fileContent.charAt(i) == '\n')
 				line++;
-			}
-		}
 		return line;
 	}
 
