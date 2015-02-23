@@ -7,7 +7,7 @@ import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 import org.eclipse.php.internal.core.ast.nodes.Program;
 
 /**
- * Purpose: Return the original file and the file's content that contains a given AST node.
+ * Purpose: Managing the relation between a PHP file and its AST.
  * @author HUNG
  *
  */
@@ -18,18 +18,17 @@ public class ASTHelper {
 	/*
 	 * Mappings
 	 */	
-	private HashMap<Program, File> phpProgramToSourceFile = new HashMap<Program, File>();
+	private HashMap<File, Program> phpFileToPhpProgram = new HashMap<File, Program>();
+	private HashMap<Program, File> phpProgramToPhpFile = new HashMap<Program, File>();
 	private HashMap<Program, String> phpProgramToSourceCode = new HashMap<Program, String>();	
 	
 	/*
 	 * Set properties
 	 */
 	
-	public void setSourceFileForPhpProgram(Program program, File sourceFile) {
-		phpProgramToSourceFile.put(program, sourceFile);
-	}
-	
-	public void setSourceCodeForPhpProgram(Program program, String sourceCode) {
+	public void setPhpFileForPhpProgram(Program program, File file, String sourceCode) {
+		phpFileToPhpProgram.put(file, program);
+		phpProgramToPhpFile.put(program, file);
 		phpProgramToSourceCode.put(program, sourceCode);
 	}
 	
@@ -38,14 +37,22 @@ public class ASTHelper {
 	 */
 	
 	/**
-	 * Returns the source file that contains the PHP AST node.
+	 * Returns the root AST node of a PHP file
+	 * @param file
 	 */
-	public File getSourceFileOfPhpASTNode(ASTNode astNode) {
-		return phpProgramToSourceFile.get(astNode.getProgramRoot());
+	public Program getPhpProgramOfPhpFile(File file) {
+		return phpFileToPhpProgram.get(file);
+	}
+	
+	/**
+	 * Returns the PHP file that contains the PHP AST node.
+	 */
+	public File getPhpFileOfPhpASTNode(ASTNode astNode) {
+		return phpProgramToPhpFile.get(astNode.getProgramRoot());
 	}
 
 	/**
-	 * Returns the source code that contains the PHP AST node.
+	 * Returns the source code that corresponds to the PHP AST node.
 	 */
 	public String getSourceCodeOfPhpASTNode(ASTNode astNode) {
 		String sourceCode = phpProgramToSourceCode.get(astNode.getProgramRoot());

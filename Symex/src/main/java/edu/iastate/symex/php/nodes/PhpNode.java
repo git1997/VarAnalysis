@@ -25,7 +25,7 @@ public abstract class PhpNode {
 	 * @param astNode
 	 */
 	public PhpNode(ASTNode astNode) {
-		File file = ASTHelper.inst.getSourceFileOfPhpASTNode(astNode);	
+		File file = ASTHelper.inst.getPhpFileOfPhpASTNode(astNode);	
 		
 		this.astNode = astNode;
 		this.range = new Range(file, astNode.getStart(), astNode.getLength());

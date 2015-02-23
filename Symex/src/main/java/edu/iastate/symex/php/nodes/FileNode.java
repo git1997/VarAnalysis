@@ -53,8 +53,7 @@ public class FileNode {
 		 * Create the ProgramNode
 		 */
 		if (program != null) {
-			ASTHelper.inst.setSourceFileForPhpProgram(program, file);
-			ASTHelper.inst.setSourceCodeForPhpProgram(program, source);
+			ASTHelper.inst.setPhpFileForPhpProgram(program, file, source);
 			this.programNode = new ProgramNode(program);
 		}
 	}

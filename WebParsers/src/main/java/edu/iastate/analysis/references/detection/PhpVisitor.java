@@ -383,7 +383,7 @@ public class PhpVisitor implements WebAnalysis.IListener {
 	 */
 	
 	private PositionRange getLocation(ASTNode astNode) {
-		File file = ASTHelper.inst.getSourceFileOfPhpASTNode(astNode);	
+		File file = ASTHelper.inst.getPhpFileOfPhpASTNode(astNode);	
 		return new Range(file, astNode.getStart(), astNode.getEnd() - astNode.getStart());
 	}
 	
