@@ -33,6 +33,8 @@ public class Evaluation {
 										//UPB;
 										//WEB_CHESS;
 	
+	public static boolean DISCARD_CROSS_ENTRY_EDGES = false;
+	
 	private static HashMap<String, String> projectNameToPath = new HashMap<String, String>();
 	private static HashMap<String, List<String>> projectNameToEntries = new HashMap<String, List<String>>();
 		

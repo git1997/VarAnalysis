@@ -264,8 +264,8 @@ public class ShowStatisticsOnReferences {
 			
 			for (Reference ref1 : toExpandReferences_) {
 				for (Reference ref2 : referenceManager.getDataFlowManager().getDataFlowFrom(ref1)) {
-					//if (ref2.getType().equals("PhpRefToHtml"))
-					//	continue;
+					if (Evaluation.DISCARD_CROSS_ENTRY_EDGES && ref2.getType().equals("PhpRefToHtml"))
+						continue;
 					if (!referencesInSlice.contains(ref2)) {
 						referencesInSlice.add(ref2);
 						nodes.add(new Node(ref2));
