@@ -75,7 +75,7 @@ public class ShowStatisticsOnReferences {
 			nodesByLanguage.put(language, 0);
 		
 		int embeddedNodes = 0;
-		int embeddedAndOnEchoNodes = 0;
+		int embeddedAndOnEchoPrintNodes = 0;
 		
 		for (Reference reference : referenceManager.getReferenceList()) {
 			Node node = new Node(reference);
@@ -83,15 +83,15 @@ public class ShowStatisticsOnReferences {
 			String type = node.getType();
 			String language = node.getLanguage();
 			boolean isEmbedded = node.isEmbedded();
-			boolean isEmbeddedAndOnEcho = node.isEmbeddedAndOnEcho();
+			boolean isEmbeddedAndOnEchoPrint = node.isEmbeddedAndOnEchoPrint();
 			
 			totalNodes++;
 			nodesByType.put(type, nodesByType.get(type) + 1);
 			nodesByLanguage.put(language, nodesByLanguage.get(language) + 1);
 			if (isEmbedded)
 				embeddedNodes++;
-			if (isEmbeddedAndOnEcho)
-				embeddedAndOnEchoNodes++;
+			if (isEmbeddedAndOnEchoPrint)
+				embeddedAndOnEchoPrintNodes++;
 		}
 		
 		int totalEdges = 0;
@@ -126,7 +126,7 @@ public class ShowStatisticsOnReferences {
 			str.append(language  + ": " + nodesByLanguage.get(language) + System.lineSeparator());
 		}
 		str.append("Embedded: " + embeddedNodes + System.lineSeparator());
-		str.append("EmbeddedAndOnEcho: " + embeddedAndOnEchoNodes + System.lineSeparator());
+		str.append("EmbeddedAndOnEchoPrint: " + embeddedAndOnEchoPrintNodes + System.lineSeparator());
 		
 		str.append("Total edges: " + totalEdges + System.lineSeparator());
 		str.append("Cross-language edges: " + crossLangEdges + System.lineSeparator());
@@ -136,7 +136,7 @@ public class ShowStatisticsOnReferences {
 		str.append("Cross-entry edges: " + crossEntryEdges + System.lineSeparator());
 		
 		str.append(totalNodes + "\t" + nodesByLanguage.get("PHP") + "\t" + nodesByLanguage.get("SQL") + "\t" + nodesByLanguage.get("HTML") + "\t" + nodesByLanguage.get("JS") + "\t" 
-						+ embeddedNodes + "\t" + (embeddedNodes - embeddedAndOnEchoNodes) + "\t"
+						+ embeddedNodes + "\t" + (embeddedNodes - embeddedAndOnEchoPrintNodes) + "\t"
 						+ totalEdges + "\t" + crossLangEdges + "\t" + crossFileEdges + "\t" + crossFuncEdges + "\t" + crossStringEdges + "\t" + crossEntryEdges + System.lineSeparator());
 	}
 	
@@ -376,10 +376,10 @@ public class ShowStatisticsOnReferences {
 		}
 		
 		public boolean isEmbedded() {
-			return positionInfo.getScalar() != null;
+			return !getLanguage().equals("PHP") && positionInfo.getScalar() != null;
 		}
 		
-		public boolean isEmbeddedAndOnEcho() {
+		public boolean isEmbeddedAndOnEchoPrint() {
 			return isEmbedded() && positionInfo.getEchoPrintStatement() != null;
 		}
 		
