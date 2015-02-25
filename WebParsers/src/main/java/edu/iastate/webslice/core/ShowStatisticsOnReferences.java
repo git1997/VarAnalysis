@@ -235,14 +235,15 @@ public class ShowStatisticsOnReferences {
 		if (!crossEntryEdgesCount.containsKey(0))
 			crossEntryEdgesCount.put(0, 0);
 		
-		str.append(totalSlices + " & " 
-				+ getPercentile(edgesCount, 0.5) + " & "
-				+ getPercentile(lengthCount, 0.5) + " & "
-				+ (totalSlices - crossLangEdgesCount.get(0)) + " & "
-				+ (totalSlices - crossFileEdgesCount.get(0)) + " & "
-				+ (totalSlices - crossFuncEdgesCount.get(0)) + " & "
-				+ (totalSlices - crossStringEdgesCount.get(0)) + " & "
-				+ (totalSlices - crossEntryEdgesCount.get(0)));		
+		str.append(String.format("%,d & %,d & %,d & %,d & %,d & %,d & %,d & %,d", 
+				totalSlices, 
+				getPercentile(edgesCount, 0.5),
+				getPercentile(lengthCount, 0.5),
+				(totalSlices - crossLangEdgesCount.get(0)),
+				(totalSlices - crossFileEdgesCount.get(0)),
+				(totalSlices - crossFuncEdgesCount.get(0)),
+				(totalSlices - crossStringEdgesCount.get(0)),
+				(totalSlices - crossEntryEdgesCount.get(0))));		
 	}
 	
 	/**
