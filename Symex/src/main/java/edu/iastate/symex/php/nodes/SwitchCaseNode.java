@@ -7,8 +7,6 @@ import org.eclipse.php.internal.core.ast.nodes.SwitchCase;
 
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.datamodel.nodes.LiteralNode;
 
 /**
  * 
@@ -18,7 +16,6 @@ import edu.iastate.symex.datamodel.nodes.LiteralNode;
 public class SwitchCaseNode extends StatementNode {
 	
 	private ExpressionNode value;
-	private LiteralNode condtionString;	
 	private ArrayList<StatementNode> statements;
 	
 	private boolean isDefault;
@@ -50,7 +47,6 @@ public class SwitchCaseNode extends StatementNode {
 		}
 		
 		this.value = (switchCase.isDefault() ? null : ExpressionNode.createInstance(switchCase.getValue()));
-		this.condtionString = (switchCase.isDefault() ? null : DataNodeFactory.createLiteralNode(this.value));
 		this.statements = statementNodes;
 		this.isDefault = switchCase.isDefault();
 		this.hasBreakStatement = hasBreakStatement;
@@ -58,10 +54,6 @@ public class SwitchCaseNode extends StatementNode {
 	
 	public ExpressionNode getValue() {
 		return value;
-	}
-	
-	public LiteralNode getConditionString() {
-		return condtionString;
 	}
 	
 	public boolean isDefault() {

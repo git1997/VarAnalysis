@@ -9,13 +9,8 @@ import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.datamodel.nodes.DataNode;
-import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
-import edu.iastate.symex.datamodel.nodes.LiteralNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
-import edu.iastate.symex.position.CompositeRange;
-import edu.iastate.symex.position.PositionRange;
-import edu.iastate.symex.position.Range;
 
 /**
  * 
@@ -25,7 +20,6 @@ import edu.iastate.symex.position.Range;
 public class SwitchStatementNode extends StatementNode {
 
 	protected ExpressionNode expression;
-	protected LiteralNode expressionString;
 	protected ArrayList<SwitchCaseNode> switchCases;
 	
 	/*
@@ -98,14 +92,13 @@ public class SwitchStatementNode extends StatementNode {
 		}
 		
 		this.expression = ExpressionNode.createInstance(switchStatement.getExpression());
-		this.expressionString = DataNodeFactory.createLiteralNode(expression);		
 		this.switchCases = switchCaseNodes;
 	}
 
 	@Override
 	public DataNode execute_(Env env) {
 		DataNode expressionResult = expression.execute(env);
-		FakeSwitchStatementNode fakeSwitchExpressionNode = new FakeSwitchStatementNode((SwitchStatement) this.getAstNode(), expressionResult, expressionString, switchCases);
+		FakeSwitchStatementNode fakeSwitchExpressionNode = new FakeSwitchStatementNode((SwitchStatement) this.getAstNode(), expression, expressionResult, switchCases);
 		return fakeSwitchExpressionNode.execute(env);
 	}
 	
@@ -116,16 +109,16 @@ public class SwitchStatementNode extends StatementNode {
 		
 		private SwitchStatement originalSwitchStatement;
 		
+		private ExpressionNode expression;
 		private DataNode expressionResult;
-		private LiteralNode expressionString;
 		private ArrayList<SwitchCaseNode> switchCases;
 		
-		private FakeSwitchStatementNode(SwitchStatement originalSwitchStatement, DataNode expressionResult, LiteralNode conditionString, ArrayList<SwitchCaseNode> switchCases) {
+		private FakeSwitchStatementNode(SwitchStatement originalSwitchStatement, ExpressionNode expression, DataNode expressionResult, ArrayList<SwitchCaseNode> switchCases) {
 			super(originalSwitchStatement);
 			this.originalSwitchStatement = originalSwitchStatement;
 			
+			this.expression = expression;
 			this.expressionResult = expressionResult;
-			this.expressionString = conditionString;
 			this.switchCases = switchCases;
 		}
 		
@@ -137,7 +130,7 @@ public class SwitchStatementNode extends StatementNode {
 			SwitchCaseNode thenBranch = switchCases.get(0);
 			ArrayList<SwitchCaseNode> remainingSwitchCases = new ArrayList<SwitchCaseNode>(switchCases);
 			remainingSwitchCases.remove(0);
-			FakeSwitchStatementNode elseBranch = remainingSwitchCases.isEmpty() ? null : new FakeSwitchStatementNode(originalSwitchStatement, expressionResult, expressionString, remainingSwitchCases);
+			FakeSwitchStatementNode elseBranch = remainingSwitchCases.isEmpty() ? null : new FakeSwitchStatementNode(originalSwitchStatement, expression, expressionResult, remainingSwitchCases);
 			
 			// Execute the branches
 			if (thenBranch.isDefault()) {
@@ -162,10 +155,7 @@ public class SwitchStatementNode extends StatementNode {
 				/*
 				 * Else, execute both branches.
 				 */
-				PositionRange location = new CompositeRange(new CompositeRange(expressionString.getLocation(), new Range(" == ".length())), thenBranch.getConditionString().getLocation());
-				String stringValue = expressionString.getStringValue() + " == " + thenBranch.getConditionString().getStringValue(); 
-				LiteralNode conditionString = DataNodeFactory.createLiteralNode(stringValue, location);
-				Constraint constraint = ConstraintFactory.createAtomicConstraint(conditionString.getStringValue(), conditionString.getLocation());
+				Constraint constraint = ConstraintFactory.createEqualConstraint(expression, thenBranch.getValue()); 
 
 				return IfStatementNode.execute(env, constraint, thenBranch, elseBranch, true);
 			}

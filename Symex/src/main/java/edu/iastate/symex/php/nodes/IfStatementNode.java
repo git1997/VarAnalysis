@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.php.internal.core.ast.nodes.IfStatement;
-
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.core.BranchEnv;
@@ -85,7 +84,7 @@ public class IfStatementNode extends StatementNode {
 		/*
 		 * Else, execute both branches.
 		 */
-		Constraint constraint = ConstraintFactory.createAtomicConstraint(condition.getSourceCode(), condition.getLocation());
+		Constraint constraint = ConstraintFactory.createConstraintFromCondition(condition);
 		
 		return execute(env, constraint, trueNode, falseNode, isStatement);
 	}

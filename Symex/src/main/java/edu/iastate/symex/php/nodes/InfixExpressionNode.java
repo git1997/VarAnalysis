@@ -32,6 +32,18 @@ public class InfixExpressionNode extends ExpressionNode {
 		this.right = ExpressionNode.createInstance(infixExpression.getRight());
 	}
 	
+	public int getOperator() {
+		return operator;
+	}
+	
+	public ExpressionNode getLeft() {
+		return left;
+	}
+	
+	public ExpressionNode getRight() {
+		return right;
+	}
+	
 	@Override
 	public DataNode execute(Env env) {
 		DataNode leftValue = left.execute(env);
