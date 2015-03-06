@@ -43,7 +43,10 @@ public class BddConstraintFactory extends ConstraintFactory {
 
 	@Override
 	protected Constraint createNot(Constraint oppositeConstraint) {
-		return new BddConstraint(((BddConstraint) oppositeConstraint).featureExpr.not());
+		if (oppositeConstraint instanceof BddNotConstraint)
+			return ((BddNotConstraint) oppositeConstraint).getOppositeConstraint();
+		else
+			return new BddNotConstraint(oppositeConstraint);
 	}
 	
 	@Override
