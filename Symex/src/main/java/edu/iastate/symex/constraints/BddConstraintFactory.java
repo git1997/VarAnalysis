@@ -2,6 +2,7 @@ package edu.iastate.symex.constraints;
 
 import de.fosd.typechef.featureexpr.FeatureExprFactory;
 import de.fosd.typechef.featureexpr.bdd.BDDFeatureExprFactory$;
+import edu.iastate.symex.php.nodes.ExpressionNode;
 
 /**
  * 
@@ -43,6 +44,11 @@ public class BddConstraintFactory extends ConstraintFactory {
 	@Override
 	protected Constraint createNot(Constraint oppositeConstraint) {
 		return new BddConstraint(((BddConstraint) oppositeConstraint).featureExpr.not());
+	}
+	
+	@Override
+	protected Constraint createEqual(String conditionString, ExpressionNode leftExpression, ExpressionNode rightExpression) {
+		return new BddEqualConstraint(FeatureExprFactory.createDefinedExternal(conditionString), leftExpression, rightExpression);
 	}
 
 }

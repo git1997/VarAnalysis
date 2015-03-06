@@ -1,5 +1,7 @@
 package edu.iastate.symex.constraints;
 
+import edu.iastate.symex.php.nodes.ExpressionNode;
+
 /**
  * 
  * @author HUNG
@@ -35,6 +37,12 @@ public class SimpleConstraintFactory extends ConstraintFactory {
 	@Override
 	protected Constraint createNot(Constraint oppositeConstraint) {
 		return new SimpleConstraint("NOT(" + ((SimpleConstraint) oppositeConstraint).featureExpr + ")");
+	}
+
+	@Override
+	protected Constraint createEqual(String conditionString, ExpressionNode leftExpression, ExpressionNode rightExpression) {
+		// TODO Implement this
+		return null;
 	}
 
 }
