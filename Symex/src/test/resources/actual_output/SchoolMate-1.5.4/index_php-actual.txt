@@ -331,7 +331,7 @@
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -555,7 +555,7 @@
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -680,7 +680,7 @@ SELECTED
 #endrepeat
 
    <option value='-1' 
-#if ($_POST['semester']==-1)
+#if ($_POST['semester'] == -1)
 SELECTED
 #else
 
@@ -708,13 +708,13 @@ SELECTED
 	<th>Days</th>
 	<th>Substitute</th>
    </tr>
-#if ($_POST['semester']!="")
+#if (!$_POST['semester'] == "")
 
 #repeat ($class = mysql_fetch_row($query))
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -776,7 +776,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -961,7 +961,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -1099,7 +1099,7 @@ odd
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -1170,7 +1170,7 @@ SELECTED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -1306,7 +1306,7 @@ SELECTED
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -1355,7 +1355,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -1491,7 +1491,7 @@ odd
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -1546,7 +1546,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -1685,7 +1685,7 @@ odd
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -1716,7 +1716,7 @@ odd
 #endif
 </td>
 	  <td>
-#if ($smstr[6]==1)
+#if ($smstr[6] == 1)
 First
 #else
 Second
@@ -1763,7 +1763,7 @@ Second
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -1898,7 +1898,7 @@ Second
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -1962,7 +1962,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -2072,7 +2072,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -2163,7 +2163,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -2220,7 +2220,7 @@ odd
 
 #if ($page2 == 9)
 
-#if ($_POST['fullyear']!=1)
+#if (!$_POST['fullyear'] == 1)
 <h1>Add New Class</h1>
 
   <form name='addclass' action='./index.php' method='POST'>
@@ -2306,7 +2306,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -2452,7 +2452,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -2587,7 +2587,7 @@ odd
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -2636,7 +2636,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -2782,7 +2782,7 @@ CHECKED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -2889,7 +2889,7 @@ CHECKED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -2991,14 +2991,14 @@ CHECKED
 	<td>
 	 <select name='half'>
 	  <option value='1' 
-#if ($semester[4]==1)
+#if ($semester[4] == 1)
 SELECTED
 #else
 
 #endif
 >First</option>
 	  <option value='2' 
-#if ($semester[4]==2)
+#if ($semester[4] == 2)
 SELECTED
 #else
 
@@ -3031,7 +3031,7 @@ SELECTED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -3151,7 +3151,7 @@ SELECTED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -3273,7 +3273,7 @@ SELECTED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -3371,7 +3371,7 @@ SELECTED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -3468,7 +3468,7 @@ SELECTED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -3559,7 +3559,7 @@ SELECTED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -3660,7 +3660,7 @@ SELECTED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -3760,7 +3760,7 @@ SELECTED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -3859,7 +3859,7 @@ SELECTED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -3995,14 +3995,14 @@ SELECTED
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
 #endif
 '>
 	  <td><input type='checkbox' name='delete[]' value='[Symbolic:$parent[0]]' onClick='updateboxes(0);document.parents.studentid.value=
-#if ($student[2]==NULL)
+#if ($student[2] == NULL)
 -1
 #else
 [Symbolic:$student[2]]
@@ -4052,7 +4052,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -4161,7 +4161,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -4262,7 +4262,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -4343,7 +4343,7 @@ odd
    
 #repeat ($i<=$numperiods)
 <tr class='
-#if ($i%2==0)
+#if ($i%2 == 0)
 even
 #else
 odd
@@ -4359,7 +4359,7 @@ odd
 		   Section: [Symbolic:$class[3]]<br />
 		   Room: [Symbolic:$class[4]]<br />
 		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
-#if ($monday != "<td>")
+#if (!$monday == "<td>")
 <br /><br />
 #else
 <br />
@@ -4386,7 +4386,7 @@ odd
 		   Section: [Symbolic:$class[3]]<br />
 		   Room: [Symbolic:$class[4]]<br />
 		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
-#if ($tuesday != "<td>")
+#if (!$tuesday == "<td>")
 <br /><br />
 #else
 <br />
@@ -4419,7 +4419,7 @@ odd
 		   Section: [Symbolic:$class[3]]<br />
 		   Room: [Symbolic:$class[4]]<br />
 		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
-#if ($wednesday != "<td>")
+#if (!$wednesday == "<td>")
 <br /><br />
 #else
 <br />
@@ -4458,7 +4458,7 @@ odd
 		   Section: [Symbolic:$class[3]]<br />
 		   Room: [Symbolic:$class[4]]<br />
 		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
-#if ($thursday != "<td>")
+#if (!$thursday == "<td>")
 <br /><br />
 #else
 <br />
@@ -4503,7 +4503,7 @@ odd
 		   Section: [Symbolic:$class[3]]<br />
 		   Room: [Symbolic:$class[4]]<br />
 		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
-#if ($friday != "<td>")
+#if (!$friday == "<td>")
 <br /><br />
 #else
 <br />
@@ -4541,7 +4541,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -4711,7 +4711,7 @@ SELECTED
   <tr class='header'>
    <td align='center' colspan='3'>
 	<select name='class'>
-#if ($_POST['semester']!=NULL)
+#if (!$_POST['semester'] == NULL)
 
 #repeat ($classes = mysql_fetch_row($query))
 <option value='[Symbolic:$classes[0]]'>[Symbolic:$classes[1]]</option>
@@ -4730,7 +4730,7 @@ SELECTED
   </tr>
 #repeat ($reg = mysql_fetch_row($query))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -4757,7 +4757,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -4837,7 +4837,7 @@ SELECTED
 #endrepeat
 
    <option value='-1' 
-#if ($_POST['semester']==-1)
+#if ($_POST['semester'] == -1)
 SELECTED
 #else
 
@@ -4857,7 +4857,7 @@ SELECTED
   </tr>
 #repeat ($deficient = mysql_fetch_row($query))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -4881,7 +4881,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -4968,7 +4968,7 @@ SELECTED
   </tr>
 #repeat ($classes = mysql_fetch_row($query))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -4976,7 +4976,7 @@ odd
 '>
    <td align='left' style='padding-left: 30px;'>[Symbolic:$cinfo[0]]</td>
    <td>
-#if ($cinfo[1]==0)
+#if ($cinfo[1] == 0)
 
 #else
 
@@ -5082,7 +5082,7 @@ F
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -5158,7 +5158,7 @@ F
    
 #repeat ($i<=$numperiods)
 <tr class='
-#if ($i%2==0)
+#if ($i%2 == 0)
 even
 #else
 odd
@@ -5176,7 +5176,7 @@ odd
 		   Section: [Symbolic:$class[2]]<br />
 		   Room: [Symbolic:$class[3]]<br />
 		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
-#if ($monday != "<td>")
+#if (!$monday == "<td>")
 <br /><br />
 #else
 <br />
@@ -5207,7 +5207,7 @@ odd
 		   Section: [Symbolic:$class[2]]<br />
 		   Room: [Symbolic:$class[3]]<br />
 		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
-#if ($tuesday != "<td>")
+#if (!$tuesday == "<td>")
 <br /><br />
 #else
 <br />
@@ -5244,7 +5244,7 @@ odd
 		   Section: [Symbolic:$class[2]]<br />
 		   Room: [Symbolic:$class[3]]<br />
 		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
-#if ($wednesday != "<td>")
+#if (!$wednesday == "<td>")
 <br /><br />
 #else
 <br />
@@ -5287,7 +5287,7 @@ odd
 		   Section: [Symbolic:$class[2]]<br />
 		   Room: [Symbolic:$class[3]]<br />
 		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
-#if ($thursday != "<td>")
+#if (!$thursday == "<td>")
 <br /><br />
 #else
 <br />
@@ -5336,7 +5336,7 @@ odd
 		   Section: [Symbolic:$class[2]]<br />
 		   Room: [Symbolic:$class[3]]<br />
 		   Teacher: [Symbolic:$teacher[0]] [Symbolic:$teacher[1]]
-#if ($friday != "<td>")
+#if (!$friday == "<td>")
 <br /><br />
 #else
 <br />
@@ -5376,7 +5376,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -5530,11 +5530,11 @@ SELECTED
   <tr class='header' align='center'>
    <th>&nbsp;</th><th>Tardy</th><th>Absent</th>
   </tr>
-#if ($_POST['semester']!=NULL)
+#if (!$_POST['semester'] == NULL)
 
 #repeat ($reg = mysql_fetch_row($query))
 <tr style='color: red; font-weight: bold;' align='center' class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -5542,7 +5542,7 @@ odd
 '>
    <td><input type='checkbox' name='delete[]' value='[Symbolic:$reg[0]]' onClick='updateboxes(0);' /></td>
    <td>
-#if ($class[0]!="")
+#if (!$class[0] == "")
 
 #if ($ret_date == "00/00/0000")
 
@@ -5555,7 +5555,7 @@ odd
 #endif
 </td>
    <td>
-#if ($class[1]!="")
+#if (!$class[1] == "")
 
 #if ($ret_date == "00/00/0000")
 
@@ -5594,7 +5594,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -5692,7 +5692,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -5769,11 +5769,11 @@ SELECTED
 	 </select>
  &nbsp;&nbsp;<b>Classes:</b>
  <select name='selectclass' onChange='document.classes.submit();'>
-#if ($_POST['semester']!=NULL)
+#if (!$_POST['semester'] == NULL)
 
 #repeat ($classes = mysql_fetch_row($query))
 <option value='[Symbolic:$classes[0]]' 
-#if ($_POST['selectclass']==$classes[0])
+#if ($_POST['selectclass'] == $classes[0])
 SELECTED
 #else
 
@@ -5795,11 +5795,11 @@ SELECTED
    <th>Percent</th>
    <th>Grade</th>
   </tr>
-#if ($_POST['selectclass']!=NULL)
+#if (!$_POST['selectclass'] == NULL)
 
 #repeat ($studentinfo = mysql_fetch_row($query))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -5809,7 +5809,7 @@ odd
 	<td>[Symbolic:$current]</td>
 	<td>[Symbolic:$total]</td>
 	<td>
-#if ($total != 0)
+#if (!$total == 0)
 [Symbolic:number_format(100*($current / $total),2)]
 #else
 0.00
@@ -5857,7 +5857,7 @@ F
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -6096,7 +6096,7 @@ AdminMain.php: Invalid Page
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -6176,11 +6176,11 @@ SELECTED
 	<th>Class Name</th>
    </tr>
    
-#if ($_POST['semester']!=NULL)
+#if (!$_POST['semester'] == NULL)
 
 #repeat ($class = mysql_fetch_row($query))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -6203,7 +6203,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -6296,7 +6296,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -6431,7 +6431,7 @@ odd
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -6495,7 +6495,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -6640,7 +6640,7 @@ SELECTED
   </tr>
 #repeat ($student = mysql_fetch_row($query))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -6649,7 +6649,7 @@ odd
    <td><input type='checkbox' name='delete[]' value='[Symbolic:$student[0]]' onClick='updateboxes(0);' /></td>
    <td>[Symbolic:$student[1]] [Symbolic:$student[2]]</td>
    <td>
-#if (convertfromdb($grade[3]) != "//")
+#if (!convertfromdb($grade[3]) == "//")
 
 #if ($ret_date == "00/00/0000")
 
@@ -6664,7 +6664,7 @@ odd
    <td>[Symbolic:$grade[1]]</td>
    <td>[Symbolic:$assignment[1]]</td>
 	<td>
-#if ($grade[4] != NULL)
+#if (!$grade[4] == NULL)
 
 #if ($letter == -1)
 Total Not Found
@@ -6705,7 +6705,7 @@ F
 Yes
 #else
 
-#if ($grade[4] != NULL)
+#if (!$grade[4] == NULL)
 No
 #else
 [Special]
@@ -6735,7 +6735,7 @@ No
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -6832,7 +6832,7 @@ No
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -6946,7 +6946,7 @@ No
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -7021,7 +7021,7 @@ No
    <tr class='even' valign='top'>
 	<td>[Symbolic:$student[0]] [Symbolic:$student[1]]	</td>
 	<td><input type='text' name='gradedate' maxlength='10' size='10' value='
-#if (convertfromdb($grade[0]) != "//")
+#if (!convertfromdb($grade[0]) == "//")
 
 #if ($ret_date == "00/00/0000")
 
@@ -7036,7 +7036,7 @@ No
 	<td><input type='text' name='points' maxlength='5' size='5' value='[Symbolic:number_format($grade[1],1)]' /></td>
 	<td><textarea cols='20' rows='3' name='comment'>[Symbolic:$grade[2]]</textarea></td>
 	<td><input type='checkbox' name='late' value='1'
-#if ($grade[3]==1)
+#if ($grade[3] == 1)
 CHECKED
 #else
 
@@ -7057,7 +7057,7 @@ CHECKED
   <input type='hidden' name='gradeid' value='[Symbolic:$grade[4]]' />
   <input type='hidden' name='wasgrade' value='[Symbolic:number_format($grade[1],1)]' />
   <input type='hidden' name='wasdate' value='
-#if (convertfromdb($grade[0]) != "//")
+#if (!convertfromdb($grade[0]) == "//")
 
 #if ($ret_date == "00/00/0000")
 
@@ -7082,7 +7082,7 @@ CHECKED
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -7156,7 +7156,7 @@ CHECKED
   </tr>
 #repeat ($i<count($ids))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -7206,7 +7206,7 @@ F
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -7279,7 +7279,7 @@ F
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -7327,7 +7327,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -7517,7 +7517,7 @@ teacherMain.php: Invalid Page
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -7597,13 +7597,13 @@ SELECTED
 	<th>Class Name</th>
    </tr>
    
-#if ($_POST['semester']!=NULL)
+#if (!$_POST['semester'] == NULL)
 
 #repeat ($class = mysql_fetch_row($query))
 
 #repeat ($info = mysql_fetch_row($q))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -7628,7 +7628,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -7719,7 +7719,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -7794,7 +7794,7 @@ odd
 
 #if ($row > ($_POST["onpage"]*25)-25 && $row <= ($_POST["onpage"]*25))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -7852,7 +7852,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -7930,7 +7930,7 @@ odd
   </tr>
 #repeat ($assignment = mysql_fetch_row($query))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -7938,7 +7938,7 @@ odd
 '>
    <td>[Symbolic:$assignment[1]]</td>
    <td>
-#if (convertfromdb($grade[2]) != "//")
+#if (!convertfromdb($grade[2]) == "//")
 
 #if ($ret_date == "00/00/0000")
 
@@ -7953,7 +7953,7 @@ odd
    <td>[Symbolic:$grade[1]]</td>
    <td>[Symbolic:$assignmentinfo[1]]</td>
 	<td>
-#if ($grade[3] != NULL)
+#if (!$grade[3] == NULL)
 
 #if ($letter == -1)
 Total Not Found
@@ -7995,7 +7995,7 @@ F
 Yes
 #else
 
-#if ($grade[3] != NULL)
+#if (!$grade[3] == NULL)
 No
 #else
 [Special]
@@ -8023,7 +8023,7 @@ No
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -8219,7 +8219,7 @@ StudentMain.php: Invalid Page
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -8285,7 +8285,7 @@ StudentMain.php: Invalid Page
   </tr>
 #repeat ($info = mysql_fetch_row($query))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -8306,7 +8306,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -8408,13 +8408,13 @@ SELECTED
 	<th>Class Name</th>
    </tr>
    
-#if ($_POST['semester']!=NULL)
+#if (!$_POST['semester'] == NULL)
 
 #repeat ($class = mysql_fetch_row($query))
 
 #repeat ($info = mysql_fetch_row($q))
 <tr class='
-#if ($row%2==0)
+#if ($row%2 == 0)
 even
 #else
 odd
@@ -8439,7 +8439,7 @@ odd
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -8556,15 +8556,15 @@ Could not connect: [Symbolic:mysql_error()]
 Unable to select the database: [Symbolic:mysql_error()]
 #else
 
-#if ($_POST['page2']==1337 & $_SESSION['userid'] == "" || $_SESSION['usertype']!="Admin")
+#if ($_POST['page2'] == 1337 & $_SESSION['userid'] == "" || $_SESSION['usertype']!="Admin")
 Invalid User!
 #else
 
-#if ($_POST['page2']==1337 & !$_SESSION['userid'] == "" || $_SESSION['usertype']!="Admin" & $type[0]!="Admin")
+#if ($_POST['page2'] == 1337 & !$_SESSION['userid'] == "" || $_SESSION['usertype']!="Admin" & !$type[0] == "Admin")
 [Special]
 #else
 
-#if ($_POST['page2']==1337)
+#if ($_POST['page2'] == 1337)
 [Symbolic:$data]
 #else
 
@@ -8821,15 +8821,15 @@ Unable to retrieve school name: [Symbolic:mysql_error()]
 Unable to validate login and password with the database: [Symbolic:mysql_error()]
 #else
 
-#if ($_POST["login"] == 1 & !md5($_POST["password"]) != $result & die("Unable to get user type: " . mysql_error()))
+#if ($_POST["login"] == 1 & md5($_POST["password"]) == $result & die("Unable to get user type: " . mysql_error()))
 Unable to get user type: [Symbolic:mysql_error()]
 #else
 
-#if ($_POST["login"] == 1 & !md5($_POST["password"]) != $result & die("Unable to get userid from users: " . mysql_error()))
+#if ($_POST["login"] == 1 & md5($_POST["password"]) == $result & die("Unable to get userid from users: " . mysql_error()))
 Unable to get userid from users: [Symbolic:mysql_error()]
 #else
 
-#if ($_POST["login"] == 1 & !md5($_POST["password"]) != $result & !$_SESSION["usertype"] == "Admin" & !$_SESSION["usertype"] == "Teacher" & !$_SESSION["usertype"] == "Substitute" & !$_SESSION["usertype"] == "Student" & !$_SESSION["usertype"] == "Parent")
+#if ($_POST["login"] == 1 & md5($_POST["password"]) == $result & !$_SESSION["usertype"] == "Admin" & !$_SESSION["usertype"] == "Teacher" & !$_SESSION["usertype"] == "Substitute" & !$_SESSION["usertype"] == "Student" & !$_SESSION["usertype"] == "Parent")
 ValidateLogin.php: Unable to determine the type of user.  Please verify.
 #else
 
@@ -8837,7 +8837,7 @@ ValidateLogin.php: Unable to determine the type of user.  Please verify.
 Invalid User!
 #else
 
-#if (!$page == 0 & $page == 1 & $page2 == 0 & $_POST["addclass"] == 1 && $_POST["title"] != "" && $_POST["teacher"] != "" && $_POST["semester"] != "" && $_POST["roomnum"] != "" && $_POST["periodnum"] != "" & $_POST['fullyear']!=1 & die("ManageClasses.php: Unable to insert new class - " . mysql_error()))
+#if (!$page == 0 & $page == 1 & $page2 == 0 & $_POST["addclass"] == 1 && $_POST["title"] != "" && $_POST["teacher"] != "" && $_POST["semester"] != "" && $_POST["roomnum"] != "" && $_POST["periodnum"] != "" & !$_POST['fullyear'] == 1 & die("ManageClasses.php: Unable to insert new class - " . mysql_error()))
 <script language='JavaScript'>
   function logoutAdmin()
   {
@@ -8982,7 +8982,7 @@ Invalid User!
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
@@ -9033,7 +9033,7 @@ Invalid User!
 	 <td valign='top'>ManageClasses.php: Unable to insert new class - [Symbolic:mysql_error()]
 #else
 
-#if (!$page == 0 & $page == 1 & $page2 == 0 & $_POST["addclass"] == 1 && $_POST["title"] != "" && $_POST["teacher"] != "" && $_POST["semester"] != "" && $_POST["roomnum"] != "" && $_POST["periodnum"] != "" & !$_POST['fullyear']!=1 & die("ManageClasses.php: Unable to insert new class - " . mysql_error()) & $_POST['semester']!=$_POST['semester2'])
+#if (!$page == 0 & $page == 1 & $page2 == 0 & $_POST["addclass"] == 1 && $_POST["title"] != "" && $_POST["teacher"] != "" && $_POST["semester"] != "" && $_POST["roomnum"] != "" && $_POST["periodnum"] != "" & $_POST['fullyear'] == 1 & die("ManageClasses.php: Unable to insert new class - " . mysql_error()) & !$_POST['semester'] == $_POST['semester2'])
 <script language='JavaScript'>
   function logoutAdmin()
   {
@@ -9178,7 +9178,7 @@ Invalid User!
 
 #if ($_POST["login"] == 1)
 
-#if (md5($_POST["password"]) != $result)
+#if (!md5($_POST["password"]) == $result)
 0
 #else
 
