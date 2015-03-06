@@ -51,7 +51,8 @@ public class FieldAccessNode extends DispatchNode {
 		
 		if (dataNode instanceof ObjectNode && fieldName != null) {
 			ObjectNode object = (ObjectNode) dataNode;
-			return object.getFieldValue(fieldName);
+			DataNode fieldValue = object.getFieldValue(fieldName);
+			return DataNodeFactory.createSymbolicNodeFromUnsetNodeIfPossible(fieldValue, this);
 		}
 		else
 			return DataNodeFactory.createSymbolicNode(this);

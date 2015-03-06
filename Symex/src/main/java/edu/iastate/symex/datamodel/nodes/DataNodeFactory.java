@@ -234,6 +234,18 @@ public class DataNodeFactory {
 		return createSymbolicNode(null, null);
 	}
 	
+	/**
+	 * Checks the dataNode, if it is UNSET then create a SYMBOLIC node, otherwise just return the dataNode
+	 */
+	public static DataNode createSymbolicNodeFromUnsetNodeIfPossible(DataNode dataNode, PhpNode phpNode) {
+		if (dataNode == SpecialNode.UnsetNode.UNSET)
+			return DataNodeFactory.createSymbolicNode(phpNode);
+		else if (dataNode instanceof SymbolicNode)
+			return DataNodeFactory.createSymbolicNode(phpNode, (SymbolicNode) dataNode);
+		else
+			return dataNode;
+	}
+	
 	/*
 	 * Create ReferenceNodes
 	 */

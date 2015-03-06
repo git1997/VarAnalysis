@@ -60,7 +60,8 @@ public class ArrayAccessNode extends VariableNode {
 		
 		if (dataNode instanceof ArrayNode && key != null) {
 			ArrayNode array = (ArrayNode) dataNode;
-			return array.getElementValue(key);
+			DataNode elementValue = array.getElementValue(key);
+			return DataNodeFactory.createSymbolicNodeFromUnsetNodeIfPossible(elementValue, this);
 		}
 		else
 			return DataNodeFactory.createSymbolicNode(this);
