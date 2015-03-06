@@ -10,7 +10,7 @@ import edu.iastate.symex.php.nodes.ExpressionNode;
  * @author HUNG
  *
  */
-public class BddEqualConstraint extends BddConstraint {
+public class BddEqualConstraint extends BddConstraint implements EqualConstraint {
 	
 	private ExpressionNode leftExpression;
 	private ExpressionNode rightExpression;
