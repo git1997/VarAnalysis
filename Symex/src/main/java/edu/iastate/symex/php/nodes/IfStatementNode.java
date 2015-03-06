@@ -112,7 +112,9 @@ public class IfStatementNode extends StatementNode {
 		
 		if (trueNode != null) {
 			BranchEnv trueBranchEnv = new BranchEnv(env, constraint);
+			trueBranchEnv.assignVariableValuesOnConstraint();
 			trueBranchRetValue = (isStatement ? ((StatementNode) trueNode).execute(trueBranchEnv) : ((ExpressionNode) trueNode).execute(trueBranchEnv));
+			trueBranchEnv.undoAssignVariableValuesOnConstraint();
 			dirtyVarsInTrueBranch = env.backtrackAfterExecution(trueBranchEnv);
 		}
 
@@ -126,7 +128,9 @@ public class IfStatementNode extends StatementNode {
 		
 		if (falseNode != null) {
 			BranchEnv falseBranchEnv = new BranchEnv(env, ConstraintFactory.createNotConstraint(constraint));
+			falseBranchEnv.assignVariableValuesOnConstraint();
 			falseBranchRetValue = (isStatement ? ((StatementNode) falseNode).execute(falseBranchEnv) : ((ExpressionNode) falseNode).execute(falseBranchEnv));
+			falseBranchEnv.undoAssignVariableValuesOnConstraint();
 			dirtyVarsInFalseBranch = env.backtrackAfterExecution(falseBranchEnv);
 		}
 		
