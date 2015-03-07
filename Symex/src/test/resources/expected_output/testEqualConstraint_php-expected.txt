@@ -1,16 +1,22 @@
 
 #if ($x == 1)
-[Symbolic:$x]
+1
 #else
 [Special]
 #endif
 
-#if ($y == 0)
-[Symbolic:$y]
+#if ($x == 2)
+2
+#else
+[Symbolic:$x]
+#endif
+
+#if ($y == 3)
+3
 #else
 
-#if ($y == 2)
-[Symbolic:$y]
+#if ($y == 4)
+4
 #else
 [Symbolic:$y]
 #endif
