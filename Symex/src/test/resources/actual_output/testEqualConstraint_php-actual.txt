@@ -1,0 +1,24 @@
+
+#if ($x == 1)
+1
+#else
+[Special]
+#endif
+
+#if ($x == 2)
+2
+#else
+[Symbolic:$x]
+#endif
+
+#if ($y == 3)
+3
+#else
+
+#if ($y == 4)
+4
+#else
+[Symbolic:$y]
+#endif
+
+#endif

@@ -1,0 +1,18 @@
+
+#if ($x == 1)
+[Symbolic:$x]
+#else
+[Special]
+#endif
+
+#if ($y == 0)
+[Symbolic:$y]
+#else
+
+#if ($y == 2)
+[Symbolic:$y]
+#else
+[Symbolic:$y]
+#endif
+
+#endif

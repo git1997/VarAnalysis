@@ -21,7 +21,7 @@ public class TestSymex extends GenericTest {
 		TestSymex testSymex = new TestSymex();
 		//testSymex.enableOracleCreation();
 		
-		testSymex.testDie();
+		testSymex.testEqualConstraint();
 	}
 
 	@Override
@@ -125,13 +125,13 @@ public class TestSymex extends GenericTest {
 	}
 	
 	@Test
-	public void testEqualConstraint() {
-		testFile("testEqualConstraint.php");
+	public void testDie() {
+		testFile("testDie.php");
 	}
 	
 	@Test
-	public void testDie() {
-		testFile("testDie.php");
+	public void testEqualConstraint() {
+		testFile("testEqualConstraint.php");
 	}
 	
 	@Test
