@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
+import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 
@@ -159,17 +161,87 @@ class ValueSet {
 	
 	/**
 	 * Returns a value representing the valueSet, or NULL if the valueSet is empty.
-	 * (The last constraint in the valueSet is assumed to add up to TRUE, i.e. constrain[1] | constraint[2] | ... | constraint[n] == TRUE)
+	 * (All constraints in the valueSet are assumed to add up to TRUE, i.e. constrain[1] | constraint[2] | ... | constraint[n] == TRUE)
 	 */
 	public DataNode getValue() {
 		if (values.isEmpty())
 			return null;
 		
-		DataNode retValue = values.get(values.size() - 1);
-		for (int i = values.size() - 2; i >= 0; i--) {
-			retValue = DataNodeFactory.createCompactSelectNode(constraints.get(i), values.get(i), retValue);
+		// TODO Turn off DataModel size limit
+		SymexConfig.DATA_MODEL_MAX_DEPTH = 1000;
+				
+		int size = values.size();
+		return getValue(values.toArray(new DataNode[size]), constraints.toArray(new Constraint[size]), size);
+	}
+	
+	private DataNode getValue(DataNode[] values, Constraint[] constraints, int size) {
+		if (size == 1)
+			return values[0];
+		
+		// combinedValue[i] is the combined value of values[i - 1] and values[i]
+		DataNode[] combinedValue = new DataNode[size];
+		for (int i = size - 1; i > 0; i--) {
+			combinedValue[i] = DataNodeFactory.createCompactSelectNode(constraints[i - 1], values[i - 1], values[i]);
 		}
-		return retValue;
+		
+		// ratio[i] is the compression ratio if values[i - 1] and values[i] are combined
+		// max is the maximum ratio
+		double max = 0;
+		for (int i = size - 1; i > 0; i--) {
+			double ratio = (double) countConcatChildNodes(combinedValue[i]) / (countConcatChildNodes(values[i - 1]) + countConcatChildNodes(values[i]));
+			if (ratio > max)
+				max = ratio;
+		}
+		
+		// Combine those pairs with compression ratio exceeding a threshold
+		// Put the combined pairs and uncombined elements into a new array
+		int size_ = 0;
+		DataNode[] values_ = new DataNode[size];
+		Constraint[] constraints_ = new Constraint[size];
+		
+		for (int i = size - 1; i > 0; i--) {
+			combinedValue[i] = DataNodeFactory.createCompactSelectNode(constraints[i - 1], values[i - 1], values[i]);
+			double ratio = (double) countConcatChildNodes(combinedValue[i]) / (countConcatChildNodes(values[i - 1]) + countConcatChildNodes(values[i]));
+			if (ratio > max * 0.99) {
+				values[i - 1] = combinedValue[i];
+				// TODO The statement below is correct but might cause explosion of constraints, so let's comment it out for now, 
+				//   and use an approximate constraint.
+				//constraints[i - 1] = ConstraintFactory.createOrConstraint(constraints[i - 1], constraints[i]);
+				constraints[i - 1] = constraints[i];
+			}
+			else {
+				values_[size_] = values[i];
+				constraints_[size_] = constraints[i];
+				size_++;
+			}
+		}
+		values_[size_] = values[0];
+		constraints_[size_] = constraints[0];
+		size_++;
+		
+		// Reverse the arrays
+		for (int i = 0; i <= size_ / 2 - 1; i++) {
+			DataNode tmpValue = values_[i];
+			values_[i] = values_[size_ - i - 1];
+			values_[size_ - i - 1] = tmpValue;
+			
+			Constraint tmpConstraint = constraints_[i];
+			constraints_[i] = constraints_[size_ - i - 1];
+			constraints_[size_ - i - 1] = tmpConstraint;
+		}
+		
+		// Do it recursively for the new arrays
+		return getValue(values_, constraints_, size_);
+	}
+	
+	/**
+	 * Returns the number of child nodes in a dataNode if it is a ConcatNode; otherwise return 1
+	 */
+	private int countConcatChildNodes(DataNode dataNode) {
+		if (dataNode instanceof ConcatNode)
+			return ((ConcatNode) dataNode).getChildNodes().size();
+		else
+			return 1;
 	}
 	
 }

@@ -15,6 +15,7 @@ import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.ObjectNode;
 import edu.iastate.symex.datamodel.nodes.RepeatNode;
 import edu.iastate.symex.datamodel.nodes.SpecialNode;
+import edu.iastate.symex.datamodel.nodes.SpecialNode.UnsetNode;
 import edu.iastate.symex.instrumentation.WebAnalysis;
 import edu.iastate.symex.php.nodes.ClassDeclarationNode;
 import edu.iastate.symex.php.nodes.FileNode;
@@ -678,7 +679,7 @@ public abstract class Env {
 	 * it nicely yet, let's return null.
 	 */
 	private DataNode getAppendedStringValue(DataNode stringValueBeforeLoop, DataNode stringValueAfterLoop) {
-		if (stringValueBeforeLoop == null)
+		if (stringValueBeforeLoop instanceof UnsetNode)
 			return stringValueAfterLoop;
 
 		if (!(stringValueAfterLoop instanceof ConcatNode))
