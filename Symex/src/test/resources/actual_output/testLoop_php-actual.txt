@@ -2,3 +2,29 @@ Hey
 #repeat ($a <= 10)
 world
 #endrepeat
+
+#repeat ($a < $b)
+[Symbolic:$z]
+#if (y != "1")
+2
+#else
+3
+#endif
+
+#endrepeat
+
+#repeat ($j<count($days))
+
+#if ($days[$j] == 'M')
+<b>[Symbolic:$class[0]]</b><br />
+#if ($monday != "<td>")
+<br /><br />
+#else
+<br />
+#endif
+
+#else
+[Special]
+#endif
+
+#endrepeat
