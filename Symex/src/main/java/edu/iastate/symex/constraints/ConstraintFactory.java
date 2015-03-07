@@ -60,9 +60,12 @@ public abstract class ConstraintFactory {
 					return ConstraintFactory.createEqualConstraint(((InfixExpressionNode) condition).getLeft(), ((InfixExpressionNode) condition).getRight());
 				
 				// '!='
+				// TODO Temporarily comment out this code because it breaks the testLoop test case (which is an excerpt from the SchoolMate web app)
+				/*
 				case InfixExpression.OP_IS_NOT_EQUAL:
 					return ConstraintFactory.createNotConstraint(
 								ConstraintFactory.createEqualConstraint(((InfixExpressionNode) condition).getLeft(), ((InfixExpressionNode) condition).getRight()));
+				*/
 				
 				// TODO Handle more cases here if necessary (e.g., condition = "a && b" => return ConstraintFactory.createAndConstraint)
 				
