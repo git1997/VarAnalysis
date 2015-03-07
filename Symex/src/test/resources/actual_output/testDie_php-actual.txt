@@ -1,0 +1,6 @@
+Hi world
+#if (NORMAL_OUTPUT)
+What's up?
+#else
+Bye world!
+#endif

@@ -21,7 +21,7 @@ public class TestSymex extends GenericTest {
 		TestSymex testSymex = new TestSymex();
 		//testSymex.enableOracleCreation();
 		
-		testSymex.testEchoThenReturn();
+		testSymex.testDie();
 	}
 
 	@Override
@@ -122,6 +122,16 @@ public class TestSymex extends GenericTest {
 	@Test
 	public void testEchoThenReturn() {
 		testFile("testEchoThenReturn.php");
+	}
+	
+	@Test
+	public void testEqualConstraint() {
+		testFile("testEqualConstraint.php");
+	}
+	
+	@Test
+	public void testDie() {
+		testFile("testDie.php");
 	}
 	
 	@Test
