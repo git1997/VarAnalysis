@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import edu.iastate.symex.config.SymexConfig;
 import edu.iastate.symex.constraints.Constraint;
 import edu.iastate.symex.constraints.ConstraintFactory;
 import edu.iastate.symex.datamodel.nodes.ConcatNode;
@@ -72,7 +71,7 @@ public abstract class PhpEnv extends Env {
 	}
 	
 	/*
-	 * Mange the output value
+	 * Manage the output value
 	 */
 	
 	protected ValueSet getOutputAtReturns_() {
