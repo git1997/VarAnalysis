@@ -18,8 +18,10 @@ public class ConcatNode extends DataNode {
 	 */
 	protected ConcatNode(ArrayList<DataNode> childNodes) {
 		for (DataNode childNode : childNodes) {
-			if (checkAndUpdateDepth(childNode))
+			if (checkAndUpdateSize(childNode))
 				this.childNodes.add(childNode);
+			else
+				this.childNodes.add(DataNodeFactory.createSymbolicNode());
 		}
 	}
 	

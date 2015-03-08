@@ -167,9 +167,6 @@ class ValueSet {
 		if (values.isEmpty())
 			return null;
 		
-		// TODO Turn off DataModel size limit
-		SymexConfig.DATA_MODEL_MAX_DEPTH = 1000;
-				
 		int size = values.size();
 		return getValue(values.toArray(new DataNode[size]), constraints.toArray(new Constraint[size]), size);
 	}

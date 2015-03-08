@@ -10,7 +10,7 @@ public class SymexConfig {
 	/*
 	 * Execution options
 	 */
-	public static int DATA_MODEL_MAX_DEPTH = 50;						// The maximum depth of Data Model
+	public static int DATA_MODEL_MAX_SIZE = 10000;						// The maximum size of Data Model
 	public static boolean COLLECT_OUTPUTS_FROM_EXIT_STATEMENTS = true;	// Set to true to let the FinalOutput include the outputs at exit statements.
 	
 	/*

@@ -19,8 +19,10 @@ public class RepeatNode extends DataNode {
 	 */
 	protected RepeatNode(Constraint constraint, DataNode dataNode) {
 		this.constraint = constraint;
-		if (checkAndUpdateDepth(dataNode))
+		if (checkAndUpdateSize(dataNode))
 			this.childNode = dataNode;
+		else
+			this.childNode = DataNodeFactory.createSymbolicNode();
 	}
 	
 	public Constraint getConstraint() {

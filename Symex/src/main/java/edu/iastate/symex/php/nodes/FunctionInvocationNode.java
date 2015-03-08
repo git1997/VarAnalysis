@@ -296,7 +296,7 @@ public class FunctionInvocationNode extends VariableBaseNode {
 	 * Implements the standard PHP function: define
 	 */
 	private DataNode php_define(ArrayList<DataNode> arguments, Env env) {	
-		if (arguments.size() == 2) {
+		if (arguments.size() >= 2) { // TODO Third argument is for case sensitivity
 			String constantName = arguments.get(0).getExactStringValueOrNull();
 			DataNode constantValue = arguments.get(1);
 			if (constantName != null)

@@ -13,33 +13,31 @@ import edu.iastate.symex.datamodel.nodes.SpecialNode.BooleanNode;
  */
 public abstract class DataNode {
 
-	private int depth;	// The depth of the tree at this node
+	private int size;	// The size of the tree at this node
 	
 	/**
 	 * Protected constructor.
 	 */
 	protected DataNode() {
-		this.depth = 1;
+		this.size = 1;
 	}
 	
-	public int getDepth() {
-		return depth;
+	public int getSize() {
+		return size;
 	}
 	
 	/**
 	 * Returns true if the childNode can be added to this node
-	 * (the depth of this node has not exceeded its limit).
-	 * In that case, also update the depth of this node.
-	 * @return
+	 *   (the size of this node has not exceeded a limit).
+	 * In that case, also update the size of this node.
 	 */
-	protected boolean checkAndUpdateDepth(DataNode childNode) {
-		if (childNode.depth + 1 <= SymexConfig.DATA_MODEL_MAX_DEPTH) {
-			if (childNode.depth + 1 > this.depth)
-				this.depth = childNode.depth + 1;
+	protected boolean checkAndUpdateSize(DataNode childNode) {
+		if (this.size + childNode.size <= SymexConfig.DATA_MODEL_MAX_SIZE) {
+			this.size += childNode.size;
 			return true;
 		}
 		else {
-			MyLogger.log(MyLevel.USER_EXCEPTION, "In DataNode.java: Data model has reached its maximum depth of " + SymexConfig.DATA_MODEL_MAX_DEPTH);
+			MyLogger.log(MyLevel.USER_EXCEPTION, "In DataNode.java: Data model has reached its maximum size of " + SymexConfig.DATA_MODEL_MAX_SIZE);
 			return false;
 		}
 	}

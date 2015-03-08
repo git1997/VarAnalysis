@@ -26,12 +26,12 @@ public class SelectNode extends DataNode {
 	protected SelectNode(Constraint constraint, DataNode nodeInTrueBranch, DataNode nodeInFalseBranch) {
 		this.constraint = constraint;
 
-		if (checkAndUpdateDepth(nodeInTrueBranch))
+		if (checkAndUpdateSize(nodeInTrueBranch))
 			this.nodeInTrueBranch = nodeInTrueBranch;
 		else
 			this.nodeInTrueBranch = DataNodeFactory.createSymbolicNode();
 
-		if (checkAndUpdateDepth(nodeInFalseBranch))
+		if (checkAndUpdateSize(nodeInFalseBranch))
 			this.nodeInFalseBranch = nodeInFalseBranch;
 		else
 			this.nodeInFalseBranch = DataNodeFactory.createSymbolicNode();
