@@ -144,6 +144,9 @@ public class DataModelTreeViewer implements ITreeViewer {
 		if (element instanceof SelectNode)
 			return (((SelectNode) element).getConstraint() != null ? ((SelectNode) element).getConstraint().getLocation() : Range.UNDEFINED);
 		
+		else if (element instanceof RepeatNode)
+			return (((RepeatNode) element).getConstraint() != null ? ((RepeatNode) element).getConstraint().getLocation() : Range.UNDEFINED);
+		
 		else if (element instanceof SymbolicNode)
 			return (((SymbolicNode) element).getPhpNode() != null ? ((SymbolicNode) element).getPhpNode().getLocation() : Range.UNDEFINED);
 		
