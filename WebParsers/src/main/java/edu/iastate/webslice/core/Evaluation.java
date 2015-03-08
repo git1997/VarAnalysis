@@ -154,7 +154,7 @@ public class Evaluation {
 		System.out.println(new ShowStatisticsOnReferences().showStatistics(referenceManager));
 		
 		System.out.println("========== INFEASIBLE EDGES ==========");
-		System.out.println("Infeasible edges: " + (DataFlowManager.totalEdges - DataFlowManager.feasibleEdges) + " / " + DataFlowManager.totalEdges);
+		//System.out.println("Infeasible edges: " + (DataFlowManager.totalEdges - DataFlowManager.feasibleEdges) + " / " + DataFlowManager.totalEdges);
 		
 		System.out.println("========== EXECUTION SUMMARY ==========");
 		System.out.println("Entries: " + entries.size());

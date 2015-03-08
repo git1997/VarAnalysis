@@ -277,10 +277,17 @@ public class DataFlowManager {
 				
 				Position currentPos = attribute.getLocation().getStartPosition();
 				Position nextPos = null;
-				if (currentIdx < attributes.size() - 1)
-					nextPos = attributes.get(currentIdx + 1).getLocation().getStartPosition();
-				else if (!endBrackets.isEmpty())
-					nextPos = endBrackets.get(0).getLocation().getStartPosition();
+				if (attribute.getAttrValEnd() != null)
+					nextPos = attribute.getAttrValEnd().getLocation().getStartPosition();
+				else {
+					for (int i = currentIdx + 1; i < attributes.size(); i++)
+						if (attributes.get(i).getLocation().getStartPosition().getOffset() > currentPos.getOffset()) {
+							nextPos = attributes.get(i).getLocation().getStartPosition();
+							break;
+						}
+					if (nextPos == null && !endBrackets.isEmpty())
+						nextPos = endBrackets.get(0).getLocation().getStartPosition();
+				}
 				
 				if (nextPos == null || !currentPos.getFile().equals(nextPos.getFile()))
 					continue;
