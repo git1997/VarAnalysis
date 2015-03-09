@@ -14,6 +14,7 @@ import org.eclipse.php.internal.core.ast.nodes.Program;
 import org.eclipse.php.internal.core.ast.nodes.Scalar;
 import org.eclipse.php.internal.core.ast.visitor.AbstractVisitor;
 
+import edu.iastate.symex.php.nodes.FileNode;
 import edu.iastate.symex.position.Position;
 import edu.iastate.symex.position.Range;
 import edu.iastate.symex.util.ASTHelper;
@@ -38,6 +39,10 @@ public class AstAnalyzer {
 	 * @param position
 	 */
 	public PositionInfo getPositionInfo(Position position) {
+		// TODO [ADHOC CODE]: Quick fix to parse JavaScript files as PHP files
+		if (position.getFileName().endsWith(".js"))
+			new FileNode(position.getFile());
+		
 		final File file = position.getFile();
 		Program program = ASTHelper.inst.getPhpProgramOfPhpFile(file);
 		

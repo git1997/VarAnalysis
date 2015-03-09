@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 
 import edu.iastate.analysis.references.Reference;
+import edu.iastate.analysis.references.detection.DataFlowManager;
 import edu.iastate.analysis.references.detection.ReferenceManager;
 import edu.iastate.webslice.core.AstAnalyzer.PositionInfo;
 
@@ -134,10 +135,12 @@ public class ShowStatisticsOnReferences {
 		str.append("Cross-function edges: " + crossFuncEdges + System.lineSeparator());
 		str.append("Cross-string edges: " + crossStringEdges + System.lineSeparator());
 		str.append("Cross-entry edges: " + crossEntryEdges + System.lineSeparator());
+		//str.append("Infeasible edges: " + (DataFlowManager.totalEdges - DataFlowManager.feasibleEdges) + " / " + DataFlowManager.totalEdges + System.lineSeparator());
 		
-		str.append(totalNodes + "\t" + nodesByLanguage.get("PHP") + "\t" + nodesByLanguage.get("SQL") + "\t" + nodesByLanguage.get("HTML") + "\t" + nodesByLanguage.get("JS") + "\t" 
-						+ embeddedNodes + "\t" + (embeddedNodes - embeddedAndOnEchoPrintNodes) + "\t"
-						+ totalEdges + "\t" + crossLangEdges + "\t" + crossFileEdges + "\t" + crossFuncEdges + "\t" + crossStringEdges + "\t" + crossEntryEdges + System.lineSeparator());
+		//str.append(totalNodes + "\t" + nodesByLanguage.get("PHP") + "\t" + nodesByLanguage.get("SQL") + "\t" + nodesByLanguage.get("HTML") + "\t" + nodesByLanguage.get("JS") + "\t" 
+		//				+ embeddedNodes + "\t" + (embeddedNodes - embeddedAndOnEchoPrintNodes) + "\t"
+		//				+ totalEdges + "\t" + crossLangEdges + "\t" + crossFileEdges + "\t" + crossFuncEdges + "\t" + crossStringEdges + "\t" + crossEntryEdges + "\t"
+		//				+ (DataFlowManager.totalEdges - DataFlowManager.feasibleEdges) + System.lineSeparator());
 	}
 	
 	/**
@@ -235,7 +238,7 @@ public class ShowStatisticsOnReferences {
 		if (!crossEntryEdgesCount.containsKey(0))
 			crossEntryEdgesCount.put(0, 0);
 		
-		str.append(String.format("%,d & %,d & %,d & %,d & %,d & %,d & %,d & %,d", 
+		str.append(String.format("%,d\t%,d\t%,d\t%,d\t%,d\t%,d\t%,d\t%,d", 
 				totalSlices, 
 				getPercentile(edgesCount, 0.5),
 				getPercentile(lengthCount, 0.5),

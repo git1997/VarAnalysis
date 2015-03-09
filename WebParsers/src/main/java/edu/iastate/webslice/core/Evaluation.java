@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.iastate.analysis.references.detection.DataFlowManager;
 import edu.iastate.analysis.references.detection.ReferenceDetector;
 import edu.iastate.analysis.references.detection.ReferenceManager;
 import edu.iastate.symex.core.Env;
@@ -74,7 +73,7 @@ public class Evaluation {
 			"timeclock.php"
 		}));
 		
-		projectNameToPath.put(UPB, "/Work/Data/Web Projects/Server Code/UPB-2.2.7");
+		projectNameToPath.put(UPB, "/Work/Data/Web Projects/Server Code/UPB-2.2.7-installed");
 		projectNameToEntries.put(UPB, Arrays.asList(new String[] {
 			"about_image.php",
 			"admin_badwords.php",
@@ -149,17 +148,15 @@ public class Evaluation {
 		}
 		
 		WebDebugger.setListener(null);
-		String time = timer.getElapsedSecondsInText();
+		float time = timer.getElapsedSeconds();
 		
 		System.out.println(new ShowStatisticsOnReferences().showStatistics(referenceManager));
-		
-		System.out.println("========== INFEASIBLE EDGES ==========");
-		//System.out.println("Infeasible edges: " + (DataFlowManager.totalEdges - DataFlowManager.feasibleEdges) + " / " + DataFlowManager.totalEdges);
 		
 		System.out.println("========== EXECUTION SUMMARY ==========");
 		System.out.println("Entries: " + entries.size());
 		System.out.println("Executed statements: " + countExecutedStatements.getCount());
-		System.out.println("Time: " + time );
+		System.out.println("Time: " + time);
+		System.out.println(entries.size() + "\t" + countExecutedStatements.getCount() + "\t" + time);
 	}
 	
 	/**
