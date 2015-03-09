@@ -16,8 +16,8 @@ public class RunReferenceDetectorForFile {
 	/**
 	 * PHP file to test
 	 */	
-	public static String PHP_FILE =	//"/Work/To-do/Data/Web Projects/Server Code/addressbookv6.2.12/index.php"; 
-									"/Work/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
+	public static String PHP_FILE =	"/Work/Data/Web Projects/Server Code/AddressBook-6.2.12/index.php"; 
+									//"/Work/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
 									//"/Work/To-do/Data/Web Projects/Server Code/TimeClock-1.04/index.php";
 									//"/Work/To-do/Data/Web Projects/Server Code/UPB-2.2.7/admin_forums.php";
 									//"/Work/Eclipse/workspace/scala/VarAnalysis-Tool/runtime-EclipseApplication/Test Project/testWebSlice.php";

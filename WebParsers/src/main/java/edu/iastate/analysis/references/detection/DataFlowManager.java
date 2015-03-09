@@ -164,37 +164,33 @@ public class DataFlowManager {
 	 * Resolves data flows
 	 */
 	public void resolveDataFlows() {
-		resolveDataFlowsWithinServerCode();
-		resolveDataFlowsWithinClientCode();
-		resolveDataFlowsFromServerCodeToClientCode();
-		resolveDataFlowsFromClientCodeToServerCode();
+		/*
+		 * Data flows within 1 language:
+		 * + PHP: Done during symbolic execution
+		 * + SQL: Done during symbolic execution
+		 * + HTML: Done during parsing VarDOM
+		 * + JavaScript: Done during parsing VarDOM. TODO The data flows within each JavaScript code fragment have been resolved,
+		 * 		but those across the fragments are not yet resolved. Need to deal with this in the future.
+		 */
 		
+		// Connecting data flows withing 1 language may produce duplicate data flows.
+		// Here, we remove those duplicates. (After this step, connecting data flows across languages will not produce any duplicates.)
 		removeDuplicates();
-	}
-	
-	/**
-	 * Resolves data flows within the server code
-	 */
-	private void resolveDataFlowsWithinServerCode() {
-		// Data flows within and across PHP and SQL has been automatically resolved during symbolic execution.
-	}
-	
-	/**
-	 * Resolves data flows within the client code
-	 */
-	private void resolveDataFlowsWithinClientCode() {
-		// [DONE] No data flow within HTML
-		resolveDataFlowsWithinJavaScriptCode();
+		
+		/*
+		 * Data flows across languages:
+		 * a) Def-use:
+		 * 		+ SQL -> PHP: Done during symbolic execution
+		 * 		+ HTML -> JS: To do next
+		 * 		+ HTML/JS -> PHP: To do next
+		 * b) Info-flow:
+		 * 		+ PHP -> SQL: TODO Future work
+		 * 		+ JS -> HTML: TODO Future work
+		 * 		+ PHP -> HTML/JS: To do next
+		 */
 		resolveDataFlowsFromHtmlToJavaScript();
-		// [DONE] No data flow from JavaScript to HTML (since HTML code can be viewed as JS code declaring variables, regular JS code cannot flow data back to those declarations)
-	}
-	
-	/**
-	 * Resolves data flows within JavaScript code
-	 */
-	private void resolveDataFlowsWithinJavaScriptCode() {
-		// NOTE: The data flows within each JavaScript code fragment have been resolved but those across the fragments are not yet resolved.
-		// Therefore, we connect them here. This method should not reconnect data flows within each JavaScript code fragment.
+		resolveDataFlowsFromClientCodeToServerCode();
+		resolveDataFlowsFromServerCodeToClientCode();
 	}
 	
 	/**
@@ -243,63 +239,6 @@ public class DataFlowManager {
 							&& compareInputName((HtmlDeclOfHtmlInputValue) ref1, (JsRefToHtmlInputValue) ref2)
 							&& compareFormName((HtmlDeclOfHtmlInputValue) ref1, (JsRefToHtmlInputValue) ref2))
 						addDataFlow((DeclaringReference) ref1, (RegularReference) ref2);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Resolves data flows from the server code and the client code
-	 */
-	private void resolveDataFlowsFromServerCodeToClientCode() {
-		/*
-		 * NOTE: The correct algorithm would require every value to have an associated trace.
-		 * For example: 
-		 *		L1: $x = 'a';
-		 *		L2: echo "<input name='input1' value='$x'";
-		 * Value $x at line 2 should be ('a': $x:L2 -> $x:L1 -> 'a':L1)
-		 * However, currently we don't have that trace so the algorithm below is only an approximate solution.
-		 */
-		ArrayList<Reference> referenceList = referenceManager.getReferenceList();
-		HashMap<String, ArrayList<Reference>> referencePositionMap = getReferenceListByPosition(referenceList); // Use a map of reference positions to speed up searching
-		
-		for (Reference ref1 : referenceList) {
-			/*
-			 * Connect a PHP reference and HtmlDeclOfHtmlInputValue
-			 */
-			if (ref1 instanceof HtmlDeclOfHtmlInputValue) {
-				HtmlAttribute attribute = ((HtmlDeclOfHtmlInputValue) ref1).getHtmlAttribute();
-				
-				HtmlElement htmlElement = attribute.getParentElement();
-				ArrayList<HtmlAttribute> attributes = attribute.getParentElement().getAttributes();
-				ArrayList<HtmlToken> endBrackets = htmlElement.getOpenTag().getEndBrackets();
-				int currentIdx = attributes.indexOf(attribute);
-				
-				Position currentPos = attribute.getLocation().getStartPosition();
-				Position nextPos = null;
-				if (attribute.getAttrValEnd() != null)
-					nextPos = attribute.getAttrValEnd().getLocation().getStartPosition();
-				else {
-					for (int i = currentIdx + 1; i < attributes.size(); i++)
-						if (attributes.get(i).getLocation().getStartPosition().getOffset() > currentPos.getOffset()) {
-							nextPos = attributes.get(i).getLocation().getStartPosition();
-							break;
-						}
-					if (nextPos == null && !endBrackets.isEmpty())
-						nextPos = endBrackets.get(0).getLocation().getStartPosition();
-				}
-				
-				if (nextPos == null || !currentPos.getFile().equals(nextPos.getFile()))
-					continue;
-				
-				File file = currentPos.getFile();
-				for (int offset = currentPos.getOffset(); offset < nextPos.getOffset(); offset++) {
-					Position pos = new Position(file, offset);
-					if (referencePositionMap.containsKey(pos.getSignature()))
-						for (Reference ref2 : referencePositionMap.get(pos.getSignature()))
-							if (ref2 instanceof PhpVariableRef || ref2 instanceof PhpFunctionCall
-									|| ref2 instanceof PhpRefToHtml	|| ref2 instanceof PhpRefToSqlTableColumn)
-								addDataFlow((RegularReference) ref2, (DeclaringReference) ref1);
 				}
 			}
 		}
@@ -377,6 +316,63 @@ public class DataFlowManager {
 						if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
 							addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
 					}
+			}
+		}
+	}
+	
+	/**
+	 * Resolves data flows from the server code and the client code
+	 */
+	private void resolveDataFlowsFromServerCodeToClientCode() {
+		/*
+		 * NOTE: The correct algorithm would require every value to have an associated trace.
+		 * For example: 
+		 *		L1: $x = 'a';
+		 *		L2: echo "<input name='input1' value='$x'";
+		 * Value $x at line 2 should be ('a': $x:L2 -> $x:L1 -> 'a':L1)
+		 * However, currently we don't have that trace so the algorithm below is only an approximate solution.
+		 */
+		ArrayList<Reference> referenceList = referenceManager.getReferenceList();
+		HashMap<String, ArrayList<Reference>> referencePositionMap = getReferenceListByPosition(referenceList); // Use a map of reference positions to speed up searching
+		
+		for (Reference ref1 : referenceList) {
+			/*
+			 * Connect a PHP reference and HtmlDeclOfHtmlInputValue
+			 */
+			if (ref1 instanceof HtmlDeclOfHtmlInputValue) {
+				HtmlAttribute attribute = ((HtmlDeclOfHtmlInputValue) ref1).getHtmlAttribute();
+				
+				HtmlElement htmlElement = attribute.getParentElement();
+				ArrayList<HtmlAttribute> attributes = attribute.getParentElement().getAttributes();
+				ArrayList<HtmlToken> endBrackets = htmlElement.getOpenTag().getEndBrackets();
+				int currentIdx = attributes.indexOf(attribute);
+				
+				Position currentPos = attribute.getLocation().getStartPosition();
+				Position nextPos = null;
+				if (attribute.getAttrValEnd() != null)
+					nextPos = attribute.getAttrValEnd().getLocation().getStartPosition();
+				else {
+					for (int i = currentIdx + 1; i < attributes.size(); i++)
+						if (attributes.get(i).getLocation().getStartPosition().getOffset() > currentPos.getOffset()) {
+							nextPos = attributes.get(i).getLocation().getStartPosition();
+							break;
+						}
+					if (nextPos == null && !endBrackets.isEmpty())
+						nextPos = endBrackets.get(0).getLocation().getStartPosition();
+				}
+				
+				if (nextPos == null || !currentPos.getFile().equals(nextPos.getFile()))
+					continue;
+				
+				File file = currentPos.getFile();
+				for (int offset = currentPos.getOffset(); offset < nextPos.getOffset(); offset++) {
+					Position pos = new Position(file, offset);
+					if (referencePositionMap.containsKey(pos.getSignature()))
+						for (Reference ref2 : referencePositionMap.get(pos.getSignature()))
+							if (ref2 instanceof PhpVariableRef || ref2 instanceof PhpFunctionCall
+									|| ref2 instanceof PhpRefToHtml	|| ref2 instanceof PhpRefToSqlTableColumn)
+								addDataFlow((RegularReference) ref2, (DeclaringReference) ref1);
+				}
 			}
 		}
 	}
