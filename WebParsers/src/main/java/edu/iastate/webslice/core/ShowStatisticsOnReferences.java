@@ -148,6 +148,7 @@ public class ShowStatisticsOnReferences {
 	 */
 	private void showStatisticsOfSlices(ReferenceManager referenceManager, StringBuilder str) {
 		int totalSlices = 0;
+		TreeMap<Integer, Integer> nodesCount = new TreeMap<Integer, Integer>();
 		TreeMap<Integer, Integer> edgesCount = new TreeMap<Integer, Integer>();
 		TreeMap<Integer, Integer> lengthCount = new TreeMap<Integer, Integer>();
 		TreeMap<Integer, Integer> crossLangEdgesCount = new TreeMap<Integer, Integer>();
@@ -167,6 +168,7 @@ public class ShowStatisticsOnReferences {
 				continue;
 			
 			totalSlices++;
+			int numOfNodes = nodes.size();
 			int numOfEdges = edges.size();
 			int length = length_[0];
 			int crossLangEdges = 0;
@@ -188,6 +190,7 @@ public class ShowStatisticsOnReferences {
 					crossEntryEdges++;
 			}
 			
+			incrementCount(nodesCount, numOfNodes);
 			incrementCount(edgesCount, numOfEdges);
 			incrementCount(lengthCount, length);
 			incrementCount(crossLangEdgesCount, crossLangEdges);
@@ -198,6 +201,10 @@ public class ShowStatisticsOnReferences {
 		}
 		
 		str.append("Total slices: " + totalSlices + System.lineSeparator());
+		
+		str.append("Nodes:" + System.lineSeparator());
+		reportDistribution(nodesCount, str);
+		str.append("----------" + System.lineSeparator());
 		
 		str.append("Edges:" + System.lineSeparator());
 		reportDistribution(edgesCount, str);
@@ -240,7 +247,7 @@ public class ShowStatisticsOnReferences {
 		
 		str.append(String.format("%,d\t%,d\t%,d\t%,d\t%,d\t%,d\t%,d\t%,d", 
 				totalSlices, 
-				getPercentile(edgesCount, 0.5),
+				getPercentile(nodesCount, 0.5),
 				getPercentile(lengthCount, 0.5),
 				(totalSlices - crossLangEdgesCount.get(0)),
 				(totalSlices - crossFileEdgesCount.get(0)),
