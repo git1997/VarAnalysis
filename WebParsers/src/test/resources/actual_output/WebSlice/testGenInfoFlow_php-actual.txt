@@ -7,8 +7,6 @@ z (PhpVariableDecl) @ testGenInfoFlow.php:Line3:Offset26
 input3 (HtmlInputDecl) @ testGenInfoFlow.php:Line4:Offset61
 value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line4:Offset68
 	<- z (PhpVariableRef) @ testGenInfoFlow.php:Line4:Offset74
-value (HtmlDeclOfHtmlInputValue) @ testGenInfoFlow.php:Line4:Offset68
-	<- z (PhpVariableRef) @ testGenInfoFlow.php:Line4:Offset74
 z (PhpVariableRef) @ testGenInfoFlow.php:Line4:Offset74
 	<- z (PhpVariableDecl) @ testGenInfoFlow.php:Line3:Offset26
 z (PhpVariableRef) @ testGenInfoFlow.php:Line4:Offset74
