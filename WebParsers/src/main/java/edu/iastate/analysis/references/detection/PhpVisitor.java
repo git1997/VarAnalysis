@@ -31,6 +31,7 @@ import edu.iastate.analysis.references.SqlTableColumnDecl;
 import edu.iastate.symex.core.Env;
 import edu.iastate.symex.core.PhpVariable;
 import edu.iastate.symex.datamodel.nodes.ArrayNode;
+import edu.iastate.symex.datamodel.nodes.ConcatNode;
 import edu.iastate.symex.datamodel.nodes.DataNode;
 import edu.iastate.symex.datamodel.nodes.DataNodeFactory;
 import edu.iastate.symex.datamodel.nodes.LiteralNode;
@@ -272,6 +273,9 @@ public class PhpVisitor implements WebAnalysis.IListener {
 		// Add a PhpFunctionCall for mysql_query
 		PhpFunctionCall phpFunctionCall = new PhpFunctionCall(functionName, getLocation(functionInvocationNameNode));
 		addReference(phpFunctionCall, functionInvocation, env);
+
+		if (argumentValue instanceof ConcatNode)
+			argumentValue = ((ConcatNode) argumentValue).getChildNodes().get(0);
 					
 		if (!(argumentValue instanceof LiteralNode))
 			return DataNodeFactory.createSymbolicNode();
@@ -307,7 +311,7 @@ public class PhpVisitor implements WebAnalysis.IListener {
 	/**
 	 * Returns a array of LiteralNode describing the column extracted from the SqlCode.
 	 */
-	public ArrayList<LiteralNode> extractSqlTableColumns(String sqlCode, PositionRange sqlLocation) {
+	private ArrayList<LiteralNode> extractSqlTableColumns(String sqlCode, PositionRange sqlLocation) {
 		ArrayList<LiteralNode> sqlTableColumns = new ArrayList<LiteralNode>();
 		
 		Pattern p = Pattern.compile("SELECT (\\s*\\w+\\s*,)*(\\s*\\w+\\s*) FROM", Pattern.CASE_INSENSITIVE);
