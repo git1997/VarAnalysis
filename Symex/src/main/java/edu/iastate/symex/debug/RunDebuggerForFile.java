@@ -16,10 +16,11 @@ public class RunDebuggerForFile {
 	/**
 	 * PHP file to test
 	 */	
-	public static String PHP_FILE = //"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/TestProject/index.php";
-									//"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/SchoolMate-1.5.4/index.php";
+	public static String PHP_FILE = //"/Work/Data/Web Projects/Server Code/AddressBook-6.2.12/index.php";
+									//"/Work/Data/Web Projects/Server Code/SchoolMate-1.5.4/index.php";
+									//"/Work/Data/Web Projects/Server Code/UPB-2.2.7-installed/index.php";
 									"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/WordPress-4.1/index.php";
-
+									
 	/**
 	 * The entry point of the program
 	 */
