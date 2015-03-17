@@ -8,6 +8,11 @@ package edu.iastate.analysis.config;
 public class AnalysisConfig {
 
 	/*
+	 * Execution options
+	 */
+	public static boolean CHECK_CONSTRAINTS_FOR_CROSS_PAGE_DATA_FLOWS = true;	// Set to true to check the constraints when detecting cross-page data flows
+
+	/*
 	 * XML identifiers
 	 */
 	public static String XML_ROOT				= "Root";

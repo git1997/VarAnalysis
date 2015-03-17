@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import edu.iastate.analysis.config.AnalysisConfig;
 import edu.iastate.analysis.references.DeclaringReference;
 import edu.iastate.analysis.references.HtmlDeclOfHtmlInputValue;
 import edu.iastate.analysis.references.HtmlFormDecl;
@@ -274,7 +275,7 @@ public class DataFlowManager {
 				if (referenceNameMap.containsKey(name))
 					for (Reference ref2 : referenceNameMap.get(name)) {
 						if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
-							addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
+							addCrossPageDataFlow((DeclaringReference) ref1, (PhpRefToHtml) ref2);
 					}
 			}
 			/*
@@ -287,7 +288,7 @@ public class DataFlowManager {
 				if (referenceNameMap.containsKey(inputName))
 					for (Reference ref2 : referenceNameMap.get(inputName)) {
 						if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
-							addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
+							addCrossPageDataFlow((DeclaringReference) ref1, (PhpRefToHtml) ref2);
 					}
 			}
 			/*
@@ -300,7 +301,7 @@ public class DataFlowManager {
 				if (referenceNameMap.containsKey(inputName))
 					for (Reference ref2 : referenceNameMap.get(inputName)) {
 						if (ref2 instanceof PhpRefToHtml && matchSubmitToPagesToEntryFile(submitToPages, ref2.getEntryFile()))
-							addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
+							addCrossPageDataFlow((DeclaringReference) ref1, (PhpRefToHtml) ref2);
 					}
 			}
 			/*
@@ -314,10 +315,17 @@ public class DataFlowManager {
 				if (referenceNameMap.containsKey(inputName))
 					for (Reference ref2 : referenceNameMap.get(inputName)) {
 						if (ref2 instanceof PhpRefToHtml && matchSubmitToPageToEntryFile(submitToPage, ref2.getEntryFile()))
-							addDataFlowWithoutConstraintChecking((DeclaringReference) ref1, (RegularReference) ref2);
+							addCrossPageDataFlow((DeclaringReference) ref1, (PhpRefToHtml) ref2);
 					}
 			}
 		}
+	}
+	
+	private void addCrossPageDataFlow(DeclaringReference ref1, PhpRefToHtml ref2) {
+		if (AnalysisConfig.CHECK_CONSTRAINTS_FOR_CROSS_PAGE_DATA_FLOWS)
+			addDataFlow(ref1, ref2);
+		else
+			addDataFlowWithoutConstraintChecking(ref1, ref2);
 	}
 	
 	/**
