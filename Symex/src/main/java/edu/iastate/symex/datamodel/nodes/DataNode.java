@@ -139,7 +139,7 @@ public abstract class DataNode {
 		if (this == dataNode)
 			return BooleanNode.TRUE;
 		else
-			return BooleanNode.FALSE;
+			return BooleanNode.UNKNOWN; // TODO Currently returning UNKNOWN since the values can be symbolic, this code could be improved by breaking down different cases
 	}
 	
 }
