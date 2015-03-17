@@ -255,6 +255,10 @@ public class ShowStatisticsOnReferences {
 				(totalSlices - crossEntryEdgesCount.get(0))));
 		str.append(System.lineSeparator());
 		
+		str.append("Nodes:" + System.lineSeparator());
+		reportDetailedDistribution(nodesCount, str);
+		str.append("----------" + System.lineSeparator());
+		
 		str.append("Cross-lang edges:" + System.lineSeparator());
 		reportDetailedDistribution(crossLangEdgesCount, str);
 		str.append("----------" + System.lineSeparator());
