@@ -7,7 +7,6 @@ import java.util.TreeMap;
 import org.eclipse.php.internal.core.ast.nodes.ASTNode;
 
 import edu.iastate.analysis.references.Reference;
-import edu.iastate.analysis.references.detection.DataFlowManager;
 import edu.iastate.analysis.references.detection.ReferenceManager;
 import edu.iastate.webslice.core.AstAnalyzer.PositionInfo;
 
@@ -137,10 +136,10 @@ public class ShowStatisticsOnReferences {
 		str.append("Cross-entry edges: " + crossEntryEdges + System.lineSeparator());
 		//str.append("Infeasible edges: " + (DataFlowManager.totalEdges - DataFlowManager.feasibleEdges) + " / " + DataFlowManager.totalEdges + System.lineSeparator());
 		
-		//str.append(totalNodes + "\t" + nodesByLanguage.get("PHP") + "\t" + nodesByLanguage.get("SQL") + "\t" + nodesByLanguage.get("HTML") + "\t" + nodesByLanguage.get("JS") + "\t" 
-		//				+ embeddedNodes + "\t" + (embeddedNodes - embeddedAndOnEchoPrintNodes) + "\t"
-		//				+ totalEdges + "\t" + crossLangEdges + "\t" + crossFileEdges + "\t" + crossFuncEdges + "\t" + crossStringEdges + "\t" + crossEntryEdges + "\t"
-		//				+ (DataFlowManager.totalEdges - DataFlowManager.feasibleEdges) + System.lineSeparator());
+		str.append(nodesByLanguage.get("PHP") + "\t" + (totalNodes - nodesByLanguage.get("PHP")) + "\t" + nodesByLanguage.get("SQL") + "\t" + nodesByLanguage.get("HTML") + "\t" + nodesByLanguage.get("JS") + "\t" 
+						+ embeddedNodes + "\t" + (embeddedNodes - embeddedAndOnEchoPrintNodes) + "\t"
+						+ totalEdges + "\t" + crossLangEdges + "\t" + crossFileEdges + "\t" + crossFuncEdges + "\t" + crossStringEdges + "\t" + crossEntryEdges + "\t"
+						+ System.lineSeparator());
 	}
 	
 	/**
@@ -164,7 +163,7 @@ public class ShowStatisticsOnReferences {
 			getForwardSlice(referenceManager, reference, nodes, edges, length_);
 			
 			// Discard slices with 1 node
-			if (edges.isEmpty())
+			if (nodes.size() == 1)
 				continue;
 			
 			totalSlices++;
@@ -253,7 +252,12 @@ public class ShowStatisticsOnReferences {
 				(totalSlices - crossFileEdgesCount.get(0)),
 				(totalSlices - crossFuncEdgesCount.get(0)),
 				(totalSlices - crossStringEdgesCount.get(0)),
-				(totalSlices - crossEntryEdgesCount.get(0))));		
+				(totalSlices - crossEntryEdgesCount.get(0))));
+		str.append(System.lineSeparator());
+		
+		str.append("Cross-lang edges:" + System.lineSeparator());
+		reportDetailedDistribution(crossLangEdgesCount, str);
+		str.append("----------" + System.lineSeparator());
 	}
 	
 	/**
@@ -274,8 +278,6 @@ public class ShowStatisticsOnReferences {
 			
 			for (Reference ref1 : toExpandReferences_) {
 				for (Reference ref2 : referenceManager.getDataFlowManager().getDataFlowFrom(ref1)) {
-					if (Evaluation.DISCARD_CROSS_ENTRY_EDGES && ref2.getType().equals("PhpRefToHtml"))
-						continue;
 					if (!referencesInSlice.contains(ref2)) {
 						referencesInSlice.add(ref2);
 						nodes.add(new Node(ref2));
@@ -325,6 +327,15 @@ public class ShowStatisticsOnReferences {
 		str.append("Percentile 75%: " + getPercentile(countMap, 0.75) + "\t");
 		str.append("Percentile 100%: " + getPercentile(countMap, 1) + "\t");
 		str.append(System.lineSeparator());
+	}
+	
+	/**
+	 * Shows detailed distribution of a countMap
+	 */
+	private void reportDetailedDistribution(TreeMap<Integer, Integer> countMap, StringBuilder str) {
+		for (int type : countMap.keySet()) {
+			str.append(type + "\t" + countMap.get(type) + System.lineSeparator());
+		}
 	}
 	
 	/**
