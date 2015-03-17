@@ -11,13 +11,13 @@ import java.util.List;
  */
 public class SubjectSystems {
 	
-	public static String ADDRESS_BOOK 	= "AddressBook";
+	public static String ADDRESS_BOOK	= "AddressBook";
 	public static String SCHOOL_MATE 	= "SchoolMate";
 	public static String TIME_CLOCK 	= "TimeClock";
 	public static String UPB 			= "UPB";
 	public static String WEB_CHESS 		= "WebChess";
 	
-	public static String projectName = ADDRESS_BOOK;
+	public static String projectName = 	ADDRESS_BOOK;
 										//SCHOOL_MATE;
 										//TIME_CLOCK;
 										//UPB;
