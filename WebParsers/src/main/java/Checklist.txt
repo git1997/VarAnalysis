@@ -17,7 +17,7 @@ OK				edu.iastate.webslice.core
 Method													Input				Return
 --------------------------------------------------------------------------------------------
 new PhpExecuterAndParser().executeAndParse()			File				HtmlDocument
-	new PhpExecute().execute()								File				DataModel
+	new PhpExecuter().execute()								File				DataModel
 	new DataModelParser().parse()							DataModel		    HtmlDocument
 new ReferenceDetector().detect()						File				ReferenceManager
 new Debugger().debug()									File				DebugInfo
