@@ -29,6 +29,7 @@ import java.util.HashMap;
 public class FileIO {
 	
 	// Cache the files' contents for faster reads
+	public static boolean TURN_CACHE_ON = true;
 	private static HashMap<File, String> fileMap = new HashMap<File, String>();
 
 	/*
@@ -40,7 +41,7 @@ public class FileIO {
 	}
 
 	public static String readStringFromFile(File inputFile) {
-		if (!fileMap.containsKey(inputFile))
+		if (!TURN_CACHE_ON || !fileMap.containsKey(inputFile))
 			fileMap.put(inputFile, readStringFromFileWithoutCache(inputFile));
 		return fileMap.get(inputFile);
 	}
