@@ -49,7 +49,7 @@ public class ReadWriteDataModelToFromXml {
 	/**
 	 * Reads DataModel from XML file
 	 */
-	public DataModel readDataModelFromXmlFile(File xmlFile) {
+	public DataModel readDataModelFromXmlFile(String xmlFile) {
 		Document document = XmlDocument.readXmlDocumentFromFile(xmlFile);
 		Element dataModelElement = document.getDocumentElement();
 		Element rootElement = (Element) dataModelElement.getFirstChild();
