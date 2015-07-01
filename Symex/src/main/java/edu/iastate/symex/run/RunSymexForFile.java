@@ -4,6 +4,7 @@ import java.io.File;
 
 import edu.iastate.symex.core.PhpExecuter;
 import edu.iastate.symex.datamodel.DataModel;
+import edu.iastate.symex.datamodel.ReadWriteDataModelToFromXml;
 import edu.iastate.symex.util.Timer;
 import edu.iastate.symex.util.logging.MyLevel;
 import edu.iastate.symex.util.logging.MyLogger;
@@ -19,8 +20,7 @@ public class RunSymexForFile {
 	 * PHP file to test
 	 */	
 	public static String PHP_FILE = //"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/TestProject/index.php";
-									//"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/SchoolMate-1.5.4/index.php";
-									"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/WordPress-4.1/index.php";
+									"/Work/Eclipse/Repositories/javaEE/WebTesting/quercus-4.0.39/WebContent/WebApps/SchoolMate-1.5.4/index.php";
 
 	/**
 	 * The entry point of the program
@@ -44,6 +44,7 @@ public class RunSymexForFile {
 		 * Print results
 		 */
 		MyLogger.log(MyLevel.INFO, dataModel.toIfdefString());
+		new ReadWriteDataModelToFromXml().writeDataModelToXmlFile(dataModel, "/Users/HUNG/Desktop/output-dmodel.xml");
 		//MyLogger.writeLogMessagesToFile(new File("/Users/HUNG/Desktop/logs.txt"));
 	}
 	

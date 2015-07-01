@@ -29,10 +29,10 @@ public class SymexConfig {
 	public static String XML_OBJECT			= "Object";
 	public static String XML_REPEAT			= "Repeat";
 	public static String XML_SELECT			= "Select";
-	public static String XML_SELECT_TRUE	= "True";
-	public static String XML_SELECT_FALSE	= "False";
+	public static String XML_SPECIAL		= "Special";
 	public static String XML_SYMBOLIC		= "Symbolic";
 
+	public static String XML_CONSTRAINT		= "Constraint";
 	public static String XML_TEXT			= "Text";
 	public static String XML_FILE			= "File";
 	public static String XML_OFFSET			= "Offset";

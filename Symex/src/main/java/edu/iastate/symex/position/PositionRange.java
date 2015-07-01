@@ -1,5 +1,6 @@
 package edu.iastate.symex.position;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -37,6 +38,39 @@ public abstract class PositionRange {
 	public Position getEndPosition() {
 		int length = getLength();
 		return (length == -1 ? Position.UNDEFINED : getPositionAtRelativeOffset(length));
+	}
+	
+	/*
+	 * Convenience methods
+	 * @see edu.iastate.symex.position.Position
+	 */
+	
+	/**
+	 * Returns the file of the start position, or null if the start position is UNDEFINED
+	 */
+	public File getFile() {
+		return getStartPosition().getFile();
+	}
+
+	/**
+	 * Returns the offset of the start position, or -1 if the start position is UNDEFINED
+	 */
+	public int getOffset() {
+		return getStartPosition().getOffset();
+	}
+	
+	/**
+	 * Returns true if the start position is UNDEFINED
+	 */
+	public boolean isUndefined() {
+		return getStartPosition().isUndefined();
+	}
+	
+	/**
+	 * Returns the absolute file path of the start position, or null if the start position is UNDEFINED
+	 */
+	public String getFilePath() {
+		return getStartPosition().getFilePath();
 	}
 	
 }
