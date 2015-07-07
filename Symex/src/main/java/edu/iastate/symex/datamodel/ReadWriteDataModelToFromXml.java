@@ -149,11 +149,8 @@ public class ReadWriteDataModelToFromXml {
 	 */
 	private Element writeLiteralNodeToXmlElement(LiteralNode literalNode, Document document) {
 		Element element = document.createElement(SymexConfig.XML_LITERAL);
-		
 		element.setAttribute(SymexConfig.XML_TEXT, literalNode.getStringValue());
-		element.setAttribute(SymexConfig.XML_FILE, literalNode.getLocation().getFilePath());
-		element.setAttribute(SymexConfig.XML_OFFSET, String.valueOf(literalNode.getLocation().getOffset()));
-		
+		writeLocationToXmlElement(literalNode.getLocation(), element);
 		return element;
 	}
 	
@@ -162,11 +159,7 @@ public class ReadWriteDataModelToFromXml {
 	 */
 	private LiteralNode readLiteralNodeFromXmlElement(Element element) {
 		String stringValue = element.getAttribute(SymexConfig.XML_TEXT);
-		String file =  element.getAttribute(SymexConfig.XML_FILE);
-		int offset =  Integer.valueOf(element.getAttribute(SymexConfig.XML_OFFSET));
-		int length = stringValue.length();
-		PositionRange location = new Range(new File(file), offset, length);
-		
+		PositionRange location = readLocationFromXmlElement(element);
 		return DataNodeFactory.createLiteralNode(stringValue, location);
 	}
 	
@@ -269,8 +262,7 @@ public class ReadWriteDataModelToFromXml {
 	private Element writeSymbolicNodeToXmlElement(SymbolicNode symbolicNode, Document document) {
 		Element element = document.createElement(SymexConfig.XML_SYMBOLIC);
 		element.setAttribute(SymexConfig.XML_TEXT, symbolicNode.getPhpNode().getSourceCode());
-		element.setAttribute(SymexConfig.XML_FILE, symbolicNode.getLocation().getFilePath());
-		element.setAttribute(SymexConfig.XML_OFFSET, String.valueOf(symbolicNode.getLocation().getFilePath()));
+		writeLocationToXmlElement(symbolicNode.getLocation(), element);
 		return element;
 	}
 	
@@ -287,8 +279,7 @@ public class ReadWriteDataModelToFromXml {
 	private Element writeConstraintToXmlElement(Constraint constraint, Document document) {
 		Element element = document.createElement(SymexConfig.XML_CONSTRAINT);
 		element.setAttribute(SymexConfig.XML_TEXT, constraint.toDebugString());
-		element.setAttribute(SymexConfig.XML_FILE, constraint.getLocation().getFilePath());
-		element.setAttribute(SymexConfig.XML_OFFSET, String.valueOf(constraint.getLocation().getOffset()));
+		writeLocationToXmlElement(constraint.getLocation(), element);
 		return element;
 	}
 	
@@ -297,11 +288,36 @@ public class ReadWriteDataModelToFromXml {
 	 */
 	private Constraint readConstraintFromXmlElement(Element element) {
 		String text = element.getAttribute(SymexConfig.XML_TEXT);
-		String file = element.getAttribute(SymexConfig.XML_FILE);
-		int offset = Integer.valueOf(element.getAttribute(SymexConfig.XML_OFFSET));
-		int length = text.length();
-		PositionRange location = new Range(new File(file), offset, length);
+		PositionRange location = readLocationFromXmlElement(element);
 		return ConstraintFactory.createAtomicConstraint(text, location);
+	}
+	
+	/**
+	 * Writes Location to XML element
+	 */
+	private void writeLocationToXmlElement(PositionRange location, Element element) {
+		element.setAttribute(SymexConfig.XML_FILE, location.getFilePath() != null ? location.getFilePath() : "");
+		element.setAttribute(SymexConfig.XML_OFFSET, String.valueOf(location.getOffset()));
+		element.setAttribute(SymexConfig.XML_LENGTH, String.valueOf(location.getLength())); // TODO Revise for the case location is scattered
+	}
+	
+	/**
+	 * Reads Location from XML element
+	 */
+	private PositionRange readLocationFromXmlElement(Element element) {
+		String filePath = element.getAttribute(SymexConfig.XML_FILE);
+		File file = (!filePath.isEmpty() ? new File(filePath) : null);
+		int offset = Integer.valueOf(element.getAttribute(SymexConfig.XML_OFFSET));
+		int length = Integer.valueOf(element.getAttribute(SymexConfig.XML_LENGTH));
+
+		if (offset == -1) {
+			if (length == -1)
+				return Range.UNDEFINED;
+			else
+				return new Range(length);
+		}
+		else
+			return new Range(file, offset, length);
 	}
 	
 }
