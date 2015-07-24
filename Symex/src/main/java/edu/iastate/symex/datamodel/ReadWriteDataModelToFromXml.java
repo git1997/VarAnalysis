@@ -62,44 +62,52 @@ public class ReadWriteDataModelToFromXml {
 	 * Writes DataNode to XML element
 	 */
 	private Element writeDataNodeToXmlElement(DataNode dataNode, Document document) {
+		Element element;
+		
 		if (dataNode instanceof ArrayNode)
-			return writeArrayNodeToXmlElement((ArrayNode) dataNode, document);
+			element = writeArrayNodeToXmlElement((ArrayNode) dataNode, document);
 		else if (dataNode instanceof ConcatNode)
-			return writeConcatNodeToXmlElement((ConcatNode) dataNode, document);
+			element = writeConcatNodeToXmlElement((ConcatNode) dataNode, document);
 		else if (dataNode instanceof LiteralNode)
-			return writeLiteralNodeToXmlElement((LiteralNode) dataNode, document);
+			element = writeLiteralNodeToXmlElement((LiteralNode) dataNode, document);
 		else if (dataNode instanceof ObjectNode)
-			return writeObjectNodeToXmlElement((ObjectNode) dataNode, document);
+			element = writeObjectNodeToXmlElement((ObjectNode) dataNode, document);
 		else if (dataNode instanceof RepeatNode)
-			return writeRepeatNodeToXmlElement((RepeatNode) dataNode, document);
+			element = writeRepeatNodeToXmlElement((RepeatNode) dataNode, document);
 		else if (dataNode instanceof SelectNode)
-			return writeSelectNodeToXmlElement((SelectNode) dataNode, document);
+			element = writeSelectNodeToXmlElement((SelectNode) dataNode, document);
 		else if (dataNode instanceof SpecialNode)
-			return writeSpecialNodeToXmlElement((SpecialNode) dataNode, document);
+			element = writeSpecialNodeToXmlElement((SpecialNode) dataNode, document);
 		else // if (dataNode instanceof SymbolicNode)
-			return writeSymbolicNodeToXmlElement((SymbolicNode) dataNode, document);
+			element = writeSymbolicNodeToXmlElement((SymbolicNode) dataNode, document);
+		
+		return element;
 	}
 	
 	/**
 	 * Reads DataNode from XML element
 	 */
 	private DataNode readDataNodeFromXmlElement(Element element) {
+		DataNode dataNode;
+		
 		if (element.getNodeName().equals(SymexConfig.XML_ARRAY))
-			return readArrayNodeFromXmlElement(element);
+			dataNode = readArrayNodeFromXmlElement(element);
 		else if (element.getNodeName().equals(SymexConfig.XML_CONCAT))
-			return readConcatNodeFromXmlElement(element);
+			dataNode = readConcatNodeFromXmlElement(element);
 		else if (element.getNodeName().equals(SymexConfig.XML_LITERAL))
-			return readLiteralNodeFromXmlElement(element);
+			dataNode = readLiteralNodeFromXmlElement(element);
 		else if (element.getNodeName().equals(SymexConfig.XML_OBJECT))
-			return readObjectNodeFromXmlElement(element);
+			dataNode = readObjectNodeFromXmlElement(element);
 		else if (element.getNodeName().equals(SymexConfig.XML_REPEAT))
-			return readRepeatNodeFromXmlElement(element);
+			dataNode = readRepeatNodeFromXmlElement(element);
 		else if (element.getNodeName().equals(SymexConfig.XML_SELECT))
-			return readSelectNodeFromXmlElement(element);
+			dataNode = readSelectNodeFromXmlElement(element);
 		else if (element.getNodeName().equals(SymexConfig.XML_SPECIAL))
-			return readSpecialNodeFromXmlElement(element);
+			dataNode = readSpecialNodeFromXmlElement(element);
 		else // if (xmlElement.getNodeName().equals(SymexConfig.XML_SYMBOLIC))
-			return readSymbolicNodeFromXmlElement(element);
+			dataNode = readSymbolicNodeFromXmlElement(element);
+		
+		return dataNode;
 	}
 	
 	/**
@@ -261,13 +269,13 @@ public class ReadWriteDataModelToFromXml {
 	 */
 	private Element writeSymbolicNodeToXmlElement(SymbolicNode symbolicNode, Document document) {
 		Element element = document.createElement(SymexConfig.XML_SYMBOLIC);
-		element.setAttribute(SymexConfig.XML_TEXT, symbolicNode.getPhpNode().getSourceCode());
-		writeLocationToXmlElement(symbolicNode.getLocation(), element);
+		//element.setAttribute(SymexConfig.XML_TEXT, symbolicNode.getPhpNode().getSourceCode());
+		//writeLocationToXmlElement(symbolicNode.getLocation(), element);
 		return element;
 	}
 	
 	/**
-	 * Reads SymblicNode from XML element
+	 * Reads SymbolicNode from XML element
 	 */
 	private DataNode readSymbolicNodeFromXmlElement(Element element) {
 		return DataNodeFactory.createSymbolicNode(); // TODO Should add more info to SymbolicNode

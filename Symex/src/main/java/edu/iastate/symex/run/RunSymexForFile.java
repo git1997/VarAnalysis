@@ -19,8 +19,8 @@ public class RunSymexForFile {
 	/**
 	 * PHP file to test
 	 */	
-	public static String PHP_FILE = //"/Work/Eclipse/workspace/javaEE/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/TestProject/index.php";
-									"/Work/Eclipse/Repositories/javaEE/WebTesting/quercus-4.0.39/WebContent/WebApps/SchoolMate-1.5.4/index.php";
+	public static String PHP_FILE = //"/Work/Eclipse/Repositories/SymexTesting/quercus-4.0.39/WebContent/WebApps/TestProject/index.php";
+									"/Work/Eclipse/Repositories/WebTesting/quercus-4.0.39/WebContent/WebApps/SchoolMate-1.5.4/index.php";
 
 	/**
 	 * The entry point of the program

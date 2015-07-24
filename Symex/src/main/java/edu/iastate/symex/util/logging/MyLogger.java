@@ -60,6 +60,10 @@ public class MyLogger {
 		logger.log(level, msg);
 	}
 	
+	public static void log(String msg) {
+		logger.log(MyLevel.INFO, msg);
+	}
+	
 	/*
 	 * writeLogMessagesToFile
 	 */
