@@ -66,10 +66,7 @@ public class XmlDocument {
 
 	public static Document readXmlDocumentFromFile(File xmlFile) {
 		try {
-			// TODO Adhoc code to fix error with the &# characters
 			String source = FileIO.readStringFromFile(xmlFile);
-			source = source.replace("&#", "&amp;#");
-			
 			ByteArrayInputStream fileContent = new ByteArrayInputStream(source.getBytes("UTF-8"));
 			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileContent);
 			document.getDocumentElement().normalize();
