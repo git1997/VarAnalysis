@@ -10,13 +10,14 @@ import edu.iastate.symex.datamodel.DataModelVisitor;
  */
 public class ConcatNode extends DataNode {
 	
-	private ArrayList<DataNode> childNodes = new ArrayList<DataNode>(); // childNodes must be compact (no child nodes of type ConcatNode)
+	private ArrayList<DataNode> childNodes; // childNodes must be compact (no child nodes of type ConcatNode) and contain at least 2 elements
 
 	/**
 	 * Protected constructor, called from DataNodeFactory only.
 	 * @param childNodes childNodes must be compact (no child nodes of type ConcatNode) and contain at least 2 elements
 	 */
 	protected ConcatNode(ArrayList<DataNode> childNodes) {
+		this.childNodes = new ArrayList<DataNode>();
 		for (DataNode childNode : childNodes) {
 			if (checkAndUpdateSize(childNode))
 				this.childNodes.add(childNode);
