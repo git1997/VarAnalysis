@@ -18,7 +18,7 @@ Source Code Structure
 
 Getting Started
 ===============
-	0. Install Eclipse for Java.
+	0. Install Eclipse for Java and PHP Development Tools (PDT) on top of Eclipse. You might need to resolve a few compiling issues.
 	1. Experiment with the following files:
 		+ Symex/src/main/java/edu/iastate/symex/run/RunSymexForFile.java: Run Symex 
 		+ WebParsers/src/main/java/edu/iastate/parsers/html/run/RunVarisForFile.java: Run Varis
