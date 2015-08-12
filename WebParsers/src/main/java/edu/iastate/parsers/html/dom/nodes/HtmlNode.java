@@ -10,7 +10,7 @@ import java.util.HashSet;
  */
 public abstract class HtmlNode {
 	
-	protected HashSet<HtmlNode> parentNodes = new HashSet<HtmlNode>(); // The parent nodes (an HtmlNode can have mutiple parents, but they must never form a loop)
+	protected HashSet<HtmlNode> parentNodes = new HashSet<HtmlNode>(); // The parent nodes (an HtmlNode can have multiple parents depending on a condition)
 	
 	protected ArrayList<HtmlNode> childNodes = new ArrayList<HtmlNode>(); // Its child nodes
 	
