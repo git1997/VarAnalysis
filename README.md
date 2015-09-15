@@ -28,3 +28,8 @@ Getting Started
 Contact
 =======
 Please feel free to contact the author if you have any questions.
+
+FAQs
+=======
+	1. What is the version of the Eclipse do you use?
+		I’m using Eclipse for Scala, but I think the plug-ins should work for other Eclipse environments as well. Here is what’s written in the About section of my current IDE: "Scala IDE build of Eclipse SDK ... Build id: 3.0.1-vfinal-20130718-1727-Typesafe ... Visit http://scala-ide.org/ ... Eclipse SDK Version: 3.7.2".
