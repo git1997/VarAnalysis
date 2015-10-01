@@ -32,7 +32,7 @@ Please feel free to contact the author if you have any questions.
 FAQs
 =======
 	1. What is the version of Eclipse that you use?
-		I'm using Eclipse for Scala, but I think the plug-ins should work for other Eclipse environments as well. Here is what's written in the About section of my current IDE: "Scala IDE build of Eclipse SDK ... Build id: 3.0.1-vfinal-20130718-1727-Typesafe ... Visit http://scala-ide.org/ ... Eclipse SDK Version: 3.7.2".
+		I'm using Eclipse for Scala: "Scala IDE build of Eclipse SDK ... Build id: 3.0.1-vfinal-20130718-1727-Typesafe ... Visit http://scala-ide.org/ ... Eclipse SDK Version: 3.7.2". The plug-ins should work on newer versions of Eclipse as well, but there might be some dependency issues that you need to resolve first.
 	2. When I import these projects into my Eclipse, there are some compiling errors. What should I do?
 		Some of these projects depend on other projects. Make sure you're not missing dependencies among projects (e.g., the featureexprlib project should be included from Symex).
 		Also, make sure that you have installed PHP Development Tools (PDT) on top of Eclipse.
