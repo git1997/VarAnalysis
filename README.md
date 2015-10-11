@@ -35,7 +35,7 @@ FAQs
 		I'm using Eclipse for Scala: "Scala IDE build of Eclipse SDK ... Build id: 3.0.1-vfinal-20130718-1727-Typesafe ... Visit http://scala-ide.org/ ... Eclipse SDK Version: 3.7.2". The plug-ins should work on newer versions of Eclipse as well, but there might be some dependency issues that you need to resolve first.
 	2. When I import these projects into my Eclipse, there are some compiling errors. What should I do?
 		Some of these projects depend on other projects. Make sure you're not missing dependencies among projects (e.g., the featureexprlib project should be included from Symex).
-		Also, make sure that you have installed PHP Development Tools (PDT) on top of Eclipse.
+		Also, make sure that you have installed PHP Development Tools (PDT) on top of Eclipse. (PDT 3.2 and 3.4 should work; PDT 3.6 seems to introduce a runtime error with JavaCup.)
 	3. How do I install PHP Development Tools (PDT)?
 		http://stackoverflow.com/questions/2397978/how-to-install-a-php-ide-plugin-for-eclipse-directly-from-the-eclipse-environmen
 		https://eclipse.org/pdt/ (Scroll down to Update existing Eclipse)
