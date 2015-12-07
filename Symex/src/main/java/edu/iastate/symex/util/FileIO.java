@@ -41,9 +41,14 @@ public class FileIO {
 	}
 
 	public static String readStringFromFile(File inputFile) {
-		if (!TURN_CACHE_ON || !fileMap.containsKey(inputFile))
-			fileMap.put(inputFile, readStringFromFileWithoutCache(inputFile));
-		return fileMap.get(inputFile);
+		if (TURN_CACHE_ON) {
+			if (!fileMap.containsKey(inputFile))
+				fileMap.put(inputFile, readStringFromFileWithoutCache(inputFile));
+			return fileMap.get(inputFile);
+		}
+		else {
+			return readStringFromFileWithoutCache(inputFile);
+		}
 	}
 	
 	private static String readStringFromFileWithoutCache(File inputFile) {
@@ -53,6 +58,11 @@ public class FileIO {
 			e.printStackTrace();
 			return "";
 		}
+	}
+	
+	public static String[] readLinesFromFile(String inputFile) {
+		String fileContent = readStringFromFile(inputFile);
+		return fileContent.split("\r?\n");
 	}
 
 	public static String readStringFromStream(InputStream is) {
