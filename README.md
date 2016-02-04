@@ -42,7 +42,7 @@ FAQs
 	4. When I run Symex, I have a FileNotFoundException error. How can I fix it?
 		The input to Symex is a PHP file so you should change the PHP_FILE constant in RunSymexForFile.java to a file on your computer.
 	5. I am confused about the SymexUI project, how do I use it?
-		SemexUI is for creating a plug-in in Eclipse that shows the result of symbolic execution in a tree view. If you just want to experiment with the symbolic execution engine without a GUI, you can ignore it for now, and come back to it later once you are more familiar with Eclipse plug-in development in general (http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Fguide%2Ffirstplugin.htm)
+		SymexUI is for creating a plug-in in Eclipse that shows the result of symbolic execution in a tree view. If you just want to experiment with the symbolic execution engine without a GUI, you can ignore it for now, and come back to it later once you are more familiar with Eclipse plug-in development in general (http://help.eclipse.org/mars/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Fguide%2Ffirstplugin.htm)
 	6. When I click on some buttons like "Run Analysis", nothing will show (I have imported some PHP projects to it). Could you give me some advice?
 		Those buttons generally work for a PHP file that is currently active in Eclipse. First you need to select a PHP file in your PHP project, then open it. Then you click on one of the buttons, it will analyze that file and show some results.
 	7. What is the best way to debug an issue?
