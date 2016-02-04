@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="edu.iastate.webtesting.category.webtesting"
+            name="WebTesting">
+      </category>
+      <view
+            category="edu.iastate.webtesting.category.webtesting"
+            class="edu.iastate.webtesting.ui.views.WebTestingView"
+            icon="src/main/resources/icons/sample.gif"
+            id="edu.iastate.webtesting.ui.views.WebTestingView"
+            name="Web Testing">
+      </view>
+   </extension>
+
+</plugin>

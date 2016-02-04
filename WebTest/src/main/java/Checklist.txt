@@ -1,0 +1,11 @@
+edu.iastate.symex.datamodel_modified			OK
+edu.iastate.webtesting.bugcoverage				OK
+edu.iastate.webtesting.evaluation				OK
+edu.iastate.webtesting.mapper					OK
+edu.iastate.webtesting.outputcoverage			OK
+edu.iastate.webtesting.statementcoverage		OK
+edu.iastate.webtesting.tests					OK
+edu.iastate.webtesting.ui.views					OK
+edu.iastate.webtesting.util_clone				OK
+edu.iastate.webtesting.values_clone				OK
+edu.iastate.webtesting.visualization			OK
