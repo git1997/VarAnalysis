@@ -7,14 +7,17 @@ Implementation of the following research projects:
 	+ Varis, "Building Call Graphs for Embedded Client-Side Code in Dynamic Web Applications", FSE 2014
 
 	+ WebSlice, "Cross-language Program Slicing for Dynamic Web Applications", FSE 2015
+	
+	+ WebTest, "Exploring Output-Based Coverage for Testing PHP Web Applications", in submission
 
 Source Code Structure
 =====================
 	+ featureexprlib_2.9.1-0.3.3_plugin		Library for solving constraints
-	+ Symex									Implementation of PhpSync (now called Symex)
-	+ SymexUI								Eclipse plug-in view for Symex
-	+ WebParsers							Implemenation of Varis and WebSlice
-	+ WebParsersUI							Eclipse plug-in view for WebParsers
+	+ Symex						Implementation of PhpSync (now called Symex)
+	+ SymexUI					Eclipse plug-in view for Symex
+	+ WebParsers					Implemenation of Varis and WebSlice
+	+ WebParsersUI					Eclipse plug-in view for WebParsers
+	+ WebTest					Implementation of WebTest
 
 Getting Started
 ===============
