@@ -2,3 +2,4 @@ bin/
 target/
 .cache
 /.gradle
+.DS_Store
